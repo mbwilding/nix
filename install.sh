@@ -2,9 +2,12 @@
 
 set -euo pipefail
 
-flake_path=~/nix
-if [ -n "$1" ]; then
-  flake_path="$flake_path#$1"
+if [ -n "${1:-}" ]; then
+  HOST="$1"
+else
+  read -rp "Hostname: " HOST
 fi
 
-sudo nixos-rebuild switch --impure --flake "$flake_path"
+HOST="${HOST// /}"
+
+sudo HOST="$HOST" nixos-rebuild switch --impure --flake "/home/anon/nix#$HOST"
