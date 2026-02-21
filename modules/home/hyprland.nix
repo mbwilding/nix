@@ -1,10 +1,82 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, hostname, ... }:
 
 let
   anim_speed = 2.0;
   gaps = 10.0;
 
   anim_speed_str = builtins.toString anim_speed;
+
+  monitors = {
+    anon = [
+      {
+        output = "HDMI-A-1";
+        mode = "3840x2160@119.88";
+        position = "0x0";
+        scale = 1.0;
+        transform = 0;
+        vrr = 2;
+        bitdepth = 10;
+        supports_wide_color = 1;
+        supports_hdr = 1;
+        cm = "wide";
+      }
+      {
+        output = "DP-2";
+        mode = "3440x1440@120";
+        position = "3840x-720";
+        scale = 1.0;
+        transform = 1;
+        vrr = 2;
+      }
+      {
+        output = "DP-1";
+        mode = "2560x1080@60";
+        position = "-1080x0";
+        scale = 1.0;
+        transform = 3;
+      }
+    ];
+
+    nona = [
+      # Internal
+      {
+        output = "eDP-1";
+        mode = "2944x1840@90";
+        position = "0x0";
+        scale = 1.33;
+        transform = 0;
+        bitdepth = 10;
+        supports_wide_color = 1;
+        supports_hdr = 1;
+      }
+      # Home
+      {
+        output = "HDMI-A-1";
+        mode = "3840x2160@120.00";
+        position = "1080x-1080";
+        scale = 2.0;
+        transform = 0;
+        bitdepth = 10;
+        supports_wide_color = 1;
+        supports_hdr = 1;
+      }
+      # Work
+      {
+        output = "DP-7";
+        mode = "2560x1440@74.97";
+        position = "-1280x-1440";
+        scale = 1.0;
+        transform = 0;
+      }
+      {
+        output = "DP-6";
+        mode = "2560x1440@74.97";
+        position = "1280x-1440";
+        scale = 1.0;
+        transform = 0;
+      }
+    ];
+  };
 in
 {
   home = {
@@ -190,45 +262,7 @@ in
         force_zero_scaling = true;
       };
 
-      monitorv2 = [
-        # Internal
-        {
-          output = "eDP-1";
-          mode = "2944x1840@90";
-          position = "0x0";
-          scale = 1.33;
-          transform = 0;
-          bitdepth = 10;
-          supports_wide_color = 1;
-          supports_hdr = 1;
-        }
-        # Home
-        {
-          output = "HDMI-A-1";
-          mode = "3840x2160@120.00";
-          position = "1080x-1080";
-          scale = 2.0;
-          transform = 0;
-          bitdepth = 10;
-          supports_wide_color = 1;
-          supports_hdr = 1;
-        }
-        # Work
-        {
-          output = "DP-7";
-          mode = "2560x1440@74.97";
-          position = "-1280x-1440";
-          scale = 1.0;
-          transform = 0;
-        }
-        {
-          output = "DP-6";
-          mode = "2560x1440@74.97";
-          position = "1280x-1440";
-          scale = 1.0;
-          transform = 0;
-        }
-      ];
+      monitorv2 = monitors.${hostname} or [];
 
       input = {
         kb_layout = "us";

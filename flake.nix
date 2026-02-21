@@ -37,6 +37,8 @@
     let
       system = "x86_64-linux";
 
+      hostname = builtins.getEnv "HOST";
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -77,7 +79,7 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
               home-manager.extraSpecialArgs = {
-                inherit inputs pkgsStable;
+                inherit inputs pkgsStable hostname;
               };
               home-manager.users.anon = {
                 imports = [
@@ -99,7 +101,7 @@
         anon = inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
 
-          extraSpecialArgs = { inherit inputs pkgsStable; };
+          extraSpecialArgs = { inherit inputs pkgsStable hostname; };
 
           modules = [
             ./home.nix
