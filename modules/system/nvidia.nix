@@ -50,9 +50,14 @@
 
   environment = {
     sessionVariables = {
-      ENABLE_HDR_WSI = 1;
-      VDPAU_DRIVER = "nvidia";
+      ENABLE_HDR_WSI = 1; # Generally not advised to be enabled globally
+      GBM_BACKEND = "nvidia-drm";
       LIBVA_DRIVER_NAME = "nvidia";
+      NVD_BACKEND = "direct";
+      VDPAU_DRIVER = "nvidia";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      __GL_GSYNC_ALLOWED = 1;
+      __GL_VRR_ALLOWED = 1;
     };
   };
 }

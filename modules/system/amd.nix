@@ -16,9 +16,9 @@
 
   environment = {
     sessionVariables = {
-      ENABLE_HDR_WSI = 1;
-      VDPAU_DRIVER = "radeonsi";
+      ENABLE_HDR_WSI = 1; # Generally not advised to be enabled globally
       LIBVA_DRIVER_NAME = "radeonsi";
+      VDPAU_DRIVER = "radeonsi";
     };
   };
 }
