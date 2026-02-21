@@ -1,0 +1,27 @@
+{ ... }:
+
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/system/nvidia.nix
+
+    # ../../modules/system/kde.nix
+    ../../modules/system/hyprland.nix
+
+    ../../modules/system/default.nix
+    ../../modules/system/obs.nix
+    ../../modules/system/steam.nix
+    ../../modules/system/wireguard.nix
+    ../../modules/system/wireshark.nix
+  ];
+
+  networking.hostName = "anon";
+
+  environment = {
+    sessionVariables = {
+      WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
+    };
+  };
+
+  system.stateVersion = "25.11";
+}
