@@ -37,8 +37,6 @@
     let
       system = "x86_64-linux";
 
-      hostname = builtins.getEnv "HOST";
-
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -98,17 +96,19 @@
         "vm"
       ] mkHost;
 
-      homeConfigurations = {
-        anon = inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+      homeConfigurations = nixpkgs.lib.genAttrs [
+        "anon"
+        "nona"
+        "vm"
+      ] (hostname: inputs.home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
 
-          extraSpecialArgs = { inherit inputs pkgsStable hostname; };
+        extraSpecialArgs = { inherit inputs pkgsStable hostname; };
 
-          modules = [
-            ./home.nix
-            plasma-manager.homeModules.plasma-manager
-          ];
-        };
-      };
+        modules = [
+          ./home.nix
+          plasma-manager.homeModules.plasma-manager
+        ];
+      });
     };
 }
