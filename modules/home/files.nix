@@ -45,7 +45,7 @@
       [*.{ts,tsx,js,css,scss,html}]
       quote_type = single
 
-      [*.yml]
+      [*.{yaml,yml,nix}]
       tab_width = 2
       indent_size = 2
 
