@@ -67,11 +67,11 @@ in
         oc = "opencode";
         q = "exit";
         hm-build = "home-manager build -b backup --impure --flake ~/nix#anon";
-        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#anon";
+        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#anon && exec zsh";
         nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
         nix-clean = "sudo nix-collect-garbage -d";
-        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
-        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
+        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec zsh";
+        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix && exec zsh";
         # TODO: Setup proxychains
         ${work} = "proxychains -f ~/.config/proxychains/proxychains.conf";
         t = "zellij";
