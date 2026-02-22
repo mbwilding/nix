@@ -7,7 +7,7 @@
 
     hyprland.url = "github:hyprwm/Hyprland/refs/tags/v0.53.0";
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
+      url = "github:hyprwm/hyprland-plugins/refs/tags/v0.53.0";
       inputs.hyprland.follows = "hyprland";
     };
 
