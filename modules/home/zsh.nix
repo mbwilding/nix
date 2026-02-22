@@ -50,11 +50,10 @@ in
         eval "$(op completion zsh)"; compdef _op op
 
         wifi-connect() {
-          if [ "$#" -lt 2 ]; then
-            echo "Usage: wifi-connect <SSID> <PASSWORD>"
-            return 1
-          fi
-          nmcli device wifi connect "$1" password "$2"
+          read "Enter SSID: " ssid
+          read -p "Enter Password: " -s password
+          echo
+          nmcli device wifi connect "$ssid" password "$password"
         }
       '';
       shellAliases = {
