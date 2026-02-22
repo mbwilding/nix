@@ -23,18 +23,15 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    {
-      nixpkgs,
-      home-manager,
-      nur,
-      plasma-manager,
-      ucodenix,
-      neovim-nightly-overlay,
-      ...
-    }@inputs:
+    { ... }@inputs:
     let
       system = "x86_64-linux";
       hosts = [
@@ -45,18 +42,18 @@
 
       secrets = import ./modules/system/secrets.nix;
 
-      pkgs = import nixpkgs {
+      pkgs = import inputs.nixpkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = [
-          nur.overlays.default
-          neovim-nightly-overlay.overlays.default
+          inputs.nur.overlays.default
+          inputs.neovim-nightly-overlay.overlays.default
         ];
       };
 
       mkHost =
         hostname:
-        nixpkgs.lib.nixosSystem {
+        inputs.nixpkgs.lib.nixosSystem {
           inherit system;
 
           specialArgs = { inherit inputs secrets; };
@@ -66,9 +63,8 @@
 
             ./hosts/${hostname}/configuration.nix
 
-            ucodenix.nixosModules.default
-
-            home-manager.nixosModules.home-manager
+            inputs.ucodenix.nixosModules.default
+            inputs.home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
@@ -83,7 +79,8 @@
               home-manager.users.anon = {
                 imports = [
                   ./home.nix
-                  plasma-manager.homeModules.plasma-manager
+                  inputs.plasma-manager.homeModules.plasma-manager
+                  inputs.caelestia-shell.homeManagerModules.default
                 ];
               };
             }
@@ -91,9 +88,9 @@
         };
     in
     {
-      nixosConfigurations = nixpkgs.lib.genAttrs hosts mkHost;
+      nixosConfigurations = inputs.nixpkgs.lib.genAttrs hosts mkHost;
 
-      homeConfigurations = nixpkgs.lib.genAttrs hosts (
+      homeConfigurations = inputs.nixpkgs.lib.genAttrs hosts (
         hostname:
         inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
@@ -108,7 +105,8 @@
 
           modules = [
             ./home.nix
-            plasma-manager.homeModules.plasma-manager
+            inputs.plasma-manager.homeModules.plasma-manager
+            inputs.caelestia-shell.homeManagerModules.default
           ];
         }
       );

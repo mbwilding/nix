@@ -196,7 +196,6 @@ in
         "$mod, S, exec, spotify"
         "$mod, M, exec, teams-for-linux"
         "$mod, D, exec, discord"
-        "$mod, Y, exec, home-manager switch -b backup --impure --flake ~/nix#${hostname}"
 
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
@@ -467,9 +466,32 @@ in
       '';
     };
 
-    quickshell = {
+    caelestia = {
       enable = true;
-      systemd.enable = true;
+      systemd = {
+        enable = true; # if you prefer starting from your compositor
+        target = "graphical-session.target";
+        environment = [ ];
+      };
+      settings = {
+        bar = {
+          status = {
+            showBattery = hostname == "nona";
+          };
+        };
+        launcher = {
+          vimKeybinds = true;
+        };
+        paths.wallpaper = null;
+        wallpaper.color = "#000000";
+        # paths.wallpaperDir = "~/Images";
+      };
+      cli = {
+        enable = true; # Also add caelestia-cli to path
+        settings = {
+          theme.enableGtk = true;
+        };
+      };
     };
 
     # hyprpanel = {
