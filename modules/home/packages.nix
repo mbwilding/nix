@@ -58,6 +58,7 @@
       luajitPackages.luarocks-nix
       markdownlint-cli2
       marksman
+      mpv
       neovim
       netcoredbg
       nil
@@ -66,6 +67,7 @@
       nodejs
       opencode
       openssh
+      pavucontrol
       php85Packages.php-cs-fixer
       phpactor
       powershell
