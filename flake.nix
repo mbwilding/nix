@@ -20,6 +20,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   outputs =
@@ -30,6 +32,7 @@
       nur,
       plasma-manager,
       ucodenix,
+      neovim-nightly-overlay,
       ...
     }@inputs:
     let
@@ -45,6 +48,7 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        overlays = [ neovim-nightly-overlay.overlays.default ];
         config.packageOverrides = pkgs: {
           nur = import nur {
             inherit pkgs;

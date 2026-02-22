@@ -105,11 +105,11 @@ in
         oc = "opencode";
         q = "exit";
         hm-build = "home-manager build -b backup --impure --flake ~/nix#$(hostname)";
-        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#$(hostname) && exec zsh";
+        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#$(hostname)";
         nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
         nix-clean = "sudo nix-collect-garbage -d";
-        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec zsh";
-        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix && exec zsh";
+        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
+        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
         power-p = "powerprofilesctl set performance";
         power-b = "powerprofilesctl set balanced";
         power-s = "powerprofilesctl set power-saver";
