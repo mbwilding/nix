@@ -4,7 +4,10 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
 
     plasma-manager = {
       url = "github:nix-community/plasma-manager";

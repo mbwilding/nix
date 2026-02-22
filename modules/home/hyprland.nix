@@ -1,4 +1,9 @@
-{ inputs, pkgs, hostname, ... }:
+{
+  inputs,
+  pkgs,
+  hostname,
+  ...
+}:
 
 let
   anim_speed = 2.0;
@@ -262,7 +267,7 @@ in
         force_zero_scaling = true;
       };
 
-      monitorv2 = monitors.${hostname} or [];
+      monitorv2 = monitors.${hostname} or [ ];
 
       input = {
         kb_layout = "us";
