@@ -467,6 +467,10 @@ in
       '';
     };
 
+    quickshell = {
+      enable = true;
+    };
+
     # hyprpanel = {
     #   enable = false;
     #   # Configure and theme almost all options from the GUI.
