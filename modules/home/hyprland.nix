@@ -177,6 +177,7 @@ in
 
       exec-once = [
         "brightnessctl set --device=platform::micmute 0"
+        "systemctl --user start hyprpolkitagent"
         # "nm-applet"
         # "hyprpaper"
         # "hyprpanel"
@@ -336,6 +337,7 @@ in
         "CLUTTER_BACKEND,wayland"
         "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         "GDK_BACKEND,wayland,x11,*"
+        "GTK_THEME,Breeze-Dark"
         "HYPRCURSOR_SIZE,24"
         "QT_QPA_PLATFORM,wayland;xcb"
         "QT_QPA_PLATFORMTHEME,kde"
@@ -355,32 +357,42 @@ in
     };
   };
 
-  # home.pointerCursor = {
-  #   gtk.enable = true;
-  #   # x11.enable = true;
-  #   package = pkgs.bibata-cursors;
-  #   name = "Bibata-Modern-Classic";
-  #   size = 16;
-  # };
-  #
-  # gtk = {
-  #   enable = true;
-  #
-  #   theme = {
-  #     package = pkgs.flat-remix-gtk;
-  #     name = "Flat-Remix-GTK-Grey-Darkest";
-  #   };
-  #
-  #   iconTheme = {
-  #     package = pkgs.adwaita-icon-theme;
-  #     name = "Adwaita";
-  #   };
-  #
-  #   font = {
-  #     name = "Sans";
-  #     size = 11;
-  #   };
-  # };
+  gtk = {
+    enable = true;
+
+    theme = {
+      package = pkgs.libsForQt5.breeze-gtk;
+      name = "Breeze-Dark";
+    };
+
+    iconTheme = {
+      package = pkgs.libsForQt5.breeze-icons;
+      name = "breeze-dark";
+    };
+
+    cursorTheme = {
+      name = "Breeze";
+      size = 24;
+    };
+
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+  };
+
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+      gtk-theme = "Breeze-Dark";
+      icon-theme = "breeze-dark";
+      cursor-theme = "Breeze";
+      cursor-size = 24;
+    };
+  };
 
   programs = {
     wofi = {

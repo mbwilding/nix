@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.hyprland = {
@@ -34,4 +34,9 @@
   };
 
   security.rtkit.enable = true;
+  security.polkit.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    hyprpolkitagent
+  ];
 }
