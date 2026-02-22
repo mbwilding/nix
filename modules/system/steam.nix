@@ -25,4 +25,16 @@
       DXVK_HDR = 1;
     };
   };
+
+  environment.etc."skel/.steam/steam/config/config.vdf".text = ''
+    "CompatToolMapping"
+    {
+        "*"
+        {
+            "name"  "proton-ge-custom"
+            "config"    ""
+            "priority"  "250"
+        }
+    }
+  '';
 }
