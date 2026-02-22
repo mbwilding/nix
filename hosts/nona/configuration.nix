@@ -18,7 +18,10 @@ in
     ../../modules/system/wireguard.nix
   ];
 
+  hardware.cpu.amd.updateMicrocode = true;
+
   networking.hostName = "nona";
+
   console.keyMap = keymap;
   services.xserver.xkb.variant = keymap;
 

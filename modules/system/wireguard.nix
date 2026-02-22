@@ -1,8 +1,8 @@
-{ hostname, ... }:
+{ config, ... }:
 
 {
   networking.wg-quick.interfaces =
-    if hostname == "nona" then {
+    if config.networking.hostName == "nona" then {
       Home = {
         autostart = false;
         address = [ "192.168.20.2/32" ];
