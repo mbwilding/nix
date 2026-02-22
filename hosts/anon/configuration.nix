@@ -19,7 +19,7 @@
 
   environment = {
     sessionVariables = {
-      WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
+      WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-2";
     };
   };
 
