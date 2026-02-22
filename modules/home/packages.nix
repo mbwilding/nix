@@ -26,6 +26,7 @@
       delta
       delve
       dockerfile-language-server
+      dolphin
       dotnetCorePackages.dotnet_10.sdk
       eslint_d
       eza
