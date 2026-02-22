@@ -67,6 +67,8 @@ in
         oc = "opencode";
         q = "exit";
         nix-clean = "sudo nix-collect-garbage -d";
+        nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
+        nix-build-hm = "home-manager build -b backup --impure --flake ~/nix#anon";
         nix-rebuild = "sudo nixos-rebuild switch --impure --flake ~/nix";
         nix-rebuild-hm = "home-manager switch -b backup --impure --flake ~/nix#anon";
         nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
