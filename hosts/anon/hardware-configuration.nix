@@ -42,6 +42,32 @@
     ];
   };
 
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/3450BB1850BADFB2";
+    fsType = "ntfs";
+    options = [
+      "uid=1000"
+      "gid=1000"
+      "rw"
+      "user"
+      "exec"
+      "umask=000"
+    ];
+  };
+
+  fileSystems."/mnt/studio" = {
+    device = "/dev/disk/by-uuid/094D132D094D132D";
+    fsType = "ntfs";
+    options = [
+      "uid=1000"
+      "gid=1000"
+      "rw"
+      "user"
+      "exec"
+      "umask=000"
+    ];
+  };
+
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
