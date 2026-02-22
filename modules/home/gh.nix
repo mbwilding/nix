@@ -1,8 +1,8 @@
-{ ... }:
+{ secrets, ... }:
 
 let
   usernamePersonal = "mbwilding";
-  usernameWork = builtins.readFile /home/anon/.secrets/github-work-username;
+  usernameWork = secrets.githubWorkUsername;
 in
 {
   programs = {
@@ -13,10 +13,10 @@ in
           user = usernameWork;
           users = {
             "${usernamePersonal}" = {
-              oauth_token = builtins.readFile /home/anon/.secrets/github-personal;
+              oauth_token = secrets.githubPersonalToken;
             };
             "${usernameWork}" = {
-              oauth_token = builtins.readFile /home/anon/.secrets/github-work;
+              oauth_token = secrets.githubWorkToken;
             };
           };
         };

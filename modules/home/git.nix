@@ -1,8 +1,4 @@
-{ ... }:
-let
-  work = builtins.readFile /home/anon/.secrets/work-name;
-  workEmailName = builtins.readFile /home/anon/.secrets/work-email-name;
-in
+{ secrets, ... }:
 {
   services = {
     gpg-agent = {
@@ -63,25 +59,25 @@ in
           smudge = "git-lfs smudge -- %f";
         };
         url = {
-          "git@${work}.github.com:${work}/" = {
-            insteadOf = "git@github.com:${work}/";
+          "git@${secrets.workName}.github.com:${secrets.workName}/" = {
+            insteadOf = "git@github.com:${secrets.workName}/";
           };
         };
         includeIf = {
           "hasconfig:remote.*.url:**" = {
             path = "~/.config/git/config-personal";
           };
-          "hasconfig:remote.*.url:git@gitlab.com:${work}/**" = {
+          "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
             path = "~/.config/git/config-work";
           };
           # NOTE: May need work to be upper
-          "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${work}/**" = {
+          "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${secrets.workName}/**" = {
             path = "~/.config/git/config-work";
           };
-          "hasconfig:remote.*.url:git@github.com:${work}/**" = {
+          "hasconfig:remote.*.url:git@github.com:${secrets.workName}/**" = {
             path = "~/.config/git/config-work";
           };
-          "hasconfig:remote.*.url:git@${work}.github.com:${work}/**" = {
+          "hasconfig:remote.*.url:git@${secrets.workName}.github.com:${secrets.workName}/**" = {
             path = "~/.config/git/config-work";
           };
         };
@@ -100,13 +96,13 @@ in
     file.".config/git/config-work".text = ''
       [user]
           name = Matt Wilding
-          email = ${workEmailName}
+          email = ${secrets.workEmailName}
           signingkey = ~/.ssh/work.pub
     '';
 
     file.".config/git/allowed_signers".text = ''
-      mbwilding@gmail.com ${builtins.readFile /home/anon/.ssh/personal.pub}
-      ${workEmailName} ${builtins.readFile /home/anon/.ssh/work.pub}
+      mbwilding@gmail.com ${secrets.personalPublicKey}
+      ${secrets.workEmailName} ${secrets.workPublicKey}
     '';
   };
 }
