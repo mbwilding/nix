@@ -1,7 +1,7 @@
-{ ... }:
+{ secrets, ... }:
 
 let
-  s = builtins.fromJSON (builtins.readFile /home/anon/.secrets/aws.json);
+  s = secrets.aws;
   output = "yaml";
 
   mkProfile =

@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   home = {
@@ -7,21 +7,21 @@
       <configuration>
         <packageSources>
           <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
-          <add key="github" value="https://nuget.pkg.github.com/${builtins.readFile /home/anon/.secrets/work-name}/index.json" />
+          <add key="github" value="https://nuget.pkg.github.com/${secrets.workName}/index.json" />
         </packageSources>
         <packageSourceCredentials>
           <github>
-            <add key="Username" value="${builtins.readFile /home/anon/.secrets/github-work-username}" />
-            <add key="ClearTextPassword" value="${builtins.readFile /home/anon/.secrets/github-work}" />
+            <add key="Username" value="${secrets.githubWorkUsername}" />
+            <add key="ClearTextPassword" value="${secrets.githubWorkToken}" />
           </github>
         </packageSourceCredentials>
       </configuration>
     '';
 
     file.".config/.bunfig".text = ''
-      [install.scopes."@${builtins.readFile /home/anon/.secrets/work-name}"]
+      [install.scopes."@${secrets.workName}"]
       url = "https://npm.pkg.github.com"
-      token = "${builtins.readFile /home/anon/.secrets/github-work}"
+      token = "${secrets.githubWorkToken}"
     '';
 
     file.".gdbinit".text = ''

@@ -39,12 +39,13 @@
     }@inputs:
     let
       system = "x86_64-linux";
-
       hosts = [
         "anon"
         "nona"
         "vm"
       ];
+
+      secrets = import ./modules/system/secrets.nix;
 
       pkgs = import nixpkgs {
         inherit system;
@@ -71,7 +72,7 @@
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit inputs pkgsStable; };
+          specialArgs = { inherit inputs pkgsStable secrets; };
 
           modules = [
             { nixpkgs.pkgs = pkgs; }
@@ -86,7 +87,7 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
               home-manager.extraSpecialArgs = {
-                inherit inputs pkgsStable hostname;
+                inherit inputs pkgsStable hostname secrets;
               };
               home-manager.users.anon = {
                 imports = [
@@ -106,7 +107,7 @@
         inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
 
-          extraSpecialArgs = { inherit inputs pkgsStable hostname; };
+          extraSpecialArgs = { inherit inputs pkgsStable hostname secrets; };
 
           modules = [
             ./home.nix

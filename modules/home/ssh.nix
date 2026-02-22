@@ -1,8 +1,5 @@
-{ ... }:
+{ secrets, ... }:
 
-let
-  work = builtins.readFile /home/anon/.secrets/work-name;
-in
 {
   programs = {
     ssh = {
@@ -102,7 +99,7 @@ in
           identityFile = [ "~/.ssh/personal" ];
         };
 
-        "${work}.github.com" = {
+        "${secrets.workName}.github.com" = {
           hostname = "github.com";
           user = "git";
           identitiesOnly = true;
@@ -118,7 +115,7 @@ in
 
         surface = {
           hostname = "192.168.11.253";
-          user = work;
+          user = secrets.workId;
           identitiesOnly = true;
           identityFile = [ "~/.ssh/personal" ];
         };
