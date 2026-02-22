@@ -5,6 +5,8 @@
     ./fonts.nix
   ];
 
+  services.ucodenix.enable = true;
+
   boot = {
     loader = {
       systemd-boot.enable = true;

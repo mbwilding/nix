@@ -3,7 +3,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    hyprland.url = "github:hyprwm/Hyprland";
+    ucodenix.url = "github:e-tho/ucodenix";
+
+    hyprland.url = "github:hyprwm/Hyprland/refs/tags/v0.53.3";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
@@ -35,6 +37,7 @@
       hyprland,
       hyprland-plugins,
       plasma-manager,
+      ucodenix,
       ...
     }@inputs:
     let
@@ -79,6 +82,7 @@
 
             ./hosts/${hostname}/configuration.nix
 
+            ucodenix.nixosModules.default
             hyprland.nixosModules.default
 
             home-manager.nixosModules.home-manager
@@ -87,7 +91,12 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
               home-manager.extraSpecialArgs = {
-                inherit inputs pkgsStable hostname secrets;
+                inherit
+                  inputs
+                  pkgsStable
+                  hostname
+                  secrets
+                  ;
               };
               home-manager.users.anon = {
                 imports = [
@@ -107,7 +116,14 @@
         inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
 
-          extraSpecialArgs = { inherit inputs pkgsStable hostname secrets; };
+          extraSpecialArgs = {
+            inherit
+              inputs
+              pkgsStable
+              hostname
+              secrets
+              ;
+          };
 
           modules = [
             ./home.nix
