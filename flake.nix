@@ -37,6 +37,12 @@
     let
       system = "x86_64-linux";
 
+      hosts = [
+        "anon"
+        "nona"
+        "vm"
+      ];
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -90,25 +96,20 @@
         };
     in
     {
-      nixosConfigurations = nixpkgs.lib.genAttrs [
-        "anon"
-        "nona"
-        "vm"
-      ] mkHost;
+      nixosConfigurations = nixpkgs.lib.genAttrs hosts mkHost;
 
-      homeConfigurations = nixpkgs.lib.genAttrs [
-        "anon"
-        "nona"
-        "vm"
-      ] (hostname: inputs.home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+      homeConfigurations = nixpkgs.lib.genAttrs hosts (
+        hostname:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
 
-        extraSpecialArgs = { inherit inputs pkgsStable hostname; };
+          extraSpecialArgs = { inherit inputs pkgsStable hostname; };
 
-        modules = [
-          ./home.nix
-          plasma-manager.homeModules.plasma-manager
-        ];
-      });
+          modules = [
+            ./home.nix
+            plasma-manager.homeModules.plasma-manager
+          ];
+        }
+      );
     };
 }
