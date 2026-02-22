@@ -196,7 +196,7 @@ in
         "$mod, S, exec, spotify"
         "$mod, M, exec, teams-for-linux"
         "$mod, D, exec, discord"
-        "$mod, Y, exec, home-manager switch -b backup --impure --flake ~/nix#anon"
+        "$mod, Y, exec, home-manager switch -b backup --impure --flake ~/nix#${hostname}"
 
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
@@ -517,10 +517,10 @@ in
 
         theme.bar.transparent = true;
 
-        theme.font = {
-          name = "NeoSpleen Nerd Font";
-          size = "20px";
-        };
+        # theme.font = {
+        #   name = "NeoSpleen Nerd Font";
+        #   size = "20px";
+        # };
       };
     };
 
