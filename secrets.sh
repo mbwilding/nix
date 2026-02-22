@@ -45,8 +45,11 @@ done
 op_commands=""
 for entry in "${secrets[@]}"; do
   IFS='|' read -r item field path <<< "$entry"
-  # TODO: .ssh dir files don't want the new line trimmed
-  op_commands+="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path' || exit 1;"
+  if [[ "$path" == /home/anon/.ssh/* ]]; then
+    op_commands+="op read 'op://Vault/$item/$field' > '$path' && chmod 600 '$path' || exit 1;"
+  else
+    op_commands+="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path' || exit 1;"
+  fi
 done
 
 NIXPKGS_ALLOW_UNFREE=1 nix-shell -p coreutils _1password-cli --run "
