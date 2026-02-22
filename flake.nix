@@ -1,8 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
-
     ucodenix.url = "github:e-tho/ucodenix";
 
     plasma-manager = {
@@ -21,13 +19,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       nixpkgs,
-      nixpkgs-stable,
       home-manager,
       nur,
       plasma-manager,
@@ -48,21 +48,10 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        config.packageOverrides = pkgs: {
-          nur = import nur {
-            inherit pkgs;
-          };
-        };
-      };
-
-      pkgsStable = import nixpkgs-stable {
-        inherit system;
-        config.allowUnfree = true;
-        config.packageOverrides = pkgs: {
-          nur = import nur {
-            inherit pkgs;
-          };
-        };
+        overlays = [
+          nur.overlays.default
+          neovim-nightly-overlay.overlays.default
+        ];
       };
 
       mkHost =
@@ -70,7 +59,7 @@
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit inputs pkgsStable secrets; };
+          specialArgs = { inherit inputs secrets; };
 
           modules = [
             { nixpkgs.pkgs = pkgs; }
@@ -87,7 +76,6 @@
               home-manager.extraSpecialArgs = {
                 inherit
                   inputs
-                  pkgsStable
                   hostname
                   secrets
                   ;
@@ -113,7 +101,6 @@
           extraSpecialArgs = {
             inherit
               inputs
-              pkgsStable
               hostname
               secrets
               ;
