@@ -469,15 +469,84 @@ in
     caelestia = {
       enable = true;
       systemd = {
-        enable = true; # if you prefer starting from your compositor
+        enable = true;
         target = "graphical-session.target";
         environment = [ ];
       };
       settings = {
         bar = {
+          excludedScreens = [
+            "DP-1"
+            "DP-2"
+            "DP-3"
+            "DP-4"
+            "DP-5"
+          ];
+          clock.showIcon = false;
+          popouts.activeWindow = false;
+          persistent = false;
           status = {
             showBattery = hostname == "nona";
+            showMicrophone = true;
+            showLockStatus = false;
+            showBluetooth = true;
+            showAudio = true;
+            showKbLayout = false;
+            showNetwork = true;
           };
+        };
+        workspaces = {
+          activeIndicator = true;
+          activeLabel = "󰪥 ";
+          activeTrail = false;
+          label = " ";
+          occupiedBg = true;
+          occupiedLabel = "󰪥 ";
+          rounded = true;
+          showWindows = false;
+          shown = 5;
+        };
+        entries = [
+          {
+            id = "logo";
+            enabled = true;
+          }
+          {
+            id = "workspaces";
+            enabled = false;
+          }
+          {
+            id = "spacer";
+            enabled = true;
+          }
+          {
+            id = "activeWindow";
+            enabled = true;
+          }
+          {
+            id = "spacer";
+            enabled = true;
+          }
+          {
+            id = "tray";
+            enabled = true;
+          }
+          {
+            id = "clock";
+            enabled = true;
+          }
+          {
+            id = "statusIcons";
+            enabled = true;
+          }
+          {
+            id = "power";
+            enabled = true;
+          }
+        ];
+        tray = {
+          background = false;
+          recolour = false;
         };
         launcher = {
           vimKeybinds = true;
