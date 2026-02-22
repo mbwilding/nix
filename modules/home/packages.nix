@@ -57,7 +57,7 @@
       luajitPackages.luarocks-nix
       markdownlint-cli2
       marksman
-      neovim
+      neovim-nightly
       netcoredbg
       nil
       nix-diff
