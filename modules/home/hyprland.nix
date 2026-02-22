@@ -198,7 +198,7 @@ in
         "$mod, D, exec, discord"
         "$mod, Y, exec, home-manager switch -b backup --impure --flake ~/nix#${hostname}"
         # TODO: Remove debug
-        "$mod, A, exec, ghostty -e echo '${hostname}'"
+        "$mod, A, exec, echo '${hostname}' > ~/debug.txt"
 
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
@@ -452,7 +452,7 @@ in
 
   programs = {
     hyprpanel = {
-      enable = true;
+      enable = false;
       # Configure and theme almost all options from the GUI.
       # See 'https://hyprpanel.com/configuration/settings.html'.
       # Default: <same as gui>
