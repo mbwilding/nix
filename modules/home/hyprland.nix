@@ -882,7 +882,6 @@ in
               "wg-quick"
             ];
           };
-
         };
 
         sidebar = {
