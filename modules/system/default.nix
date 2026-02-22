@@ -5,7 +5,19 @@
     ./fonts.nix
   ];
 
-  services.ucodenix.enable = true;
+  services = {
+    ucodenix.enable = true;
+    blueman.enable = true;
+    power-profiles-daemon.enable = true;
+    xserver.xkb = {
+      layout = "us";
+    };
+    openssh = {
+      enable = true;
+      settings.PasswordAuthentication = false;
+      settings.KbdInteractiveAuthentication = false;
+    };
+  };
 
   boot = {
     loader = {
@@ -45,8 +57,6 @@
     package = pkgs.bluez;
   };
 
-  services.blueman.enable = true;
-
   users.users.anon = {
     description = "anon";
     extraGroups = [
@@ -75,17 +85,6 @@
     _1password-gui = {
       enable = true;
       polkitPolicyOwners = [ "anon" ];
-    };
-  };
-
-  services = {
-    xserver.xkb = {
-      layout = "us";
-    };
-    openssh = {
-      enable = true;
-      settings.PasswordAuthentication = false;
-      settings.KbdInteractiveAuthentication = false;
     };
   };
 
