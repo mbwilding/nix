@@ -170,7 +170,7 @@ in
       render = {
         send_content_type = true;
         direct_scanout = 1;
-        cm_fs_passthrough = 1; # This may cause blown out colors
+        cm_fs_passthrough = 0;
         cm_auto_hdr = 2;
         new_render_scheduling = false;
       };
