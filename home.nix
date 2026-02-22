@@ -13,7 +13,7 @@
     ./modules/home/gh.nix
     ./modules/home/ghostty.nix
     ./modules/home/git.nix
-    ./modules/home/neovim.nix
+    # ./modules/home/neovim.nix
     ./modules/home/packages.nix
     ./modules/home/ssh.nix
     ./modules/home/starship.nix

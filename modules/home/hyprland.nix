@@ -266,7 +266,8 @@ in
 
       input = {
         kb_layout = "us";
-        kb_variant = "dvorak";
+        # TODO: Switch this
+        kb_variant = "us";
 
         resolve_binds_by_sym = true;
 

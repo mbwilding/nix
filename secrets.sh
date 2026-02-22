@@ -45,7 +45,8 @@ done
 op_commands=""
 for entry in "${secrets[@]}"; do
   IFS='|' read -r item field path <<< "$entry"
-  op_commands+="op read 'op://Vault/$item/$field' | sed \":a;N;\$!ba;s/\n*$//\" > '$path' && chmod 600 '$path' || exit 1; "
+  # TODO: .ssh dir files don't want the new line trimmed
+  op_commands+="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path' || exit 1;"
 done
 
 NIXPKGS_ALLOW_UNFREE=1 nix-shell -p coreutils _1password-cli --run "
