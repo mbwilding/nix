@@ -482,9 +482,11 @@ in
         launcher = {
           vimKeybinds = true;
         };
-        paths.wallpaper = null;
-        wallpaper.color = "#000000";
-        # paths.wallpaperDir = "~/Images";
+        paths.wallpaperDir = "~/Pictures/Wallpapers";
+        theme = {
+          mode = "dark";
+          starship.enable = false;
+        };
       };
       cli = {
         enable = true; # Also add caelestia-cli to path
