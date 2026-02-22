@@ -23,6 +23,7 @@
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelParams = [ "microcode.amd_sha_check=off" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
