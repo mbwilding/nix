@@ -87,7 +87,7 @@ in
   home = {
     packages = with pkgs; [
       pulseaudio
-      # wofi
+      hyprlandPlugins.hyprscrolling
     ];
   };
 
