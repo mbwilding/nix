@@ -72,6 +72,9 @@ in
         nix-clean = "sudo nix-collect-garbage -d";
         nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec zsh";
         nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix && exec zsh";
+        power-p = "powerprofilesctl set performance";
+        power-b = "powerprofilesctl set balanced";
+        power-s = "powerprofilesctl set power-saver";
         # TODO: Setup proxychains
         ${work} = "proxychains -f ~/.config/proxychains/proxychains.conf";
         t = "zellij";
