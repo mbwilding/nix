@@ -75,6 +75,7 @@ in
         power-p = "powerprofilesctl set performance";
         power-b = "powerprofilesctl set balanced";
         power-s = "powerprofilesctl set power-saver";
+        battery = "cat /sys/class/power_supply/BAT1/capacity";
         # TODO: Setup proxychains
         ${work} = "proxychains -f ~/.config/proxychains/proxychains.conf";
         t = "zellij";
