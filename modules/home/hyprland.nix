@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   hostname,
   ...
@@ -182,6 +181,7 @@ in
         # "hyprpaper"
         # "hyprpanel"
         # "hypridle"
+        "hyprctl dispatch workspace main"
       ];
 
       "$mod" = "SUPER";
@@ -354,6 +354,60 @@ in
           fullscreen_on_one_column = true;
         };
       };
+
+      workspace =
+        if hostname == "anon" then
+          [
+            "defaultName:Main,   name:main,   monitor:HDMI-A-2, default:true, layoutopt:orientation:left, persistent:true"
+            "defaultName:Social, name:social, monitor:DP-4,     default:true, layoutopt:orientation:top,  persistent:true"
+            "defaultName:Spare,  name:spare,  monitor:DP-5,     default:true, layoutopt:orientation:top,  persistent:true"
+          ]
+        else if hostname == "nona" then
+          [
+            "defaultName:Main,   name:main,   monitor:eDP-1, default:true, layoutopt:orientation:left, persistent:true"
+          ]
+        else
+          [ ];
+
+      windowrule =
+        if hostname == "anon" then
+          [
+            {
+              name = "SuppressMaximize";
+              suppress_event = "maximize";
+              "match:class" = ".*";
+            }
+            {
+              name = "IdleInhibitFullscreen";
+              idle_inhibit = "fullscreen";
+              "match:class" = ".*";
+            }
+            {
+              name = "UnrealEngine";
+              workspace = "main";
+              no_anim = "on";
+              no_initial_focus = "on";
+              "match:class" = "^(UnrealEditor)$";
+              "match:title" = "^\w*$";
+            }
+            {
+              name = "Teams";
+              workspace = "social";
+              "match:class" = "teams-for-linux";
+            }
+            {
+              name = "Spotify";
+              workspace = "social";
+              "match:class" = "spotify";
+            }
+            {
+              name = "Discord";
+              workspace = "social";
+              "match:class" = "discord";
+            }
+          ]
+        else
+          [ ];
     };
   };
 
