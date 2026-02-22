@@ -48,7 +48,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ neovim-nightly-overlay.overlays.default ];
         config.packageOverrides = pkgs: {
           nur = import nur {
             inherit pkgs;
