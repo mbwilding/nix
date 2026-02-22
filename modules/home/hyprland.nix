@@ -101,7 +101,7 @@ in
       "name"
     ];
     plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      pkgs.hyprlandPlugins.hyprscrolling
     ];
     settings = {
       ecosystem = {
