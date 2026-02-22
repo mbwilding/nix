@@ -40,6 +40,7 @@
       go
       google-chrome
       gopls
+      gparted
       home-manager
       imagemagick
       jdk
