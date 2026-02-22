@@ -532,11 +532,11 @@ in
         };
 
         background = {
-          enabled = true;
+          enabled = false;
           wallpaperEnabled = false;
 
           desktopClock = {
-            enabled = true;
+            enabled = false;
             scale = 1.0;
             position = "bottom-right";
             invertColors = false;
