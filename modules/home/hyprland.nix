@@ -13,7 +13,7 @@ let
   monitors = {
     anon = [
       {
-        output = "HDMI-A-2";
+        output = "HDMI-A-1";
         mode = "3840x2160@119.88";
         position = "0x0";
         scale = 1.0;
@@ -25,20 +25,20 @@ let
         cm = "wide";
       }
       {
-        output = "DP-5";
+        output = "DP-2";
         mode = "3440x1440@120";
         position = "3840x-720";
         scale = 1.0;
         transform = 1;
         vrr = 2;
       }
-      {
-        output = "DP-4";
-        mode = "2560x1080@60";
-        position = "-1080x0";
-        scale = 1.0;
-        transform = 3;
-      }
+      # {
+      #   output = "DP-4";
+      #   mode = "2560x1080@60";
+      #   position = "-1080x0";
+      #   scale = 1.0;
+      #   transform = 3;
+      # }
     ];
 
     nona = [
@@ -358,9 +358,9 @@ in
       workspace =
         if hostname == "anon" then
           [
-            "defaultName:Main,   name:main,   monitor:HDMI-A-2, default:true, layoutopt:orientation:left, persistent:true"
-            "defaultName:Social, name:social, monitor:DP-4,     default:true, layoutopt:orientation:top,  persistent:true"
-            "defaultName:Spare,  name:spare,  monitor:DP-5,     default:true, layoutopt:orientation:top,  persistent:true"
+            "defaultName:Main,   name:main,   monitor:HDMI-A-1, default:true, layoutopt:orientation:left, persistent:true"
+            "defaultName:Social, name:social, monitor:DP-2,     default:true, layoutopt:orientation:top,  persistent:true"
+            # "defaultName:Spare,  name:spare,  monitor:DP-5,     default:true, layoutopt:orientation:top,  persistent:true"
           ]
         else if hostname == "nona" then
           [
