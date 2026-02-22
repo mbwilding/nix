@@ -40,11 +40,11 @@
       go
       google-chrome
       gopls
-      gparted
       home-manager
       imagemagick
       jdk
       jq
+      kdePackages.partitionmanager
       killall
       kubectl
       kubernetes-helm
