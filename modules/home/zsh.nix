@@ -48,6 +48,14 @@ in
         eval "$(direnv hook zsh)"
         eval "$(gh completion -s zsh)"
         eval "$(op completion zsh)"; compdef _op op
+
+        wifi-connect() {
+          if [ "$#" -lt 2 ]; then
+            echo "Usage: wifi-connect <SSID> <PASSWORD>"
+            return 1
+          fi
+          nmcli device wifi connect "$1" password "$2"
+        }
       '';
       shellAliases = {
         awsl = "aws sso login --sso-session ${work}";
@@ -84,15 +92,6 @@ in
         wgd = "sudo systemctl stop wg-quick-Home";
         wgu = "sudo systemctl start wg-quick-Home";
       };
-      initExtra = ''
-        wifi-connect() {
-          if [ "$#" -lt 2 ]; then
-            echo "Usage: wifi-connect <SSID> <PASSWORD>"
-            return 1
-          fi
-          nmcli device wifi connect "$1" password "$2"
-        }
-      '';
       envExtra = lib.concatStringsSep "\n" (
         lib.mapAttrsToList (
           envVar: secretFile: ''export ${envVar}="$(cat ~/.secrets/${secretFile} 2>/dev/null || true)"''
