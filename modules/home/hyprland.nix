@@ -460,47 +460,47 @@ in
         # Configure bar layouts for monitors.
         # See 'https://hyprpanel.com/configuration/panel.html'.
         # Default: null
-        layout = {
-          bar.autoHide = "single-window";
-          theme = {
-            bar = {
-              border.location = "none";
-              enableShadow = false;
-              buttons = {
-                enableBorders = false;
-                windowtitle.enableBorder = false;
-              };
-            };
-          };
-          bar = {
-            network = {
-              label = true;
-              showWifiInfo = true;
-            };
-            clock.showTime = true;
-            layouts = {
-              "*" = {
-                left = [
-                  # "dashboard"
-                  "workspaces"
-                  "windowtitle"
-                ];
-                middle = [ "media" ];
-                right = [
-                  "cpu"
-                  "ram"
-                  "volume"
-                  "network"
-                  "bluetooth"
-                  "battery"
-                  "systray"
-                  "clock"
-                  "notifications"
-                ];
-              };
-            };
-          };
-        };
+        # layout = {
+        #   bar.autoHide = "single-window";
+        #   theme = {
+        #     bar = {
+        #       border.location = "none";
+        #       enableShadow = false;
+        #       buttons = {
+        #         enableBorders = false;
+        #         windowtitle.enableBorder = false;
+        #       };
+        #     };
+        #   };
+        #   bar = {
+        #     network = {
+        #       label = true;
+        #       showWifiInfo = true;
+        #     };
+        #     clock.showTime = true;
+        #     layouts = {
+        #       "*" = {
+        #         left = [
+        #           # "dashboard"
+        #           "workspaces"
+        #           "windowtitle"
+        #         ];
+        #         middle = [ "media" ];
+        #         right = [
+        #           "cpu"
+        #           "ram"
+        #           "volume"
+        #           "network"
+        #           "bluetooth"
+        #           "battery"
+        #           "systray"
+        #           "clock"
+        #           "notifications"
+        #         ];
+        #       };
+        #     };
+        #   };
+        # };
 
         bar.launcher.autoDetectIcon = true;
         bar.workspaces.show_icons = true;
