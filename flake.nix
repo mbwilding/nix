@@ -93,6 +93,7 @@
     in
     {
       nixosConfigurations = nixpkgs.lib.genAttrs [
+        "anon"
         "nona"
         "vm"
       ] mkHost;
