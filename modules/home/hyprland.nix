@@ -9,7 +9,7 @@ let
   monitors = {
     anon = [
       {
-        output = "HDMI-A-1";
+        output = "HDMI-A-2";
         mode = "3840x2160@119.88";
         position = "0x0";
         scale = 1.0;
@@ -21,7 +21,7 @@ let
         cm = "wide";
       }
       {
-        output = "DP-2";
+        output = "DP-5";
         mode = "3440x1440@120";
         position = "3840x-720";
         scale = 1.0;
@@ -29,7 +29,7 @@ let
         vrr = 2;
       }
       {
-        output = "DP-1";
+        output = "DP-4";
         mode = "2560x1080@60";
         position = "-1080x0";
         scale = 1.0;
