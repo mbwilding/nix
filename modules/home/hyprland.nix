@@ -469,6 +469,7 @@ in
 
     quickshell = {
       enable = true;
+      systemd.enable = true;
     };
 
     # hyprpanel = {
