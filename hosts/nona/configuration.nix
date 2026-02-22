@@ -18,7 +18,7 @@ in
     ../../modules/system/wireguard.nix
   ];
 
-  hardware.cpu.amd.updateMicrocode = true;
+  # hardware.cpu.amd.updateMicrocode = true;
 
   networking.hostName = "nona";
 
