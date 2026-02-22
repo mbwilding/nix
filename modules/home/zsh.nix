@@ -76,6 +76,7 @@ in
         power-b = "powerprofilesctl set balanced";
         power-s = "powerprofilesctl set power-saver";
         battery = "cat /sys/class/power_supply/BAT1/capacity";
+        wifi-list = "nmcli device wifi list";
         # TODO: Setup proxychains
         ${work} = "proxychains -f ~/.config/proxychains/proxychains.conf";
         t = "zellij";
@@ -83,6 +84,15 @@ in
         wgd = "sudo systemctl stop wg-quick-Home";
         wgu = "sudo systemctl start wg-quick-Home";
       };
+      initExtra = ''
+        wifi-connect() {
+          if [ "$#" -lt 2 ]; then
+            echo "Usage: wifi-connect <SSID> <PASSWORD>"
+            return 1
+          fi
+          nmcli device wifi connect "$1" password "$2"
+        }
+      '';
       envExtra = lib.concatStringsSep "\n" (
         lib.mapAttrsToList (
           envVar: secretFile: ''export ${envVar}="$(cat ~/.secrets/${secretFile} 2>/dev/null || true)"''
