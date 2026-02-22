@@ -7,7 +7,6 @@
 
     ./modules/home/aws.nix
     ./modules/home/btop.nix
-    ./modules/home/direnv.nix
     ./modules/home/discord.nix
     ./modules/home/files.nix
     ./modules/home/gh.nix
@@ -16,8 +15,7 @@
     # ./modules/home/neovim.nix
     ./modules/home/packages.nix
     ./modules/home/ssh.nix
-    ./modules/home/starship.nix
-    ./modules/home/zsh.nix
+    ./modules/home/shell.nix
   ];
 
   home = {
