@@ -7,6 +7,11 @@
     # portalPackage = {};
   };
 
+  # wayland.windowManager.hyprland = {
+  #   enable = true;
+  #   extraConfig = "plugin = ${inputs.hy3.packages.${pkgs.system}.hy3}/lib/libhy3.so ";
+  # };
+
   services = {
     greetd = {
       enable = true;

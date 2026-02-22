@@ -5,7 +5,7 @@
 
     ucodenix.url = "github:e-tho/ucodenix";
 
-    hyprland.url = "github:hyprwm/Hyprland/refs/tags/v0.53.3";
+    hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
