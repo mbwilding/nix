@@ -394,6 +394,10 @@ in
         width = "20%";
       };
       style = ''
+        window {
+            background-color: #222222;
+            color: #eeeeee;
+        }
         image {
             margin-left: 0.5em;
             margin-right: 0.5em;
