@@ -26,7 +26,6 @@
       delta
       delve
       dockerfile-language-server
-      dolphin
       dotnetCorePackages.dotnet_10.sdk
       eslint_d
       eza
@@ -46,6 +45,7 @@
       imagemagick
       jdk
       jq
+      kdePackages.dolphin
       kdePackages.partitionmanager
       killall
       kubectl
