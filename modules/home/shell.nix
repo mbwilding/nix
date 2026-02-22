@@ -21,6 +21,44 @@ let
 in
 {
   programs = {
+    atuin = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        add_newline = true;
+        character.success_symbol = "[❯](bold green)";
+        package.disabled = false;
+      };
+    };
+
+    direnv = {
+      enable = true;
+      enableZshIntegration = true;
+      nix-direnv.enable = true;
+      silent = false;
+      config = {
+        global = {
+          warn_timeout = "2m";
+          hide_env_diff = true;
+        };
+      };
+    };
+
     zsh = {
       enable = true;
       autocd = true;
@@ -40,15 +78,6 @@ in
         ];
       };
       initContent = ''
-        eval "$(atuin init zsh)"
-        eval "$(fzf --zsh)"
-        eval "$(zoxide init zsh)"
-        eval "$(starship init zsh)"
-        ## eval "$(jira completion zsh)"
-        eval "$(direnv hook zsh)"
-        eval "$(gh completion -s zsh)"
-        eval "$(op completion zsh)"; compdef _op op
-
         wifi-connect() {
           echo -n "Enter SSID: "
           read ssid
