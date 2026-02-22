@@ -50,9 +50,8 @@ in
         eval "$(op completion zsh)"; compdef _op op
 
         wifi-connect() {
-          read "Enter SSID: " ssid
+          read -p "Enter SSID: " ssid
           read -p "Enter Password: " -s password
-          echo
           nmcli device wifi connect "$ssid" password "$password"
         }
       '';
