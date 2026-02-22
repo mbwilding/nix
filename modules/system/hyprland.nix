@@ -15,7 +15,7 @@
   # };
 
   services = {
-    services.greetd = {
+    greetd = {
       enable = true;
       settings = {
         default_session = {
@@ -23,16 +23,6 @@
           user = "greeter";
         };
       };
-    };
-
-    systemd.services.greetd.serviceConfig = {
-      Type = "idle";
-      StandardInput = "tty";
-      StandardOutput = "tty";
-      StandardError = "journal";
-      TTYReset = true;
-      TTYVHangup = true;
-      TTYVTDisallocate = true;
     };
 
     xserver.enable = false;
@@ -43,6 +33,16 @@
       alsa.support32Bit = true;
       pulse.enable = true;
     };
+  };
+
+  systemd.services.greetd.serviceConfig = {
+    Type = "idle";
+    StandardInput = "tty";
+    StandardOutput = "tty";
+    StandardError = "journal";
+    TTYReset = true;
+    TTYVHangup = true;
+    TTYVTDisallocate = true;
   };
 
   security.rtkit.enable = true;
