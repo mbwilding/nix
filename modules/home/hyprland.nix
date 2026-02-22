@@ -197,6 +197,8 @@ in
         "$mod, M, exec, teams-for-linux"
         "$mod, D, exec, discord"
         "$mod, Y, exec, home-manager switch -b backup --impure --flake ~/nix#${hostname}"
+        # TODO: Remove debug
+        "$mod, A, exec, ghostty -e echo '${hostname}'"
 
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
