@@ -768,7 +768,7 @@ in
 
         notifs = {
           expire = true;
-          defaultExpireTimeout = 2000;
+          defaultExpireTimeout = 5000;
           clearThreshold = 0.3;
           expandThreshold = 20;
           actionOnClick = true;
@@ -784,7 +784,7 @@ in
 
         osd = {
           enabled = true;
-          hideDelay = 1000;
+          hideDelay = 750;
           enableBrightness = true;
           enableMicrophone = true;
 
