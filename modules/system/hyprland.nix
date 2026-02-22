@@ -15,13 +15,24 @@
   # };
 
   services = {
-    greetd = {
+    services.greetd = {
       enable = true;
       settings = {
         default_session = {
-          command = "/run/current-system/sw/bin/greetd-tuigreet";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.hyprland}/share/wayland-sessions";
+          user = "greeter";
         };
       };
+    };
+
+    systemd.services.greetd.serviceConfig = {
+      Type = "idle";
+      StandardInput = "tty";
+      StandardOutput = "tty";
+      StandardError = "journal";
+      TTYReset = true;
+      TTYVHangup = true;
+      TTYVTDisallocate = true;
     };
 
     xserver.enable = false;
