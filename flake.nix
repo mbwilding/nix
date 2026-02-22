@@ -5,12 +5,6 @@
 
     ucodenix.url = "github:e-tho/ucodenix";
 
-    hyprland.url = "github:hyprwm/Hyprland/refs/tags/v0.53.0";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins/refs/tags/v0.53.0";
-      inputs.hyprland.follows = "hyprland";
-    };
-
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,8 +28,6 @@
       nixpkgs-stable,
       home-manager,
       nur,
-      hyprland,
-      hyprland-plugins,
       plasma-manager,
       ucodenix,
       ...
@@ -83,7 +75,6 @@
             ./hosts/${hostname}/configuration.nix
 
             ucodenix.nixosModules.default
-            hyprland.nixosModules.default
 
             home-manager.nixosModules.home-manager
             {

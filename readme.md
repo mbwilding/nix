@@ -4,3 +4,7 @@
 - Run ~/nix/secrets.sh
   - Paste in the service account token (Vault/1Password/credential)
 - Run ~/nix/install.sh {hostname}
+
+# TODO
+
+- No prompt for password, for example opening partitionmanager (KDE)
