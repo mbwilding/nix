@@ -10,6 +10,7 @@
       # FIND vscode-bash-debug
       # PROJECT gcc-arm-embedded
       _1password-gui
+      asciiquarium
       atuin
       bash-language-server
       bashdb
