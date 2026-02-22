@@ -361,12 +361,12 @@ in
     enable = true;
 
     theme = {
-      package = pkgs.libsForQt6.breeze-gtk;
+      package = pkgs.breeze-gtk;
       name = "Breeze-Dark";
     };
 
     iconTheme = {
-      package = pkgs.libsForQt6.breeze-icons;
+      package = pkgs.breeze-icons;
       name = "breeze-dark";
     };
 
