@@ -81,6 +81,7 @@
       rustc
       rustfmt
       sl
+      spotify
       sqls
       sshfs
       tailwindcss-language-server
