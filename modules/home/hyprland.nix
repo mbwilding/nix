@@ -266,8 +266,7 @@ in
 
       input = {
         kb_layout = "us";
-        # TODO: Switch this
-        kb_variant = "us";
+        kb_variant = if hostname == "anon" then "us" else "dvorak";
 
         resolve_binds_by_sym = true;
 
