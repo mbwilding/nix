@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
@@ -57,7 +57,7 @@
       luajitPackages.luarocks-nix
       markdownlint-cli2
       marksman
-      neovim-nightly
+      inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default
       netcoredbg
       nil
       nix-diff
