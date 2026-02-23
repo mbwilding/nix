@@ -830,7 +830,7 @@ in
 
         launcher = {
           enabled = true;
-          showOnHover = true;
+          showOnHover = false;
           maxShown = 7;
           maxWallpapers = 9; # Odd looks better
           specialPrefix = "@";
