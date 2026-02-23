@@ -11,7 +11,6 @@
       remote_dns_subnet 224
       tcp_read_time_out 15000
       tcp_connect_time_out 8000
-      quiet_mode
 
       [ProxyList]
       socks5 192.168.11.10 1080
