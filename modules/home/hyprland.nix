@@ -782,7 +782,7 @@ in
         };
 
         border = {
-          thickness = 10;
+          thickness = 0;
           rounding = 20;
         };
 
