@@ -42,6 +42,24 @@
         config.allowUnfree = true;
         overlays = [
           inputs.neovim-nightly-overlay.overlays.default
+          (final: prev: {
+            caelestia-cli-oled =
+              inputs.caelestia-shell.inputs.caelestia-cli.packages.${system}.default.overrideAttrs
+                (old: {
+                  patchPhase =
+                    (old.patchPhase or "")
+                    + ''
+                      mkdir -p src/caelestia/data/schemes/oled/default
+                      cp ${./modules/home/caelestia-schemes/oled/default/dark.txt} \
+                        src/caelestia/data/schemes/oled/default/dark.txt
+                    '';
+                });
+            caelestia-shell-oled =
+              inputs.caelestia-shell.packages.${system}.caelestia-shell.override {
+                withCli = true;
+                caelestia-cli = final.caelestia-cli-oled;
+              };
+          })
         ];
       };
 
