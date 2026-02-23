@@ -33,9 +33,9 @@
         ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
         ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
         hm-build = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
-        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname) && exec fish";
-        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec fish";
-        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix && exec fish";
+        hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
+        nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
+        nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
       };
       functions = {
         fish_prompt = {
