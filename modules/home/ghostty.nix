@@ -65,11 +65,17 @@ in
         window-padding-x = 0;
         window-padding-y = 0;
         window-theme = "ghostty";
+        # quick-terminal-position = "top";
+        # quick-terminal-size = "30%";
+        # quick-terminal-autohide = false;
+        # gtk-quick-terminal-layer = "overlay";
+
         keybind = [
           "ctrl+0=reset_font_size"
           "ctrl+equal=increase_font_size:1"
           "ctrl+minus=decrease_font_size:1"
           "f11=toggle_fullscreen"
+          # "f1=toggle_quick_terminal"
           "${mod}+a=goto_tab:1"
           "${mod}+o=goto_tab:2"
           "${mod}+e=goto_tab:3"
