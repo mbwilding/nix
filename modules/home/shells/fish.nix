@@ -14,6 +14,7 @@
         set -g __fish_git_prompt_showcolorhints 1
         set -g __fish_git_prompt_color_branch yellow
         set -g __fish_git_prompt_color_dirtystate red
+
         set -g __fish_git_prompt_color_stagedstate green
         set -g __fish_git_prompt_color_prefix yellow
         set -g __fish_git_prompt_color_suffix yellow
@@ -40,6 +41,8 @@
         fish_prompt = {
           description = "Custom prompt";
           body = ''
+            set_color cyan
+            echo -n (hostname):' '
             set -l last_status $status
             set_color normal
             set_color blue
