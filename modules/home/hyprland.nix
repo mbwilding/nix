@@ -87,7 +87,25 @@ in
     packages = with pkgs; [
       pulseaudio
       hyprlandPlugins.hyprscrolling
+      kdePackages.breeze
+      kdePackages.plasma-integration
     ];
+
+    file.".config/kdeglobals".text = ''
+      [General]
+      ColorScheme=BreezeDark
+      Name=Breeze Dark
+      shadeSortColumn=true
+      widgetStyle=Breeze
+
+      [Icons]
+      Theme=breeze-dark
+
+      [KDE]
+      LookAndFeelPackage=org.kde.breezedark.desktop
+      SingleClick=false
+      widgetStyle=Breeze
+    '';
   };
 
   wayland.windowManager.hyprland = {
