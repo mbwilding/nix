@@ -13,7 +13,7 @@ let
   monitors = {
     anon = [
       {
-        output = "HDMI-A-1";
+        output = "desc:LG Electronics LG TV SSCR2 0x01010101";
         mode = "3840x2160@119.88";
         position = "0x0";
         scale = 1.0;
@@ -25,25 +25,26 @@ let
         cm = "wide";
       }
       {
-        output = "DP-2";
+        output = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
         mode = "3440x1440@120";
         position = "3840x-720";
         scale = 1.0;
         transform = 1;
         vrr = 2;
       }
-      # {
-      #   output = "DP-4";
-      #   mode = "2560x1080@60";
-      #   position = "-1080x0";
-      #   scale = 1.0;
-      #   transform = 3;
-      # }
+      {
+        output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
+        mode = "2560x1080@60";
+        position = "-1080x0";
+        scale = 1.0;
+        transform = 3;
+      }
     ];
 
     nona = [
       # Internal
       {
+        # TODO: Update to desc: with hyprctl monitors
         output = "eDP-1";
         mode = "2944x1840@90";
         position = "0x0";
@@ -795,13 +796,13 @@ in
           showOnHover = true;
           dragThreshold = 1;
 
-          excludedScreens = [
-            "DP-1"
-            "DP-2"
-            "DP-3"
-            "DP-4"
-            "DP-5"
-          ];
+          # excludedScreens = [
+          #   "DP-1"
+          #   "DP-2"
+          #   "DP-3"
+          #   "DP-4"
+          #   "DP-5"
+          # ];
 
           entries = [
             {
