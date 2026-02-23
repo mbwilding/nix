@@ -1,25 +1,25 @@
-{ lib, ... }:
+{ secrets, ... }:
 
 let
-  work = builtins.readFile /home/anon/.secrets/work-name;
-
-  secretEnvVars = {
-    GITLAB_TOKEN = "gitlab-work";
-    GITLAB_TOKEN_WORK = "gitlab-work";
-    GITHUB_TOKEN = "github-work";
-    GITHUB_TOKEN_WORK = "github-work";
-    GITHUB_TOKEN_PERSONAL = "github-personal";
-    CARGO_REGISTRY_TOKEN = "cargo";
-    ELEVENLABS_API_KEY = "elevenlabs";
-    PULUMI_ACCESS_TOKEN = "pulumi";
-    STEAM_API_KEY = "steam";
-    WEATHER_API_TOKEN = "weather";
-    ANTHROPIC_API_KEY = "anthropic";
-    DEEPSEEK_API_KEY = "deepseek";
-    OPENAI_API_KEY = "openai";
-  };
+  work = secrets.workName;
 in
 {
+  home.sessionVariables = {
+    GITLAB_TOKEN = secrets.gitlabWorkToken;
+    GITLAB_TOKEN_WORK = secrets.gitlabWorkToken;
+    GITHUB_TOKEN = secrets.githubWorkToken;
+    GITHUB_TOKEN_WORK = secrets.githubWorkToken;
+    GITHUB_TOKEN_PERSONAL = secrets.githubPersonalToken;
+    CARGO_REGISTRY_TOKEN = secrets.cargoToken;
+    ELEVENLABS_API_KEY = secrets.elevenLabsKey;
+    PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
+    STEAM_API_KEY = secrets.steamToken;
+    WEATHER_API_TOKEN = secrets.weatherKey;
+    ANTHROPIC_API_KEY = secrets.anthropicKey;
+    DEEPSEEK_API_KEY = secrets.deepSeekKey;
+    OPENAI_API_KEY = secrets.openAiKey;
+  };
+
   programs = {
     atuin = {
       enable = true;
@@ -143,11 +143,6 @@ in
         wgd = "sudo systemctl stop wg-quick-Home";
         wgu = "sudo systemctl start wg-quick-Home";
       };
-      envExtra = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (
-          envVar: secretFile: ''export ${envVar}="$(cat ~/.secrets/${secretFile} 2>/dev/null || true)"''
-        ) secretEnvVars
-      );
       zplug = {
         enable = true;
         plugins = [
