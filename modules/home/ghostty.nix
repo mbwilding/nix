@@ -1,11 +1,13 @@
-{ config, ... }:
+{ lib, config, ... }:
 
 let
   mod = "super+shift+ctrl+alt";
-  trails = {
+  shaders = {
     color = "vec4(0.7, 0.5075, 0.1127, 1.0)";
     colorAccent = "vec4(0.7, 0.0, 0.0, 1.0)";
     duration = "0.2";
+    blaze = false;
+    trail = true;
   };
 in
 {
@@ -19,10 +21,9 @@ in
       installVimSyntax = true;
       clearDefaultKeybinds = true;
       settings = {
-        custom-shader = [
-          "shaders/cursor_smear.glsl"
-          "shaders/cursor_blaze.glsl"
-        ];
+        custom-shader =
+          (lib.optionals shaders.trail [ "shaders/cursor_smear.glsl" ])
+          ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
         adjust-cell-height = "12%";
         adjust-cell-width = "-8%";
         adjust-cursor-height = "12%";
@@ -151,11 +152,11 @@ in
 
         // const vec4 TRAIL_COLOR = vec4(0.482, 0.886, 1.0, 1.0);
         // const vec4 TRAIL_COLOR_ACCENT = vec4(0.0, 0.424, 1.0, 1.0);
-        const vec4 TRAIL_COLOR = ${trails.color};
-        const vec4 TRAIL_COLOR_ACCENT = ${trails.colorAccent};
+        const vec4 TRAIL_COLOR = ${shaders.color};
+        const vec4 TRAIL_COLOR_ACCENT = ${shaders.colorAccent};
         const vec4 CURRENT_CURSOR_COLOR = TRAIL_COLOR;
         const vec4 PREVIOUS_CURSOR_COLOR = TRAIL_COLOR;
-        const float DURATION = 0.3;
+        const float DURATION = ${shaders.duration};
 
         void mainImage(out vec4 fragColor, in vec2 fragCoord)
         {
@@ -263,8 +264,8 @@ in
             return pow(1.0 - x, 3.0);
         }
 
-        const vec4 TRAIL_COLOR = ${trails.color};
-        const float DURATION = ${trails.duration}; //IN SECONDS
+        const vec4 TRAIL_COLOR = ${shaders.color};
+        const float DURATION = ${shaders.duration}; //IN SECONDS
 
         void mainImage(out vec4 fragColor, in vec2 fragCoord)
         {
