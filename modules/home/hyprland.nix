@@ -643,6 +643,15 @@ in
               workspace = "social";
               "match:class" = "discord";
             }
+            {
+              # GW2 launcher via Steam repeatedly sends maximize/resize events
+              # causing the window to thrash. Forcing float stops the layout
+              # engine fighting with the app's own resize requests.
+              name = "GuildWars2Launcher";
+              float = "on";
+              suppress_event = "fullscreen maximize";
+              "match:class" = "^(steam_app_1284210|Gw2-64\\.exe)$";
+            }
           ]
         else
           [ ];
