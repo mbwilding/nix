@@ -3,9 +3,9 @@
 let
   mod = "super+shift+ctrl+alt";
   shaders = {
-    color = "vec4(0.7, 0.5075, 0.1127, 1.0)";
-    colorAccent = "vec4(0.7, 0.0, 0.0, 1.0)";
-    duration = "0.2";
+    color = "vec4(0.35, 0.25375, 0.05635, 1.0)";
+    colorAccent = "vec4(0.35, 0.0, 0.0, 1.0)";
+    duration = "0.05";
     blaze = false;
     trail = true;
   };
