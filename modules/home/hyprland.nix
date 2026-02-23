@@ -783,7 +783,7 @@ in
 
         border = {
           thickness = 0;
-          rounding = 20;
+          rounding = 0;
         };
 
         dashboard = {
