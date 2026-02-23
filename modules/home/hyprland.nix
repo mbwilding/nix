@@ -658,7 +658,7 @@ in
 
           status = {
             showAudio = true;
-            showMicrophone = true;
+            showMicrophone = false;
             showKbLayout = false;
             showNetwork = true;
             showWifi = true;
