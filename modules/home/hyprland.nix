@@ -105,6 +105,90 @@ in
       LookAndFeelPackage=org.kde.breezedark.desktop
       SingleClick=false
       widgetStyle=Breeze
+
+      [Colors:View]
+      BackgroundAlternate=49,54,59
+      BackgroundNormal=35,38,41
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=61,174,233
+      ForegroundInactive=161,169,177
+      ForegroundLink=29,153,243
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=239,240,241
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
+
+      [Colors:Window]
+      BackgroundAlternate=49,54,59
+      BackgroundNormal=49,54,59
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=61,174,233
+      ForegroundInactive=161,169,177
+      ForegroundLink=29,153,243
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=239,240,241
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
+
+      [Colors:Button]
+      BackgroundAlternate=49,54,59
+      BackgroundNormal=49,54,59
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=61,174,233
+      ForegroundInactive=161,169,177
+      ForegroundLink=29,153,243
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=239,240,241
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
+
+      [Colors:Selection]
+      BackgroundAlternate=29,153,243
+      BackgroundNormal=61,174,233
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=252,252,252
+      ForegroundInactive=161,169,177
+      ForegroundLink=253,188,75
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=252,252,252
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
+
+      [Colors:Tooltip]
+      BackgroundAlternate=49,54,59
+      BackgroundNormal=49,54,59
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=61,174,233
+      ForegroundInactive=161,169,177
+      ForegroundLink=29,153,243
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=239,240,241
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
+
+      [Colors:Complementary]
+      BackgroundAlternate=49,54,59
+      BackgroundNormal=42,46,50
+      DecorationFocus=61,174,233
+      DecorationHover=61,174,233
+      ForegroundActive=61,174,233
+      ForegroundInactive=161,169,177
+      ForegroundLink=29,153,243
+      ForegroundNegative=218,68,83
+      ForegroundNeutral=246,116,0
+      ForegroundNormal=239,240,241
+      ForegroundPositive=39,174,96
+      ForegroundVisited=155,89,182
     '';
   };
 
