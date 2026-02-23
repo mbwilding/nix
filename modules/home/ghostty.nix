@@ -7,6 +7,7 @@ in
   programs = {
     ghostty = {
       enable = true;
+      systemd.enable = true;
       enableZshIntegration = true;
       installBatSyntax = true;
       installVimSyntax = true;
