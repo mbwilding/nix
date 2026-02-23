@@ -602,11 +602,11 @@ in
               enabled = true;
             }
             {
-              id = "clock";
+              id = "statusIcons";
               enabled = true;
             }
             {
-              id = "statusIcons";
+              id = "clock";
               enabled = true;
             }
             {
