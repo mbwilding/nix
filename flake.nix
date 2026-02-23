@@ -41,7 +41,6 @@
         inherit system;
         config.allowUnfree = true;
         overlays = [
-          inputs.nur.overlays.default
           inputs.neovim-nightly-overlay.overlays.default
         ];
       };
