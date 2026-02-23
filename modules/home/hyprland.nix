@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   hostname,
   ...
@@ -573,7 +572,6 @@ in
 
     caelestia = {
       enable = true;
-      package = pkgs.caelestia-shell-oled;
       systemd = {
         enable = true;
         target = "graphical-session.target";
@@ -1029,7 +1027,6 @@ in
 
       cli = {
         enable = true;
-        package = pkgs.caelestia-cli-oled;
         settings = {
           theme.enableGtk = true;
         };
@@ -1037,7 +1034,124 @@ in
     };
   };
 
-  home.activation.caelestiaScheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    ${pkgs.caelestia-cli-oled}/bin/caelestia scheme set -n oled -m dark
+  home.file.".local/state/caelestia/scheme.json".text = ''
+    {
+        "name": "oled",
+        "flavour": "default",
+        "mode": "dark",
+        "variant": "tonalspot",
+        "colours": {
+            "primary_paletteKeyColor": "5878ab",
+            "secondary_paletteKeyColor": "6c778d",
+            "tertiary_paletteKeyColor": "966799",
+            "neutral_paletteKeyColor": "76777b",
+            "neutral_variant_paletteKeyColor": "747780",
+            "background": "000000",
+            "onBackground": "e3e2e7",
+            "surface": "000000",
+            "surfaceDim": "121317",
+            "surfaceBright": "38393d",
+            "surfaceContainerLowest": "0d0e11",
+            "surfaceContainerLow": "1a1c1f",
+            "surfaceContainer": "1e2023",
+            "surfaceContainerHigh": "292a2d",
+            "surfaceContainerHighest": "333538",
+            "onSurface": "e3e2e7",
+            "surfaceVariant": "43474f",
+            "onSurfaceVariant": "c3c6d0",
+            "inverseSurface": "e3e2e7",
+            "inverseOnSurface": "2f3034",
+            "outline": "8d919a",
+            "outlineVariant": "43474f",
+            "shadow": "000000",
+            "scrim": "000000",
+            "surfaceTint": "a8c8ff",
+            "primary": "a8c8ff",
+            "onPrimary": "05305f",
+            "primaryContainer": "7292c6",
+            "onPrimaryContainer": "000513",
+            "inversePrimary": "3e5f90",
+            "secondary": "bbc7df",
+            "onSecondary": "253144",
+            "secondaryContainer": "3c475b",
+            "onSecondaryContainer": "aab5cd",
+            "tertiary": "ebb5ec",
+            "onTertiary": "48204e",
+            "tertiaryContainer": "b180b4",
+            "onTertiaryContainer": "000000",
+            "error": "ffb4ab",
+            "onError": "690005",
+            "errorContainer": "93000a",
+            "onErrorContainer": "ffdad6",
+            "primaryFixed": "d5e3ff",
+            "primaryFixedDim": "a8c8ff",
+            "onPrimaryFixed": "001b3c",
+            "onPrimaryFixedVariant": "254777",
+            "secondaryFixed": "d7e3fc",
+            "secondaryFixedDim": "bbc7df",
+            "onSecondaryFixed": "101c2e",
+            "onSecondaryFixedVariant": "3c475b",
+            "tertiaryFixed": "ffd6fe",
+            "tertiaryFixedDim": "ebb5ec",
+            "onTertiaryFixed": "310937",
+            "onTertiaryFixedVariant": "613766",
+            "term0": "181818",
+            "term1": "E78284",
+            "term2": "39CC84",
+            "term3": "C9A26D",
+            "term4": "8CAAEE",
+            "term5": "F4B8E4",
+            "term6": "81C8BE",
+            "term7": "A5ADCE",
+            "term8": "4F5258",
+            "term9": "FF4747",
+            "term10": "39CC8F",
+            "term11": "FFFFFF",
+            "term12": "9591FF",
+            "term13": "ED94C0",
+            "term14": "5ABFB5",
+            "term15": "B5BFE2",
+            "rosewater": "f4f0fa",
+            "flamingo": "e2e0f5",
+            "pink": "d6dbff",
+            "mauve": "a9bfff",
+            "red": "a6aeff",
+            "maroon": "b7baf1",
+            "peach": "e0c2f9",
+            "yellow": "d0f9f4",
+            "green": "c1e4ff",
+            "teal": "c7e3ff",
+            "sky": "c2deff",
+            "sapphire": "a1caff",
+            "blue": "97beff",
+            "lavender": "b5cdff",
+            "klink": "5389ce",
+            "klinkSelection": "5489ce",
+            "kvisited": "5b7cdd",
+            "kvisitedSelection": "5c7bdd",
+            "knegative": "7479ff",
+            "knegativeSelection": "7578ff",
+            "kneutral": "c794ff",
+            "kneutralSelection": "c794ff",
+            "kpositive": "00b4fd",
+            "kpositiveSelection": "00b4fe",
+            "text": "e3e2e7",
+            "subtext1": "c3c6d0",
+            "subtext0": "8d919a",
+            "overlay2": "7b7e86",
+            "overlay1": "686b72",
+            "overlay0": "575960",
+            "surface2": "46484e",
+            "surface1": "36373d",
+            "surface0": "24252a",
+            "base": "121317",
+            "mantle": "121317",
+            "crust": "111216",
+            "success": "B5CCBA",
+            "onSuccess": "213528",
+            "successContainer": "374B3E",
+            "onSuccessContainer": "D1E9D6"
+        }
+    }
   '';
 }
