@@ -733,20 +733,20 @@ in
             warnLevels = [
               {
                 level = 20;
-                title = "Low battery";
-                message = "You might want to plug in a charger";
+                title = "Battery Level Low";
+                message = "Please connect your device to a power source at your earliest convenience.";
                 icon = "battery_android_frame_2";
               }
               {
                 level = 10;
-                title = "Did you see the previous message?";
-                message = "You should probably plug in a charger now";
+                title = "Battery Level Critically Low";
+                message = "Immediate connection to a power source is strongly recommended.";
                 icon = "battery_android_frame_1";
               }
               {
                 level = 5;
-                title = "Critical battery level";
-                message = "PLUG THE CHARGER RIGHT NOW!!";
+                title = "Battery Level Critical";
+                message = "System shutdown is imminent. Please connect to a power source immediately.";
                 icon = "battery_android_alert";
                 critical = true;
               }
