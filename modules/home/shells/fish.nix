@@ -42,7 +42,7 @@
           description = "Custom prompt";
           body = ''
             set_color cyan
-            echo -n (hostname):' '
+            echo -n (hostname)' '
             set -l last_status $status
             set_color normal
             set_color blue
