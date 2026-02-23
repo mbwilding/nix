@@ -59,6 +59,7 @@
       markdownlint-cli2
       marksman
       mpv
+      neovide
       neovim
       netcoredbg
       nil
