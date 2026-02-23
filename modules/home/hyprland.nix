@@ -279,6 +279,7 @@ in
       exec-once = [
         "brightnessctl set --device=platform::micmute 0"
         "systemctl --user start hyprpolkitagent"
+        "caelestia scheme set -n oled"
         # "nm-applet"
         # "hyprpaper"
         # "hyprpanel"
