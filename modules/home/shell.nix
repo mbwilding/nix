@@ -143,15 +143,6 @@ in
         wgd = "sudo systemctl stop wg-quick-Home";
         wgu = "sudo systemctl start wg-quick-Home";
       };
-      zplug = {
-        enable = true;
-        plugins = [
-          { name = "zsh-users/zsh-syntax-highlighting"; }
-          { name = "zsh-users/zsh-autosuggestions"; }
-          { name = "zsh-users/zsh-completions"; }
-          { name = "Aloxaf/fzf-tab"; }
-        ];
-      };
     };
   };
 }
