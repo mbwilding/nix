@@ -552,8 +552,13 @@ in
         # workspace_swipe_min_speed_to_force = 0;
 
         gesture = [
-          "3, horizontal, workspace"
-          "3, up, fullscreen"
+          # "3, up, fullscreen"
+          # "3, horizontal, workspace"
+          "3, vertical, workspace"
+          "3, right, dispatcher, layoutmsg, focus left"
+          "3, left, dispatcher, layoutmsg, focus right"
+          "3, pinchin, dispatcher, layoutmsg, colresize +conf"
+          "3, pinchout, dispatcher, layoutmsg, colresize -conf"
         ];
       };
 
