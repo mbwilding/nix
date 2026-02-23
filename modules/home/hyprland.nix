@@ -833,9 +833,9 @@ in
           actionPrefix = ">";
           enableDangerousActions = true; # Shutdown/Reboot/Logout
           dragThreshold = 1;
-          vimKeybinds = false;
-          favouriteApps = [ ];
-          hiddenApps = [ ]; # App IDs hidden (supports regex)
+          vimKeybinds = true;
+          # favouriteApps = [ ];
+          # hiddenApps = [ ]; # App IDs hidden (supports regex)
 
           useFuzzy = {
             apps = true;
@@ -865,7 +865,8 @@ in
           # Transparency (disabled by default), Random, Light, Dark,
           # Shutdown (dangerous), Reboot (dangerous), Logout (dangerous),
           # Lock, Sleep, Settings
-          actions = [ ];
+
+          # actions = [ ];
         };
 
         notifs = {
