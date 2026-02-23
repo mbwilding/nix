@@ -85,10 +85,11 @@ in
 {
   home = {
     packages = with pkgs; [
-      pulseaudio
       hyprlandPlugins.hyprscrolling
+      hyprshot
       kdePackages.breeze
       kdePackages.plasma-integration
+      pulseaudio
     ];
 
     file.".local/state/caelestia/scheme.json".text = builtins.toJSON {
@@ -429,10 +430,18 @@ in
         "$mod, grave, exit,"
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
 
+        # Switch window focus
         "$mod, h, movefocus, l"
         "$mod, l, movefocus, r"
         "$mod, k, movefocus, u"
         "$mod, j, movefocus, d"
+
+        # Swap window positions
+        "$mod SHIFT, h, swapwindow, l"
+        "$mod SHIFT, l, swapwindow, r"
+        "$mod SHIFT, k, swapwindow, u"
+        "$mod SHIFT, j, swapwindow, d"
+
         ", Print, exec, hyprshot -m window -m active"
 
         # Scroll through existing workspaces with mod + scroll
