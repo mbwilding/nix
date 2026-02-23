@@ -540,6 +540,8 @@ in
     };
   };
 
+  xdg.configFile."gtk-4.0/gtk.css".force = true;
+
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
