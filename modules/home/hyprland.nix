@@ -570,6 +570,7 @@ in
 
     caelestia = {
       enable = true;
+      package = pkgs.caelestia-shell-oled;
       systemd = {
         enable = true;
         target = "graphical-session.target";
@@ -1025,6 +1026,7 @@ in
 
       cli = {
         enable = true;
+        package = pkgs.caelestia-cli-oled;
         settings = {
           theme.enableGtk = true;
         };
