@@ -365,6 +365,10 @@ in
         active_opacity = 1.0;
         inactive_opacity = 0.7;
 
+        shadow = {
+          enabled = false;
+        };
+
         # https://wiki.hyprland.org/Configuring/Variables/#blur
         blur = {
           enabled = false;
