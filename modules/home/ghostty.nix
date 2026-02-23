@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 let
   mod = "super+shift+ctrl+alt";
@@ -8,7 +8,8 @@ in
     ghostty = {
       enable = true;
       systemd.enable = true;
-      enableZshIntegration = true;
+      enableFishIntegration = config.programs.fish.enable;
+      enableZshIntegration = config.programs.zsh.enable;
       installBatSyntax = true;
       installVimSyntax = true;
       clearDefaultKeybinds = true;
@@ -39,7 +40,7 @@ in
         mouse-shift-capture = false;
         quit-after-last-window-closed = true;
         resize-overlay = "never";
-        shell-integration = "zsh";
+        shell-integration = if config.programs.fish.enable then "fish" else if config.programs.zsh.enable then "zsh" else "none";
         # shell-integration-features = "cursor,sudo,title,ssh-terminfo,ssh-env";
         shell-integration-features = "cursor,sudo,title";
         theme = "gronk";

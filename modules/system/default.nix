@@ -64,7 +64,7 @@
       "wheel"
     ];
     isNormalUser = true;
-    shell = pkgs.zsh;
+    shell = pkgs.fish;
   };
 
   environment = {
@@ -78,7 +78,8 @@
   };
 
   programs = {
-    zsh.enable = true;
+    fish.enable = true;
+    zsh.enable = false;
     mtr.enable = true;
     nano.enable = false;
     _1password.enable = true;
