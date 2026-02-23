@@ -73,8 +73,6 @@
       powershell
       powershell-editor-services
       prettierd
-      proxychains-ng
-      proxychains-ng
       pulumi
       pyright
       python314
