@@ -782,8 +782,8 @@ in
         };
 
         border = {
-          thickness = 0;
-          rounding = 0;
+          thickness = 1;
+          rounding = 1;
         };
 
         dashboard = {
