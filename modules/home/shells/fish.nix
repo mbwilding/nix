@@ -17,13 +17,16 @@
         set -g __fish_git_prompt_color_stagedstate green
         set -g __fish_git_prompt_color_prefix yellow
         set -g __fish_git_prompt_color_suffix yellow
+        set -g __fish_git_prompt_color_upstream yellow
 
         # Nerd Font git chars
-        set -g __fish_git_prompt_char_dirtystate "✎"
-        set -g __fish_git_prompt_char_stagedstate "●"
-        set -g __fish_git_prompt_char_untrackedfiles "…"
-        set -g __fish_git_prompt_char_upstream_ahead "↑"
-        set -g __fish_git_prompt_char_upstream_behind "↓"
+        set -g __fish_git_prompt_char_dirtystate "󰝶"
+        set -g __fish_git_prompt_char_stagedstate "󰸞"
+        set -g __fish_git_prompt_char_untrackedfiles "󰙴"
+        set -g __fish_git_prompt_char_upstream_ahead "󰁝"
+        set -g __fish_git_prompt_char_upstream_behind "󰁅"
+        set -g __fish_git_prompt_char_upstream_equal "󰸞"
+        set -g __fish_git_prompt_char_upstream_diverged "󱐊"
       '';
       shellAliases = {
         ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
