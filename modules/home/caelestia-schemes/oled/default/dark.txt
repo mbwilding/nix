@@ -5,7 +5,7 @@ neutral_paletteKeyColor 76777b
 neutral_variant_paletteKeyColor 747780
 background 000000
 onBackground e3e2e7
-surface 121317
+surface 000000
 surfaceDim 121317
 surfaceBright 38393d
 surfaceContainerLowest 0d0e11

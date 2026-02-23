@@ -106,6 +106,7 @@ in
         q = "exit";
         hm-build = "home-manager build -b backup --impure --flake ~/nix#$(hostname)";
         hm-switch = "home-manager switch -b backup --impure --flake ~/nix#$(hostname) && exec zsh";
+        hm-expire = "home-manager expire-generations -days";
         nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
         nix-clean = "sudo nix-collect-garbage -d";
         nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec zsh";
