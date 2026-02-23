@@ -826,7 +826,7 @@ in
 
         launcher = {
           enabled = true;
-          showOnHover = false;
+          showOnHover = true;
           maxShown = 7;
           maxWallpapers = 9; # Odd looks better
           specialPrefix = "@";
@@ -870,12 +870,12 @@ in
 
         notifs = {
           expire = true;
-          defaultExpireTimeout = 5000;
+          defaultExpireTimeout = 10 * 1000;
           clearThreshold = 0.3;
           expandThreshold = 20;
           actionOnClick = true;
           groupPreviewNum = 3;
-          openExpanded = false;
+          openExpanded = true;
 
           sizes = {
             width = 400;
@@ -955,7 +955,7 @@ in
 
         utilities = {
           enabled = true;
-          maxToasts = 4;
+          maxToasts = 8;
 
           sizes = {
             width = 430;
