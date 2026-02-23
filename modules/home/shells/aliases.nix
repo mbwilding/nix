@@ -23,7 +23,7 @@
     power-s = "powerprofilesctl set power-saver";
     battery = "cat /sys/class/power_supply/BAT1/capacity";
     wifi-list = "nmcli device wifi list";
-    ${secrets.workName} = "proxychains -f ~/.config/proxychains/proxychains.conf";
+    ${secrets.workName} = "proxychains4 -f ~/.config/proxychains/proxychains.conf";
     t = "zellij";
     tree = "eza --tree";
     wgd = "sudo systemctl stop wg-quick-Home";
