@@ -610,41 +610,42 @@ in
       windowrule = [
         {
           name = "Game";
-          float = "on";
+          tile = 0;
           "match:content" = 3;
         }
         {
           name = "Modals";
-          float = "on";
+          float = 1;
+          tile = 0;
           "match:modal" = true;
         }
         {
           name = "Proton";
-          float = "on";
+          tile = 0;
           "match:xdg_tag" = "proton-game";
+        }
+        {
+          name = "SuppressMaximize";
+          suppress_event = "maximize";
+          "match:class" = ".*";
+        }
+        {
+          name = "IdleInhibitFullscreen";
+          idle_inhibit = "fullscreen";
+          "match:class" = ".*";
+        }
+        {
+          name = "UnrealEngine";
+          workspace = "main";
+          no_anim = "on";
+          no_initial_focus = "on";
+          "match:class" = "^(UnrealEditor)$";
+          "match:title" = "^\w*$";
         }
       ]
       ++ (
         if hostname == "anon" then
           [
-            {
-              name = "SuppressMaximize";
-              suppress_event = "maximize";
-              "match:class" = ".*";
-            }
-            {
-              name = "IdleInhibitFullscreen";
-              idle_inhibit = "fullscreen";
-              "match:class" = ".*";
-            }
-            {
-              name = "UnrealEngine";
-              workspace = "main";
-              no_anim = "on";
-              no_initial_focus = "on";
-              "match:class" = "^(UnrealEditor)$";
-              "match:title" = "^\w*$";
-            }
             {
               name = "Teams";
               workspace = "social";
