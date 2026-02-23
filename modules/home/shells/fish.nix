@@ -44,6 +44,11 @@
             set_color normal
             set_color blue
             echo -n (prompt_pwd)
+            set -l njobs (jobs -p | count)
+            if test $njobs -gt 0
+              set_color --bold magenta
+              echo -n " [$njobs]"
+            end
             set -l git_info (fish_git_prompt)
             if test -n "$git_info"
               set_color yellow
