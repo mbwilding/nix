@@ -607,14 +607,26 @@ in
         else
           [ ];
 
-      windowrule =
+      windowrule = [
+        {
+          name = "Game";
+          float = "on";
+          "match:content" = 3;
+        }
+        {
+          name = "Modals";
+          float = "on";
+          "match:modal" = true;
+        }
+        {
+          name = "Proton";
+          float = "on";
+          "match:xdg_tag" = "proton-game";
+        }
+      ]
+      ++ (
         if hostname == "anon" then
           [
-            {
-              name = "GuildWars2Launcher";
-              float = "on";
-              "match:title" = "Guild Wars 2";
-            }
             {
               name = "SuppressMaximize";
               suppress_event = "maximize";
@@ -650,7 +662,8 @@ in
             }
           ]
         else
-          [ ];
+          [ ]
+      );
     };
   };
 
