@@ -3,8 +3,8 @@
 let
   mod = "super+shift+ctrl+alt";
   colors = {
-    trailColor = "vec4(0.424, 0.584, 0.922, 1.0)";
-    trailColorAccent = "vec4(0.306, 0.678, 0.898, 1.0)";
+    trailColor = "vec4(1.0, 0.725, 0.161, 0.3)";
+    trailColorAccent = "vec4(1.0, 0., 0., 0.3)";
   };
 in
 {
