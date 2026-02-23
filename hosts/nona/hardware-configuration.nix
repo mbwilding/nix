@@ -21,6 +21,7 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.kernelParams = [ "microcode.amd_sha_check=off" ];
   boot.extraModulePackages = [ ];
+  boot.blacklistedKernelModules = [ "lenovo_wmi_gamezone" ];
 
   fileSystems."/" = {
     device = "/dev/mapper/luks-a564edb6-03bd-4f93-8de8-b2e176fb4e03";
