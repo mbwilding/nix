@@ -44,8 +44,7 @@ let
     nona = [
       # Internal
       {
-        # TODO: Update to desc: with hyprctl monitors
-        output = "eDP-1";
+        output = "desc:Lenovo Group Limited 0x8AC2";
         mode = "2944x1840@90";
         position = "0x0";
         scale = 1.33;
