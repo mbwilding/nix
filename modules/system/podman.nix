@@ -1,8 +1,15 @@
 { pkgs, ... }:
 
 {
-  sessionVariables = {
-    DOTNET_ASPIRE_CONTAINER_RUNTIME = "podman";
+  environment = {
+    sessionVariables = {
+      DOTNET_ASPIRE_CONTAINER_RUNTIME = "podman";
+    };
+
+    systemPackages = with pkgs; [
+      podman-desktop
+      podman-tui
+    ];
   };
 
   virtualisation = {
@@ -18,8 +25,4 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    podman-desktop
-    podman-tui
-  ];
 }
