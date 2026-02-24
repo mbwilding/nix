@@ -5,6 +5,13 @@
     ./fonts.nix
   ];
 
+  security.wrappers."mount.cifs" = {
+    source = "${pkgs.cifs-utils.bin}/bin/mount.cifs";
+    owner = "root";
+    group = "root";
+    setuid = true;
+  };
+
   services = {
     ucodenix.enable = true;
     blueman.enable = true;
