@@ -25,6 +25,11 @@
       };
     };
 
+    # Dolphin mounts
+    udisks2.enable = true;
+    # Dolphin previews
+    tumbler.enable = true;
+
     xserver.enable = false;
     pulseaudio.enable = false;
     pipewire = {
@@ -33,6 +38,11 @@
       alsa.support32Bit = true;
       pulse.enable = true;
     };
+  };
+
+  security = {
+    rtkit.enable = true;
+    polkit.enable = true;
   };
 
   systemd.services.greetd.serviceConfig = {
@@ -58,9 +68,6 @@
       };
     };
   };
-
-  security.rtkit.enable = true;
-  security.polkit.enable = true;
 
   environment.systemPackages = with pkgs; [
     hyprpolkitagent
