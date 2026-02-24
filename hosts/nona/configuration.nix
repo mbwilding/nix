@@ -24,9 +24,11 @@ in
   console.keyMap = keymap;
   services.xserver.xkb.variant = keymap;
 
-  services = {
+  hardware = {
     xone.enable = true;
+  };
 
+  services = {
     keyd = {
       enable = true;
       keyboards.default = {
