@@ -45,6 +45,12 @@
     TTYVTDisallocate = true;
   };
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    config.common.default = "*";
+  };
+
   security.rtkit.enable = true;
   security.polkit.enable = true;
 
