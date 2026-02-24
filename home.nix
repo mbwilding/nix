@@ -37,7 +37,6 @@
       AWS_PROFILE = "md";
       AWS_REGION = "ap-southeast-2";
       PULUMI_CONFIG_PASSPHRASE = "";
-      DOTNET_ASPIRE_CONTAINER_RUNTIME = "podman";
       DOTNET_CLI_TELEMETRY_OPTOUT = "1";
       NIXOS_OZONE_WL = "1";
     };
