@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs = {
@@ -47,8 +47,16 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-    config.common.default = "*";
+    extraPortals = lib.mkForce [ pkgs.xdg-desktop-portal-hyprland ];
+    configPackages = [ pkgs.hyprland ];
+    config = {
+      hyprland = {
+        default = [ "hyprland" ];
+      };
+      common = {
+        default = [ "hyprland" ];
+      };
+    };
   };
 
   security.rtkit.enable = true;
