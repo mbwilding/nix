@@ -73,8 +73,9 @@
     };
     systemPackages = with pkgs; [
       _1password-cli
-      coreutils
+      bazecor
       cifs-utils
+      coreutils
     ];
   };
 
