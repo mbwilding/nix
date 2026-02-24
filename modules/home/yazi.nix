@@ -6,5 +6,14 @@
     enableZshIntegration = config.programs.zsh.enable;
     enableFishIntegration = config.programs.fish.enable;
     shellWrapperName = "y";
+    settings = {
+      mgr = {
+        show_hidden = true;
+        sort_by = "alphabetical";
+        sort_dir_first = true;
+        sort_reverse = true;
+      };
+    };
   };
 }
+
