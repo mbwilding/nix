@@ -80,22 +80,27 @@
             if test -d $bat
               set -l cap (cat $bat/capacity)
               set -l stat (cat $bat/status)
+
               if test "$stat" = Charging
                 set_color --bold yellow
                 echo -n "$cap% 󰂄 "
-              else if test $cap -le 20
+              else if test $cap -lt 20
                 set_color --bold red
-                echo -n "$cap% 󰂎 "
-              else if test $cap -le 40
+                echo -n "$cap% 󰁺 "
+              else if test $cap -lt 40
                 set_color --bold yellow
-                echo -n "$cap% 󰂃 "
-              else if test $cap -gt 60
+                echo -n "$cap% 󰁻 "
+              else if test $cap -lt 60
+                set_color --bold yellow
+                echo -n "$cap% 󰁼 "
+              else if test $cap -lt 80
+                set_color --bold white
+                echo -n "$cap% 󰁽 "
+              else
                 set_color --bold green
                 echo -n "$cap% 󰁹 "
               end
             end
-
-            set_color normal
           '';
         };
         wifi-connect = {
