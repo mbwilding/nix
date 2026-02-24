@@ -26,6 +26,7 @@
 
   hardware = {
     xone.enable = true;
+    nvidia-container-toolkit.enable = true;
   };
 
   services = {
