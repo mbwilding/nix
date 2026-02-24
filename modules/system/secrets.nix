@@ -39,6 +39,9 @@ in
   elevenLabsKey = readSecret /home/anon/.secrets/elevenlabs;
   weatherKey = readSecret /home/anon/.secrets/weather;
 
+  # Vault
+  password = readSecret /home/anon/.secrets/password;
+
   # Infrastructure
   pulumiToken = readSecret /home/anon/.secrets/pulumi;
   steamToken = readSecret /home/anon/.secrets/steam;
