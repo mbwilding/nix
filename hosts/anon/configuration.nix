@@ -24,11 +24,12 @@
     };
   };
 
+  hardware = {
+    openrgb.enable = true;
+    xone.enable = true;
+  };
+
   services = {
-    hardware = {
-      openrgb.enable = true;
-      xone.enable = true;
-    };
     pipewire = {
       enable = true;
       alsa.enable = true;
