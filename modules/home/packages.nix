@@ -31,7 +31,6 @@ in
       delta
       delve
       dockerfile-language-server
-      dotnetCorePackages.dotnet_9.sdk
       eslint_d
       eza
       fd
@@ -49,6 +48,8 @@ in
       home-manager
       imagemagick
       jdk
+      jetbrains.datagrip
+      jetbrains.rider
       jq
       kdePackages.dolphin
       kdePackages.ffmpegthumbs
@@ -117,6 +118,12 @@ in
       zip
       zls
       zoxide
+
+      (pkgs.dotnetCorePackages.combinePackages [
+        pkgs.dotnetCorePackages.dotnet_8.sdk
+        pkgs.dotnetCorePackages.dotnet_9.sdk
+        pkgs.dotnetCorePackages.dotnet_10.sdk
+      ])
 
       # vscode-extensions.ms-vscode.powershell
       # vscode-extensions.llvm-vs-code-extensions.lldb-dap
