@@ -72,11 +72,12 @@
           };
         };
       };
-      udev.extraRules = ''
-        KERNEL=="rtc0", GROUP="audio"
-        KERNEL=="hpet", GROUP="audio"
-      '';
     };
+
+    udev.extraRules = ''
+      KERNEL=="rtc0", GROUP="audio"
+      KERNEL=="hpet", GROUP="audio"
+    '';
   };
 
   programs = {
