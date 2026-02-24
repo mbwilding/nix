@@ -1,11 +1,12 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   fileSystems."/mnt/mbwilding" = {
     device = "//truenas/nextcloud-mbwilding";
     fsType = "cifs";
     options = [
-      "credentials=/home/anon/.secrets/password"
+      "username=mbwilding"
+      "password=${secrets.password}"
       "file_mode=0777"
       "dir_mode=0777"
       "uid=1000"
