@@ -89,7 +89,10 @@
       polkitPolicyOwners = [ "anon" ];
     };
     # Needed for running dynamically linked binaries
-    nix-ld.enable = true;
+    nix-ld = {
+      enable = true;
+      # nix-ld.libraries = with pkgs; [ "" ];
+    };
   };
 
   environment.etc = {
