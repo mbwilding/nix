@@ -132,7 +132,6 @@
   virtualisation = {
     podman = {
       enable = true;
-      networkSocket.enable = true;
       dockerSocket.enable = true;
       dockerCompat = true;
       autoPrune = {
