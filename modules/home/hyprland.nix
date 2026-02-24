@@ -315,7 +315,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.variables = [ "--all" ];
-    # portalPackage = null;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
     importantPrefixes = [
       "$mod"
       "output"
