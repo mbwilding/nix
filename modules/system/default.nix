@@ -81,6 +81,7 @@
     systemPackages = with pkgs; [
       _1password-cli
       coreutils
+      cifs-utils
     ];
   };
 
