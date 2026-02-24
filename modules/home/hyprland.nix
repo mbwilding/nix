@@ -217,6 +217,8 @@ in
       Name=Breeze Dark
       shadeSortColumn=true
       widgetStyle=Breeze
+      TerminalApplication=ghostty
+      TerminalService=com.mitchellh.ghostty.desktop
 
       [Icons]
       Theme=breeze-dark
@@ -309,6 +311,11 @@ in
       ForegroundNormal=239,240,241
       ForegroundPositive=39,174,96
       ForegroundVisited=155,89,182
+    '';
+
+    file.".config/dolphinrc".text = ''
+      [PreviewSettings]
+      Plugins=appimagethumbnail,audiothumbnail,blenderthumbnail,comicbookthumbnail,cursorthumbnail,directorythumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,ffmpegthumbs,gsthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,mobithumbnail,opendocumentthumbnail,rawthumbnail,svgthumbnail,textthumbnail,windowsexethumbnail,windowsimagethumbnail
     '';
   };
 
