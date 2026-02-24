@@ -88,6 +88,8 @@
       enable = true;
       polkitPolicyOwners = [ "anon" ];
     };
+    # Needed for running dynamically linked binaries
+    nix-ld.enable = true;
   };
 
   environment.etc = {
