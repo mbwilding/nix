@@ -14,7 +14,7 @@
       "iocharset=utf8"
       "noauto"
       "x-systemd.automount"
-      "x-systemd.mount-timeout=10"
+      "x-systemd.mount-timeout=3"
       "x-systemd.idle-timeout=600"
       "_netdev"
     ];
