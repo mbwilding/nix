@@ -945,7 +945,7 @@ in
             trayMenuWidth = 300;
             batteryWidth = 250;
             networkWidth = 320;
-            kbLayoutWidth = 320; # NOTE: Not serialized
+            kbLayoutWidth = 320;
           };
         };
 
