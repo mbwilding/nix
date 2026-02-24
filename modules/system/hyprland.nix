@@ -63,21 +63,45 @@
     configPackages = [ pkgs.hyprland ];
     config = {
       hyprland = {
-        default = [ "hyprland" "kde" "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "kde" "gtk" ];
-        "org.freedesktop.impl.portal.AppChooser" = [ "kde" "gtk" ];
+        default = [
+          "hyprland"
+          "kde"
+          "gtk"
+        ];
+        "org.freedesktop.impl.portal.FileChooser" = [
+          "kde"
+          "gtk"
+        ];
+        "org.freedesktop.impl.portal.AppChooser" = [
+          "kde"
+          "gtk"
+        ];
       };
       common = {
-        default = [ "hyprland" "kde" "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "kde" "gtk" ];
-        "org.freedesktop.impl.portal.AppChooser" = [ "kde" "gtk" ];
+        default = [
+          "hyprland"
+          "kde"
+          "gtk"
+        ];
+        "org.freedesktop.impl.portal.FileChooser" = [
+          "kde"
+          "gtk"
+        ];
+        "org.freedesktop.impl.portal.AppChooser" = [
+          "kde"
+          "gtk"
+        ];
       };
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    hyprpolkitagent
-    kdePackages.kactivitymanagerd
-    kdePackages.partitionmanager
-  ];
+  environment = {
+    etc."xdg/menus/applications.menu".source =
+      "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
+
+    systemPackages = with pkgs; [
+      hyprpolkitagent
+      kdePackages.kactivitymanagerd
+    ];
+  };
 }

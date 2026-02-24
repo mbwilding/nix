@@ -76,6 +76,7 @@
       _1password-cli
       cifs-utils
       coreutils
+      kdePackages.partitionmanager
     ];
   };
 
