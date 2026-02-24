@@ -71,10 +71,13 @@
           '';
         };
         fish_right_prompt = {
-          description = "Right prompt with battery";
+          description = "Right prompt with time and battery";
           body = ''
-            set -l bat /sys/class/power_supply/BAT1
-            if not test -d $bat
+            set_color --bold white
+            echo -n (date '+%H:%M:%S')" "
+            set -l battery /sys/class/power_supply/BAT1
+            if not test -d $battery
+              set_color normal
               return
             end
             set -l cap (cat $bat/capacity)
