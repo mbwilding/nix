@@ -80,8 +80,8 @@
               set_color normal
               return
             end
-            set -l cap (cat $bat/capacity)
-            set -l stat (cat $bat/status)
+            set -l cap (cat $battery/capacity)
+            set -l stat (cat $battery/status)
             if test "$stat" = Charging
               set_color --bold yellow
               echo -n "󰂄 $cap%"
