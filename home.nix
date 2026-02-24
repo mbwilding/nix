@@ -21,6 +21,8 @@
     ./modules/home/proxychains.nix
     ./modules/home/shells
     ./modules/home/ssh.nix
+    ./modules/home/dapr.nix
+    ./modules/home/dotnet.nix
     ./modules/home/zoxide.nix
   ];
 

@@ -1,9 +1,9 @@
-{ config, ... }:
+{ lib, pkgs, ... }:
 
 {
-  programs.zoxide = {
-    enable = true;
-    enableZshIntegration = config.programs.zsh.enable;
-    enableFishIntegration = config.programs.fish.enable;
-  };
+  home.activation.daprInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if ${pkgs.dapr-cli}/bin/dapr version 2>/dev/null | grep -q "Runtime version: n/a"; then
+      ${pkgs.dapr-cli}/bin/dapr init --slim --container-runtime podman
+    fi
+  '';
 }
