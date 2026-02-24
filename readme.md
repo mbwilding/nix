@@ -7,4 +7,5 @@
 
 # TODO
 
-- No prompt for password, for example opening partitionmanager (KDE)
+- Fix partitionmanager just loading but being blank, think it should ask for sudo via gui
+- Add mpv and use config from /home/anon/dev/personal/dotfiles/dot_config/mpv/ and also add --target-colorspace-hint-mode=source
