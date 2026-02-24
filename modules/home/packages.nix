@@ -53,6 +53,9 @@ in
       jetbrains.rider
       jq
       kdePackages.dolphin
+      kdePackages.dolphin-plugins
+      kdePackages.baloo-widgets
+      kdePackages.baloo
       kdePackages.ffmpegthumbs
       kdePackages.gwenview
       kdePackages.kdegraphics-thumbnailers
