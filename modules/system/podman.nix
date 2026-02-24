@@ -7,6 +7,7 @@
     };
 
     systemPackages = with pkgs; [
+      podman-compose
       podman-desktop
       podman-tui
     ];
