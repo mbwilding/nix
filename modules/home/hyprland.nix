@@ -1029,7 +1029,7 @@ in
 
         notifs = {
           expire = true;
-          defaultExpireTimeout = 3 * 1000;
+          defaultExpireTimeout = 6 * 1000;
           clearThreshold = 0.3;
           expandThreshold = 20;
           actionOnClick = true;
