@@ -52,6 +52,7 @@ in
       jq
       kdePackages.dolphin
       kdePackages.ffmpegthumbs
+      kdePackages.gwenview
       kdePackages.kdegraphics-thumbnailers
       kdePackages.kimageformats
       kdePackages.kio-extras
