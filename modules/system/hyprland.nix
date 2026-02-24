@@ -27,8 +27,6 @@
 
     # Dolphin mounts
     udisks2.enable = true;
-    # Dolphin previews
-    tumbler.enable = true;
 
     xserver.enable = false;
     pulseaudio.enable = false;
