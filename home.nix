@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -34,15 +34,7 @@
       MANPAGER = "nvim +Man!";
       MANWIDTH = "999";
       RUST_LOG = "info";
-      AWS_PROFILE = "md";
-      AWS_REGION = "ap-southeast-2";
       PULUMI_CONFIG_PASSPHRASE = "";
-      DOTNET_CLI_TELEMETRY_OPTOUT = "1";
-      DOTNET_ROOT = "${pkgs.dotnetCorePackages.combinePackages [
-        pkgs.dotnetCorePackages.dotnet_8.sdk
-        pkgs.dotnetCorePackages.dotnet_9.sdk
-        pkgs.dotnetCorePackages.dotnet_10.sdk
-      ]}/share/dotnet";
       NIXOS_OZONE_WL = "1";
     };
 
