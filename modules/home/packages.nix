@@ -51,6 +51,10 @@ in
       jdk
       jq
       kdePackages.dolphin
+      kdePackages.ffmpegthumbs
+      kdePackages.kdegraphics-thumbnailers
+      kdePackages.kimageformats
+      kdePackages.kio-extras
       kdePackages.partitionmanager
       killall
       kubectl
