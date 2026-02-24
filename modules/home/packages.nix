@@ -109,6 +109,7 @@ in
       vscode-js-debug
       vscode-langservers-extracted
       vue-language-server
+      wev
       wget
       yaml-language-server
       yamllint
