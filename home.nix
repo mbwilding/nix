@@ -10,19 +10,20 @@
     ./modules/home/atuin.nix
     ./modules/home/aws.nix
     ./modules/home/btop.nix
+    ./modules/home/dapr.nix
     ./modules/home/direnv.nix
     ./modules/home/discord.nix
+    ./modules/home/dotnet.nix
     ./modules/home/files.nix
     ./modules/home/fzf.nix
     ./modules/home/gh.nix
     ./modules/home/ghostty.nix
     ./modules/home/git.nix
+    ./modules/home/mpv.nix
     ./modules/home/packages.nix
     ./modules/home/proxychains.nix
     ./modules/home/shells
     ./modules/home/ssh.nix
-    ./modules/home/dapr.nix
-    ./modules/home/dotnet.nix
     ./modules/home/zoxide.nix
   ];
 
