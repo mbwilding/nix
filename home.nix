@@ -17,7 +17,6 @@
     ./modules/home/gh.nix
     ./modules/home/ghostty.nix
     ./modules/home/git.nix
-    ./modules/home/mounts.nix
     ./modules/home/packages.nix
     ./modules/home/proxychains.nix
     ./modules/home/shells
