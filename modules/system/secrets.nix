@@ -5,10 +5,7 @@ let
 
   readSecretJSON =
     path:
-    if builtins.pathExists path then
-      builtins.fromJSON (builtins.readFile path)
-    else
-      throw "Secret JSON file not found: ${path}";
+    builtins.fromJSON (readSecret path);
 in
 {
   # SSH keys
