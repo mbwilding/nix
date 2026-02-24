@@ -2,9 +2,13 @@
 
 # https://search.nixos.org/packages?channel=unstable
 
+let
+  open-ecc = pkgs.callPackage ./open-ecc.nix { };
+in
 {
   home = {
     packages = with pkgs; [
+      open-ecc
       # BROKEN python314Packages.cfn-lint
       # FIND ada-language-server
       # FIND vscode-bash-debug
