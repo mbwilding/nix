@@ -71,5 +71,6 @@
 
   environment.systemPackages = with pkgs; [
     hyprpolkitagent
+    kdePackages.kactivitymanagerd
   ];
 }
