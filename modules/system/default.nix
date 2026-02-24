@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./dotnet.nix
     ./fonts.nix
   ];
 

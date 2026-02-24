@@ -35,6 +35,11 @@ let
     defaultEntry // suffixedEntries;
 in
 {
+  home.sessionVariables = {
+    AWS_PROFILE = "md";
+    AWS_REGION = s.region;
+  };
+
   programs = {
     awscli = {
       enable = true;

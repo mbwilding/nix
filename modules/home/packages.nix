@@ -119,12 +119,6 @@ in
       zls
       zoxide
 
-      (pkgs.dotnetCorePackages.combinePackages [
-        pkgs.dotnetCorePackages.dotnet_8.sdk
-        pkgs.dotnetCorePackages.dotnet_9.sdk
-        pkgs.dotnetCorePackages.dotnet_10.sdk
-      ])
-
       # vscode-extensions.ms-vscode.powershell
       # vscode-extensions.llvm-vs-code-extensions.lldb-dap
     ];
