@@ -31,7 +31,7 @@ in
       delta
       delve
       dockerfile-language-server
-      dotnetCorePackages.dotnet_10.sdk
+      dotnetCorePackages.dotnet_9.sdk
       eslint_d
       eza
       fd
