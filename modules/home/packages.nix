@@ -117,7 +117,6 @@ in
       wget
       yaml-language-server
       yamllint
-      yazi
       zip
       zls
       zoxide
