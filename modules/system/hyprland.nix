@@ -55,14 +55,22 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = lib.mkForce [ pkgs.xdg-desktop-portal-hyprland ];
+    extraPortals = lib.mkForce [
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.kdePackages.xdg-desktop-portal-kde
+    ];
     configPackages = [ pkgs.hyprland ];
     config = {
       hyprland = {
-        default = [ "hyprland" ];
+        default = [ "hyprland" "kde" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "kde" "gtk" ];
+        "org.freedesktop.impl.portal.AppChooser" = [ "kde" "gtk" ];
       };
       common = {
-        default = [ "hyprland" ];
+        default = [ "hyprland" "kde" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "kde" "gtk" ];
+        "org.freedesktop.impl.portal.AppChooser" = [ "kde" "gtk" ];
       };
     };
   };
