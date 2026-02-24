@@ -81,6 +81,7 @@
   };
 
   programs = {
+    bazecor.enable = true;
     fish.enable = true;
     zsh.enable = false;
     mtr.enable = true;
