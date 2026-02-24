@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, hostname, ... }:
 
 let
   mod = "super+shift+ctrl+alt";
@@ -42,7 +42,7 @@ in
         cursor-style-blink = true;
         focus-follows-mouse = true;
         font-family = "NeoSpleen Nerd Font";
-        font-size = 21;
+        font-size = if hostname == "anon" then 24 else 21;
         # font-synthetic-style = true;
         gtk-tabs-location = "top";
         gtk-titlebar = false;
