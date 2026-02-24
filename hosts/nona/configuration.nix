@@ -16,6 +16,7 @@ in
     ../../modules/system/obs.nix
     ../../modules/system/wireshark.nix
     ../../modules/system/wireguard.nix
+    ../../modules/system/mounts.nix
   ];
 
   networking.hostName = "nona";
