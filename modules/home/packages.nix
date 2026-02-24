@@ -19,6 +19,7 @@
       bun
       cargo
       cfn-nag
+      cifs-utils
       clang-tools
       clippy
       cmake
