@@ -24,103 +24,107 @@ in
   console.keyMap = keymap;
   services.xserver.xkb.variant = keymap;
 
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [
-        "0001:0001:09b4e68d"
-        "413c:2110:a6c37897"
-      ];
+  services = {
+    xone.enable = true;
 
-      settings = {
-        main = {
-          backspace = "noop";
-          space = "overload(shift, space)";
-          capslock = "overload(capslock, backspace)";
-          leftshift = "esc";
-          rightalt = "layer(symbols)";
+    keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [
+          "0001:0001:09b4e68d"
+          "413c:2110:a6c37897"
+        ];
 
-          a = "overloadt(control, a, 200)";
-          ";" = "overloadt(control, ;, 200)";
-          s = "overloadt(meta, s, 200)";
-          l = "overloadt(meta, l, 200)";
-          z = "overloadt(alt, z, 200)";
-          "/" = "overloadt(alt, /, 200)";
-          f = "overloadt(numbers, f, 200)";
-          m = "overloadt(fkeys, m, 200)";
-        };
+        settings = {
+          main = {
+            backspace = "noop";
+            space = "overload(shift, space)";
+            capslock = "overload(capslock, backspace)";
+            leftshift = "esc";
+            rightalt = "layer(symbols)";
 
-        "capslock:C" = {
-          j = "left";
-          c = "down";
-          v = "up";
-          p = "right";
-        };
+            a = "overloadt(control, a, 200)";
+            ";" = "overloadt(control, ;, 200)";
+            s = "overloadt(meta, s, 200)";
+            l = "overloadt(meta, l, 200)";
+            z = "overloadt(alt, z, 200)";
+            "/" = "overloadt(alt, /, 200)";
+            f = "overloadt(numbers, f, 200)";
+            m = "overloadt(fkeys, m, 200)";
+          };
 
-        "capslock+shift" = {
-          j = "C-left";
-          c = "C-down";
-          v = "C-up";
-          p = "C-right";
-        };
+          "capslock:C" = {
+            j = "left";
+            c = "down";
+            v = "up";
+            p = "right";
+          };
 
-        symbols = {
-          q = "`";
-          w = "!";
-          e = "?";
-          r = "@";
-          t = "{";
-          y = "}";
-          u = "~";
-          p = "right";
-          a = "=";
-          s = "|";
-          d = "^";
-          f = "_";
-          g = "(";
-          h = ")";
-          j = "left";
-          k = "$";
-          l = "&";
-          ";" = "-";
-          z = "/";
-          x = "#";
-          c = "down";
-          v = "up";
-          b = "{";
-          n = "}";
-          m = "+";
-          "," = "%";
-          "." = "*";
-          "/" = "\\";
-        };
+          "capslock+shift" = {
+            j = "C-left";
+            c = "C-down";
+            v = "C-up";
+            p = "C-right";
+          };
 
-        numbers = {
-          ";" = "0";
-          m = "1";
-          "," = "2";
-          "." = "3";
-          j = "4";
-          k = "5";
-          l = "6";
-          u = "7";
-          i = "8";
-          o = "9";
-        };
+          symbols = {
+            q = "`";
+            w = "!";
+            e = "?";
+            r = "@";
+            t = "{";
+            y = "}";
+            u = "~";
+            p = "right";
+            a = "=";
+            s = "|";
+            d = "^";
+            f = "_";
+            g = "(";
+            h = ")";
+            j = "left";
+            k = "$";
+            l = "&";
+            ";" = "-";
+            z = "/";
+            x = "#";
+            c = "down";
+            v = "up";
+            b = "{";
+            n = "}";
+            m = "+";
+            "," = "%";
+            "." = "*";
+            "/" = "\\";
+          };
 
-        fkeys = {
-          q = "f1";
-          w = "f2";
-          e = "f3";
-          r = "f4";
-          a = "f5";
-          s = "f6";
-          d = "f7";
-          f = "f8";
-          z = "f9";
-          x = "f10";
-          c = "f11";
-          v = "f12";
+          numbers = {
+            ";" = "0";
+            m = "1";
+            "," = "2";
+            "." = "3";
+            j = "4";
+            k = "5";
+            l = "6";
+            u = "7";
+            i = "8";
+            o = "9";
+          };
+
+          fkeys = {
+            q = "f1";
+            w = "f2";
+            e = "f3";
+            r = "f4";
+            a = "f5";
+            s = "f6";
+            d = "f7";
+            f = "f8";
+            z = "f9";
+            x = "f10";
+            c = "f11";
+            v = "f12";
+          };
         };
       };
     };
