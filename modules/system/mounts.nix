@@ -2,7 +2,7 @@
 
 {
   fileSystems."/mnt/mbwilding" = {
-    device = "//truenas/nextcloud-mbwilding";
+    device = "//192.168.11.10/nextcloud-mbwilding";
     fsType = "cifs";
     options = [
       "username=mbwilding"
