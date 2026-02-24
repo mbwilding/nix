@@ -28,6 +28,7 @@ in
       clippy
       cmake
       curl
+      dapr-cli
       delta
       delve
       dockerfile-language-server
