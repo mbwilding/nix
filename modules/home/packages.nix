@@ -58,7 +58,6 @@ in
       kdePackages.kdegraphics-thumbnailers
       kdePackages.kimageformats
       kdePackages.kio-extras
-      kdePackages.partitionmanager
       killall
       kubectl
       kubernetes-helm
