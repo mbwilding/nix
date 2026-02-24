@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  systemd.user.mounts."mnt-mbwilding" = {
+  systemd.user.mounts."home-anon-mnt-mbwilding" = {
     Unit = {
       Description = "TrueNAS Nextcloud CIFS mount (mbwilding)";
       After = [ "network-online.target" ];
