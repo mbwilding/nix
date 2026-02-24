@@ -34,6 +34,7 @@ secrets=(
   "Work Info|id|/home/anon/.secrets/work-id"
   "Work Info|name|/home/anon/.secrets/work-name"
   "AWS|json|/home/anon/.secrets/aws.json"
+  "Password|credential|/home/anon/.secrets/password"
   "Kubectl|file|/home/anon/.kube/config"
 )
 
