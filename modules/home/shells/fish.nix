@@ -73,27 +73,27 @@
         fish_right_prompt = {
           description = "Right prompt with time and battery";
           body = ''
+            set_color --bold white
+            echo -n (date '+%H:%M:%S')" "
+
             set -l bat /sys/class/power_supply/BAT1
             if test -d $bat
               set -l cap (cat $bat/capacity)
               set -l stat (cat $bat/status)
               if test "$stat" = Charging
                 set_color --bold yellow
-                echo -n "󰂄 $cap%"
+                echo -n "$cap% 󰂄 "
               else if test $cap -le 20
                 set_color --bold red
-                echo -n "󰂎 $cap%"
+                echo -n "$cap% 󰂎 "
               else if test $cap -le 40
                 set_color --bold yellow
-                echo -n "󰂃 $cap%"
+                echo -n "$cap% 󰂃 "
               else if test $cap -gt 60
                 set_color --bold green
-                echo -n "󰁹 $cap%"
+                echo -n "$cap% 󰁹 "
               end
             end
-
-            set_color --bold white
-            echo -n (date '+%H:%M:%S')" "
 
             set_color normal
           '';
