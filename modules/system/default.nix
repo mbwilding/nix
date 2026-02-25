@@ -77,6 +77,7 @@
       cifs-utils
       coreutils
       icu
+      icu.dev
       kdePackages.partitionmanager
     ];
   };
