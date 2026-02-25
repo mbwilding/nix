@@ -5,6 +5,7 @@
 }:
 
 let
+  font = "NeoSpleen Nerd Font";
   anim_speed = 2.0;
   gaps = 10.0;
 
@@ -681,6 +682,11 @@ in
   gtk = {
     enable = true;
 
+    font = {
+      name = font;
+      size = 13;
+    };
+
     theme = {
       package = pkgs.kdePackages.breeze-gtk;
       name = "Breeze-Dark";
@@ -745,6 +751,10 @@ in
         width = "20%";
       };
       style = ''
+        * {
+            font-family: "${font}";
+        }
+
         image {
             margin-left: 0.5em;
             margin-right: 0.5em;
@@ -1204,6 +1214,17 @@ in
           wallpaperDir = "~/Pictures/Wallpapers";
           sessionGif = "root:/assets/kurukuru.gif";
           mediaGif = "root:/assets/bongocat.gif";
+        };
+
+        appearance = {
+          font = {
+            family = {
+              sans = font;
+              mono = font;
+              clock = font;
+              material = "Material Symbols Rounded";
+            };
+          };
         };
       };
 

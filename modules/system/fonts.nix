@@ -10,6 +10,7 @@ in
       neospleen
       neospleen-nerdfont
       jetbrains-mono
+      spleen
     ];
   }
   // (
