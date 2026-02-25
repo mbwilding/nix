@@ -9,11 +9,18 @@ let
 in
 {
   home = {
-    sessionPath = [ "$HOME/.dotnet/tools" ];
+    packages = with pkgs; [
+      msbuild
+    ];
+    sessionPath = [
+      "$HOME/.dotnet/tools"
+      "${dotnet}/bin"
+    ];
 
     sessionVariables = {
       DOTNET_CLI_TELEMETRY_OPTOUT = "1";
       DOTNET_ROOT = "${dotnet}/share/dotnet";
+
     };
 
     activation.dotnetSetup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
