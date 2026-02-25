@@ -36,6 +36,12 @@ in
   elevenLabsKey = readSecret /home/anon/.secrets/elevenlabs;
   weatherKey = readSecret /home/anon/.secrets/weather;
 
+  # Networks
+  wifiHomeSsid = readSecret /home/anon/.secrets/wifi-home-ssid;
+  wifiHomePassword = readSecret /home/anon/.secrets/wifi-home-password;
+  wifiParentsSsid = readSecret /home/anon/.secrets/wifi-parents-ssid;
+  wifiParentsPassword = readSecret /home/anon/.secrets/wifi-parents-password;
+
   # Vault
   password = readSecret /home/anon/.secrets/password;
 
