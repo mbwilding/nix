@@ -49,8 +49,6 @@ in
       home-manager
       imagemagick
       jdk
-      jetbrains.datagrip
-      jetbrains.rider
       jq
       kdePackages.dolphin
       kdePackages.dolphin-plugins

@@ -76,6 +76,7 @@
       cacert
       cifs-utils
       coreutils
+      icu
       kdePackages.partitionmanager
     ];
   };
