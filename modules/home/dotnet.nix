@@ -20,7 +20,6 @@ in
     sessionVariables = {
       DOTNET_CLI_TELEMETRY_OPTOUT = "1";
       DOTNET_ROOT = "${dotnet}/share/dotnet";
-      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1;
     };
 
     activation.dotnetSetup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

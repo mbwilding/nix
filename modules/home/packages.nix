@@ -89,6 +89,7 @@ in
       pyright
       python314
       python314Packages.debugpy
+      reaper
       ripgrep
       roslyn-ls
       ruby
