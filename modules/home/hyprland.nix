@@ -684,7 +684,7 @@ in
 
     font = {
       name = font;
-      size = 13;
+      size = 14;
     };
 
     theme = {
@@ -753,6 +753,7 @@ in
       style = ''
         * {
             font-family: "${font}";
+            font-size: 22px;
         }
 
         image {
@@ -760,6 +761,7 @@ in
             margin-right: 0.5em;
         }
       '';
+
     };
 
     caelestia = {
@@ -1218,6 +1220,9 @@ in
 
         appearance = {
           font = {
+            size = {
+              scale = 1.4;
+            };
             family = {
               sans = font;
               mono = font;
