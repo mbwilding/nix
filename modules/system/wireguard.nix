@@ -37,19 +37,20 @@ in
         ACTION="$2"
 
         # Only act on WiFi connectivity changes
-        [ "$ACTION" = "up" ] || [ "$ACTION" = "down" ] || \
-        [ "$ACTION" = "dhcp4-change" ] || [ "$ACTION" = "connectivity-change" ] || exit 0
+        [ "$ACTION" = "up" ] || [ "$ACTION" = "down" ] || exit 0
+        # [ "$ACTION" = "dhcp4-change" ] || [ "$ACTION" = "connectivity-change" ] || exit 0
 
-        SSID=$(${pkgs.networkmanager}/bin/nmcli -t -f active,ssid dev wifi 2>/dev/null \
-          | grep '^yes' | cut -d: -f2)
+        SSID=$(${pkgs.networkmanager}/bin/nmcli -t -f active,ssid dev wifi 2>/dev/null | grep '^yes' | cut -d: -f2)
 
-        if [ "$ACTION" = "down" ]; then
-          systemctl stop wg-quick-Home
-        elif [ "$SSID" = "${secrets.wifiHomeSsid}" ]; then
-          systemctl stop wg-quick-Home
-        else
-          systemctl start wg-quick-Home
-        fi
+         if [ "$ACTION" = "down" ]; then
+           systemctl stop wg-quick-Home
+         elif [ "$ACTION" = "up" ]; then
+           if [ "$SSID" != "${secrets.wifiHomeSsid}" ]; then
+             systemctl start wg-quick-Home
+           else
+             systemctl stop wg-quick-Home
+           fi
+         fi
       '';
       type = "basic";
     }
