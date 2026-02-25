@@ -451,10 +451,6 @@ in
         "$mod SHIFT, l, swapwindow, r"
         "$mod SHIFT, k, swapwindow, u"
         "$mod SHIFT, j, swapwindow, d"
-        "$mod SHIFT, h, movefocus, l"
-        "$mod SHIFT, l, movefocus, r"
-        "$mod SHIFT, k, movefocus, u"
-        "$mod SHIFT, j, movefocus, d"
 
         ", Print, exec, hyprshot -m window -m active"
 
