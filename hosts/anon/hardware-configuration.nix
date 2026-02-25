@@ -44,7 +44,7 @@
   };
 
   fileSystems."/mnt/spare" = {
-    device = "/dev/disk/by-uuid/9edce5df-6bb9-4bf8-8e39-f967efb6d1c4";
+    device = "/dev/disk/by-uuid/e817a40e-2882-48a7-a659-70052710a6dd";
     fsType = "ext4";
   };
 
