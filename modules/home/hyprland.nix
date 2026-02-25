@@ -1218,7 +1218,6 @@ in
 
         appearance = {
           font = {
-            size = 24;
             family = {
               sans = font;
               mono = font;
