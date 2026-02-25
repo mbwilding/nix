@@ -95,7 +95,7 @@
     # Needed for running dynamically linked binaries
     nix-ld = {
       enable = true;
-      # nix-ld.libraries = with pkgs; [ "" ];
+      libraries = with pkgs; [ icu ];
     };
   };
 
