@@ -1,9 +1,7 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 
 let
-  dotnet = pkgs.dotnetCorePackages.combinePackages [
-    pkgs.dotnetCorePackages.dotnet_9.sdk
-  ];
+  dotnet = config.custom.dotnet.sdk;
 
   rider =
     (pkgs.jetbrains.rider.override {
