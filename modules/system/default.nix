@@ -19,7 +19,7 @@
     };
   };
 
-  console.font = "${pkgs.spleen}/share/consolefonts/spleen-32x64.psfu";
+  console.font = "${pkgs.spleen}/share/consolefonts/spleen-24x48.psfu";
 
   boot = {
     loader = {
