@@ -4,6 +4,16 @@
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
+
+  google-chrome = pkgs.symlinkJoin {
+    name = "google-chrome";
+    paths = [ pkgs.google-chrome ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/google-chrome-stable \
+        --add-flags "--force-device-scale-factor=1.2"
+    '';
+  };
 in
 {
   home = {
@@ -44,7 +54,7 @@ in
       gnumake
       gnupg
       go
-      google-chrome
+      google-chrome # wrapped — see let block above for --force-device-scale-factor
       gopls
       home-manager
       imagemagick
