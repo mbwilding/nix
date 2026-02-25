@@ -24,8 +24,9 @@ let
   };
 in
 {
-  home.packages = [
+  home.packages = with pkgs; [
+    jetbrains.datagrip
+    mono
     rider
-    pkgs.jetbrains.datagrip
   ];
 }
