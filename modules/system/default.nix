@@ -74,6 +74,7 @@
     };
     systemPackages = with pkgs; [
       _1password-cli
+      cacert
       cifs-utils
       coreutils
       kdePackages.partitionmanager
