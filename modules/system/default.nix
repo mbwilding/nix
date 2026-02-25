@@ -19,7 +19,8 @@
     };
   };
 
-  console.font = "${pkgs.spleen}/share/consolefonts/spleen-24x48.psfu";
+  # 32x64 16x32 12x24 8x16 6x12 5x8
+  console.font = "${pkgs.spleen}/share/consolefonts/spleen-12x24.psfu";
 
   boot = {
     loader = {
