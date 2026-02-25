@@ -16,17 +16,4 @@ in
       DOTNET_ROOT = "${dotnet}/share/dotnet";
     };
   };
-
-  systemd.user.services.dotnetDevCertsTrust = {
-    description = "Trust dotnet dev-certs HTTPS certificate";
-    wantedBy = [ "default.target" ];
-    script = ''
-      export DOTNET_ROOT="${dotnet}/share/dotnet"
-      export PATH="${dotnet}/bin:$PATH"
-      dotnet dev-certs https --trust || true
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-    };
-  };
 }
