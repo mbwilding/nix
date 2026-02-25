@@ -43,7 +43,9 @@ in
         SSID=$(${pkgs.networkmanager}/bin/nmcli -t -f active,ssid dev wifi 2>/dev/null \
           | grep '^yes' | cut -d: -f2)
 
-        if [ "$SSID" = "${secrets.wifiHomeSsid}" ]; then
+        if [ "$ACTION" = "down" ]; then
+          systemctl stop wg-quick-Home
+        elif [ "$SSID" = "${secrets.wifiHomeSsid}" ]; then
           systemctl stop wg-quick-Home
         else
           systemctl start wg-quick-Home
