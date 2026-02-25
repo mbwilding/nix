@@ -71,7 +71,6 @@
   environment = {
     sessionVariables = {
       NIXOS_OZONE_WL = "1";
-      SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
     };
     systemPackages = with pkgs; [
       _1password-cli
