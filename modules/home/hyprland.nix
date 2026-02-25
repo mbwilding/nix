@@ -684,7 +684,7 @@ in
 
     font = {
       name = font;
-      size = 14;
+      size = 10;
     };
 
     theme = {
