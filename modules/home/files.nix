@@ -18,7 +18,7 @@
       </configuration>
     '';
 
-    file.".config/.bunfig".text = ''
+    file.".config/.bunfig.toml".text = ''
       [install.scopes."@${secrets.workName}"]
       url = "https://npm.pkg.github.com"
       token = "${secrets.githubWorkToken}"
