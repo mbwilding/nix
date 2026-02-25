@@ -87,7 +87,7 @@ in
       powershell
       powershell-editor-services
       prettierd
-      pulumi
+      pulumi-bin
       pyright
       python314
       python314Packages.debugpy
