@@ -29,7 +29,6 @@ in
     else
       { };
 
-  # TODO: The systemctl command may need sudo
   networking.networkmanager.dispatcherScripts = pkgs.lib.optionals isNona [
     {
       source = pkgs.writeShellScript "wg-auto" ''
