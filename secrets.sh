@@ -36,6 +36,10 @@ secrets=(
   "AWS|json|/home/anon/.secrets/aws.json"
   "Password|credential|/home/anon/.secrets/password"
   "Kubectl|file|/home/anon/.kube/config"
+  "Wifi Home|network name|/home/anon/.secrets/wifi-home-ssid"
+  "Wifi Home|wireless network password|/home/anon/.secrets/wifi-home-password"
+  "Wifi Parents|network name|/home/anon/.secrets/wifi-parents-ssid"
+  "Wifi Parents|wireless network password|/home/anon/.secrets/wifi-parents-password"
 )
 
 for entry in "${secrets[@]}"; do

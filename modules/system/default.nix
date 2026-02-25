@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, secrets, ... }:
 
 {
   imports = [
@@ -48,7 +48,50 @@
   };
 
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      ensureProfiles.profiles = {
+        home = {
+          connection = {
+            id = secrets.wifiHomeSsid;
+            type = "wifi";
+          };
+          wifi = {
+            mode = "infrastructure";
+            ssid = secrets.wifiHomeSsid;
+          };
+          wifi-security = {
+            key-mgmt = "sae";
+            psk = secrets.wifiHomePassword;
+          };
+          ipv4.method = "auto";
+          ipv6 = {
+            addr-gen-mode = "default";
+            method = "auto";
+          };
+        };
+        parents = {
+          connection = {
+            id = secrets.wifiParentsSsid;
+            type = "wifi";
+          };
+          wifi = {
+            mode = "infrastructure";
+            ssid = secrets.wifiParentsSsid;
+          };
+          wifi-security = {
+            auth-alg = "open";
+            key-mgmt = "wpa-psk";
+            psk = secrets.wifiParentsPassword;
+          };
+          ipv4.method = "auto";
+          ipv6 = {
+            addr-gen-mode = "default";
+            method = "auto";
+          };
+        };
+      };
+    };
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 ];
