@@ -19,6 +19,8 @@
     };
   };
 
+  console.font = "${pkgs.spleen}/share/consolefonts/spleen-32x64.psfu";
+
   boot = {
     loader = {
       systemd-boot.enable = true;
