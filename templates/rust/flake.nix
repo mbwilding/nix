@@ -20,6 +20,9 @@
 
         buildInputs = with pkgs; [
           openssl
+          wayland
+          wayland-protocols
+          libxkbcommon
         ];
       };
     };

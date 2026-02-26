@@ -106,7 +106,7 @@
       );
 
       templates = {
-        microkit = {
+        rust = {
           path = ./templates/rust;
           description = "Rust Dev Shell";
         };
