@@ -104,5 +104,12 @@
           ];
         }
       );
+
+      templates = {
+        microkit = {
+          path = ./templates/rust;
+          description = "Rust Dev Shell";
+        };
+      };
     };
 }
