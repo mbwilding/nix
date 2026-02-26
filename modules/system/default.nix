@@ -127,6 +127,10 @@
       coreutils
       icu
       kdePackages.partitionmanager
+
+      # Only for building things
+      pkg-config
+      openssl
     ];
   };
 
