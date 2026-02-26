@@ -1221,7 +1221,7 @@ in
         appearance = {
           font = {
             size = {
-              scale = 1.4;
+              scale = 1.2;
             };
             family = {
               sans = font;
