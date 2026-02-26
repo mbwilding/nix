@@ -3,8 +3,8 @@
 {
   programs.starship = {
     enable = config.programs.zsh.enable;
-    enableZshIntegration = true;
-    enableFishIntegration = true;
+    enableFishIntegration = config.programs.fish.enable;
+    enableZshIntegration = config.programs.zsh.enable;
     settings = {
       add_newline = true;
       character.success_symbol = "[❯](bold green)";
