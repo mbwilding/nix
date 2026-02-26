@@ -108,6 +108,8 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "video"
+      "audio"
     ];
     isNormalUser = true;
     shell = pkgs.fish;
