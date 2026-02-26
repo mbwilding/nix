@@ -110,6 +110,7 @@
       "wheel"
       "video"
       "audio"
+      "docker"
     ];
     isNormalUser = true;
     shell = pkgs.fish;
