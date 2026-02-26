@@ -14,7 +14,8 @@ in
     ../../modules/system/default.nix
     ../../modules/system/mounts.nix
     ../../modules/system/obs.nix
-    ../../modules/system/podman.nix
+    # ../../modules/system/podman.nix
+    ../../modules/system/docker.nix
     ../../modules/system/steam.nix
     ../../modules/system/wireguard.nix
     ../../modules/system/wireshark.nix
