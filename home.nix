@@ -18,8 +18,9 @@
     ./modules/home/fzf.nix
     ./modules/home/gh.nix
     ./modules/home/ghostty.nix
-    ./modules/home/jetbrains.nix
     ./modules/home/git.nix
+    ./modules/home/jetbrains.nix
+    ./modules/home/lazysql.nix
     ./modules/home/mpv.nix
     ./modules/home/packages.nix
     ./modules/home/proxychains.nix
