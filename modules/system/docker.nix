@@ -7,8 +7,9 @@
     };
 
     systemPackages = with pkgs; [
-      docker-compose
       docker
+      docker-compose
+      docker-desktop
       lazydocker
     ];
   };
