@@ -1,5 +1,13 @@
 { pkgs, secrets, ... }:
 
+let
+  buildInputs = [
+    "${pkgs.openssl.dev}/lib/pkgconfig"
+    "${pkgs.wayland}/lib/pkgconfig"
+    "${pkgs.wayland-protocols}/share/pkgconfig"
+    "${pkgs.libxkbcommon}/lib/pkgconfig"
+  ];
+in
 {
   imports = [
     ./fonts.nix
@@ -127,6 +135,12 @@
       coreutils
       icu
       kdePackages.partitionmanager
+      pkg-config
+      openssl
+      openssl.dev
+      wayland
+      wayland-protocols
+      libxkbcommon
     ];
   };
 
@@ -162,6 +176,7 @@
       # SDL_VIDEODRIVER = "wayland";
       # QT_QPA_PLATFORM = "wayland";
       ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+      PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
     };
   };
 
