@@ -41,7 +41,8 @@ in
       dapr-cli
       delta
       delve
-      dockerfile-language-server
+      docker-compose-language-server
+      docker-language-server
       eslint_d
       eza
       fd
