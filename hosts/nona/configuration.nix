@@ -19,6 +19,7 @@ in
     ../../modules/system/steam.nix
     ../../modules/system/wireguard.nix
     ../../modules/system/wireshark.nix
+    ../../modules/system/appimage.nix
   ];
 
   networking.hostName = "nona";
