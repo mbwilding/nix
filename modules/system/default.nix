@@ -134,7 +134,6 @@ in
       cifs-utils
       coreutils
       icu
-      kactivitymanagerd
       kdePackages.partitionmanager
       libxkbcommon
       openssl
