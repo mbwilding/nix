@@ -1,5 +1,22 @@
 { lib, pkgs, ... }:
 
+let
+  installs = [
+    "corefonts"
+    "dotnet20"
+    "dotnet35"
+    "dotnet40"
+    "dotnet45"
+    "dotnet452"
+    "dotnet46"
+    "dotnet461"
+    "dotnet462"
+    "dotnet47"
+    "dotnet471"
+    "dotnet472"
+    "dotnet48"
+  ];
+in
 {
   home = {
     packages = with pkgs; [
@@ -8,16 +25,8 @@
     ];
 
     activation.winetricksCorefonts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if ! ${pkgs.wineWow64Packages.staging}/bin/wine --version >/dev/null 2>&1; then
-        echo "Wine not found: skipping winetricks corefonts"
-        exit 0
-      fi
-      if ! ${pkgs.wineWow64Packages.staging}/bin/wine "C:\\Windows\\Fonts\\arial.ttf" >/dev/null 2>&1; then
-        echo "Installing corefonts via winetricks..."
-        ${pkgs.winetricks}/bin/winetricks corefonts
-      else
-        echo "Corefonts already installed"
-      fi
+      export PATH="${pkgs.wineWow64Packages.staging}/bin:$PATH"
+      ${pkgs.winetricks}/bin/winetricks --country=AU --optout --unattended ${lib.concatStringsSep " " installs}
     '';
   };
 }
