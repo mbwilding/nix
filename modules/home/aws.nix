@@ -237,8 +237,9 @@ in
         account_id = s.accounts.cd;
         default_role = s.special_roles.cd;
         roles = [
-          "secrets-elevated"
           "read"
+          "power-elevated"
+          "secrets-elevated"
         ];
       }
 
