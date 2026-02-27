@@ -11,19 +11,20 @@ let
 
   src = fetchurl {
     url = "${repo}/releases/download/v${version}/Power-Platform-ToolBox-${version}-x86_64-linux.AppImage";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-9R51X7Ar3JqjMxhpSxatL20grURahPTn+V/yAmPiuMQ=";
   };
 
   appimageContents = appimageTools.extractType1 {
-    name = pname;
-    src = src;
+    inherit pname version src;
   };
-
 in
 appimageTools.wrapType2 rec {
   inherit pname version src;
 
   extraInstallCommands = ''
+    install -Dm444 ${appimageContents}/powerplatform-toolbox.desktop -T $out/share/applications/${pname}.desktop
+    install -Dm444 ${appimageContents}/powerplatform-toolbox.png -T $out/share/icons/hicolor/512x512/apps/${pname}.png
+
     substituteInPlace $out/share/applications/${pname}.desktop \
       --replace-fail 'Exec=AppRun' 'Exec=${meta.mainProgram}'
   '';
