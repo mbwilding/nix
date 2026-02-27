@@ -33,9 +33,9 @@ in
       winetricks
     ];
 
-    activation.winetricksCorefonts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    activation.winetricksInstalls = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.wineWow64Packages.staging}/bin:$PATH"
-      ${pkgs.winetricks}/bin/winetricks --country=AU --optout --unattended ${lib.concatStringsSep " " installs}
+      ${pkgs.winetricks}/bin/winetricks --country=AU --optout --unattended ${lib.concatStringsSep " " installs} > /dev/null 2>&1
     '';
   };
 }
