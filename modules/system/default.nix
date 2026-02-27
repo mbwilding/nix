@@ -135,12 +135,13 @@ in
       coreutils
       icu
       kdePackages.partitionmanager
-      pkg-config
+      libxkbcommon
       openssl
       openssl.dev
+      pkg-config
+      skia
       wayland
       wayland-protocols
-      libxkbcommon
     ];
   };
 
