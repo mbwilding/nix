@@ -3,8 +3,15 @@
 let
   installs = [
     "corefonts"
+    "dotnet11sp1"
+    "dotnet11"
     "dotnet20"
+    "dotnet20sp1"
+    "dotnet20sp2"
+    "dotnet30"
+    "dotnet30sp1"
     "dotnet35"
+    "dotnet35sp1"
     "dotnet40"
     "dotnet45"
     "dotnet452"
