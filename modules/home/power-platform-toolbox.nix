@@ -26,7 +26,8 @@ appimageTools.wrapType2 rec {
     install -Dm444 ${appimageContents}/powerplatform-toolbox.png -T $out/share/icons/hicolor/512x512/apps/${pname}.png
 
     substituteInPlace $out/share/applications/${pname}.desktop \
-      --replace-fail 'Exec=AppRun' 'Exec=${meta.mainProgram}'
+      --replace-fail 'Exec=AppRun' 'Exec=${meta.mainProgram}' \
+      --replace-fail 'Icon=powerplatform-toolbox' 'Icon=${pname}'
   '';
 
   meta = {
