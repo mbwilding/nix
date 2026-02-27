@@ -30,7 +30,7 @@
     ./modules/home/wine.nix
     ./modules/home/yazi.nix
     ./modules/home/zoxide.nix
-    ./modules/home/power-platfrom-toolbox.nix
+    ./modules/home/power-platform-toolbox.nix
   ];
 
   home = {
