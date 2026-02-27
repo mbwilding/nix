@@ -7,7 +7,7 @@ let
     colorAccent = "vec4(0.35, 0.0, 0.0, 1.0)";
     duration = "0.05";
     blaze = false;
-    trail = true;
+    trail = false;
   };
 in
 {
