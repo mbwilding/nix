@@ -4,6 +4,7 @@
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
+  power-platform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
 
   google-chrome = pkgs.symlinkJoin {
     name = "google-chrome";
@@ -19,6 +20,7 @@ in
   home = {
     packages = with pkgs; [
       open-ecc
+      power-platform-toolbox
       # BROKEN python314Packages.cfn-lint
       # FIND ada-language-server
       # FIND vscode-bash-debug
