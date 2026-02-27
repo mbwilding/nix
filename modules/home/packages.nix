@@ -55,16 +55,16 @@ in
       gnumake
       gnupg
       go
-      google-chrome # wrapped — see let block above for --force-device-scale-factor
+      google-chrome
       gopls
       home-manager
       imagemagick
       jdk
       jq
+      kdePackages.baloo
+      kdePackages.baloo-widgets
       kdePackages.dolphin
       kdePackages.dolphin-plugins
-      kdePackages.baloo-widgets
-      kdePackages.baloo
       kdePackages.ffmpegthumbs
       kdePackages.gwenview
       kdePackages.kdegraphics-thumbnailers
