@@ -102,6 +102,7 @@
     systemPackages = with pkgs; [
       hyprpolkitagent
       kdePackages.kactivitymanagerd
+      kdePackages.ark
     ];
   };
 }
