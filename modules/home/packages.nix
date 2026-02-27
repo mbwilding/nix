@@ -4,7 +4,7 @@
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
-  powerplatform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
+  powerplatform-toolbox = pkgs.callPackage ./powerplatform-toolbox.nix { };
 
   google-chrome = pkgs.symlinkJoin {
     name = "google-chrome";
