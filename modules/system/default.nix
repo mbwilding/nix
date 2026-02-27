@@ -114,11 +114,12 @@ in
   users.users.anon = {
     description = "anon";
     extraGroups = [
-      "networkmanager"
-      "wheel"
-      "video"
       "audio"
       "docker"
+      "networkmanager"
+      "render"
+      "video"
+      "wheel"
     ];
     isNormalUser = true;
     shell = pkgs.fish;
