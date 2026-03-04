@@ -25,7 +25,7 @@
     sessionVariables = {
       WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
     };
-    environment.systemPackages = with pkgs; [
+    systemPackages = with pkgs; [
       solaar
     ];
   };
