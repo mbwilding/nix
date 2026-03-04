@@ -35,7 +35,7 @@ in
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_zen;
   };
 
   time.timeZone = "Australia/Perth";
@@ -137,6 +137,7 @@ in
       icu
       kdePackages.partitionmanager
       libxkbcommon
+      lm_sensors
       openssl
       openssl.dev
       pkg-config
