@@ -407,15 +407,27 @@ in
         new_render_scheduling = false;
       };
 
-      exec-once = [
-        "brightnessctl set --device=platform::micmute 0"
-        "systemctl --user start hyprpolkitagent"
-        # "nm-applet"
-        # "hyprpaper"
-        # "hyprpanel"
-        # "hypridle"
-        "hyprctl dispatch workspace main"
-      ];
+      exec-once =
+        [
+          "brightnessctl set --device=platform::micmute 0"
+          "systemctl --user start hyprpolkitagent"
+          # "nm-applet"
+          # "hyprpaper"
+          # "hyprpanel"
+          # "hypridle"
+        ]
+        ++ (
+          if hostname == "anon" then
+            [
+              # Pre-initialize all named workspaces so persistent:true takes effect.
+              # Dispatch social and spare first, then return to main last.
+              "hyprctl dispatch workspace name:social"
+              "hyprctl dispatch workspace name:spare"
+              "hyprctl dispatch workspace name:main"
+            ]
+          else
+            [ "hyprctl dispatch workspace main" ]
+        );
 
       "$mod" = "SUPER";
       bind = [
@@ -521,7 +533,7 @@ in
 
         sensitivity = 0;
         force_no_accel = 1;
-        numlock_by_default = true;
+        numlock_by_default = false;
         follow_mouse = 0;
         mouse_refocus = false;
 
@@ -621,13 +633,13 @@ in
       workspace =
         if hostname == "anon" then
           [
-            "defaultName:Main, name:main, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, default:true, layoutopt:direction:right, persistent:true"
-            "defaultName:Social, name:social, monitor:desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd, default:true, layoutopt:direction:down, persistent:true"
-            "defaultName:Spare, name:spare, monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
+            "name:main, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, default:true, direction:right, persistent:true"
+            "name:social, monitor:desc:Dell Inc. Dell AW3418DW, default:true, direction:down, persistent:true"
+            "name:spare, monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, direction:down, persistent:true"
           ]
         else if hostname == "nona" then
           [
-            "defaultName:Main, name:main, monitor:desc:Lenovo Group Limited 0x8AC2, default:true, layoutopt:direction:right, persistent:true"
+            "name:main, monitor:desc:Lenovo Group Limited 0x8AC2, default:true, direction:right, persistent:true"
           ]
         else
           [ ];
@@ -661,7 +673,7 @@ in
         }
         {
           name = "UnrealEngine";
-          workspace = "main";
+          workspace = "name:main";
           no_anim = "on";
           no_initial_focus = "on";
           "match:class" = "^(UnrealEditor)$";
@@ -673,17 +685,17 @@ in
           [
             {
               name = "Teams";
-              workspace = "social";
+              workspace = "name:social";
               "match:class" = "teams-for-linux";
             }
             {
               name = "Spotify";
-              workspace = "social";
+              workspace = "name:social";
               "match:class" = "spotify";
             }
             {
               name = "Discord";
-              workspace = "social";
+              workspace = "name:social";
               "match:class" = "discord";
             }
           ]
