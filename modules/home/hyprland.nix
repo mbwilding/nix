@@ -572,7 +572,7 @@ in
           kb_variant = "us";
         }
         {
-          name = "holtek-usb-hid-keyboard-1";
+          name = "holtek-usb-hid-keyboard";
           kb_layout = "us";
           kb_variant = "dvorak";
         }
