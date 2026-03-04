@@ -332,8 +332,8 @@ in
       "output"
       "name"
     ];
-    plugins = [
-      pkgs.hyprlandPlugins.hyprscrolling
+    plugins = with pkgs; [
+      hyprlandPlugins.hyprscrolling
     ];
     settings = {
       ecosystem = {

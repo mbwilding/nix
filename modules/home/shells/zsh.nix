@@ -40,6 +40,7 @@ in
         hm-switch = "home-manager switch -b backup --impure --flake ~/nix#$(hostname) && exec zsh";
         nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix && exec zsh";
         nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix && exec zsh";
+        nix-update = "nix flake update --flake ~/nix";
       };
     };
   };
