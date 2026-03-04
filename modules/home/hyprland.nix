@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   hostname,
   ...
 }:
@@ -87,7 +86,7 @@ in
 {
   home = {
     packages = with pkgs; [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      # hyprlandPlugins.hyprscrolling
       hyprshot
       kdePackages.breeze
       kdePackages.plasma-integration
@@ -326,17 +325,17 @@ in
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    package = pkgs.hyprland;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
     systemd.variables = [ "--all" ];
     importantPrefixes = [
       "$mod"
       "output"
       "name"
     ];
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
-    ];
+    # plugins = with pkgs; [
+    #   hyprlandPlugins.hyprscrolling
+    # ];
     settings = {
       ecosystem = {
         no_update_news = true;
@@ -344,8 +343,7 @@ in
       };
 
       general = {
-        # dwindle
-        layout = "scrolling";
+        layout = "dwindle"; # scrolling
 
         gaps_in = gaps;
         gaps_out = gaps * 2;
