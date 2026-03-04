@@ -11,7 +11,7 @@
 
   # wayland.windowManager.hyprland = {
   #   enable = true;
-  #   extraConfig = "plugin = ${inputs.hy3.packages.${pkgs.system}.hy3}/lib/libhy3.so ";
+  #   extraConfig = "plugin = ${inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}.hy3}/lib/libhy3.so ";
   # };
 
   services = {
