@@ -407,27 +407,26 @@ in
         new_render_scheduling = false;
       };
 
-      exec-once =
-        [
-          "brightnessctl set --device=platform::micmute 0"
-          "systemctl --user start hyprpolkitagent"
-          # "nm-applet"
-          # "hyprpaper"
-          # "hyprpanel"
-          # "hypridle"
-        ]
-        ++ (
-          if hostname == "anon" then
-            [
-              # Pre-initialize all named workspaces so persistent:true takes effect.
-              # Dispatch social and spare first, then return to main last.
-              "hyprctl dispatch workspace name:social"
-              "hyprctl dispatch workspace name:spare"
-              "hyprctl dispatch workspace name:main"
-            ]
-          else
-            [ "hyprctl dispatch workspace main" ]
-        );
+      exec-once = [
+        "systemctl --user start hyprpolkitagent"
+        # "nm-applet"
+        # "hyprpaper"
+        # "hyprpanel"
+        # "hypridle"
+      ]
+      ++ (
+        if hostname == "anon" then
+          [
+            "hyprctl dispatch workspace name:social"
+            "hyprctl dispatch workspace name:spare"
+            "hyprctl dispatch workspace name:main"
+          ]
+        else
+          [
+            "hyprctl dispatch workspace main"
+            "brightnessctl set --device=platform::micmute 0"
+          ]
+      );
 
       "$mod" = "SUPER";
       bind = [
@@ -791,7 +790,7 @@ in
     };
 
     caelestia = {
-      enable = true;
+      enable = false;
       systemd = {
         enable = true;
         target = "graphical-session.target";
