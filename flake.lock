@@ -209,7 +209,25 @@
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": "nixpkgs",
         "plasma-manager": "plasma-manager",
+        "solaar-pro-x2": "solaar-pro-x2",
         "ucodenix": "ucodenix"
+      }
+    },
+    "solaar-pro-x2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772038593,
+        "narHash": "sha256-U5alkTyZEWFSj+HbtCpI2uZK7jzvDkYPtRhwAj4eX9o=",
+        "owner": "caioquirino",
+        "repo": "Solaar",
+        "rev": "f3423b24c48a003457a24d3a1a2e7903968bbd93",
+        "type": "github"
+      },
+      "original": {
+        "owner": "caioquirino",
+        "ref": "feat/pro-x-2-superstrike",
+        "repo": "Solaar",
+        "type": "github"
       }
     },
     "ucodenix": {

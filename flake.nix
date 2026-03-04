@@ -23,6 +23,12 @@
       url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # NOTE: Remove once PR is merged: https://github.com/pwr-Solaar/Solaar/pull/3132
+    solaar = {
+      url = "github:caioquirino/Solaar/feat/pro-x-2-superstrike";
+      flake = false;
+    };
   };
 
   outputs =
@@ -42,6 +48,11 @@
         config.allowUnfree = true;
         overlays = [
           inputs.neovim-nightly-overlay.overlays.default
+          (final: prev: {
+            solaar = prev.solaar.overrideAttrs (_: {
+              src = inputs.solaar;
+            });
+          })
         ];
       };
 
