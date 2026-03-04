@@ -524,6 +524,8 @@ in
         repeat_delay = 195;
 
         sensitivity = 0;
+        force_no_accel = 1;
+        numlock_by_default = true;
         follow_mouse = 0;
         mouse_refocus = false;
 
@@ -535,9 +537,24 @@ in
 
       device = [
         {
+          name = "dygma-defy-keyboard";
+          kb_layout = "us";
+          kb_variant = "us";
+        }
+        {
           name = "keyd-virtual-keyboard";
           kb_layout = "us";
           kb_variant = "dvorak";
+        }
+        {
+          name = "solaar-keyboard";
+          kb_layout = "us";
+          kb_variant = "us";
+        }
+        {
+          name = "logitech-x2-superstrike";
+          kb_layout = "us";
+          kb_variant = "us";
         }
         {
           name = "at-translated-set-2-keyboard";
