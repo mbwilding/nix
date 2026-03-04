@@ -621,13 +621,13 @@ in
       workspace =
         if hostname == "anon" then
           [
-            "defaultName:Main,   name:main,   monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  default:true, layoutopt:direction:right,  persistent:true"
-            "defaultName:Social, name:social, monitor:desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd,  default:true, layoutopt:direction:down,   persistent:true"
-            "defaultName:Spare,  name:spare,  monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down,   persistent:true"
+            "defaultName:Main, name:main, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, default:true, layoutopt:direction:right, persistent:true"
+            "defaultName:Social, name:social, monitor:desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd, default:true, layoutopt:direction:down, persistent:true"
+            "defaultName:Spare, name:spare, monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
           ]
         else if hostname == "nona" then
           [
-            "defaultName:Main,   name:main,   monitor:desc:Lenovo Group Limited 0x8AC2,            default:true, layoutopt:direction:right,  persistent:true"
+            "defaultName:Main, name:main, monitor:desc:Lenovo Group Limited 0x8AC2, default:true, layoutopt:direction:right, persistent:true"
           ]
         else
           [ ];
