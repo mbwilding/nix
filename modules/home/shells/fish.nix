@@ -36,6 +36,7 @@
         hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
         nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
         nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
+        nix-update = "nix flake update --flake ~/nix";
       };
       functions = {
         fish_prompt = {

@@ -18,8 +18,8 @@
     greetd = {
       enable = true;
       settings = {
-        default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.hyprland}/share/wayland-sessions";
+        default_session = with pkgs; {
+          command = "${tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${hyprland}/share/wayland-sessions";
           user = "greeter";
         };
       };
@@ -60,7 +60,7 @@
       pkgs.xdg-desktop-portal-gtk
       pkgs.kdePackages.xdg-desktop-portal-kde
     ];
-    configPackages = [ pkgs.hyprland ];
+    configPackages = with pkgs; [ hyprland ];
     config = {
       hyprland = {
         default = [
