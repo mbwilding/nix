@@ -86,7 +86,6 @@ in
 {
   home = {
     packages = with pkgs; [
-      # hyprlandPlugins.hyprscrolling
       hyprshot
       kdePackages.breeze
       kdePackages.plasma-integration
@@ -333,9 +332,6 @@ in
       "output"
       "name"
     ];
-    # plugins = with pkgs; [
-    #   hyprlandPlugins.hyprscrolling
-    # ];
     settings = {
       ecosystem = {
         no_update_news = true;
@@ -343,7 +339,7 @@ in
       };
 
       general = {
-        layout = "dwindle"; # scrolling
+        layout = "scrolling"; # dwindle
 
         gaps_in = gaps;
         gaps_out = gaps * 2;
@@ -616,10 +612,10 @@ in
         "XDG_SESSION_TYPE,wayland"
       ];
 
-      plugin = {
-        hyprscrolling = {
+      scrolling = {
           fullscreen_on_one_column = true;
-        };
+          follow_focus = true;
+          direction = "right";
       };
 
       workspace =
