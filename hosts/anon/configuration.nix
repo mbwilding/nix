@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -25,11 +25,15 @@
     sessionVariables = {
       WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
     };
+    environment.systemPackages = with pkgs; [
+      solaar
+    ];
   };
 
   hardware = {
     xone.enable = true;
     nvidia-container-toolkit.enable = true;
+    logitech.wireless.enable = true;
   };
 
   services = {
