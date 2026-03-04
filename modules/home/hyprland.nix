@@ -571,6 +571,11 @@ in
           kb_layout = "us";
           kb_variant = "us";
         }
+        {
+          name = "holtek-usb-hid-keyboard-1";
+          kb_layout = "us";
+          kb_variant = "dvorak";
+        }
       ];
 
       gestures = {
