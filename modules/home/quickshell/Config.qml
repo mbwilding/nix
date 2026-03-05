@@ -42,7 +42,7 @@ QtObject {
 
     readonly property QtObject notifications: QtObject {
         readonly property int animateSpeed: 250
-        readonly property int timeout: 5000
+        readonly property int timeout: 0
         readonly property int cardWidth: Math.round(400 * root.scale)
         readonly property int iconSize: Math.round(18 * root.scale)
         readonly property int radius: Math.round(12 * root.scale)
