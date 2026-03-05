@@ -19,7 +19,7 @@ Scope {
     }
 
     function notify(summary, body, icon) {
-        notifyProc.command = ["notify-send", "--app-name=Battery", "--icon=" + icon, summary, body];
+        notifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + icon, summary, body];
         notifyProc.running = true;
     }
 
