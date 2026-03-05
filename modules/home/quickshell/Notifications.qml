@@ -4,11 +4,17 @@ import QtQuick
 import QtQuick.Layouts
 import QtQml.Models
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 
 Scope {
     id: root
+
+    Process {
+        id: soundProc
+        command: ["paplay", "/run/current-system/sw/share/sounds/freedesktop/stereo/message.oga"]
+    }
 
     NotificationServer {
         id: server
@@ -20,6 +26,8 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
+            if (Config.soundEnabled)
+                soundProc.running = true;
         }
     }
 

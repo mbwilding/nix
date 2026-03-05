@@ -5,10 +5,9 @@ import QtQuick
 QtObject {
     id: root
 
-    // Master scale — change this to resize everything proportionally
     readonly property real scale: 1.0
-    // Font scale — independently control font sizes
     readonly property real fontSize: 1.4
+    readonly property bool soundEnabled: true
 
     readonly property QtObject font: QtObject {
         readonly property string family: "NeoSpleen Nerd Font"
