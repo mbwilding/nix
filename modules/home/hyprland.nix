@@ -523,7 +523,7 @@ in
 
       input = {
         kb_layout = "us";
-        kb_variant = if hostname == "anon" then "us" else "dvorak";
+        kb_variant = "dvorak";
 
         resolve_binds_by_sym = true;
 
@@ -543,41 +543,20 @@ in
       };
 
       device = [
-        # Dygma Defy (DVORAK mapped to QWERTY)
         {
           name = "dygma-defy-keyboard";
           kb_layout = "us";
           kb_variant = "us";
         }
-        # Laptop Keyboard
-        {
-          name = "at-translated-set-2-keyboard";
-          kb_layout = "us";
-          kb_variant = "dvorak";
-        }
-        # Laptop Keyd
-        {
-          name = "keyd-virtual-keyboard";
-          kb_layout = "us";
-          kb_variant = "dvorak";
-        }
-        # Corne Mini 34-key
         {
           name = "cornemini-keyboard";
           kb_layout = "us";
           kb_variant = "us";
         }
-        # ZSA Voyager
         {
           name = "zsa-technology-labs-voyager";
           kb_layout = "us";
           kb_variant = "us";
-        }
-        # Sara's keyboard
-        {
-          name = "holtek-usb-hid-keyboard";
-          kb_layout = "us";
-          kb_variant = "dvorak";
         }
       ];
 
