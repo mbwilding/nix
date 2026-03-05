@@ -47,6 +47,7 @@ Item {
             exitAnim.start();
         } else {
             root._pendingExit = true;
+            root.animateSpeed = Math.round(Config.notifications.animateSpeed / 3);
         }
     }
 
