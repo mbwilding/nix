@@ -8,7 +8,7 @@ QtObject {
     // Master scale — change this to resize everything proportionally
     readonly property real scale: 1.0
     // Font scale — independently control font sizes
-    readonly property real fontSize: 1.2
+    readonly property real fontSize: 1.4
 
     readonly property QtObject font: QtObject {
         readonly property string family: "NeoSpleen Nerd Font"
@@ -43,7 +43,7 @@ QtObject {
     readonly property QtObject notifications: QtObject {
         readonly property int animateSpeed: 250
         readonly property int timeout:      5000
-        readonly property int cardWidth:    Math.round(360 * root.scale)
+        readonly property int cardWidth:    Math.round(400 * root.scale)
         readonly property int iconSize:     Math.round(18 * root.scale)
         readonly property int radius:       Math.round(12 * root.scale)
         readonly property int accentBar:    Math.round(3 * root.scale)
