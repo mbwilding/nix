@@ -33,6 +33,7 @@ in
       bat
       brightnessctl
       bun
+      cameractrls-gtk4
       cargo
       cfn-nag
       cifs-utils
