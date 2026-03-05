@@ -6,8 +6,8 @@ import Quickshell.Io
 QtObject {
     id: root
 
-    property string _notification: ""
-    property string _volume: ""
+    property string _notification: "@notificationSound@"
+    property string _volume: "@volumeSound@"
 
     function playNotification() {
         if (Config.soundEnabled && _notification !== "") {
@@ -57,34 +57,9 @@ QtObject {
     property Process _pidCheckProc: Process {
         property string soundPath: ""
         onExited: exitCode => {
-            // script exits 0 if sender has an active audio stream, 1 if not
             if (exitCode !== 0) {
                 notificationProc.command = ["paplay", soundPath];
                 notificationProc.running = true;
-            }
-        }
-    }
-
-    property Process _resolveNotification: Process {
-        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/message-new-instant.oga\"; [ -f \"$f\" ] && echo \"$f\" && break; done"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const path = this.text.trim();
-                if (path !== "")
-                    root._notification = path;
-            }
-        }
-    }
-
-    property Process _resolveVolume: Process {
-        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/audio-volume-change.oga\"; [ -f \"$f\" ] && echo \"$f\" && break; done"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const path = this.text.trim();
-                if (path !== "")
-                    root._volume = path;
             }
         }
     }
