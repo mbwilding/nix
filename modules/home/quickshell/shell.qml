@@ -89,8 +89,26 @@ ShellRoot {
                                     top: parent.top
                                     bottom: parent.bottom
                                 }
-                                implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
+                                property real vol: Pipewire.defaultAudioSink?.audio.volume ?? 0
+                                property real excessRatio: Math.min(1.0, Math.max(0.0, (vol - 1.0) / 0.5))
+                                implicitWidth: Math.min(parent.width, parent.width * vol)
                                 radius: parent.radius
+                                color: Qt.rgba(1, 1 - excessRatio, 1 - excessRatio, 1)
+                            }
+                        }
+
+                        Text {
+                            text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                            color: "white"
+                            font.pixelSize: 14
+                            horizontalAlignment: Text.AlignRight
+                            Layout.preferredWidth: maxVolumeMetrics.boundingRect.width
+                            Layout.leftMargin: parent.spacing
+
+                            TextMetrics {
+                                id: maxVolumeMetrics
+                                font: parent.font
+                                text: "100%"
                             }
                         }
                     }
