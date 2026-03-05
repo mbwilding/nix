@@ -69,12 +69,19 @@ Scope {
         objects: [Pipewire.defaultAudioSink]
     }
 
+    Process {
+        id: volumeSoundProc
+        command: ["paplay", "/run/current-system/sw/share/sounds/freedesktop/stereo/audio-volume-change.oga"]
+    }
+
     Connections {
         target: root.volumeAvailable ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
             root.volumeVisible = true;
             root.show();
+            if (Config.soundEnabled)
+                volumeSoundProc.running = true;
         }
 
         function onMutedChanged() {
