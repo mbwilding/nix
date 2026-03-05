@@ -20,9 +20,19 @@ Item {
     implicitWidth: Config.notifications.cardWidth
 
     Component.onCompleted: Qt.callLater(() => {
-        latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
         visible_ = true;
     })
+
+    // Watch card.implicitHeight directly — body text wrapping requires multiple
+    // layout passes before the true height is known, so we can't latch once on completion.
+    // Guard against updating during exit animation.
+    Connections {
+        target: card
+        function onImplicitHeightChanged() {
+            if (!exitAnim.running)
+                root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
+        }
+    }
 
     function animateOut() {
         if (!root.visible_)
@@ -34,7 +44,7 @@ Item {
     Timer {
         id: dismissTimer
         interval: root.timeout
-        running: root.visible_
+        running: root.visible_ && root.timeout > 0
         onTriggered: root.animateOut()
     }
 
