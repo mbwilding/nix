@@ -5,17 +5,12 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 
-// A single indicator row: icon | progress bar | percentage label
 Item {
     id: root
 
-    // Icon name from the icon theme (symbolic recommended)
     property string iconName: ""
-    // Value in [0, 1]; values above 1.0 render the bar red
     property real value: 0
-    // Label shown on the right (e.g. "75%")
     property string label: ""
-    // Width of the widest possible label string, used to reserve space
     property string maxLabel: "100%"
 
     implicitHeight: 50
