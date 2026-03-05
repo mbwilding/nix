@@ -8,16 +8,18 @@ import Quickshell.Widgets
 Item {
     id: root
 
+    property int animateSpeed: 150
+    property real displayValue: 0
     property real value: 0
     property string iconName: ""
     property string label: ""
-    property int animateSpeed: 150
 
-    // Animated proxy — bar and colour bind to this, not value directly
-    property real displayValue: 0
     onValueChanged: displayValue = value
     Behavior on displayValue {
-        NumberAnimation { duration: root.animateSpeed; easing.type: Easing.OutQuad }
+        NumberAnimation {
+            duration: root.animateSpeed
+            easing.type: Easing.OutQuad
+        }
     }
 
     implicitHeight: 50
