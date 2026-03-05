@@ -8,10 +8,9 @@ import Quickshell.Widgets
 Item {
     id: root
 
-    property string iconName: ""
     property real value: 0
+    property string iconName: ""
     property string label: ""
-    property string maxLabel: "100%"
 
     implicitHeight: 50
     implicitWidth: 400
@@ -58,7 +57,7 @@ Item {
             TextMetrics {
                 id: labelMetrics
                 font.pixelSize: 14
-                text: root.maxLabel
+                text: "100%"
             }
         }
     }
