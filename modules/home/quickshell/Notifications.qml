@@ -31,7 +31,7 @@ Scope {
         exclusiveZone: 0
         color: "transparent"
 
-        implicitWidth: 376
+        implicitWidth: Config.notifications.cardWidth + Math.round(16 * Config.scale)
 
         Column {
             id: notifColumn
@@ -39,11 +39,11 @@ Scope {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 8
-                rightMargin: 8
+                topMargin: Math.round(8 * Config.scale)
+                rightMargin: Math.round(8 * Config.scale)
             }
 
-            width: 360
+            width: Config.notifications.cardWidth
             spacing: 0
 
             move: Transition {
@@ -62,7 +62,7 @@ Scope {
                     notification: modelData
                     animateSpeed: Config.notifications.animateSpeed
                     timeout: Config.notifications.timeout
-                    width: 360
+                    width: Config.notifications.cardWidth
                     parent: notifColumn
 
                     Connections {
