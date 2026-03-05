@@ -451,8 +451,10 @@ in
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
         "$mod, Q, killactive,"
-        # "$mod, Z, exec, hyprlock,"
         "$mod, grave, exit,"
+
+        "$mod, L, exec, qs ipc call default lock"
+        "$mod, A, exec, qs ipc call default toggleMixer"
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
         "$mod, Z, exec, hyprshot -m window -m active"
 
