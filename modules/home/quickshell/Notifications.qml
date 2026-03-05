@@ -62,8 +62,7 @@ Scope {
                     Connections {
                         target: modelData
                         function onClosed() {
-                            visible_ = false;
-                            collapseTimer.start();
+                            animateOut();
                         }
                     }
                 }
