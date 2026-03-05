@@ -12,46 +12,90 @@ Scope {
 
     readonly property int hideDelay: 1500
 
+    // Ordered list of slot keys in activation order — first triggered is index
+    // 0 (top), newest is last (bottom). Cleared when the panel hides so the
+    // next session starts fresh.
+    property var slotOrder: []
+
+    function activate(key) {
+        if (root.slotOrder.indexOf(key) === -1) {
+            root.slotOrder = root.slotOrder.concat(key);
+        }
+        hideTimer.restart();
+    }
+
+    Timer {
+        id: hideTimer
+        interval: root.hideDelay
+        onTriggered: {
+            root.anyVisible = false;
+            root.slotOrder = [];
+        }
+    }
+
+    property bool anyVisible: false
+
+    // Slot data looked up by key in the Repeater delegate
+    function slotIcon(key) {
+        if (key === "volume") {
+            const audio = Pipewire.defaultAudioSink?.audio;
+            if (!audio || audio.muted) return "audio-volume-muted-symbolic";
+            const vol = audio.volume;
+            if (vol <= 0.33) return "audio-volume-low-symbolic";
+            if (vol <= 0.66) return "audio-volume-medium-symbolic";
+            return "audio-volume-high-symbolic";
+        }
+        if (key === "screen") return "video-display-brightness-symbolic";
+        if (key === "kbd")    return "input-keyboard-brightness";
+        return "";
+    }
+
+    function slotValue(key) {
+        if (key === "volume") return Pipewire.defaultAudioSink?.audio.volume ?? 0;
+        if (key === "screen") return root.screenBrightness;
+        if (key === "kbd")    return root.kbdBrightness;
+        return 0;
+    }
+
+    function slotLabel(key) {
+        return Math.round(root.slotValue(key) * 100) + "%";
+    }
+
+    function slotMaxLabel(key) {
+        return key === "volume" ? "150%" : "100%";
+    }
+
+    // ── Volume ────────────────────────────────────────────────────────────────
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
-
-    property bool volumeVisible: false
 
     Connections {
         target: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
-            root.volumeVisible = true;
-            volumeTimer.restart();
+            root.anyVisible = true;
+            root.activate("volume");
         }
 
         function onMutedChanged() {
-            root.volumeVisible = true;
-            volumeTimer.restart();
+            root.anyVisible = true;
+            root.activate("volume");
         }
     }
 
-    Timer {
-        id: volumeTimer
-        interval: root.hideDelay
-        onTriggered: root.volumeVisible = false
-    }
-
-    property bool screenBrightnessVisible: false
+    // ── Screen brightness ─────────────────────────────────────────────────────
     property real screenBrightness: 0
     property int _screenRaw: -1
     property int _screenMax: 1
 
     Process {
-        id: screenMaxProc
         command: ["cat", "/sys/class/backlight/amdgpu_bl1/max_brightness"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0)
-                    root._screenMax = v;
+                if (!isNaN(v) && v > 0) root._screenMax = v;
             }
         }
     }
@@ -72,33 +116,25 @@ Scope {
                 if (!isNaN(v) && v !== root._screenRaw) {
                     root._screenRaw = v;
                     root.screenBrightness = v / root._screenMax;
-                    root.screenBrightnessVisible = true;
-                    screenBrightnessTimer.restart();
+                    root.anyVisible = true;
+                    root.activate("screen");
                 }
             }
         }
     }
 
-    Timer {
-        id: screenBrightnessTimer
-        interval: root.hideDelay
-        onTriggered: root.screenBrightnessVisible = false
-    }
-
-    property bool kbdBrightnessVisible: false
+    // ── Keyboard brightness ───────────────────────────────────────────────────
     property real kbdBrightness: 0
     property int _kbdRaw: -1
     property int _kbdMax: 1
 
     Process {
-        id: kbdMaxProc
         command: ["cat", "/sys/class/leds/platform::kbd_backlight/max_brightness"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0)
-                    root._kbdMax = v;
+                if (!isNaN(v) && v > 0) root._kbdMax = v;
             }
         }
     }
@@ -119,53 +155,42 @@ Scope {
                 if (!isNaN(v) && v !== root._kbdRaw) {
                     root._kbdRaw = v;
                     root.kbdBrightness = v / root._kbdMax;
-                    root.kbdBrightnessVisible = true;
-                    kbdBrightnessTimer.restart();
+                    root.anyVisible = true;
+                    root.activate("kbd");
                 }
             }
         }
     }
 
-    Timer {
-        id: kbdBrightnessTimer
-        interval: root.hideDelay
-        onTriggered: root.kbdBrightnessVisible = false
-    }
-
-    property bool anyVisible: root.volumeVisible || root.screenBrightnessVisible || root.kbdBrightnessVisible
-
-    // Count of currently shown rows, used to size the panel without depending
-    // on the animated implicitHeight of OsdRow children.
-    readonly property int visibleRowCount: (root.volumeVisible ? 1 : 0) + (root.screenBrightnessVisible ? 1 : 0) + (root.kbdBrightnessVisible ? 1 : 0)
+    // ── Panel ─────────────────────────────────────────────────────────────────
+    readonly property int panelHeight: root.slotOrder.length * 50 + 16
 
     PanelWindow {
         anchors.bottom: true
-        margins.bottom: 0
         exclusiveZone: 0
         color: "transparent"
         mask: Region {}
 
         implicitWidth: 400
-        implicitHeight: root.visibleRowCount * 50 + 16
-
-        Behavior on implicitHeight {
-            NumberAnimation {
-                duration: 250
-                easing.type: Easing.InOutQuad
-            }
-        }
+        implicitHeight: root.panelHeight
 
         Rectangle {
-            anchors.fill: parent
+            id: panel
+            width: parent.width
+            height: root.panelHeight
             radius: 12
             color: "#80000000"
-            opacity: root.anyVisible ? 1 : 0
 
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 250
-                    easing.type: Easing.InOutQuad
+            transform: Translate {
+                y: root.anyVisible ? 0 : panel.height
+                Behavior on y {
+                    NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
                 }
+            }
+
+            opacity: root.anyVisible ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
             }
 
             Column {
@@ -175,39 +200,17 @@ Scope {
                     bottomMargin: 8
                 }
 
-                OsdRow {
-                    width: parent.width
-                    shown: root.volumeVisible
-                    iconName: {
-                        const audio = Pipewire.defaultAudioSink?.audio;
-                        if (!audio || audio.muted)
-                            return "audio-volume-muted-symbolic";
-                        const vol = audio.volume;
-                        if (vol <= 0.33)
-                            return "audio-volume-low-symbolic";
-                        if (vol <= 0.66)
-                            return "audio-volume-medium-symbolic";
-                        return "audio-volume-high-symbolic";
+                Repeater {
+                    model: root.slotOrder
+
+                    OsdRow {
+                        required property string modelData
+                        width: parent.width
+                        iconName: root.slotIcon(modelData)
+                        value: root.slotValue(modelData)
+                        label: root.slotLabel(modelData)
+                        maxLabel: root.slotMaxLabel(modelData)
                     }
-                    value: Pipewire.defaultAudioSink?.audio.volume ?? 0
-                    label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
-                    maxLabel: "150%"
-                }
-
-                OsdRow {
-                    width: parent.width
-                    shown: root.screenBrightnessVisible
-                    iconName: "video-display-brightness-symbolic"
-                    value: root.screenBrightness
-                    label: Math.round(root.screenBrightness * 100) + "%"
-                }
-
-                OsdRow {
-                    width: parent.width
-                    shown: root.kbdBrightnessVisible
-                    iconName: "input-keyboard-brightness"
-                    value: root.kbdBrightness
-                    label: Math.round(root.kbdBrightness * 100) + "%"
                 }
             }
         }
