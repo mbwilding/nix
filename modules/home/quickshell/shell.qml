@@ -6,4 +6,5 @@ ShellRoot {
     id: root
 
     Osd {}
+    Notifications {}
 }
