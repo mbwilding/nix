@@ -25,16 +25,12 @@ QtObject {
         }
         _pidCheckProc.soundPath = _notification;
         _pidCheckProc.command = ["sh", "-c", `
-            stream_pids=$(pw-dump 2>/dev/null | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-for n in data:
-    if n.get('type') != 'PipeWire:Interface:Node': continue
-    props = n.get('info', {}).get('props', {})
-    if 'Stream/Output/Audio' in props.get('media.class', ''):
-        pid = props.get('application.process.id')
-        if pid: print(pid)
-")
+            stream_pids=$(pw-dump 2>/dev/null | awk '
+                /"type".*PipeWire:Interface:Node/ { pid=""; cls="" }
+                /"application\\.process\\.id"/ { match($0, /[0-9]+/, a); pid=a[0] }
+                /"media\\.class"/ { match($0, /"media\\.class": *"([^"]+)"/, a); cls=a[1] }
+                /"media\\.class"/ && cls ~ /Stream\\/Output\\/Audio/ && pid { print pid }
+            ')
             for pid in $stream_pids; do
                 cur=$pid
                 while [ "$cur" -gt 1 ] 2>/dev/null; do
