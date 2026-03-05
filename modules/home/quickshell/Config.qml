@@ -48,6 +48,11 @@ QtObject {
         readonly property int radius: Math.round(12 * root.scale)
         readonly property int accentBar: Math.round(3 * root.scale)
         readonly property int bodyMaxLines: 0
+        readonly property int fontSizeAppName: root.font.sizeLg
+        readonly property int fontSizeTimestamp: root.font.sizeSm
+        readonly property int fontSizeSummary: root.font.sizeMd
+        readonly property int fontSizeBody: root.font.sizeMd
+        readonly property int fontSizeAction: root.font.sizeMd
     }
 
     readonly property QtObject battery: QtObject {
