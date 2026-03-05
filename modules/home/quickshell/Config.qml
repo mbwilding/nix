@@ -42,11 +42,37 @@ QtObject {
 
     readonly property QtObject notifications: QtObject {
         readonly property int animateSpeed: 250
-        readonly property int timeout: 0
+        readonly property int timeout: 7500
         readonly property int cardWidth: Math.round(400 * root.scale)
         readonly property int iconSize: Math.round(18 * root.scale)
         readonly property int radius: Math.round(12 * root.scale)
         readonly property int accentBar: Math.round(3 * root.scale)
         readonly property int bodyMaxLines: 0
+    }
+
+    readonly property QtObject battery: QtObject {
+        readonly property var warnLevels: [
+            {
+                level: 20,
+                title: "Battery Level Low",
+                message: "Please connect your device to a power source at your earliest convenience.",
+                icon: "battery-low-symbolic",
+                critical: false
+            },
+            {
+                level: 10,
+                title: "Battery Level Critically Low",
+                message: "Immediate connection to a power source is strongly recommended.",
+                icon: "battery-caution-symbolic",
+                critical: false
+            },
+            {
+                level: 5,
+                title: "Battery Level Critical",
+                message: "System shutdown is imminent. Please connect to a power source immediately.",
+                icon: "battery-empty-symbolic",
+                critical: true
+            }
+        ]
     }
 }

@@ -78,6 +78,7 @@ in
       kubectl
       kubernetes-helm
       lemminx
+      libnotify
       lld
       lldb
       lua-language-server

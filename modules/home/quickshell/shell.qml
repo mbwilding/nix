@@ -7,4 +7,5 @@ ShellRoot {
 
     Osd {}
     Notifications {}
+    BatteryWarning {}
 }

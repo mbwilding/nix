@@ -32,6 +32,8 @@ in
   };
 
   services = {
+    upower.enable = true;
+
     keyd = {
       enable = true;
       keyboards.default = {
