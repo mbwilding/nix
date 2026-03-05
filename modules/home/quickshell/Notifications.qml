@@ -47,11 +47,17 @@ Scope {
 
             Repeater {
                 id: repeater
-                // Most recent first — reverse the list
-                model: {
-                    const all = server.trackedNotifications;
-                    const capped = all.slice(Math.max(0, all.length - root.maxNotifications));
-                    return capped.slice().reverse();
+                // ObjectModel — use directly, newest notifications appear at the end
+                // so we display them with the column reversed via a ScriptModel
+                model: ScriptModel {
+                    values: {
+                        const all = server.trackedNotifications;
+                        const out = [];
+                        const start = Math.max(0, all.length - root.maxNotifications);
+                        for (let i = all.length - 1; i >= start; i--)
+                            out.push(all[i]);
+                        return out;
+                    }
                 }
 
                 delegate: NotificationCard {
