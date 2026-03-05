@@ -20,7 +20,9 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
-            Sounds.playNotification();
+            const hints = notification.hints;
+            const hasOwnSound = hints["suppress-sound"] || hints["sound-file"] || hints["sound-name"];
+            if (!hasOwnSound) Sounds.playNotificationIfSilent(hints["sender-pid"] ?? -1);
         }
     }
 

@@ -16,6 +16,38 @@ QtObject {
         }
     }
 
+    function playNotificationIfSilent(senderPid) {
+        if (!Config.soundEnabled || _notification === "")
+            return;
+        if (senderPid <= 0) {
+            playNotification();
+            return;
+        }
+        _pidCheckProc.soundPath = _notification;
+        _pidCheckProc.command = ["sh", "-c", `
+            stream_pids=$(pw-dump 2>/dev/null | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for n in data:
+    if n.get('type') != 'PipeWire:Interface:Node': continue
+    props = n.get('info', {}).get('props', {})
+    if 'Stream/Output/Audio' in props.get('media.class', ''):
+        pid = props.get('application.process.id')
+        if pid: print(pid)
+")
+            for pid in $stream_pids; do
+                cur=$pid
+                while [ "$cur" -gt 1 ] 2>/dev/null; do
+                    [ "$cur" = "${senderPid}" ] && exit 0
+                    cur=$(awk '/^PPid:/{print $2}' /proc/$cur/status 2>/dev/null)
+                    [ -z "$cur" ] && break
+                done
+            done
+            exit 1
+        `];
+        _pidCheckProc.running = true;
+    }
+
     function playVolume() {
         if (Config.soundEnabled && _volume !== "") {
             volumeProc.command = ["paplay", _volume];
@@ -25,6 +57,17 @@ QtObject {
 
     property Process notificationProc: Process {}
     property Process volumeProc: Process {}
+
+    property Process _pidCheckProc: Process {
+        property string soundPath: ""
+        onExited: exitCode => {
+            // script exits 0 if sender has an active audio stream, 1 if not
+            if (exitCode !== 0) {
+                notificationProc.command = ["paplay", soundPath];
+                notificationProc.running = true;
+            }
+        }
+    }
 
     property Process _resolveNotification: Process {
         command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/message-new-instant.oga\"; [ -f \"$f\" ] && echo \"$f\" && break; done"]
