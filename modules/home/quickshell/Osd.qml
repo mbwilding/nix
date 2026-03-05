@@ -27,10 +27,15 @@ Scope {
     Timer {
         id: hideTimer
         interval: root.hideDelay
-        onTriggered: {
-            root.anyVisible = false;
-            root.slotOrder = [];
-        }
+        onTriggered: root.anyVisible = false
+        // slotOrder is cleared by the slide animation's onFinished so the
+        // panel height stays intact for the full duration of the slide-out.
+    }
+
+    Timer {
+        id: clearTimer
+        interval: 250  // matches slide animation duration
+        onTriggered: root.slotOrder = []
     }
 
     property bool anyVisible: false
@@ -184,7 +189,11 @@ Scope {
             transform: Translate {
                 y: root.anyVisible ? 0 : panel.height
                 Behavior on y {
-                    NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                        duration: 250
+                        easing.type: Easing.InOutQuad
+                        onFinished: if (!root.anyVisible) clearTimer.start()
+                    }
                 }
             }
 
