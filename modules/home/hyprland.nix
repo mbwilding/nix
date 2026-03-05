@@ -444,9 +444,10 @@ in
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"
         "$mod, Q, killactive,"
-        "$mod, Z, exec, hyprlock,"
+        # "$mod, Z, exec, hyprlock,"
         "$mod, grave, exit,"
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
+        "$mod, Z, exec, hyprshot -m window -m active"
 
         # Switch window focus
         "$mod, h, movefocus, l"
