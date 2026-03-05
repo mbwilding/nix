@@ -12,6 +12,7 @@ Scope {
 
     readonly property int animateSpeed: 250
     readonly property int maxNotifications: 5
+    readonly property int timeout: 5000
 
     NotificationServer {
         id: server
@@ -21,7 +22,6 @@ Scope {
         bodyMarkupSupported: false
         imageSupported: true
 
-        // Must explicitly track notifications or they are discarded
         onNotification: notification => { notification.tracked = true; }
     }
 
@@ -29,12 +29,11 @@ Scope {
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
         anchors.right: true
+        anchors.bottom: true
         exclusiveZone: 0
         color: "transparent"
-        mask: Region {}
 
         implicitWidth: 376
-        implicitHeight: notifColumn.implicitHeight + 16
 
         Column {
             id: notifColumn
@@ -56,15 +55,15 @@ Scope {
 
                     notification: modelData
                     animateSpeed: root.animateSpeed
+                    timeout: root.timeout
                     width: 360
                     parent: notifColumn
-
-                    Component.onCompleted: Qt.callLater(() => { visible_ = true; })
 
                     Connections {
                         target: modelData
                         function onClosed() {
                             visible_ = false;
+                            collapseTimer.start();
                         }
                     }
                 }
