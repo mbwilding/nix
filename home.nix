@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -31,6 +31,8 @@
     ./modules/home/yazi.nix
     ./modules/home/zoxide.nix
   ];
+
+  news.display = "silent";
 
   home = {
     username = "anon";
