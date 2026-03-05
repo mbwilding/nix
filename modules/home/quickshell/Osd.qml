@@ -11,13 +11,18 @@ Scope {
     id: root
 
     PwObjectTracker {
-        objects: [ Pipewire.defaultAudioSink ]
+        objects: [Pipewire.defaultAudioSink]
     }
 
     Connections {
         target: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
+            root.shouldShow = true;
+            hideTimer.restart();
+        }
+
+        function onMutedChanged() {
             root.shouldShow = true;
             hideTimer.restart();
         }
@@ -34,9 +39,9 @@ Scope {
     LazyLoader {
         active: root.shouldShow
 
-        PanelWindow { // qmllint disable uncreatable-type
+        PanelWindow {
             anchors.bottom: true
-            margins.bottom: screen.height / 5 // qmllint disable unqualified unresolved-type missing-property
+            margins.bottom: screen.height / 5
             exclusiveZone: 0
             implicitWidth: 400
             implicitHeight: 50
@@ -57,7 +62,17 @@ Scope {
 
                     IconImage {
                         implicitSize: 30
-                        source: Quickshell.iconPath("audio-volume-high-symbolic")
+                        source: {
+                            const audio = Pipewire.defaultAudioSink?.audio;
+                            if (!audio || audio.muted)
+                                return Quickshell.iconPath("audio-volume-muted-symbolic");
+                            const vol = audio.volume;
+                            if (vol <= 0.33)
+                                return Quickshell.iconPath("audio-volume-low-symbolic");
+                            if (vol <= 0.66)
+                                return Quickshell.iconPath("audio-volume-medium-symbolic");
+                            return Quickshell.iconPath("audio-volume-high-symbolic");
+                        }
                     }
 
                     Rectangle {
