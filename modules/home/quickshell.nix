@@ -5,14 +5,9 @@ let
     auth include login
   '';
 
-  shellQml = pkgs.replaceVars ./quickshell/shell.qml {
-    pamDir = "${pamDir}/pam";
-  };
-
   config = pkgs.runCommand "quickshell-config" { } ''
     mkdir -p $out
-    cp ${shellQml} $out/shell.qml
-    cp ${./quickshell/osd.qml} $out/osd.qml
+    cp ${./quickshell}/*.qml $out/
   '';
 
   qmlImportPaths = [
