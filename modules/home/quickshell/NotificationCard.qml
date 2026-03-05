@@ -15,14 +15,12 @@ Item {
 
     property bool visible_: false
     property bool exiting: false
-    property real cardHeight: 0
-    property bool heightAnimEnabled: false
 
-    implicitHeight: exiting ? 0 : cardHeight
+    implicitHeight: exiting ? 0 : (card.implicitHeight + 8)
     implicitWidth: 360
 
     Behavior on implicitHeight {
-        enabled: root.heightAnimEnabled
+        enabled: root.exiting
         NumberAnimation {
             duration: root.animateSpeed
             easing.type: Easing.InOutQuad
@@ -31,26 +29,31 @@ Item {
 
     clip: true
 
-    Component.onCompleted: {
-        Qt.callLater(() => {
-            // Set height instantly (no animation) then enable animation for exit collapse
-            cardHeight = card.implicitHeight + 8;
-            heightAnimEnabled = true;
-            visible_ = true;
-        });
+    // Call this instead of notification.dismiss() directly —
+    // plays the exit animation first, then dismisses after
+    function animateOut() {
+        if (root.exiting) return;
+        dismissTimer.stop();
+        visible_ = false;
+        collapseTimer.start();
     }
+
+    Component.onCompleted: Qt.callLater(() => { visible_ = true; })
 
     Timer {
         id: dismissTimer
         interval: root.timeout
         running: root.visible_
-        onTriggered: root.notification?.dismiss()
+        onTriggered: root.animateOut()
     }
 
     Timer {
         id: collapseTimer
         interval: root.animateSpeed
-        onTriggered: root.exiting = true
+        onTriggered: {
+            root.exiting = true;
+            root.notification?.dismiss();
+        }
     }
 
     Rectangle {
@@ -100,7 +103,7 @@ Item {
                     const entry = DesktopEntries.byId(n.desktopEntry);
                     if (entry) entry.launch();
                 }
-                n.dismiss();
+                root.animateOut();
             }
         }
 
@@ -185,7 +188,7 @@ Item {
 
                     HoverHandler { id: closeHover }
                     TapHandler {
-                        onTapped: root.notification?.dismiss()
+                        onTapped: root.animateOut()
                     }
                 }
             }
@@ -248,7 +251,7 @@ Item {
                         TapHandler {
                             onTapped: {
                                 modelData.invoke();
-                                root.notification?.dismiss();
+                                root.animateOut();
                             }
                         }
                     }
