@@ -69,19 +69,13 @@ Scope {
         objects: [Pipewire.defaultAudioSink]
     }
 
-    Process {
-        id: volumeSoundProc
-        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/audio-volume-change.oga\"; [ -f \"$f\" ] && exec paplay \"$f\"; done"]
-    }
-
     Connections {
         target: root.volumeAvailable ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
             root.volumeVisible = true;
             root.show();
-            if (Config.soundEnabled)
-                volumeSoundProc.running = true;
+            Sounds.playVolume();
         }
 
         function onMutedChanged() {
