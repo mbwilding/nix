@@ -60,7 +60,8 @@ Scope {
 
     function show() {
         root.anyVisible = true;
-        hideTimer.restart();
+        if (Config.osd.hideDelay > 0)
+            hideTimer.restart();
     }
 
     // Volume
