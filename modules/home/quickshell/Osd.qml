@@ -20,6 +20,8 @@ Scope {
     property int _screenRaw: -1
     property real kbdBrightness: 0
     property real screenBrightness: 0
+    property string kbdDevice: ""
+    property string screenDevice: ""
     readonly property bool kbdAvailable: _kbdMax > 1
     readonly property bool screenAvailable: _screenMax > 1
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
@@ -27,6 +29,30 @@ Scope {
     readonly property int hideDelay: 1500
     readonly property int panelHeight: root.rowCount * 50 + 16
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
+
+    Process {
+        command: ["sh", "-c", "ls /sys/class/backlight/ | head -1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const dev = this.text.trim();
+                if (dev)
+                    root.screenDevice = "/sys/class/backlight/" + dev;
+            }
+        }
+    }
+
+    Process {
+        command: ["sh", "-c", "ls /sys/class/leds/ | grep kbd_backlight | head -1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const dev = this.text.trim();
+                if (dev)
+                    root.kbdDevice = "/sys/class/leds/" + dev;
+            }
+        }
+    }
 
     Timer {
         id: hideTimer
@@ -39,6 +65,7 @@ Scope {
         hideTimer.restart();
     }
 
+    // Volume
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
@@ -57,9 +84,10 @@ Scope {
         }
     }
 
+    // Screen
     Process {
-        command: ["cat", "/sys/class/backlight/amdgpu_bl1/max_brightness"]
-        running: true
+        command: ["cat", root.screenDevice + "/max_brightness"]
+        running: root.screenDevice !== ""
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
@@ -72,13 +100,13 @@ Scope {
     Timer {
         interval: 200
         repeat: true
-        running: root.screenAvailable || root._screenMax === 1
+        running: root.screenDevice !== "" && (root.screenAvailable || root._screenMax === 1)
         onTriggered: screenPollProc.running = true
     }
 
     Process {
         id: screenPollProc
-        command: ["cat", "/sys/class/backlight/amdgpu_bl1/brightness"]
+        command: ["cat", root.screenDevice + "/brightness"]
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
@@ -94,9 +122,10 @@ Scope {
         }
     }
 
+    // Keyboard
     Process {
-        command: ["cat", "/sys/class/leds/platform::kbd_backlight/max_brightness"]
-        running: true
+        command: ["cat", root.kbdDevice + "/max_brightness"]
+        running: root.kbdDevice !== ""
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
@@ -109,13 +138,13 @@ Scope {
     Timer {
         interval: 200
         repeat: true
-        running: root.kbdAvailable || root._kbdMax === 1
+        running: root.kbdDevice !== "" && (root.kbdAvailable || root._kbdMax === 1)
         onTriggered: kbdPollProc.running = true
     }
 
     Process {
         id: kbdPollProc
-        command: ["cat", "/sys/class/leds/platform::kbd_backlight/brightness"]
+        command: ["cat", root.kbdDevice + "/brightness"]
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
@@ -131,6 +160,7 @@ Scope {
         }
     }
 
+    // Panel
     PanelWindow {
         anchors.bottom: true
         exclusiveZone: 0
