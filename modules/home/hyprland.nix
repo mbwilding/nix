@@ -87,6 +87,7 @@ in
   home = {
     packages = with pkgs; [
       hyprshot
+      hyprnotify
       kdePackages.breeze
       kdePackages.plasma-integration
       pulseaudio
@@ -409,6 +410,7 @@ in
 
       exec-once = [
         "systemctl --user start hyprpolkitagent"
+        "hyprnotify"
         # "nm-applet"
         # "hyprpaper"
         # "hyprpanel"
@@ -601,6 +603,7 @@ in
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
+        "HYPRSHOT_DIR,/home/anon/Pictures/Screenshots"
       ];
 
       scrolling = {
