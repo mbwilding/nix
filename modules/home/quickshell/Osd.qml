@@ -162,6 +162,7 @@ Scope {
 
     // Panel
     PanelWindow {
+        WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
         exclusiveZone: 0
         color: "transparent"
