@@ -20,7 +20,9 @@ Scope {
         bodyMarkupSupported: false
         imageSupported: true
 
-        onNotification: notification => { notification.tracked = true; }
+        onNotification: notification => {
+            notification.tracked = true;
+        }
     }
 
     PanelWindow {

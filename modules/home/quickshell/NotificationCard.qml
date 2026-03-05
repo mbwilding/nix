@@ -15,7 +15,6 @@ Item {
 
     property bool visible_: false
 
-    // Height is fixed once latched — only collapses after slide-out completes
     property real latchedHeight: 0
     implicitHeight: latchedHeight
     implicitWidth: 360
@@ -28,7 +27,8 @@ Item {
     })
 
     function animateOut() {
-        if (!root.visible_) return;
+        if (!root.visible_)
+            return;
         dismissTimer.stop();
         exitAnim.start();
     }
@@ -43,7 +43,6 @@ Item {
     SequentialAnimation {
         id: exitAnim
 
-        // Step 1: slide card out to the right + fade (height stays stable)
         ParallelAnimation {
             NumberAnimation {
                 target: slideTranslate
@@ -61,7 +60,6 @@ Item {
             }
         }
 
-        // Step 2: collapse height so cards below shuffle up smoothly
         NumberAnimation {
             target: root
             property: "latchedHeight"
@@ -70,7 +68,6 @@ Item {
             easing.type: Easing.InOutQuad
         }
 
-        // Step 3: notify server the notification is gone
         ScriptAction {
             script: {
                 root.visible_ = false;
@@ -117,23 +114,23 @@ Item {
             }
         }
 
-        // Card tap — invoke default action or launch desktop entry
         TapHandler {
             onTapped: {
                 const n = root.notification;
-                if (!n) return;
+                if (!n)
+                    return;
                 const def = (n.actions ?? []).find(a => a.identifier === "default");
                 if (def) {
                     def.invoke();
                 } else if (n.desktopEntry && n.desktopEntry !== "") {
                     const entry = DesktopEntries.byId(n.desktopEntry);
-                    if (entry) entry.launch();
+                    if (entry)
+                        entry.launch();
                 }
                 root.animateOut();
             }
         }
 
-        // Left accent bar
         Rectangle {
             anchors {
                 left: parent.left
@@ -161,7 +158,6 @@ Item {
 
             spacing: 4
 
-            // Header: app icon + app name + timestamp + close button
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 8
@@ -170,11 +166,14 @@ Item {
                     implicitSize: 18
                     source: {
                         const n = root.notification;
-                        if (!n) return "";
-                        if (n.appIcon !== "") return Quickshell.iconPath(n.appIcon);
+                        if (!n)
+                            return "";
+                        if (n.appIcon !== "")
+                            return Quickshell.iconPath(n.appIcon);
                         if (n.desktopEntry !== "" && n.desktopEntry !== null) {
                             const entry = DesktopEntries.byId(n.desktopEntry);
-                            if (entry && entry.icon !== "") return Quickshell.iconPath(entry.icon);
+                            if (entry && entry.icon !== "")
+                                return Quickshell.iconPath(entry.icon);
                         }
                         return Quickshell.iconPath("applications-other-symbolic");
                     }
@@ -196,14 +195,17 @@ Item {
                     font.pixelSize: 10
                 }
 
-                // Close button
                 Rectangle {
                     implicitWidth: 18
                     implicitHeight: 18
                     radius: 9
                     color: closeHover.containsMouse ? Config.colors.border : "transparent"
 
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 100
+                        }
+                    }
 
                     Text {
                         anchors.centerIn: parent
@@ -212,14 +214,15 @@ Item {
                         font.pixelSize: 10
                     }
 
-                    HoverHandler { id: closeHover }
+                    HoverHandler {
+                        id: closeHover
+                    }
                     TapHandler {
                         onTapped: root.animateOut()
                     }
                 }
             }
 
-            // Summary
             Text {
                 text: root.notification?.summary ?? ""
                 color: Config.colors.textPrimary
@@ -230,7 +233,6 @@ Item {
                 visible: text !== ""
             }
 
-            // Body
             Text {
                 text: root.notification?.body ?? ""
                 color: Config.colors.textSecondary
@@ -243,7 +245,6 @@ Item {
                 elide: Text.ElideRight
             }
 
-            // Actions
             RowLayout {
                 Layout.fillWidth: true
                 Layout.bottomMargin: 2
@@ -263,7 +264,11 @@ Item {
                         border.color: Config.colors.border
                         border.width: 1
 
-                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 120
+                            }
+                        }
 
                         Text {
                             id: actionLabel
@@ -273,7 +278,9 @@ Item {
                             font.pixelSize: 11
                         }
 
-                        HoverHandler { id: actionHover }
+                        HoverHandler {
+                            id: actionHover
+                        }
                         TapHandler {
                             onTapped: {
                                 modelData.invoke();
