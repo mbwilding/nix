@@ -72,6 +72,7 @@ in
       kdePackages.kdegraphics-thumbnailers
       kdePackages.kimageformats
       kdePackages.kio-extras
+      kdePackages.qtdeclarative # qmlls
       killall
       kubectl
       kubernetes-helm
