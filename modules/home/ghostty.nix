@@ -41,7 +41,10 @@ in
         confirm-close-surface = false;
         copy-on-select = true;
         cursor-click-to-move = true;
-        cursor-invert-fg-bg = true;
+        # selection-foreground="cell-background";
+        # selection-background="cell-foreground";
+        cursor-color="cell-foreground";
+        cursor-text="cell-background";
         cursor-opacity = 1.0;
         cursor-style = "block";
         cursor-style-blink = true;
