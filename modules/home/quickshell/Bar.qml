@@ -55,6 +55,9 @@ Scope {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         exclusiveZone: 0           // overlay — does not push windows
         color: "transparent"
+        mask: Region {
+            item: bar
+        }
 
         anchors.bottom: Config.bar.position === "bottom"
         anchors.top:    Config.bar.position === "top"
@@ -63,39 +66,33 @@ Scope {
 
         implicitHeight: Config.bar.height + Math.round(8 * Config.scale)
 
-        HoverHandler {
-            id: barHover
-            onHoveredChanged: {
-                if (hovered) {
-                    hideTimer.stop();
-                } else if (root.visible_) {
-                    hideTimer.restart();
-                }
-            }
-        }
-
         Rectangle {
             id: bar
 
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: Math.round(8 * Config.scale)
-                rightMargin: Math.round(8 * Config.scale)
-            }
-
-            // Pin to correct edge
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: Config.bar.position === "bottom" ? parent.bottom : undefined
             anchors.top:    Config.bar.position === "top"    ? parent.top    : undefined
             anchors.bottomMargin: Math.round(4 * Config.scale)
             anchors.topMargin:    Math.round(4 * Config.scale)
 
+            implicitWidth: barRow.implicitWidth + Config.bar.padding * 2
             implicitHeight: Config.bar.height
             radius: Config.bar.radius
             color: Config.colors.background
 
             border.color: Config.colors.border
             border.width: 1
+
+            HoverHandler {
+                id: barHover
+                onHoveredChanged: {
+                    if (hovered) {
+                        hideTimer.stop();
+                    } else if (root.visible_) {
+                        hideTimer.restart();
+                    }
+                }
+            }
 
             // Slide in/out from the edge
             transform: Translate {
@@ -121,8 +118,11 @@ Scope {
             }
 
             RowLayout {
+                id: barRow
                 anchors {
-                    fill: parent
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
                     leftMargin: Config.bar.padding
                     rightMargin: Config.bar.padding
                 }
@@ -169,7 +169,10 @@ Scope {
                         IconImage {
                             anchors.centerIn: parent
                             implicitSize: Config.bar.iconSize
-                            source: Quickshell.iconPath(modelData.icon)
+                            // icon may be a theme name or a full path/url
+                            source: modelData.icon.startsWith("/") || modelData.icon.startsWith(":")
+                                ? modelData.icon
+                                : Quickshell.iconPath(modelData.icon)
                         }
 
                         // Left click → activate
@@ -220,9 +223,6 @@ Scope {
                         }
                     }
                 }
-
-                // Spacer
-                Item { Layout.fillWidth: true }
             }
         }
     }
