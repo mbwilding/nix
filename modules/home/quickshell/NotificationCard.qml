@@ -29,6 +29,8 @@ Item {
     Component.onCompleted: Qt.callLater(() => {
         root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
         visible_ = true;
+        slideTranslate.x = 0;
+        card.opacity = 1;
     })
 
     Connections {
@@ -113,9 +115,8 @@ Item {
 
         transform: Translate {
             id: slideTranslate
-            x: root.visible_ ? 0 : card.width + 20
+            x: card.width + 20
             Behavior on x {
-                enabled: root.visible_
                 NumberAnimation {
                     duration: root.animateSpeed
                     easing.type: Easing.InOutQuad
@@ -123,9 +124,8 @@ Item {
             }
         }
 
-        opacity: root.visible_ ? 1 : 0
+        opacity: 0
         Behavior on opacity {
-            enabled: root.visible_
             NumberAnimation {
                 duration: root.animateSpeed
                 easing.type: Easing.InOutQuad
