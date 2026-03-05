@@ -1,10 +1,6 @@
 { pkgs, ... }:
 
 let
-  pamDir = pkgs.writeTextDir "pam/password.conf" ''
-    auth include login
-  '';
-
   soundTheme = pkgs.sound-theme-freedesktop;
   notificationSound = "${soundTheme}/share/sounds/freedesktop/stereo/message-new-instant.oga";
   volumeSound = "${soundTheme}/share/sounds/freedesktop/stereo/audio-volume-change.oga";
