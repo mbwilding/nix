@@ -54,6 +54,18 @@ QtObject {
         readonly property int fontSizeAction: root.font.sizeMd
     }
 
+    readonly property QtObject bar: QtObject {
+        readonly property int height: Math.round(40 * root.scale)
+        readonly property int animateSpeed: 200
+        readonly property int hideDelay: 4000             // ms before auto-hide after toggle
+        readonly property int radius: Math.round(10 * root.scale)
+        readonly property int iconSize: Math.round(18 * root.scale)
+        readonly property int spacing: Math.round(12 * root.scale)
+        readonly property int padding: Math.round(16 * root.scale)
+        readonly property int fontSizeClock: root.font.sizeLg
+        readonly property string position: "bottom"       // "top" or "bottom"
+    }
+
     readonly property QtObject battery: QtObject {
         readonly property var warnLevels: [
             {
