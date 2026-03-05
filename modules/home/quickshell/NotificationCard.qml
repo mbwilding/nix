@@ -11,14 +11,18 @@ Item {
 
     required property Notification notification
     property int animateSpeed: 250
+    property int timeout: 5000
 
-    // Slide in from the right
     property bool visible_: false
+    property bool exiting: false
+    property real cardHeight: 0
+    property bool heightAnimEnabled: false
 
-    implicitHeight: visible_ ? card.implicitHeight + 8 : 0
+    implicitHeight: exiting ? 0 : cardHeight
     implicitWidth: 360
 
     Behavior on implicitHeight {
+        enabled: root.heightAnimEnabled
         NumberAnimation {
             duration: root.animateSpeed
             easing.type: Easing.InOutQuad
@@ -26,6 +30,28 @@ Item {
     }
 
     clip: true
+
+    Component.onCompleted: {
+        Qt.callLater(() => {
+            // Set height instantly (no animation) then enable animation for exit collapse
+            cardHeight = card.implicitHeight + 8;
+            heightAnimEnabled = true;
+            visible_ = true;
+        });
+    }
+
+    Timer {
+        id: dismissTimer
+        interval: root.timeout
+        running: root.visible_
+        onTriggered: root.notification?.dismiss()
+    }
+
+    Timer {
+        id: collapseTimer
+        interval: root.animateSpeed
+        onTriggered: root.exiting = true
+    }
 
     Rectangle {
         id: card
@@ -35,7 +61,6 @@ Item {
             right: parent.right
             top: parent.top
             topMargin: 4
-            bottomMargin: 4
         }
 
         implicitHeight: cardContent.implicitHeight + 20
@@ -45,7 +70,6 @@ Item {
         border.color: "#30ffffff"
         border.width: 1
 
-        // Slide in transform
         transform: Translate {
             x: root.visible_ ? 0 : card.width + 20
             Behavior on x {
@@ -64,6 +88,22 @@ Item {
             }
         }
 
+        // Card tap — invoke default action or launch desktop entry
+        TapHandler {
+            onTapped: {
+                const n = root.notification;
+                if (!n) return;
+                const def = (n.actions ?? []).find(a => a.identifier === "default");
+                if (def) {
+                    def.invoke();
+                } else if (n.desktopEntry && n.desktopEntry !== "") {
+                    const entry = DesktopEntries.byId(n.desktopEntry);
+                    if (entry) entry.launch();
+                }
+                n.dismiss();
+            }
+        }
+
         // Left accent bar
         Rectangle {
             anchors {
@@ -72,7 +112,6 @@ Item {
                 bottom: parent.bottom
                 topMargin: 6
                 bottomMargin: 6
-                leftMargin: 0
             }
             width: 3
             radius: 2
@@ -93,14 +132,12 @@ Item {
 
             spacing: 4
 
-            // Header: app icon + app name + close button
+            // Header: app icon + app name + timestamp
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 8
 
-                // App icon
                 IconImage {
-                    id: appIcon
                     implicitSize: 18
                     source: {
                         const n = root.notification;
@@ -115,7 +152,6 @@ Item {
                     visible: source !== ""
                 }
 
-                // App name
                 Text {
                     text: root.notification?.appName ?? ""
                     color: "#a0a0ff"
@@ -125,29 +161,20 @@ Item {
                     Layout.fillWidth: true
                 }
 
-                // Timestamp
                 Text {
-                    text: {
-                        const n = root.notification;
-                        if (!n) return "";
-                        const d = new Date();
-                        return Qt.formatTime(d, "hh:mm");
-                    }
+                    text: Qt.formatTime(new Date(), "hh:mm")
                     color: "#60ffffff"
                     font.pixelSize: 10
                 }
 
                 // Close button
-                Item {
+                Rectangle {
                     implicitWidth: 18
                     implicitHeight: 18
+                    radius: 9
+                    color: closeHover.containsMouse ? "#50ffffff" : "transparent"
 
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: 9
-                        color: closeHover.containsMouse ? "#40ffffff" : "transparent"
-                        Behavior on color { ColorAnimation { duration: 120 } }
-                    }
+                    Behavior on color { ColorAnimation { duration: 100 } }
 
                     Text {
                         anchors.centerIn: parent
@@ -163,7 +190,7 @@ Item {
                 }
             }
 
-            // Summary (title)
+            // Summary
             Text {
                 text: root.notification?.summary ?? ""
                 color: "white"
@@ -192,7 +219,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.bottomMargin: 2
                 spacing: 6
-                visible: root.notification?.actions?.length > 0
+                visible: (root.notification?.actions?.length ?? 0) > 0
 
                 Repeater {
                     model: root.notification?.actions ?? []
@@ -219,7 +246,10 @@ Item {
 
                         HoverHandler { id: actionHover }
                         TapHandler {
-                            onTapped: modelData.invoke()
+                            onTapped: {
+                                modelData.invoke();
+                                root.notification?.dismiss();
+                            }
                         }
                     }
                 }
