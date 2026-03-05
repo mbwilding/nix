@@ -10,89 +10,62 @@ import Quickshell.Services.Pipewire
 Scope {
     id: root
 
+    property bool anyVisible: false
+    property bool kbdVisible: false
+    property bool screenVisible: false
+    property bool volumeVisible: false
+    property int _kbdMax: 1
+    property int _kbdRaw: -1
+    property int _screenMax: 1
+    property int _screenRaw: -1
+    property real kbdBrightness: 0
+    property real screenBrightness: 0
+    readonly property bool kbdAvailable: _kbdMax > 1
+    readonly property bool screenAvailable: _screenMax > 1
+    readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
+    readonly property int animation: 250
     readonly property int hideDelay: 1500
-
-    // Ordered list of slot keys in activation order — first triggered is index
-    // 0 (top), newest is last (bottom). Cleared when the panel hides so the
-    // next session starts fresh.
-    property var slotOrder: []
-
-    function activate(key) {
-        if (root.slotOrder.indexOf(key) === -1) {
-            root.slotOrder = root.slotOrder.concat(key);
-        }
-        hideTimer.restart();
-    }
+    readonly property int panelHeight: root.rowCount * 50 + 16
+    readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
 
     Timer {
         id: hideTimer
         interval: root.hideDelay
         onTriggered: root.anyVisible = false
-        // slotOrder is cleared by the slide animation's onFinished so the
-        // panel height stays intact for the full duration of the slide-out.
     }
 
     Timer {
         id: clearTimer
-        interval: 250  // matches slide animation duration
-        onTriggered: root.slotOrder = []
-    }
-
-    property bool anyVisible: false
-
-    // Slot data looked up by key in the Repeater delegate
-    function slotIcon(key) {
-        if (key === "volume") {
-            const audio = Pipewire.defaultAudioSink?.audio;
-            if (!audio || audio.muted) return "audio-volume-muted-symbolic";
-            const vol = audio.volume;
-            if (vol <= 0.33) return "audio-volume-low-symbolic";
-            if (vol <= 0.66) return "audio-volume-medium-symbolic";
-            return "audio-volume-high-symbolic";
+        interval: root.animation
+        onTriggered: {
+            root.volumeVisible = false;
+            root.screenVisible = false;
+            root.kbdVisible = false;
         }
-        if (key === "screen") return "video-display-brightness-symbolic";
-        if (key === "kbd")    return "input-keyboard-brightness";
-        return "";
     }
 
-    function slotValue(key) {
-        if (key === "volume") return Pipewire.defaultAudioSink?.audio.volume ?? 0;
-        if (key === "screen") return root.screenBrightness;
-        if (key === "kbd")    return root.kbdBrightness;
-        return 0;
+    function show() {
+        root.anyVisible = true;
+        hideTimer.restart();
     }
 
-    function slotLabel(key) {
-        return Math.round(root.slotValue(key) * 100) + "%";
-    }
-
-    function slotMaxLabel(key) {
-        return key === "volume" ? "150%" : "100%";
-    }
-
-    // ── Volume ────────────────────────────────────────────────────────────────
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
 
     Connections {
-        target: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
+        target: root.volumeAvailable ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
-            root.anyVisible = true;
-            root.activate("volume");
+            root.volumeVisible = true;
+            root.show();
         }
 
         function onMutedChanged() {
-            root.anyVisible = true;
-            root.activate("volume");
+            root.volumeVisible = true;
+            root.show();
         }
     }
-
-    // ── Screen brightness ─────────────────────────────────────────────────────
-    property real screenBrightness: 0
-    property int _screenRaw: -1
-    property int _screenMax: 1
 
     Process {
         command: ["cat", "/sys/class/backlight/amdgpu_bl1/max_brightness"]
@@ -100,7 +73,8 @@ Scope {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) root._screenMax = v;
+                if (!isNaN(v) && v > 0)
+                    root._screenMax = v;
             }
         }
     }
@@ -108,7 +82,7 @@ Scope {
     Timer {
         interval: 200
         repeat: true
-        running: true
+        running: root.screenAvailable || root._screenMax === 1
         onTriggered: screenPollProc.running = true
     }
 
@@ -121,17 +95,14 @@ Scope {
                 if (!isNaN(v) && v !== root._screenRaw) {
                     root._screenRaw = v;
                     root.screenBrightness = v / root._screenMax;
-                    root.anyVisible = true;
-                    root.activate("screen");
+                    if (root.screenAvailable) {
+                        root.screenVisible = true;
+                        root.show();
+                    }
                 }
             }
         }
     }
-
-    // ── Keyboard brightness ───────────────────────────────────────────────────
-    property real kbdBrightness: 0
-    property int _kbdRaw: -1
-    property int _kbdMax: 1
 
     Process {
         command: ["cat", "/sys/class/leds/platform::kbd_backlight/max_brightness"]
@@ -139,7 +110,8 @@ Scope {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) root._kbdMax = v;
+                if (!isNaN(v) && v > 0)
+                    root._kbdMax = v;
             }
         }
     }
@@ -147,7 +119,7 @@ Scope {
     Timer {
         interval: 200
         repeat: true
-        running: true
+        running: root.kbdAvailable || root._kbdMax === 1
         onTriggered: kbdPollProc.running = true
     }
 
@@ -160,15 +132,14 @@ Scope {
                 if (!isNaN(v) && v !== root._kbdRaw) {
                     root._kbdRaw = v;
                     root.kbdBrightness = v / root._kbdMax;
-                    root.anyVisible = true;
-                    root.activate("kbd");
+                    if (root.kbdAvailable) {
+                        root.kbdVisible = true;
+                        root.show();
+                    }
                 }
             }
         }
     }
-
-    // ── Panel ─────────────────────────────────────────────────────────────────
-    readonly property int panelHeight: root.slotOrder.length * 50 + 16
 
     PanelWindow {
         anchors.bottom: true
@@ -190,16 +161,20 @@ Scope {
                 y: root.anyVisible ? 0 : panel.height
                 Behavior on y {
                     NumberAnimation {
-                        duration: 250
+                        duration: root.animation
                         easing.type: Easing.InOutQuad
-                        onFinished: if (!root.anyVisible) clearTimer.start()
+                        onFinished: if (!root.anyVisible)
+                            clearTimer.start()
                     }
                 }
             }
 
             opacity: root.anyVisible ? 1 : 0
             Behavior on opacity {
-                NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: root.animation
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             Column {
@@ -209,17 +184,32 @@ Scope {
                     bottomMargin: 8
                 }
 
-                Repeater {
-                    model: root.slotOrder
-
-                    OsdRow {
-                        required property string modelData
-                        width: parent.width
-                        iconName: root.slotIcon(modelData)
-                        value: root.slotValue(modelData)
-                        label: root.slotLabel(modelData)
-                        maxLabel: root.slotMaxLabel(modelData)
+                OsdRow {
+                    iconName: {
+                        const audio = Pipewire.defaultAudioSink?.audio;
+                        if (!audio || audio.muted)
+                            return "audio-volume-muted-symbolic";
+                        const vol = audio.volume;
+                        if (vol <= 0.33)
+                            return "audio-volume-low-symbolic";
+                        if (vol <= 0.66)
+                            return "audio-volume-medium-symbolic";
+                        return "audio-volume-high-symbolic";
                     }
+                    value: Pipewire.defaultAudioSink?.audio.volume ?? 0
+                    label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                }
+
+                OsdRow {
+                    iconName: "video-display-brightness-symbolic"
+                    value: root.screenBrightness
+                    label: Math.round(root.screenBrightness * 100) + "%"
+                }
+
+                OsdRow {
+                    iconName: "input-keyboard-brightness"
+                    value: root.kbdBrightness
+                    label: Math.round(root.kbdBrightness * 100) + "%"
                 }
             }
         }
