@@ -10,9 +10,7 @@ import Quickshell.Services.Notifications
 Scope {
     id: root
 
-    readonly property int animateSpeed: 250
     readonly property int maxNotifications: 5
-    readonly property int timeout: 5000
 
     NotificationServer {
         id: server
@@ -51,7 +49,7 @@ Scope {
             move: Transition {
                 NumberAnimation {
                     properties: "y"
-                    duration: root.animateSpeed
+                    duration: Config.notifications.animateSpeed
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -62,8 +60,8 @@ Scope {
                     required property Notification modelData
 
                     notification: modelData
-                    animateSpeed: root.animateSpeed
-                    timeout: root.timeout
+                    animateSpeed: Config.notifications.animateSpeed
+                    timeout: Config.notifications.timeout
                     width: 360
                     parent: notifColumn
 

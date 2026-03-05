@@ -8,7 +8,6 @@ import Quickshell.Widgets
 Item {
     id: root
 
-    property int animateSpeed: 150
     property real displayValue: 0
     property real value: 0
     property string iconName: ""
@@ -17,7 +16,7 @@ Item {
     onValueChanged: displayValue = value
     Behavior on displayValue {
         NumberAnimation {
-            duration: root.animateSpeed
+            duration: Config.osd.animateSpeed
             easing.type: Easing.OutQuad
         }
     }
@@ -41,7 +40,7 @@ Item {
             Layout.fillWidth: true
             implicitHeight: 10
             radius: 20
-            color: "#50ffffff"
+            color: Config.colors.backgroundBar
 
             Rectangle {
                 anchors {
@@ -52,13 +51,18 @@ Item {
                 property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
                 implicitWidth: Math.min(parent.width, parent.width * root.displayValue)
                 radius: parent.radius
-                color: Qt.rgba(1, 1 - excessRatio, 1 - excessRatio, 1)
+                color: Qt.rgba(
+                    Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio,
+                    Config.colors.accent.g * (1 - excessRatio),
+                    Config.colors.accent.b * (1 - excessRatio),
+                    1
+                )
             }
         }
 
         Text {
             text: root.label
-            color: "white"
+            color: Config.colors.textPrimary
             font.pixelSize: 14
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: labelMetrics.boundingRect.width

@@ -10,12 +10,12 @@ Item {
     id: root
 
     required property Notification notification
-    property int animateSpeed: 250
-    property int timeout: 5000
+    property int animateSpeed: Config.notifications.animateSpeed
+    property int timeout: Config.notifications.timeout
 
     property bool visible_: false
 
-    // Height is fixed once latched — only snaps to 0 after slide-out completes
+    // Height is fixed once latched — only collapses after slide-out completes
     property real latchedHeight: 0
     implicitHeight: latchedHeight
     implicitWidth: 360
@@ -43,7 +43,7 @@ Item {
     SequentialAnimation {
         id: exitAnim
 
-        // Step 1: slide card out to the right + fade (keep height stable)
+        // Step 1: slide card out to the right + fade (height stays stable)
         ParallelAnimation {
             NumberAnimation {
                 target: slideTranslate
@@ -61,7 +61,7 @@ Item {
             }
         }
 
-        // Step 2: collapse height so cards below shuffle up
+        // Step 2: collapse height so cards below shuffle up smoothly
         NumberAnimation {
             target: root
             property: "latchedHeight"
@@ -70,7 +70,7 @@ Item {
             easing.type: Easing.InOutQuad
         }
 
-        // Step 3: notify server
+        // Step 3: notify server the notification is gone
         ScriptAction {
             script: {
                 root.visible_ = false;
@@ -91,9 +91,9 @@ Item {
 
         implicitHeight: cardContent.implicitHeight + 20
         radius: 12
-        color: "#cc1a1a2e"
+        color: Config.colors.background
 
-        border.color: "#30ffffff"
+        border.color: Config.colors.border
         border.width: 1
 
         transform: Translate {
@@ -144,7 +144,7 @@ Item {
             }
             width: 3
             radius: 2
-            color: "#a0a0ff"
+            color: Config.colors.accent
         }
 
         ColumnLayout {
@@ -161,7 +161,7 @@ Item {
 
             spacing: 4
 
-            // Header: app icon + app name + timestamp
+            // Header: app icon + app name + timestamp + close button
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 8
@@ -183,7 +183,7 @@ Item {
 
                 Text {
                     text: root.notification?.appName ?? ""
-                    color: "#a0a0ff"
+                    color: Config.colors.accent
                     font.pixelSize: 11
                     font.weight: Font.Medium
                     elide: Text.ElideRight
@@ -192,7 +192,7 @@ Item {
 
                 Text {
                     text: Qt.formatTime(new Date(), "hh:mm")
-                    color: "#60ffffff"
+                    color: Config.colors.textMuted
                     font.pixelSize: 10
                 }
 
@@ -201,14 +201,14 @@ Item {
                     implicitWidth: 18
                     implicitHeight: 18
                     radius: 9
-                    color: closeHover.containsMouse ? "#50ffffff" : "transparent"
+                    color: closeHover.containsMouse ? Config.colors.border : "transparent"
 
                     Behavior on color { ColorAnimation { duration: 100 } }
 
                     Text {
                         anchors.centerIn: parent
                         text: "✕"
-                        color: "#80ffffff"
+                        color: Config.colors.textMuted
                         font.pixelSize: 10
                     }
 
@@ -222,7 +222,7 @@ Item {
             // Summary
             Text {
                 text: root.notification?.summary ?? ""
-                color: "white"
+                color: Config.colors.textPrimary
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
@@ -233,7 +233,7 @@ Item {
             // Body
             Text {
                 text: root.notification?.body ?? ""
-                color: "#ccffffff"
+                color: Config.colors.textSecondary
                 font.pixelSize: 12
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -259,8 +259,8 @@ Item {
                         implicitHeight: 24
                         implicitWidth: actionLabel.implicitWidth + 16
                         radius: 6
-                        color: actionHover.containsMouse ? "#50a0a0ff" : "#30ffffff"
-                        border.color: "#30ffffff"
+                        color: actionHover.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.3) : Config.colors.border
+                        border.color: Config.colors.border
                         border.width: 1
 
                         Behavior on color { ColorAnimation { duration: 120 } }
@@ -269,7 +269,7 @@ Item {
                             id: actionLabel
                             anchors.centerIn: parent
                             text: modelData.text
-                            color: "white"
+                            color: Config.colors.textPrimary
                             font.pixelSize: 11
                         }
 
