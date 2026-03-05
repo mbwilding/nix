@@ -4,17 +4,11 @@ import QtQuick
 import QtQuick.Layouts
 import QtQml.Models
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 
 Scope {
     id: root
-
-    Process {
-        id: soundProc
-        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/message.oga\"; [ -f \"$f\" ] && exec paplay \"$f\"; done"]
-    }
 
     NotificationServer {
         id: server
@@ -26,8 +20,7 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
-            if (Config.soundEnabled)
-                soundProc.running = true;
+            Sounds.playNotification();
         }
     }
 
