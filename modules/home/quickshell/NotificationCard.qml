@@ -122,7 +122,7 @@ Item {
             }
         }
 
-        // Card tap — invoke default action or launch desktop entry
+        // Card tap
         TapHandler {
             onTapped: {
                 const n = root.notification;
