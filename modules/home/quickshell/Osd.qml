@@ -71,7 +71,7 @@ Scope {
 
     Process {
         id: volumeSoundProc
-        command: ["paplay", "/run/current-system/sw/share/sounds/freedesktop/stereo/audio-volume-change.oga"]
+        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/audio-volume-change.oga\"; [ -f \"$f\" ] && exec paplay \"$f\"; done"]
     }
 
     Connections {
