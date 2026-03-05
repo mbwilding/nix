@@ -332,7 +332,10 @@ in
     enable = true;
     package = pkgs.hyprland;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
-    systemd.variables = [ "--all" ];
+    systemd = {
+      enable = true;
+      variables = [ "--all" ];
+    };
     importantPrefixes = [
       "$mod"
       "output"
@@ -442,8 +445,8 @@ in
         "$mod, N, exec, neovide"
         "$mod, P, exec, 1password"
         "$mod, R, exec, wofi --show drun"
-        "$mod, T, exec, ghostty"
-        "$mod, C, exec, ghostty -e btop"
+        "$mod, T, exec, ghostty +new-window"
+        "$mod, C, exec, ghostty -e btop +new-window"
         "$mod, S, exec, spotify"
         "$mod, M, exec, teams-for-linux"
         "$mod, D, exec, discord"
