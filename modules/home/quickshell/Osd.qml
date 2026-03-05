@@ -182,7 +182,7 @@ Scope {
                     OsdRow {
                         width: parent.width
                         visible: root.screenBrightnessVisible
-                        iconName: "display-brightness-symbolic"
+                        iconName: "video-display-brightness-symbolic"
                         value: root.screenBrightness
                         label: Math.round(root.screenBrightness * 100) + "%"
                     }
@@ -190,7 +190,7 @@ Scope {
                     OsdRow {
                         width: parent.width
                         visible: root.kbdBrightnessVisible
-                        iconName: "keyboard-brightness-symbolic"
+                        iconName: "input-keyboard-brightness"
                         value: root.kbdBrightness
                         label: Math.round(root.kbdBrightness * 100) + "%"
                     }
