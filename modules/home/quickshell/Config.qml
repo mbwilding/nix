@@ -47,5 +47,6 @@ QtObject {
         readonly property int iconSize: Math.round(18 * root.scale)
         readonly property int radius: Math.round(12 * root.scale)
         readonly property int accentBar: Math.round(3 * root.scale)
+        readonly property int bodyMaxLines: 0
     }
 }
