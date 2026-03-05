@@ -84,6 +84,11 @@ let
   };
 in
 {
+  imports = [
+    ./wofi.nix
+    ./quickshell.nix
+  ];
+
   home = {
     packages = with pkgs; [
       hyprshot
