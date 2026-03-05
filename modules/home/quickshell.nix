@@ -12,6 +12,7 @@ let
   config = pkgs.runCommand "quickshell-config" { } ''
     mkdir -p $out
     cp ${shellQml} $out/shell.qml
+    cp ${./quickshell/osd.qml} $out/osd.qml
   '';
 
   qmlImportPaths = [
