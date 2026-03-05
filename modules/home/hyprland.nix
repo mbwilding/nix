@@ -92,7 +92,7 @@ in
   home = {
     packages = with pkgs; [
       hyprshot
-      hyprnotify
+      # hyprnotify
       kdePackages.breeze
       kdePackages.plasma-integration
       pulseaudio
@@ -415,7 +415,7 @@ in
 
       exec-once = [
         "systemctl --user start hyprpolkitagent"
-        "hyprnotify"
+        # "hyprnotify"
         # "nm-applet"
         # "hyprpaper"
         # "hyprpanel"
