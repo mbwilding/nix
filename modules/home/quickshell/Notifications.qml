@@ -10,8 +10,6 @@ import Quickshell.Services.Notifications
 Scope {
     id: root
 
-    readonly property int maxNotifications: 5
-
     NotificationServer {
         id: server
         keepOnReload: true
