@@ -51,12 +51,7 @@ Item {
                 property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
                 implicitWidth: Math.min(parent.width, parent.width * root.displayValue)
                 radius: parent.radius
-                color: Qt.rgba(
-                    Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio,
-                    Config.colors.accent.g * (1 - excessRatio),
-                    Config.colors.accent.b * (1 - excessRatio),
-                    1
-                )
+                color: Qt.rgba(Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio, Config.colors.accent.g * (1 - excessRatio), Config.colors.accent.b * (1 - excessRatio), 1)
             }
         }
 

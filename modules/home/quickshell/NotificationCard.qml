@@ -205,7 +205,11 @@ Item {
                     radius: Math.round(9 * Config.scale)
                     color: closeHover.containsMouse ? Config.colors.border : "transparent"
 
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 100
+                        }
+                    }
 
                     Text {
                         anchors.centerIn: parent
@@ -215,7 +219,9 @@ Item {
                         font.pixelSize: Config.font.sizeSm
                     }
 
-                    HoverHandler { id: closeHover }
+                    HoverHandler {
+                        id: closeHover
+                    }
                     TapHandler {
                         onTapped: root.animateOut()
                     }
@@ -244,7 +250,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.bottomMargin: Math.round(2 * Config.scale)
                 visible: text !== ""
-                maximumLineCount: 4
+                maximumLineCount: Config.notifications.bodyMaxLines === 0 ? Number.MAX_VALUE : Config.notifications.bodyMaxLines
                 elide: Text.ElideRight
             }
 
@@ -268,7 +274,11 @@ Item {
                         border.color: Config.colors.border
                         border.width: 1
 
-                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 120
+                            }
+                        }
 
                         Text {
                             id: actionLabel
@@ -279,7 +289,9 @@ Item {
                             font.pixelSize: Config.font.sizeXs
                         }
 
-                        HoverHandler { id: actionHover }
+                        HoverHandler {
+                            id: actionHover
+                        }
                         TapHandler {
                             onTapped: {
                                 modelData.invoke();
