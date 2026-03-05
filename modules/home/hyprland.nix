@@ -555,18 +555,15 @@ in
       device = [
         {
           name = "dygma-defy-keyboard";
-          kb_layout = "us";
-          kb_variant = "us";
+          kb_variant = "";
         }
         {
           name = "cornemini-keyboard";
-          kb_layout = "us";
-          kb_variant = "us";
+          kb_variant = "";
         }
         {
           name = "zsa-technology-labs-voyager";
-          kb_layout = "us";
-          kb_variant = "us";
+          kb_variant = "";
         }
       ];
 
