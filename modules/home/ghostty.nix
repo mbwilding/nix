@@ -1,4 +1,9 @@
-{ lib, config, hostname, ... }:
+{
+  lib,
+  config,
+  hostname,
+  ...
+}:
 
 let
   mod = "super+shift+ctrl+alt";
@@ -49,6 +54,7 @@ in
         mouse-hide-while-typing = true;
         mouse-shift-capture = false;
         quit-after-last-window-closed = true;
+        quit-after-last-window-closed-delay = "5m";
         resize-overlay = "never";
         shell-integration =
           if config.programs.fish.enable then
