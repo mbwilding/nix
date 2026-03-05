@@ -10,10 +10,8 @@ import Quickshell.Services.Pipewire
 Scope {
     id: root
 
-    // How long each slot stays visible after its last change (ms)
     readonly property int hideDelay: 1000
 
-    // ── Volume ────────────────────────────────────────────────────────────────
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
@@ -40,8 +38,6 @@ Scope {
         onTriggered: root.volumeVisible = false
     }
 
-    // ── Screen brightness ─────────────────────────────────────────────────────
-    // sysfs doesn't emit inotify events, so we poll and detect changes manually.
     property bool screenBrightnessVisible: false
     property real screenBrightness: 0
     property int _screenRaw: -1
@@ -54,7 +50,8 @@ Scope {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) root._screenMax = v;
+                if (!isNaN(v) && v > 0)
+                    root._screenMax = v;
             }
         }
     }
@@ -88,7 +85,6 @@ Scope {
         onTriggered: root.screenBrightnessVisible = false
     }
 
-    // ── Keyboard brightness ───────────────────────────────────────────────────
     property bool kbdBrightnessVisible: false
     property real kbdBrightness: 0
     property int _kbdRaw: -1
@@ -101,7 +97,8 @@ Scope {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) root._kbdMax = v;
+                if (!isNaN(v) && v > 0)
+                    root._kbdMax = v;
             }
         }
     }
@@ -135,7 +132,6 @@ Scope {
         onTriggered: root.kbdBrightnessVisible = false
     }
 
-    // ── Panel ─────────────────────────────────────────────────────────────────
     property bool anyVisible: root.volumeVisible || root.screenBrightnessVisible || root.kbdBrightnessVisible
 
     LazyLoader {
@@ -172,8 +168,10 @@ Scope {
                             if (!audio || audio.muted)
                                 return "audio-volume-muted-symbolic";
                             const vol = audio.volume;
-                            if (vol <= 0.33) return "audio-volume-low-symbolic";
-                            if (vol <= 0.66) return "audio-volume-medium-symbolic";
+                            if (vol <= 0.33)
+                                return "audio-volume-low-symbolic";
+                            if (vol <= 0.66)
+                                return "audio-volume-medium-symbolic";
                             return "audio-volume-high-symbolic";
                         }
                         value: Pipewire.defaultAudioSink?.audio.volume ?? 0
