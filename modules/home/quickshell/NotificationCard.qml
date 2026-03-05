@@ -14,6 +14,13 @@ Item {
     property int timeout: Config.notifications.timeout
     property bool visible_: false
     property real latchedHeight: 0
+    property bool _pendingExit: false
+    readonly property bool atTop: y === 0
+
+    onYChanged: {
+        if (_pendingExit && atTop)
+            exitAnim.start();
+    }
 
     clip: false
     implicitHeight: latchedHeight
@@ -35,7 +42,11 @@ Item {
         if (!root.visible_)
             return;
         dismissTimer.stop();
-        exitAnim.start();
+        if (root.atTop) {
+            exitAnim.start();
+        } else {
+            root._pendingExit = true;
+        }
     }
 
     Timer {
