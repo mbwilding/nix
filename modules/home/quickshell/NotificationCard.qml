@@ -23,9 +23,6 @@ Item {
         visible_ = true;
     })
 
-    // Watch card.implicitHeight directly — body text wrapping requires multiple
-    // layout passes before the true height is known, so we can't latch once on completion.
-    // Guard against updating during exit animation.
     Connections {
         target: card
         function onImplicitHeightChanged() {
@@ -179,8 +176,11 @@ Item {
                         const n = root.notification;
                         if (!n)
                             return "";
-                        if (n.appIcon !== "")
-                            return Quickshell.iconPath(n.appIcon);
+                        if (n.appIcon !== "") {
+                            const path = Quickshell.iconPath(n.appIcon);
+                            if (path !== "")
+                                return path;
+                        }
                         if (n.desktopEntry !== "" && n.desktopEntry !== null) {
                             const entry = DesktopEntries.byId(n.desktopEntry);
                             if (entry && entry.icon !== "")
@@ -195,7 +195,7 @@ Item {
                     text: root.notification?.appName ?? ""
                     color: Config.colors.accent
                     font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeXs
+                    font.pixelSize: Config.notifications.fontSizeAppName
                     font.weight: Font.Medium
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -205,7 +205,7 @@ Item {
                     text: Qt.formatTime(new Date(), "hh:mm")
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
+                    font.pixelSize: Config.notifications.fontSizeTimestamp
                 }
 
                 // Close button
@@ -226,7 +226,7 @@ Item {
                         text: "✕"
                         color: Config.colors.textMuted
                         font.family: Config.font.family
-                        font.pixelSize: Config.font.sizeSm
+                        font.pixelSize: Config.notifications.fontSizeTimestamp
                     }
 
                     HoverHandler {
@@ -243,7 +243,7 @@ Item {
                 text: root.notification?.summary ?? ""
                 color: Config.colors.textPrimary
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeLg
+                font.pixelSize: Config.notifications.fontSizeSummary
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 Layout.fillWidth: true
@@ -255,7 +255,7 @@ Item {
                 text: root.notification?.body ?? ""
                 color: Config.colors.textSecondary
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
+                font.pixelSize: Config.notifications.fontSizeBody
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
                 Layout.bottomMargin: Math.round(2 * Config.scale)
@@ -296,7 +296,7 @@ Item {
                             text: modelData.text
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeXs
+                            font.pixelSize: Config.notifications.fontSizeAction
                         }
 
                         HoverHandler {
