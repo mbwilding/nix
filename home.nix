@@ -28,6 +28,7 @@
     ./modules/home/shells
     ./modules/home/ssh.nix
     ./modules/home/wine.nix
+    ./modules/home/wofi.nix
     ./modules/home/yazi.nix
     ./modules/home/zoxide.nix
   ];
