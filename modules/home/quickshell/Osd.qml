@@ -10,7 +10,7 @@ import Quickshell.Services.Pipewire
 Scope {
     id: root
 
-    readonly property int hideDelay: 1000
+    readonly property int hideDelay: 1500
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
@@ -134,66 +134,80 @@ Scope {
 
     property bool anyVisible: root.volumeVisible || root.screenBrightnessVisible || root.kbdBrightnessVisible
 
-    LazyLoader {
-        active: root.anyVisible
+    // Count of currently shown rows, used to size the panel without depending
+    // on the animated implicitHeight of OsdRow children.
+    readonly property int visibleRowCount: (root.volumeVisible ? 1 : 0) + (root.screenBrightnessVisible ? 1 : 0) + (root.kbdBrightnessVisible ? 1 : 0)
 
-        PanelWindow {
-            anchors.bottom: true
-            margins.bottom: screen.height / 5
-            exclusiveZone: 0
-            color: "transparent"
-            mask: Region {}
+    PanelWindow {
+        anchors.bottom: true
+        margins.bottom: 0
+        exclusiveZone: 0
+        color: "transparent"
+        mask: Region {}
 
-            implicitWidth: 400
-            implicitHeight: visibleColumn.implicitHeight + 16
+        implicitWidth: 400
+        implicitHeight: root.visibleRowCount * 50 + 16
 
-            Rectangle {
-                anchors.fill: parent
-                radius: 12
-                color: "#80000000"
+        Behavior on implicitHeight {
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
+            }
+        }
 
-                Column {
-                    id: visibleColumn
-                    anchors {
-                        fill: parent
-                        topMargin: 8
-                        bottomMargin: 8
+        Rectangle {
+            anchors.fill: parent
+            radius: 12
+            color: "#80000000"
+            opacity: root.anyVisible ? 1 : 0
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            Column {
+                anchors {
+                    fill: parent
+                    topMargin: 8
+                    bottomMargin: 8
+                }
+
+                OsdRow {
+                    width: parent.width
+                    shown: root.volumeVisible
+                    iconName: {
+                        const audio = Pipewire.defaultAudioSink?.audio;
+                        if (!audio || audio.muted)
+                            return "audio-volume-muted-symbolic";
+                        const vol = audio.volume;
+                        if (vol <= 0.33)
+                            return "audio-volume-low-symbolic";
+                        if (vol <= 0.66)
+                            return "audio-volume-medium-symbolic";
+                        return "audio-volume-high-symbolic";
                     }
+                    value: Pipewire.defaultAudioSink?.audio.volume ?? 0
+                    label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                    maxLabel: "150%"
+                }
 
-                    OsdRow {
-                        width: parent.width
-                        visible: root.volumeVisible
-                        iconName: {
-                            const audio = Pipewire.defaultAudioSink?.audio;
-                            if (!audio || audio.muted)
-                                return "audio-volume-muted-symbolic";
-                            const vol = audio.volume;
-                            if (vol <= 0.33)
-                                return "audio-volume-low-symbolic";
-                            if (vol <= 0.66)
-                                return "audio-volume-medium-symbolic";
-                            return "audio-volume-high-symbolic";
-                        }
-                        value: Pipewire.defaultAudioSink?.audio.volume ?? 0
-                        label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
-                        maxLabel: "150%"
-                    }
+                OsdRow {
+                    width: parent.width
+                    shown: root.screenBrightnessVisible
+                    iconName: "video-display-brightness-symbolic"
+                    value: root.screenBrightness
+                    label: Math.round(root.screenBrightness * 100) + "%"
+                }
 
-                    OsdRow {
-                        width: parent.width
-                        visible: root.screenBrightnessVisible
-                        iconName: "video-display-brightness-symbolic"
-                        value: root.screenBrightness
-                        label: Math.round(root.screenBrightness * 100) + "%"
-                    }
-
-                    OsdRow {
-                        width: parent.width
-                        visible: root.kbdBrightnessVisible
-                        iconName: "input-keyboard-brightness"
-                        value: root.kbdBrightness
-                        label: Math.round(root.kbdBrightness * 100) + "%"
-                    }
+                OsdRow {
+                    width: parent.width
+                    shown: root.kbdBrightnessVisible
+                    iconName: "input-keyboard-brightness"
+                    value: root.kbdBrightness
+                    label: Math.round(root.kbdBrightness * 100) + "%"
                 }
             }
         }

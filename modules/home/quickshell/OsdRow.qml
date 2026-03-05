@@ -13,8 +13,21 @@ Item {
     property string label: ""
     property string maxLabel: "100%"
 
-    implicitHeight: 50
+    // Drive this instead of `visible` directly so the row animates in/out.
+    property bool shown: false
+
+    implicitHeight: shown ? 50 : 0
     implicitWidth: 400
+    opacity: shown ? 1 : 0
+    visible: opacity > 0  // keep in layout only while still fading
+
+    Behavior on implicitHeight {
+        NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+    }
+
+    Behavior on opacity {
+        NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+    }
 
     RowLayout {
         anchors {
@@ -57,7 +70,7 @@ Item {
 
             TextMetrics {
                 id: labelMetrics
-                font: parent.font
+                font.pixelSize: 14
                 text: root.maxLabel
             }
         }
