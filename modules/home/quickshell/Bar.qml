@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
+import Quickshell.DBusMenu
 import Quickshell.Services.SystemTray
 
 Scope {
@@ -47,16 +48,45 @@ Scope {
         onTriggered: root.visible_ = false
     }
 
+    // Resolve a tray icon string to a usable source URL.
+    // Apps like Steam send: image://icon/steam_tray_mono?path=/some/dir
+    // Quickshell can't resolve custom icon paths, so we extract the name
+    // and path and look for the file directly on disk.
+    function resolveIcon(icon) {
+        if (!icon || icon === "") return "";
+        // Full filesystem path
+        if (icon.startsWith("/")) return icon;
+        // image://icon/NAME?path=DIR  — custom icon path
+        const m = icon.match(/^image:\/\/icon\/([^?]+)\?path=(.+)$/);
+        if (m) {
+            const name = m[1];
+            const dirs = m[2].split(":");
+            for (const dir of dirs) {
+                // try common extensions
+                for (const ext of ["png", "svg", "xpm"]) {
+                    const path = dir + "/" + name + "." + ext;
+                    // Return as a file URL — QML Image will verify existence
+                    return "file://" + path;
+                }
+            }
+            // Fall back to theme lookup by name only
+            return Quickshell.iconPath(name);
+        }
+        // Plain icon name — look up in theme
+        return Quickshell.iconPath(icon);
+    }
+
     // ── Bar window ───────────────────────────────────────────────────────────
     PanelWindow {
         id: barWindow
 
         WlrLayershell.layer: WlrLayer.Top
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-        exclusiveZone: 0           // overlay — does not push windows
+        exclusiveZone: 0
         color: "transparent"
         mask: Region {
-            item: bar
+            Region { item: bar }
+            Region { item: menuPopup }
         }
 
         anchors.bottom: Config.bar.position === "bottom"
@@ -65,6 +95,121 @@ Scope {
         anchors.right:  true
 
         implicitHeight: Config.bar.height + Math.round(8 * Config.scale)
+
+        // ── Tray menu popup — lives in the window so it's not clipped by bar ──
+        Rectangle {
+            id: menuPopup
+
+            property SystemTrayItem activeTrayItem: null
+            property real anchorX: 0
+
+            visible: activeTrayItem !== null && menuOpener.children.count > 0
+
+            // Position above/below bar pill, aligned to the icon
+            x: Math.max(4, Math.min(anchorX - width / 2,
+                barWindow.width - width - 4))
+            anchors.bottom: Config.bar.position === "bottom"
+                ? bar.top : undefined
+            anchors.top: Config.bar.position === "top"
+                ? bar.bottom : undefined
+            anchors.bottomMargin: Math.round(4 * Config.scale)
+            anchors.topMargin:    Math.round(4 * Config.scale)
+
+            width: menuCol.implicitWidth + Math.round(16 * Config.scale)
+            height: menuCol.implicitHeight + Math.round(12 * Config.scale)
+            radius: Config.bar.radius
+            color: Config.colors.background
+            border.color: Config.colors.border
+            border.width: 1
+            z: 20
+
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered) {
+                        hideTimer.stop();
+                    } else if (root.visible_) {
+                        hideTimer.restart();
+                    }
+                }
+            }
+
+            QsMenuOpener {
+                id: menuOpener
+                menu: menuPopup.activeTrayItem ? menuPopup.activeTrayItem.menu : null
+            }
+
+            Column {
+                id: menuCol
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    topMargin: Math.round(6 * Config.scale)
+                    bottomMargin: Math.round(6 * Config.scale)
+                    leftMargin: Math.round(8 * Config.scale)
+                    rightMargin: Math.round(8 * Config.scale)
+                }
+                spacing: 2
+
+                Repeater {
+                    model: menuOpener.children
+
+                    delegate: Item {
+                        required property QsMenuEntry modelData
+                        width: menuCol.width
+                        height: modelData.isSeparator
+                            ? Math.round(9 * Config.scale)
+                            : Math.round(28 * Config.scale)
+
+                        // Separator
+                        Rectangle {
+                            visible: modelData.isSeparator
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: 1
+                            color: Config.colors.border
+                        }
+
+                        // Menu item
+                        Rectangle {
+                            visible: !modelData.isSeparator
+                            anchors.fill: parent
+                            radius: Math.round(4 * Config.scale)
+                            color: itemHover.containsMouse && modelData.enabled
+                                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
+                                : "transparent"
+
+                            Behavior on color { ColorAnimation { duration: 80 } }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: Math.round(4 * Config.scale)
+                                text: modelData.text
+                                color: modelData.enabled
+                                    ? Config.colors.textPrimary
+                                    : Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeClock
+                            }
+
+                            MouseArea {
+                                id: itemHover
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                enabled: modelData.enabled
+                                cursorShape: modelData.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onClicked: {
+                                    modelData.sendTriggered();
+                                    menuPopup.activeTrayItem = null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         Rectangle {
             id: bar
@@ -138,7 +283,7 @@ Scope {
                     text: Qt.formatDateTime(new Date(), "hh:mm")
 
                     Timer {
-                        interval: 10000   // update every 10 s — cheap, no seconds display
+                        interval: 10000
                         repeat: true
                         running: true
                         triggeredOnStart: true
@@ -160,65 +305,54 @@ Scope {
                     model: SystemTray.items
 
                     delegate: Item {
+                        id: trayDelegate
                         required property SystemTrayItem modelData
+                        required property int index
 
                         implicitWidth: Config.bar.iconSize
                         implicitHeight: Config.bar.iconSize
                         Layout.alignment: Qt.AlignVCenter
 
+                        readonly property bool menuOpen:
+                            menuPopup.activeTrayItem === trayDelegate.modelData
+
                         IconImage {
                             anchors.centerIn: parent
                             implicitSize: Config.bar.iconSize
-                            // icon may be a theme name or a full path/url
-                            source: modelData.icon.startsWith("/") || modelData.icon.startsWith(":")
-                                ? modelData.icon
-                                : Quickshell.iconPath(modelData.icon)
+                            source: root.resolveIcon(trayDelegate.modelData.icon)
                         }
 
-                        // Left click → activate
-                        TapHandler {
-                            acceptedButtons: Qt.LeftButton
-                            onTapped: modelData.activate()
-                        }
-
-                        // Right click → context menu
-                        TapHandler {
-                            acceptedButtons: Qt.RightButton
-                            onTapped: {
-                                if (modelData.hasMenu)
-                                    modelData.display(barWindow, parent.x, parent.y)
-                            }
-                        }
-
-                        HoverHandler {
-                            id: itemHover
-                        }
-
-                        // Tooltip
                         Rectangle {
-                            visible: itemHover.hovered && modelData.tooltipTitle !== ""
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottom: Config.bar.position === "bottom"
-                                ? parent.top : undefined
-                            anchors.top: Config.bar.position === "top"
-                                ? parent.bottom : undefined
-                            anchors.bottomMargin: Math.round(6 * Config.scale)
-                            anchors.topMargin: Math.round(6 * Config.scale)
-                            width: tooltipText.implicitWidth + Math.round(12 * Config.scale)
-                            height: tooltipText.implicitHeight + Math.round(6 * Config.scale)
+                            anchors.fill: parent
                             radius: Math.round(4 * Config.scale)
-                            color: Config.colors.background
-                            border.color: Config.colors.border
-                            border.width: 1
-                            z: 10
+                            color: (iconHover.containsMouse || trayDelegate.menuOpen)
+                                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
+                                : "transparent"
+                            Behavior on color { ColorAnimation { duration: 80 } }
+                        }
 
-                            Text {
-                                id: tooltipText
-                                anchors.centerIn: parent
-                                text: modelData.tooltipTitle
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeClock
+                        MouseArea {
+                            id: iconHover
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onEntered: {
+                                hideTimer.stop();
+                                if (trayDelegate.modelData.hasMenu) {
+                                    // Map icon centre to barWindow coordinates
+                                    const pt = trayDelegate.mapToItem(barWindow.contentItem, width / 2, 0);
+                                    menuPopup.anchorX = pt.x;
+                                    menuPopup.activeTrayItem = trayDelegate.modelData;
+                                }
+                            }
+                            onExited: {
+                                // Let the menu popup's own hover keep things open
+                                if (root.visible_) hideTimer.restart();
+                            }
+                            onClicked: {
+                                if (!trayDelegate.modelData.hasMenu)
+                                    trayDelegate.modelData.activate();
                             }
                         }
                     }
@@ -227,3 +361,4 @@ Scope {
         }
     }
 }
+
