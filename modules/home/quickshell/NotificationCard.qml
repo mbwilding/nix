@@ -9,17 +9,15 @@ import Quickshell.Services.Notifications
 Item {
     id: root
 
-    required property Notification notification
+    property bool visible_: false
     property int animateSpeed: Config.notifications.animateSpeed
     property int timeout: Config.notifications.timeout
-
-    property bool visible_: false
-
     property real latchedHeight: 0
-    implicitHeight: latchedHeight
-    implicitWidth: 360
+    required property Notification notification
 
     clip: false
+    implicitHeight: latchedHeight
+    implicitWidth: 360
 
     Component.onCompleted: Qt.callLater(() => {
         latchedHeight = card.implicitHeight + 8;
