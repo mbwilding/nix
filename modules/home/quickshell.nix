@@ -5,9 +5,19 @@ let
     auth include login
   '';
 
-  config = pkgs.runCommand "quickshell-config" { } ''
+  soundTheme = pkgs.sound-theme-freedesktop;
+  notificationSound = "${soundTheme}/share/sounds/freedesktop/stereo/message-new-instant.oga";
+  volumeSound = "${soundTheme}/share/sounds/freedesktop/stereo/audio-volume-change.oga";
+
+  config = pkgs.runCommand "quickshell-config"
+    {
+      inherit notificationSound volumeSound;
+    } ''
     mkdir -p $out
     cp ${./quickshell}/*.qml $out/
+    substituteInPlace $out/Sounds.qml \
+      --subst-var notificationSound \
+      --subst-var volumeSound
   '';
 
   qmlImportPaths = [
