@@ -48,6 +48,14 @@ Scope {
             width: 360
             spacing: 0
 
+            move: Transition {
+                NumberAnimation {
+                    properties: "y"
+                    duration: root.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
             Instantiator {
                 model: server.trackedNotifications
                 delegate: NotificationCard {

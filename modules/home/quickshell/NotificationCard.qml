@@ -14,31 +14,24 @@ Item {
     property int timeout: 5000
 
     property bool visible_: false
-    property bool exiting: false
 
-    implicitHeight: exiting ? 0 : (card.implicitHeight + 8)
+    // Height is fixed once latched — only snaps to 0 after slide-out completes
+    property real latchedHeight: 0
+    implicitHeight: latchedHeight
     implicitWidth: 360
 
-    Behavior on implicitHeight {
-        enabled: root.exiting
-        NumberAnimation {
-            duration: root.animateSpeed
-            easing.type: Easing.InOutQuad
-        }
-    }
+    clip: false
 
-    clip: true
+    Component.onCompleted: Qt.callLater(() => {
+        latchedHeight = card.implicitHeight + 8;
+        visible_ = true;
+    })
 
-    // Call this instead of notification.dismiss() directly —
-    // plays the exit animation first, then dismisses after
     function animateOut() {
-        if (root.exiting) return;
+        if (!root.visible_) return;
         dismissTimer.stop();
-        visible_ = false;
-        collapseTimer.start();
+        exitAnim.start();
     }
-
-    Component.onCompleted: Qt.callLater(() => { visible_ = true; })
 
     Timer {
         id: dismissTimer
@@ -47,12 +40,42 @@ Item {
         onTriggered: root.animateOut()
     }
 
-    Timer {
-        id: collapseTimer
-        interval: root.animateSpeed
-        onTriggered: {
-            root.exiting = true;
-            root.notification?.dismiss();
+    SequentialAnimation {
+        id: exitAnim
+
+        // Step 1: slide card out to the right + fade (keep height stable)
+        ParallelAnimation {
+            NumberAnimation {
+                target: slideTranslate
+                property: "x"
+                to: card.width + 20
+                duration: root.animateSpeed
+                easing.type: Easing.InOutQuad
+            }
+            NumberAnimation {
+                target: card
+                property: "opacity"
+                to: 0
+                duration: root.animateSpeed
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        // Step 2: collapse height so cards below shuffle up
+        NumberAnimation {
+            target: root
+            property: "latchedHeight"
+            to: 0
+            duration: root.animateSpeed
+            easing.type: Easing.InOutQuad
+        }
+
+        // Step 3: notify server
+        ScriptAction {
+            script: {
+                root.visible_ = false;
+                root.notification?.dismiss();
+            }
         }
     }
 
@@ -74,8 +97,10 @@ Item {
         border.width: 1
 
         transform: Translate {
+            id: slideTranslate
             x: root.visible_ ? 0 : card.width + 20
             Behavior on x {
+                enabled: root.visible_
                 NumberAnimation {
                     duration: root.animateSpeed
                     easing.type: Easing.InOutQuad
@@ -85,6 +110,7 @@ Item {
 
         opacity: root.visible_ ? 1 : 0
         Behavior on opacity {
+            enabled: root.visible_
             NumberAnimation {
                 duration: root.animateSpeed
                 easing.type: Easing.InOutQuad
