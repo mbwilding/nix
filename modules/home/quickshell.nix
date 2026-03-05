@@ -1,5 +1,6 @@
 { ... }:
 
+# https://git.outfoxxed.me/quickshell/quickshell-examples
 {
   programs = {
     quickshell = {
