@@ -25,7 +25,7 @@ Scope {
     readonly property bool kbdAvailable: _kbdMax > 1
     readonly property bool screenAvailable: _screenMax > 1
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
-    readonly property int panelHeight: root.rowCount * 50 + 16
+    readonly property int panelHeight: root.rowCount * Config.osd.rowHeight + Math.round(16 * Config.scale)
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
 
     Process {
@@ -166,14 +166,14 @@ Scope {
         color: "transparent"
         mask: Region {}
 
-        implicitWidth: 400
+        implicitWidth: Config.osd.panelWidth
         implicitHeight: root.panelHeight
 
         Rectangle {
             id: panel
             width: parent.width
             height: root.panelHeight
-            radius: 12
+            radius: Config.osd.radius
             color: Config.colors.background
 
             transform: Translate {
@@ -202,8 +202,8 @@ Scope {
             Column {
                 anchors {
                     fill: parent
-                    topMargin: 8
-                    bottomMargin: 8
+                    topMargin: Math.round(8 * Config.scale)
+                    bottomMargin: Math.round(8 * Config.scale)
                 }
 
                 OsdRow {

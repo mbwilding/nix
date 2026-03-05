@@ -9,18 +9,18 @@ import Quickshell.Services.Notifications
 Item {
     id: root
 
-    property bool visible_: false
+    required property Notification notification
     property int animateSpeed: Config.notifications.animateSpeed
     property int timeout: Config.notifications.timeout
+    property bool visible_: false
     property real latchedHeight: 0
-    required property Notification notification
 
     clip: false
     implicitHeight: latchedHeight
-    implicitWidth: 360
+    implicitWidth: Config.notifications.cardWidth
 
     Component.onCompleted: Qt.callLater(() => {
-        latchedHeight = card.implicitHeight + 8;
+        latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
         visible_ = true;
     })
 
@@ -81,11 +81,11 @@ Item {
             left: parent.left
             right: parent.right
             top: parent.top
-            topMargin: 4
+            topMargin: Math.round(4 * Config.scale)
         }
 
-        implicitHeight: cardContent.implicitHeight + 20
-        radius: 12
+        implicitHeight: cardContent.implicitHeight + Math.round(20 * Config.scale)
+        radius: Config.notifications.radius
         color: Config.colors.background
 
         border.color: Config.colors.border
@@ -112,6 +112,7 @@ Item {
             }
         }
 
+        // Card tap — invoke default action or launch desktop entry
         TapHandler {
             onTapped: {
                 const n = root.notification;
@@ -129,16 +130,17 @@ Item {
             }
         }
 
+        // Left accent bar
         Rectangle {
             anchors {
                 left: parent.left
                 top: parent.top
                 bottom: parent.bottom
-                topMargin: 6
-                bottomMargin: 6
+                topMargin: Math.round(6 * Config.scale)
+                bottomMargin: Math.round(6 * Config.scale)
             }
-            width: 3
-            radius: 2
+            width: Config.notifications.accentBar
+            radius: Config.notifications.accentBar
             color: Config.colors.accent
         }
 
@@ -149,19 +151,20 @@ Item {
                 left: parent.left
                 right: parent.right
                 top: parent.top
-                leftMargin: 16
-                rightMargin: 12
-                topMargin: 10
+                leftMargin: Math.round(16 * Config.scale)
+                rightMargin: Math.round(12 * Config.scale)
+                topMargin: Math.round(10 * Config.scale)
             }
 
-            spacing: 4
+            spacing: Math.round(4 * Config.scale)
 
+            // Header: app icon + app name + timestamp + close button
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 8
+                spacing: Math.round(8 * Config.scale)
 
                 IconImage {
-                    implicitSize: 18
+                    implicitSize: Config.notifications.iconSize
                     source: {
                         const n = root.notification;
                         if (!n)
@@ -181,7 +184,8 @@ Item {
                 Text {
                     text: root.notification?.appName ?? ""
                     color: Config.colors.accent
-                    font.pixelSize: 11
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeXs
                     font.weight: Font.Medium
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -190,63 +194,65 @@ Item {
                 Text {
                     text: Qt.formatTime(new Date(), "hh:mm")
                     color: Config.colors.textMuted
-                    font.pixelSize: 10
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
                 }
 
+                // Close button
                 Rectangle {
-                    implicitWidth: 18
-                    implicitHeight: 18
-                    radius: 9
+                    implicitWidth: Math.round(18 * Config.scale)
+                    implicitHeight: Math.round(18 * Config.scale)
+                    radius: Math.round(9 * Config.scale)
                     color: closeHover.containsMouse ? Config.colors.border : "transparent"
 
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 100
-                        }
-                    }
+                    Behavior on color { ColorAnimation { duration: 100 } }
 
                     Text {
                         anchors.centerIn: parent
                         text: "✕"
                         color: Config.colors.textMuted
-                        font.pixelSize: 10
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeSm
                     }
 
-                    HoverHandler {
-                        id: closeHover
-                    }
+                    HoverHandler { id: closeHover }
                     TapHandler {
                         onTapped: root.animateOut()
                     }
                 }
             }
 
+            // Summary
             Text {
                 text: root.notification?.summary ?? ""
                 color: Config.colors.textPrimary
-                font.pixelSize: 13
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeLg
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 visible: text !== ""
             }
 
+            // Body
             Text {
                 text: root.notification?.body ?? ""
                 color: Config.colors.textSecondary
-                font.pixelSize: 12
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeMd
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
-                Layout.bottomMargin: 2
+                Layout.bottomMargin: Math.round(2 * Config.scale)
                 visible: text !== ""
                 maximumLineCount: 4
                 elide: Text.ElideRight
             }
 
+            // Actions
             RowLayout {
                 Layout.fillWidth: true
-                Layout.bottomMargin: 2
-                spacing: 6
+                Layout.bottomMargin: Math.round(2 * Config.scale)
+                spacing: Math.round(6 * Config.scale)
                 visible: (root.notification?.actions?.length ?? 0) > 0
 
                 Repeater {
@@ -255,30 +261,25 @@ Item {
                     delegate: Rectangle {
                         required property NotificationAction modelData
 
-                        implicitHeight: 24
-                        implicitWidth: actionLabel.implicitWidth + 16
-                        radius: 6
+                        implicitHeight: Math.round(24 * Config.scale)
+                        implicitWidth: actionLabel.implicitWidth + Math.round(16 * Config.scale)
+                        radius: Math.round(6 * Config.scale)
                         color: actionHover.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.3) : Config.colors.border
                         border.color: Config.colors.border
                         border.width: 1
 
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 120
-                            }
-                        }
+                        Behavior on color { ColorAnimation { duration: 120 } }
 
                         Text {
                             id: actionLabel
                             anchors.centerIn: parent
                             text: modelData.text
                             color: Config.colors.textPrimary
-                            font.pixelSize: 11
+                            font.family: Config.font.family
+                            font.pixelSize: Config.font.sizeXs
                         }
 
-                        HoverHandler {
-                            id: actionHover
-                        }
+                        HoverHandler { id: actionHover }
                         TapHandler {
                             onTapped: {
                                 modelData.invoke();

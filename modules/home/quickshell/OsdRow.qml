@@ -21,25 +21,25 @@ Item {
         }
     }
 
-    implicitHeight: 50
-    implicitWidth: 400
+    implicitHeight: Config.osd.rowHeight
+    implicitWidth: Config.osd.panelWidth
 
     RowLayout {
         anchors {
             fill: parent
-            leftMargin: 10
-            rightMargin: 15
+            leftMargin: Math.round(10 * Config.scale)
+            rightMargin: Math.round(15 * Config.scale)
         }
 
         IconImage {
-            implicitSize: 30
+            implicitSize: Config.osd.iconSize
             source: Quickshell.iconPath(root.iconName)
         }
 
         Rectangle {
             Layout.fillWidth: true
-            implicitHeight: 10
-            radius: 20
+            implicitHeight: Config.osd.barHeight
+            radius: Config.osd.barHeight
             color: Config.colors.backgroundBar
 
             Rectangle {
@@ -51,21 +51,28 @@ Item {
                 property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
                 implicitWidth: Math.min(parent.width, parent.width * root.displayValue)
                 radius: parent.radius
-                color: Qt.rgba(Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio, Config.colors.accent.g * (1 - excessRatio), Config.colors.accent.b * (1 - excessRatio), 1)
+                color: Qt.rgba(
+                    Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio,
+                    Config.colors.accent.g * (1 - excessRatio),
+                    Config.colors.accent.b * (1 - excessRatio),
+                    1
+                )
             }
         }
 
         Text {
             text: root.label
             color: Config.colors.textPrimary
-            font.pixelSize: 14
+            font.family: Config.font.family
+            font.pixelSize: Config.font.sizeOsd
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: labelMetrics.boundingRect.width
             Layout.leftMargin: parent.spacing
 
             TextMetrics {
                 id: labelMetrics
-                font.pixelSize: 14
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeOsd
                 text: "100%"
             }
         }
