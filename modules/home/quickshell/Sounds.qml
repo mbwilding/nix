@@ -27,7 +27,7 @@ QtObject {
     property Process volumeProc: Process {}
 
     property Process _resolveNotification: Process {
-        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/message.oga\"; [ -f \"$f\" ] && echo \"$f\" && break; done"]
+        command: ["sh", "-c", "IFS=:; for d in ${XDG_DATA_DIRS:-/usr/share}; do f=\"$d/sounds/freedesktop/stereo/message-new-instant.oga\"; [ -f \"$f\" ] && echo \"$f\" && break; done"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {

@@ -27,6 +27,7 @@ Item {
     implicitWidth: Config.notifications.cardWidth
 
     Component.onCompleted: Qt.callLater(() => {
+        root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
         visible_ = true;
     })
 
