@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQml.Models
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
@@ -19,6 +20,9 @@ Scope {
         bodySupported: true
         bodyMarkupSupported: false
         imageSupported: true
+
+        // Must explicitly track notifications or they are discarded
+        onNotification: notification => { notification.tracked = true; }
     }
 
     PanelWindow {
@@ -45,30 +49,16 @@ Scope {
             width: 360
             spacing: 0
 
-            Repeater {
-                id: repeater
-                // ObjectModel — use directly, newest notifications appear at the end
-                // so we display them with the column reversed via a ScriptModel
-                model: ScriptModel {
-                    values: {
-                        const all = server.trackedNotifications;
-                        const out = [];
-                        const start = Math.max(0, all.length - root.maxNotifications);
-                        for (let i = all.length - 1; i >= start; i--)
-                            out.push(all[i]);
-                        return out;
-                    }
-                }
-
+            Instantiator {
+                model: server.trackedNotifications
                 delegate: NotificationCard {
                     required property Notification modelData
 
                     notification: modelData
                     animateSpeed: root.animateSpeed
                     width: 360
+                    parent: notifColumn
 
-                    // Slide in shortly after creation so the height animation
-                    // has time to open up space before the card slides in
                     Component.onCompleted: Qt.callLater(() => { visible_ = true; })
 
                     Connections {
