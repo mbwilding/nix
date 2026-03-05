@@ -23,7 +23,7 @@ Scope {
     readonly property bool kbdAvailable: _kbdMax > 1
     readonly property bool screenAvailable: _screenMax > 1
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
-    readonly property int animation: 250
+    readonly property int animateSpeed: 250
     readonly property int hideDelay: 1500
     readonly property int panelHeight: root.rowCount * 50 + 16
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
@@ -32,16 +32,6 @@ Scope {
         id: hideTimer
         interval: root.hideDelay
         onTriggered: root.anyVisible = false
-    }
-
-    Timer {
-        id: clearTimer
-        interval: root.animation
-        onTriggered: {
-            root.volumeVisible = false;
-            root.screenVisible = false;
-            root.kbdVisible = false;
-        }
     }
 
     function show() {
@@ -161,10 +151,13 @@ Scope {
                 y: root.anyVisible ? 0 : panel.height
                 Behavior on y {
                     NumberAnimation {
-                        duration: root.animation
+                        duration: root.animateSpeed
                         easing.type: Easing.InOutQuad
-                        onFinished: if (!root.anyVisible)
-                            clearTimer.start()
+                        onFinished: if (!root.anyVisible) {
+                            root.volumeVisible = false;
+                            root.screenVisible = false;
+                            root.kbdVisible = false;
+                        }
                     }
                 }
             }
@@ -172,7 +165,7 @@ Scope {
             opacity: root.anyVisible ? 1 : 0
             Behavior on opacity {
                 NumberAnimation {
-                    duration: root.animation
+                    duration: root.animateSpeed
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -185,6 +178,7 @@ Scope {
                 }
 
                 OsdRow {
+                    animateSpeed: root.animateSpeed
                     iconName: {
                         const audio = Pipewire.defaultAudioSink?.audio;
                         if (!audio || audio.muted)
@@ -201,12 +195,14 @@ Scope {
                 }
 
                 OsdRow {
+                    animateSpeed: root.animateSpeed
                     iconName: "video-display-brightness-symbolic"
                     value: root.screenBrightness
                     label: Math.round(root.screenBrightness * 100) + "%"
                 }
 
                 OsdRow {
+                    animateSpeed: root.animateSpeed
                     iconName: "input-keyboard-brightness"
                     value: root.kbdBrightness
                     label: Math.round(root.kbdBrightness * 100) + "%"

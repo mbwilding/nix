@@ -11,6 +11,14 @@ Item {
     property real value: 0
     property string iconName: ""
     property string label: ""
+    property int animateSpeed: 150
+
+    // Animated proxy — bar and colour bind to this, not value directly
+    property real displayValue: 0
+    onValueChanged: displayValue = value
+    Behavior on displayValue {
+        NumberAnimation { duration: root.animateSpeed; easing.type: Easing.OutQuad }
+    }
 
     implicitHeight: 50
     implicitWidth: 400
@@ -39,8 +47,8 @@ Item {
                     top: parent.top
                     bottom: parent.bottom
                 }
-                property real excessRatio: Math.min(1.0, Math.max(0.0, (root.value - 1.0) / 0.5))
-                implicitWidth: Math.min(parent.width, parent.width * root.value)
+                property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
+                implicitWidth: Math.min(parent.width, parent.width * root.displayValue)
                 radius: parent.radius
                 color: Qt.rgba(1, 1 - excessRatio, 1 - excessRatio, 1)
             }
