@@ -3,111 +3,198 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
-import Quickshell.Widgets
 
 Scope {
     id: root
 
+    // How long each slot stays visible after its last change (ms)
+    readonly property int hideDelay: 1000
+
+    // ── Volume ────────────────────────────────────────────────────────────────
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
+
+    property bool volumeVisible: false
 
     Connections {
         target: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
-            root.shouldShow = true;
-            hideTimer.restart();
+            root.volumeVisible = true;
+            volumeTimer.restart();
         }
 
         function onMutedChanged() {
-            root.shouldShow = true;
-            hideTimer.restart();
+            root.volumeVisible = true;
+            volumeTimer.restart();
         }
     }
 
-    property bool shouldShow: false
-
     Timer {
-        id: hideTimer
-        interval: 1000
-        onTriggered: root.shouldShow = false
+        id: volumeTimer
+        interval: root.hideDelay
+        onTriggered: root.volumeVisible = false
     }
 
+    // ── Screen brightness ─────────────────────────────────────────────────────
+    // sysfs doesn't emit inotify events, so we poll and detect changes manually.
+    property bool screenBrightnessVisible: false
+    property real screenBrightness: 0
+    property int _screenRaw: -1
+    property int _screenMax: 1
+
+    Process {
+        id: screenMaxProc
+        command: ["cat", "/sys/class/backlight/amdgpu_bl1/max_brightness"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v > 0) root._screenMax = v;
+            }
+        }
+    }
+
+    Timer {
+        interval: 200
+        repeat: true
+        running: true
+        onTriggered: screenPollProc.running = true
+    }
+
+    Process {
+        id: screenPollProc
+        command: ["cat", "/sys/class/backlight/amdgpu_bl1/brightness"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v !== root._screenRaw) {
+                    root._screenRaw = v;
+                    root.screenBrightness = v / root._screenMax;
+                    root.screenBrightnessVisible = true;
+                    screenBrightnessTimer.restart();
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: screenBrightnessTimer
+        interval: root.hideDelay
+        onTriggered: root.screenBrightnessVisible = false
+    }
+
+    // ── Keyboard brightness ───────────────────────────────────────────────────
+    property bool kbdBrightnessVisible: false
+    property real kbdBrightness: 0
+    property int _kbdRaw: -1
+    property int _kbdMax: 1
+
+    Process {
+        id: kbdMaxProc
+        command: ["cat", "/sys/class/leds/platform::kbd_backlight/max_brightness"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v > 0) root._kbdMax = v;
+            }
+        }
+    }
+
+    Timer {
+        interval: 200
+        repeat: true
+        running: true
+        onTriggered: kbdPollProc.running = true
+    }
+
+    Process {
+        id: kbdPollProc
+        command: ["cat", "/sys/class/leds/platform::kbd_backlight/brightness"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v !== root._kbdRaw) {
+                    root._kbdRaw = v;
+                    root.kbdBrightness = v / root._kbdMax;
+                    root.kbdBrightnessVisible = true;
+                    kbdBrightnessTimer.restart();
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: kbdBrightnessTimer
+        interval: root.hideDelay
+        onTriggered: root.kbdBrightnessVisible = false
+    }
+
+    // ── Panel ─────────────────────────────────────────────────────────────────
+    property bool anyVisible: root.volumeVisible || root.screenBrightnessVisible || root.kbdBrightnessVisible
+
     LazyLoader {
-        active: root.shouldShow
+        active: root.anyVisible
 
         PanelWindow {
             anchors.bottom: true
             margins.bottom: screen.height / 5
             exclusiveZone: 0
-            implicitWidth: 400
-            implicitHeight: 50
             color: "transparent"
             mask: Region {}
 
+            implicitWidth: 400
+            implicitHeight: visibleColumn.implicitHeight + 16
+
             Rectangle {
                 anchors.fill: parent
-                radius: height / 2
+                radius: 12
                 color: "#80000000"
 
-                RowLayout {
+                Column {
+                    id: visibleColumn
                     anchors {
                         fill: parent
-                        leftMargin: 10
-                        rightMargin: 15
+                        topMargin: 8
+                        bottomMargin: 8
                     }
 
-                    IconImage {
-                        implicitSize: 30
-                        source: {
+                    OsdRow {
+                        width: parent.width
+                        visible: root.volumeVisible
+                        iconName: {
                             const audio = Pipewire.defaultAudioSink?.audio;
                             if (!audio || audio.muted)
-                                return Quickshell.iconPath("audio-volume-muted-symbolic");
+                                return "audio-volume-muted-symbolic";
                             const vol = audio.volume;
-                            if (vol <= 0.33)
-                                return Quickshell.iconPath("audio-volume-low-symbolic");
-                            if (vol <= 0.66)
-                                return Quickshell.iconPath("audio-volume-medium-symbolic");
-                            return Quickshell.iconPath("audio-volume-high-symbolic");
+                            if (vol <= 0.33) return "audio-volume-low-symbolic";
+                            if (vol <= 0.66) return "audio-volume-medium-symbolic";
+                            return "audio-volume-high-symbolic";
                         }
+                        value: Pipewire.defaultAudioSink?.audio.volume ?? 0
+                        label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                        maxLabel: "150%"
                     }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: 10
-                        radius: 20
-                        color: "#50ffffff"
-
-                        Rectangle {
-                            anchors {
-                                left: parent.left
-                                top: parent.top
-                                bottom: parent.bottom
-                            }
-                            property real vol: Pipewire.defaultAudioSink?.audio.volume ?? 0
-                            property real excessRatio: Math.min(1.0, Math.max(0.0, (vol - 1.0) / 0.5))
-                            implicitWidth: Math.min(parent.width, parent.width * vol)
-                            radius: parent.radius
-                            color: Qt.rgba(1, 1 - excessRatio, 1 - excessRatio, 1)
-                        }
+                    OsdRow {
+                        width: parent.width
+                        visible: root.screenBrightnessVisible
+                        iconName: "display-brightness-symbolic"
+                        value: root.screenBrightness
+                        label: Math.round(root.screenBrightness * 100) + "%"
                     }
 
-                    Text {
-                        text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
-                        color: "white"
-                        font.pixelSize: 14
-                        horizontalAlignment: Text.AlignRight
-                        Layout.preferredWidth: maxVolumeMetrics.boundingRect.width
-                        Layout.leftMargin: parent.spacing
-
-                        TextMetrics {
-                            id: maxVolumeMetrics
-                            font: parent.font
-                            text: "100%"
-                        }
+                    OsdRow {
+                        width: parent.width
+                        visible: root.kbdBrightnessVisible
+                        iconName: "keyboard-brightness-symbolic"
+                        value: root.kbdBrightness
+                        label: Math.round(root.kbdBrightness * 100) + "%"
                     }
                 }
             }
