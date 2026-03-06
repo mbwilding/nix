@@ -23,6 +23,7 @@ Scope {
     property bool batteryReady: false
     property bool initialStateHandled: false
     property bool initialPercentageHandled: false
+    property int lastCheckedPct: -1
 
     Component.onCompleted: {
         Qt.callLater(() => {
@@ -55,9 +56,11 @@ Scope {
 
             if (state === UPowerDeviceState.Charging) {
                 root.firedLevels = [];
+                root.lastCheckedPct = -1;
                 root.batteryNotify(Config.battery.chargeLevels.charging);
             } else if (state === UPowerDeviceState.Discharging) {
                 root.firedLevels = [];
+                root.lastCheckedPct = Math.round(root.battery.percentage * 100);
                 root.batteryNotify(Config.battery.chargeLevels.discharging);
             } else if (state === UPowerDeviceState.FullyCharged) {
                 root.batteryNotify(Config.battery.chargeLevels.fullyCharged);
@@ -70,6 +73,7 @@ Scope {
 
             if (!root.initialPercentageHandled) {
                 root.initialPercentageHandled = true;
+                root.lastCheckedPct = Math.round(root.battery.percentage * 100);
                 return;
             }
 
@@ -77,6 +81,12 @@ Scope {
                 return;
 
             const pct = Math.round(root.battery.percentage * 100);
+
+            // Only act when the integer percent actually changes
+            if (pct === root.lastCheckedPct)
+                return;
+            root.lastCheckedPct = pct;
+
             const levels = Config.battery.warnLevels.slice().sort((a, b) => b.level - a.level);
 
             for (const warn of levels) {

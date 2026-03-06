@@ -94,7 +94,13 @@ Scope {
     IpcHandler {
         target: "bar"
         function toggle() {
-            root.show();
+            if (root.visible_) {
+                root.visible_ = false;
+                hideTimer.stop();
+                root.closePopup();
+            } else {
+                root.show();
+            }
         }
     }
 
