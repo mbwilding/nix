@@ -8,6 +8,7 @@ import Quickshell.Widgets
 
 // Wifi bar section: trigger icon + dropdown popup listing nearby networks.
 //
+// Clicking the bar icon toggles Wi-Fi on/off.
 // Bar.qml binds activePopup and wires the three popup-manager signals.
 Item {
     id: wifiSection
@@ -20,6 +21,8 @@ Item {
     signal keepPopupReq
     signal exitPopupReq
     signal keepAliveReq
+    signal showPasswordDialogReq(string ssid_)   // ask Bar to show the overlay
+    signal hidePasswordDialogReq                 // ask Bar to hide the overlay
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: wifiPopup
@@ -33,10 +36,6 @@ Item {
     property bool enabled: true
     property string lastConnected: ""   // SSID of last successful connection
     property string lastError: ""       // last connection error message
-
-    // Password dialog state
-    property string pendingSsid: ""     // SSID awaiting password entry
-    property bool showPasswordDialog: false
 
     // Track previous SSID to detect disconnections
     property string prevSsid: ""
@@ -106,8 +105,7 @@ Item {
             return;
         wifiSection.connecting = ssid_;
         wifiSection.lastError = "";
-        wifiSection.showPasswordDialog = false;
-        wifiSection.pendingSsid = "";
+        wifiSection.hidePasswordDialogReq();
         wifiConnectProc.targetSsid = ssid_;
         wifiConnectProc.command = ["nmcli", "--wait", "30", "dev", "wifi", "connect", ssid_, "password", password];
         wifiConnectProc.running = true;
@@ -252,9 +250,8 @@ Item {
             } else if (errText.includes("secrets") || errText.includes("password") || errText.includes("no-secrets")) {
                 // Password required
                 wifiSection.connecting = "";
-                wifiSection.pendingSsid = ssid_;
-                wifiSection.showPasswordDialog = true;
                 wifiSection.keepAliveReq();
+                wifiSection.showPasswordDialogReq(ssid_);
             } else {
                 // Other failure
                 wifiSection.connecting = "";
@@ -288,7 +285,7 @@ Item {
         onEntered: wifiSection.openPopupReq("wifi")
         onExited: wifiSection.keepPopupReq()
         onClicked: {
-            wifiSection.openPopupReq("wifi");
+            wifiSection.toggleWifi();
         }
     }
 
@@ -299,6 +296,10 @@ Item {
         IconImage {
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(wifiSection.icon(wifiSection.strength))
+            opacity: wifiSection.enabled ? 1.0 : 0.4
+            Behavior on opacity {
+                NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+            }
         }
     }
 
@@ -328,10 +329,11 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: wifiSection.showPasswordDialog ? Math.max(wifiSection.popupWidth, Math.round(260 * Config.scale)) : wifiSection.popupWidth
-        height: wifiSection.showPasswordDialog
-                ? Math.round(200 * Config.scale)
-                : Math.min(wifiPopupCol.implicitHeight + Math.round(16 * Config.scale), Math.round(400 * Config.scale))
+        width: wifiSection.popupWidth
+        height: Math.min(
+            wifiListCol.implicitHeight + Math.round(16 * Config.scale),
+            Math.round(400 * Config.scale)
+        )
 
         radius: Math.round(10 * Config.scale)
         color: Config.colors.background
@@ -349,459 +351,160 @@ Item {
             }
         }
 
-        // ── Content column (toggle + divider + network list) ───────────────
+        // ── Scrollable network list ────────────────────────────────────────
 
-        Column {
-            id: wifiPopupCol
+        Flickable {
+            id: wifiFlickable
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.right: wifiScrollbar.left
             anchors.topMargin: Math.round(8 * Config.scale)
+            anchors.bottomMargin: Math.round(8 * Config.scale)
             anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(8 * Config.scale)
-            spacing: Math.round(4 * Config.scale)
+            anchors.rightMargin: Math.round(4 * Config.scale)
+            contentWidth: width
+            contentHeight: wifiListCol.implicitHeight
+            clip: true
 
-            // ── Enable / disable toggle row ────────────────────────────────
-            Rectangle {
-                width: wifiPopupCol.width
-                implicitHeight: wifiToggleRow.implicitHeight + Math.round(8 * Config.scale)
-                radius: Math.round(6 * Config.scale)
-                color: wifiToggleMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent"
-                Behavior on color {
-                    ColorAnimation { duration: 80 }
+            Column {
+                id: wifiListCol
+                width: wifiFlickable.width
+                spacing: Math.round(2 * Config.scale)
+
+                // ── Empty-state placeholder ───────────────────────────────
+                Text {
+                    width: parent.width
+                    text: !wifiSection.enabled ? "Wi-Fi is off" : "Scanning\u2026"
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.bar.fontSizeStatus
+                    horizontalAlignment: Text.AlignHCenter
+                    topPadding: Math.round(8 * Config.scale)
+                    bottomPadding: Math.round(8 * Config.scale)
+                    visible: wifiSection.networks.length === 0
                 }
 
-                RowLayout {
-                    id: wifiToggleRow
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.leftMargin: Math.round(8 * Config.scale)
-                    anchors.rightMargin: Math.round(8 * Config.scale)
-                    spacing: Math.round(8 * Config.scale)
+                Repeater {
+                    model: wifiSection.networks
+                    delegate: Rectangle {
+                        id: wifiEntry
+                        required property var modelData
+                        readonly property bool isActive: modelData.active
+                        readonly property bool isConnecting: wifiSection.connecting === modelData.ssid
+                        readonly property bool hadError: wifiSection.lastError === modelData.ssid
 
-                    IconImage {
-                        implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-                        source: Quickshell.iconPath(wifiSection.enabled ? "network-wireless-symbolic" : "network-wireless-offline-symbolic")
-                    }
-
-                    Text {
-                        Layout.fillWidth: true
-                        text: wifiSection.enabled ? "Wi-Fi On" : "Wi-Fi Off"
-                        color: Config.colors.textPrimary
-                        font.family: Config.font.family
-                        font.pixelSize: Config.bar.fontSizeStatus
-                    }
-
-                    // Pill toggle switch
-                    Rectangle {
-                        implicitWidth: Math.round(36 * Config.scale)
-                        implicitHeight: Math.round(18 * Config.scale)
-                        radius: implicitHeight / 2
-                        color: wifiSection.enabled ? Config.colors.accent : Config.colors.border
+                        width: wifiListCol.width
+                        implicitHeight: wifiEntryRow.implicitHeight + Math.round(8 * Config.scale)
+                        radius: Math.round(6 * Config.scale)
+                        color: isActive
+                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+                               : hadError
+                                 ? Qt.rgba(1, 0.3, 0.3, 0.12)
+                                 : wifiEntryMouse.containsMouse
+                                   ? Qt.rgba(1, 1, 1, 0.07)
+                                   : "transparent"
                         Behavior on color {
-                            ColorAnimation { duration: 120 }
+                            ColorAnimation { duration: 80 }
                         }
 
-                        Rectangle {
-                            width: Math.round(12 * Config.scale)
-                            height: Math.round(12 * Config.scale)
-                            radius: width / 2
-                            color: "white"
+                        RowLayout {
+                            id: wifiEntryRow
                             anchors.verticalCenter: parent.verticalCenter
-                            x: wifiSection.enabled
-                               ? parent.width - width - Math.round(3 * Config.scale)
-                               : Math.round(3 * Config.scale)
-                            Behavior on x {
-                                NumberAnimation { duration: 120; easing.type: Easing.InOutQuad }
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: Math.round(8 * Config.scale)
+                            anchors.rightMargin: Math.round(8 * Config.scale)
+                            spacing: Math.round(8 * Config.scale)
+
+                            IconImage {
+                                implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
+                                source: Quickshell.iconPath(wifiSection.icon(wifiEntry.modelData.signal))
+                            }
+
+                            Text {
+                                Layout.fillWidth: true
+                                text: wifiEntry.modelData.ssid
+                                color: wifiEntry.isActive
+                                       ? Config.colors.accent
+                                       : wifiEntry.hadError
+                                         ? "#ff6666"
+                                         : Config.colors.textPrimary
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                                elide: Text.ElideRight
+                            }
+
+                            // Status indicator: spinner, check, error
+                            Text {
+                                text: wifiEntry.isConnecting
+                                      ? "\u2026"
+                                      : wifiEntry.isActive
+                                        ? "\u2713"
+                                        : wifiEntry.hadError
+                                          ? "\u00d7"
+                                          : ""
+                                color: wifiEntry.hadError ? "#ff6666" : Config.colors.accent
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                                visible: wifiEntry.isActive || wifiEntry.isConnecting || wifiEntry.hadError
                             }
                         }
-                    }
-                }
 
-                MouseArea {
-                    id: wifiToggleMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onEntered: wifiSection.openPopupReq("wifi")
-                    onClicked: {
-                        wifiSection.toggleWifi();
-                        wifiSection.openPopupReq("wifi");
-                    }
-                }
-            }
-
-            // ── Separator ─────────────────────────────────────────────────
-            Rectangle {
-                width: wifiPopupCol.width
-                implicitHeight: 1
-                color: Config.colors.border
-                visible: wifiSection.enabled
-            }
-
-            // ── Network list (only when enabled) ──────────────────────────
-            Item {
-                width: wifiPopupCol.width
-                // Height is the scrollable area, capped so total popup ≤ 400
-                height: Math.min(
-                    wifiListCol.implicitHeight,
-                    Math.round(400 * Config.scale)
-                        - (wifiToggleRow.implicitHeight + Math.round(8 * Config.scale))
-                        - Math.round(1 * Config.scale)
-                        - Math.round(20 * Config.scale)
-                )
-                visible: wifiSection.enabled
-                clip: true
-
-                Flickable {
-                    id: wifiFlickable
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    anchors.right: wifiScrollbar.left
-                    anchors.rightMargin: Math.round(4 * Config.scale)
-                    contentWidth: width
-                    contentHeight: wifiListCol.implicitHeight
-                    clip: true
-
-                    Column {
-                        id: wifiListCol
-                        width: wifiFlickable.width
-                        spacing: Math.round(2 * Config.scale)
-
-                        // ── "No networks" placeholder ─────────────────────
-                        Text {
-                            width: parent.width
-                            text: "Scanning…"
-                            color: Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
-                            horizontalAlignment: Text.AlignHCenter
-                            topPadding: Math.round(8 * Config.scale)
-                            bottomPadding: Math.round(8 * Config.scale)
-                            visible: wifiSection.networks.length === 0
-                        }
-
-                        Repeater {
-                            model: wifiSection.networks
-                            delegate: Rectangle {
-                                id: wifiEntry
-                                required property var modelData
-                                readonly property bool isActive: modelData.active
-                                readonly property bool isConnecting: wifiSection.connecting === modelData.ssid
-                                readonly property bool hadError: wifiSection.lastError === modelData.ssid
-
-                                width: wifiListCol.width
-                                implicitHeight: wifiEntryRow.implicitHeight + Math.round(8 * Config.scale)
-                                radius: Math.round(6 * Config.scale)
-                                color: isActive
-                                       ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                                       : hadError
-                                         ? Qt.rgba(1, 0.3, 0.3, 0.12)
-                                         : wifiEntryMouse.containsMouse
-                                           ? Qt.rgba(1, 1, 1, 0.07)
-                                           : "transparent"
-                                Behavior on color {
-                                    ColorAnimation { duration: 80 }
+                        MouseArea {
+                            id: wifiEntryMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: wifiSection.openPopupReq("wifi")
+                            onClicked: {
+                                if (!wifiEntry.isActive && !wifiEntry.isConnecting) {
+                                    wifiSection.lastError = "";
+                                    wifiSection.connectWifi(wifiEntry.modelData.ssid);
                                 }
-
-                                RowLayout {
-                                    id: wifiEntryRow
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: Math.round(8 * Config.scale)
-                                    anchors.rightMargin: Math.round(8 * Config.scale)
-                                    spacing: Math.round(8 * Config.scale)
-
-                                    IconImage {
-                                        implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-                                        source: Quickshell.iconPath(wifiSection.icon(wifiEntry.modelData.signal))
-                                    }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: wifiEntry.modelData.ssid
-                                        color: wifiEntry.isActive
-                                               ? Config.colors.accent
-                                               : wifiEntry.hadError
-                                                 ? "#ff6666"
-                                                 : Config.colors.textPrimary
-                                        font.family: Config.font.family
-                                        font.pixelSize: Config.bar.fontSizeStatus
-                                        elide: Text.ElideRight
-                                    }
-
-                                    // Status indicator: spinner text, check, error, or signal %
-                                    Text {
-                                        text: wifiEntry.isConnecting
-                                              ? "…"
-                                              : wifiEntry.isActive
-                                                ? "✓"
-                                                : wifiEntry.hadError
-                                                  ? "✕"
-                                                  : ""
-                                        color: wifiEntry.hadError ? "#ff6666" : Config.colors.accent
-                                        font.family: Config.font.family
-                                        font.pixelSize: Config.bar.fontSizeStatus
-                                        visible: wifiEntry.isActive || wifiEntry.isConnecting || wifiEntry.hadError
-                                    }
-                                }
-
-                                MouseArea {
-                                    id: wifiEntryMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onEntered: wifiSection.openPopupReq("wifi")
-                                    onClicked: {
-                                        if (!wifiEntry.isActive && !wifiEntry.isConnecting) {
-                                            wifiSection.lastError = "";
-                                            wifiSection.connectWifi(wifiEntry.modelData.ssid);
-                                        }
-                                        wifiSection.openPopupReq("wifi");
-                                    }
-                                }
+                                wifiSection.openPopupReq("wifi");
                             }
-                        }
-                    }
-                }
-
-                // Scrollbar
-                Item {
-                    id: wifiScrollbar
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    width: Math.round(3 * Config.scale)
-
-                    readonly property bool needed: wifiFlickable.contentHeight > wifiFlickable.height
-                    visible: needed
-
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: width / 2
-                        color: Config.colors.border
-                    }
-
-                    Rectangle {
-                        readonly property real ratio: wifiFlickable.height / Math.max(wifiFlickable.contentHeight, 1)
-                        readonly property real thumbH: Math.max(Math.round(20 * Config.scale), wifiScrollbar.height * ratio)
-                        readonly property real travel: wifiScrollbar.height - thumbH
-                        readonly property real scrollRatio: wifiFlickable.contentHeight > wifiFlickable.height
-                                                            ? wifiFlickable.contentY / (wifiFlickable.contentHeight - wifiFlickable.height)
-                                                            : 0
-
-                        width: parent.width
-                        height: thumbH
-                        y: travel * scrollRatio
-                        radius: width / 2
-                        color: Config.colors.textMuted
-                        Behavior on y {
-                            NumberAnimation { duration: 60 }
                         }
                     }
                 }
             }
         }
 
-        // ── Password dialog overlay ────────────────────────────────────────
+        // Scrollbar
+        Item {
+            id: wifiScrollbar
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.topMargin: Math.round(8 * Config.scale)
+            anchors.bottomMargin: Math.round(8 * Config.scale)
+            anchors.rightMargin: Math.round(3 * Config.scale)
+            width: Math.round(3 * Config.scale)
 
-        Rectangle {
-            id: passwordOverlay
-            anchors.fill: parent
-            radius: parent.radius
-            color: Config.colors.background
-            visible: wifiSection.showPasswordDialog
-            z: 10
+            readonly property bool needed: wifiFlickable.contentHeight > wifiFlickable.height
+            visible: needed
 
-            HoverHandler {
-                onHoveredChanged: {
-                    if (hovered)
-                        wifiSection.openPopupReq("wifi");
-                    else
-                        wifiSection.exitPopupReq();
-                }
+            Rectangle {
+                anchors.fill: parent
+                radius: width / 2
+                color: Config.colors.border
             }
 
-            onVisibleChanged: {
-                if (visible) {
-                    passwordField.text = "";
-                    passwordField.forceActiveFocus();
-                }
-            }
+            Rectangle {
+                readonly property real ratio: wifiFlickable.height / Math.max(wifiFlickable.contentHeight, 1)
+                readonly property real thumbH: Math.max(Math.round(20 * Config.scale), wifiScrollbar.height * ratio)
+                readonly property real travel: wifiScrollbar.height - thumbH
+                readonly property real scrollRatio: wifiFlickable.contentHeight > wifiFlickable.height
+                                                    ? wifiFlickable.contentY / (wifiFlickable.contentHeight - wifiFlickable.height)
+                                                    : 0
 
-            ColumnLayout {
-                anchors.centerIn: parent
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.margins: Math.round(16 * Config.scale)
-                spacing: Math.round(10 * Config.scale)
-
-                Text {
-                    Layout.fillWidth: true
-                    text: "Connect to"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Text {
-                    Layout.fillWidth: true
-                    text: wifiSection.pendingSsid
-                    color: Config.colors.accent
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    font.weight: Font.DemiBold
-                    horizontalAlignment: Text.AlignHCenter
-                    elide: Text.ElideMiddle
-                }
-
-                // Password input field
-                Rectangle {
-                    Layout.fillWidth: true
-                    implicitHeight: Math.round(32 * Config.scale)
-                    radius: Math.round(6 * Config.scale)
-                    color: Qt.rgba(1, 1, 1, 0.06)
-                    border.color: passwordField.activeFocus ? Config.colors.accent : Config.colors.border
-                    border.width: 1
-                    Behavior on border.color {
-                        ColorAnimation { duration: 100 }
-                    }
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: Math.round(8 * Config.scale)
-                        anchors.rightMargin: Math.round(4 * Config.scale)
-                        spacing: Math.round(4 * Config.scale)
-
-                        TextInput {
-                            id: passwordField
-                            Layout.fillWidth: true
-                            color: Config.colors.textPrimary
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
-                            echoMode: showPasswordBtn.showPw ? TextInput.Normal : TextInput.Password
-                            passwordCharacter: "•"
-                            clip: true
-                            selectByMouse: true
-                            verticalAlignment: TextInput.AlignVCenter
-
-                            // Placeholder
-                            Text {
-                                anchors.fill: parent
-                                text: "Password"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                                verticalAlignment: Text.AlignVCenter
-                                visible: passwordField.text === "" && !passwordField.activeFocus
-                            }
-
-                            Keys.onReturnPressed: {
-                                if (passwordField.text.length > 0)
-                                    wifiSection.connectWifiWithPassword(wifiSection.pendingSsid, passwordField.text);
-                            }
-                            Keys.onEscapePressed: {
-                                wifiSection.showPasswordDialog = false;
-                                wifiSection.pendingSsid = "";
-                            }
-                        }
-
-                        // Show/hide password toggle
-                        Rectangle {
-                            id: showPasswordBtn
-                            property bool showPw: false
-                            implicitWidth: Math.round(22 * Config.scale)
-                            implicitHeight: Math.round(22 * Config.scale)
-                            radius: Math.round(4 * Config.scale)
-                            color: showPwMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent"
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: showPasswordBtn.showPw ? "🙈" : "👁"
-                                font.pixelSize: Math.round(11 * Config.scale)
-                            }
-
-                            MouseArea {
-                                id: showPwMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: showPasswordBtn.showPw = !showPasswordBtn.showPw
-                            }
-                        }
-                    }
-                }
-
-                // Buttons row
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Math.round(8 * Config.scale)
-
-                    // Cancel
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: Math.round(28 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: cancelMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(1, 1, 1, 0.05)
-                        border.color: Config.colors.border
-                        border.width: 1
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "Cancel"
-                            color: Config.colors.textPrimary
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
-                        }
-
-                        MouseArea {
-                            id: cancelMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                wifiSection.showPasswordDialog = false;
-                                wifiSection.pendingSsid = "";
-                            }
-                        }
-                    }
-
-                    // Connect
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: Math.round(28 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: connectMouse.containsMouse
-                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35)
-                               : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.2)
-                        border.color: Config.colors.accent
-                        border.width: 1
-                        opacity: passwordField.text.length > 0 ? 1.0 : 0.4
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "Connect"
-                            color: Config.colors.accent
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
-                            font.weight: Font.Medium
-                        }
-
-                        MouseArea {
-                            id: connectMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (passwordField.text.length > 0)
-                                    wifiSection.connectWifiWithPassword(wifiSection.pendingSsid, passwordField.text);
-                            }
-                        }
-                    }
+                width: parent.width
+                height: thumbH
+                y: travel * scrollRatio
+                radius: width / 2
+                color: Config.colors.textMuted
+                Behavior on y {
+                    NumberAnimation { duration: 60 }
                 }
             }
         }
