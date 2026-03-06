@@ -72,22 +72,22 @@ QtObject {
 
     readonly property QtObject battery: QtObject {
         readonly property var chargeLevels: ({
-            charging: {
-                title: "Charger Connected",
-                message: "Your device is now charging.",
-                icon: "battery-good-charging-symbolic"
-            },
-            discharging: {
-                title: "Charger Disconnected",
-                message: "Your device is now running on battery.",
-                icon: "battery-good-symbolic"
-            },
-            fullyCharged: {
-                title: "Battery Full",
-                message: "Your battery is fully charged. You can disconnect the charger.",
-                icon: "battery-full-symbolic"
-            }
-        })
+                charging: {
+                    title: "Charger Connected",
+                    message: "Your device is now charging.",
+                    icon: "battery-good-charging-symbolic"
+                },
+                discharging: {
+                    title: "Charger Disconnected",
+                    message: "Your device is now running on battery.",
+                    icon: "battery-good-symbolic"
+                },
+                fullyCharged: {
+                    title: "Battery Full",
+                    message: "Your battery is fully charged. You can disconnect the charger.",
+                    icon: "battery-full-symbolic"
+                }
+            })
         readonly property var warnLevels: [
             {
                 level: 20,
