@@ -30,6 +30,11 @@ Scope {
     // Tracks the currently visible tray popup Item for the input mask
     property Item activeTrayMenuPopup: null
 
+    // ── WiFi password dialog state (hoisted so passwordWin can see it) ────────
+    property bool wifiPasswordDialogVisible: false
+    property string wifiPasswordPendingSsid: ""
+    signal wifiConnectWithPassword(string ssid_, string password)
+
     function registerTrayPopup(item) {
         root.activeTrayMenuPopup = item;
     }
@@ -131,6 +136,242 @@ Scope {
     }
 
     readonly property int sliderLabelWidth: Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale)
+
+    // ── WiFi password overlay window ──────────────────────────────────────────
+    // Separate WlrLayer.Overlay window so TextInput receives keyboard events.
+    // The bar PanelWindow (WlrLayer.Top, no keyboard interactivity) cannot host
+    // a focusable TextInput, so we use a dedicated overlay here.
+
+    PanelWindow {
+        id: passwordWin
+
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+        anchors.bottom: true
+        exclusiveZone: 0
+        color: "transparent"
+
+        implicitWidth: passwordWin.screen ? passwordWin.screen.width : 1920
+        implicitHeight: passwordWin.screen ? passwordWin.screen.height : 1080
+
+        visible: root.wifiPasswordDialogVisible
+
+        mask: Region {
+            item: pwDialog
+        }
+
+        // Centred dialog card
+        Rectangle {
+            id: pwDialog
+
+            width: Math.round(280 * Config.scale)
+            implicitHeight: pwDialogCol.implicitHeight + Math.round(32 * Config.scale)
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            // Sit just above the bar pill (roughly 100px from the bottom)
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Math.round(72 * Config.scale)
+
+            radius: Math.round(12 * Config.scale)
+            color: Config.colors.background
+            border.color: Config.colors.border
+            border.width: 1
+
+            // Dismiss on click outside the card (within the mask — but mask only
+            // covers the card, so outside clicks pass through; Escape handles cancel)
+
+            ColumnLayout {
+                id: pwDialogCol
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.topMargin: Math.round(20 * Config.scale)
+                anchors.leftMargin: Math.round(16 * Config.scale)
+                anchors.rightMargin: Math.round(16 * Config.scale)
+                spacing: Math.round(10 * Config.scale)
+
+                Text {
+                    Layout.fillWidth: true
+                    text: "Connect to"
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.bar.fontSizeStatus
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: root.wifiPasswordPendingSsid
+                    color: Config.colors.accent
+                    font.family: Config.font.family
+                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.weight: Font.DemiBold
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideMiddle
+                }
+
+                // Password input row
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: Math.round(32 * Config.scale)
+                    radius: Math.round(6 * Config.scale)
+                    color: Qt.rgba(1, 1, 1, 0.06)
+                    border.color: pwField.activeFocus ? Config.colors.accent : Config.colors.border
+                    border.width: 1
+                    Behavior on border.color {
+                        ColorAnimation { duration: 100 }
+                    }
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: Math.round(8 * Config.scale)
+                        anchors.rightMargin: Math.round(4 * Config.scale)
+                        spacing: Math.round(4 * Config.scale)
+
+                        TextInput {
+                            id: pwField
+                            Layout.fillWidth: true
+                            color: Config.colors.textPrimary
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizeStatus
+                            echoMode: pwShowBtn.showPw ? TextInput.Normal : TextInput.Password
+                            passwordCharacter: "\u2022"
+                            clip: true
+                            selectByMouse: true
+                            verticalAlignment: TextInput.AlignVCenter
+
+                            // Placeholder text
+                            Text {
+                                anchors.fill: parent
+                                text: "Password"
+                                color: Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                                verticalAlignment: Text.AlignVCenter
+                                visible: pwField.text === "" && !pwField.activeFocus
+                            }
+
+                            Keys.onReturnPressed: {
+                                if (pwField.text.length > 0)
+                                    root.wifiConnectWithPassword(root.wifiPasswordPendingSsid, pwField.text);
+                            }
+                            Keys.onEscapePressed: {
+                                root.wifiPasswordDialogVisible = false;
+                                root.wifiPasswordPendingSsid = "";
+                            }
+                        }
+
+                        // Show/hide password toggle
+                        Rectangle {
+                            id: pwShowBtn
+                            property bool showPw: false
+                            implicitWidth: Math.round(22 * Config.scale)
+                            implicitHeight: Math.round(22 * Config.scale)
+                            radius: Math.round(4 * Config.scale)
+                            color: pwShowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: pwShowBtn.showPw ? "\ud83d\ude48" : "\ud83d\udc41"
+                                font.pixelSize: Math.round(11 * Config.scale)
+                            }
+
+                            MouseArea {
+                                id: pwShowMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: pwShowBtn.showPw = !pwShowBtn.showPw
+                            }
+                        }
+                    }
+                }
+
+                // Buttons row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Math.round(8 * Config.scale)
+
+                    // Cancel
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: Math.round(28 * Config.scale)
+                        radius: Math.round(6 * Config.scale)
+                        color: pwCancelMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(1, 1, 1, 0.05)
+                        border.color: Config.colors.border
+                        border.width: 1
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "Cancel"
+                            color: Config.colors.textPrimary
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizeStatus
+                        }
+
+                        MouseArea {
+                            id: pwCancelMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.wifiPasswordDialogVisible = false;
+                                root.wifiPasswordPendingSsid = "";
+                            }
+                        }
+                    }
+
+                    // Connect
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: Math.round(28 * Config.scale)
+                        radius: Math.round(6 * Config.scale)
+                        color: pwConnectMouse.containsMouse
+                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35)
+                               : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.2)
+                        border.color: Config.colors.accent
+                        border.width: 1
+                        opacity: pwField.text.length > 0 ? 1.0 : 0.4
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "Connect"
+                            color: Config.colors.accent
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.weight: Font.Medium
+                        }
+
+                        MouseArea {
+                            id: pwConnectMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (pwField.text.length > 0)
+                                    root.wifiConnectWithPassword(root.wifiPasswordPendingSsid, pwField.text);
+                            }
+                        }
+                    }
+                }
+
+                // Bottom spacer
+                Item { implicitHeight: Math.round(4 * Config.scale) }
+            }
+        }
+
+        // Clear the field and grab focus whenever the dialog appears
+        Connections {
+            target: root
+            function onWifiPasswordDialogVisibleChanged() {
+                if (root.wifiPasswordDialogVisible) {
+                    pwField.text = "";
+                    pwShowBtn.showPw = false;
+                    pwField.forceActiveFocus();
+                }
+            }
+        }
+    }
 
     // ── Window ────────────────────────────────────────────────────────────────
 
@@ -270,6 +511,22 @@ Scope {
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onKeepAliveReq: root.keepAlive()
+                    onShowPasswordDialogReq: ssid_ => {
+                        root.wifiPasswordPendingSsid = ssid_;
+                        root.wifiPasswordDialogVisible = true;
+                    }
+                    onHidePasswordDialogReq: {
+                        root.wifiPasswordDialogVisible = false;
+                        root.wifiPasswordPendingSsid = "";
+                    }
+                }
+
+                // Wire root.wifiConnectWithPassword → wifiSection.connectWifiWithPassword
+                Connections {
+                    target: root
+                    function onWifiConnectWithPassword(ssid_, password) {
+                        wifiSection.connectWifiWithPassword(ssid_, password);
+                    }
                 }
 
                 // ── Bluetooth ─────────────────────────────────────────────────
