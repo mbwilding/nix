@@ -179,20 +179,6 @@ Scope {
         implicitWidth: Config.osd.panelWidth
         implicitHeight: root.panelHeight
 
-        // Drop shadow beneath panel
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: root.panelHeight - Math.round(4 * Config.scale)
-            width: Config.osd.panelWidth * 0.70
-            height: Math.round(18 * Config.scale)
-            radius: height / 2
-            color: "#000000"
-            opacity: root.anyVisible ? 0.22 : 0
-            Behavior on opacity { NumberAnimation { duration: Config.osd.animateSpeed } }
-            z: -1
-        }
-
         Item {
             id: panelWrapper
             width: parent.width
@@ -226,6 +212,7 @@ Scope {
                 id: panel
                 anchors.fill: parent
                 radius: Config.osd.radius
+                antialiasing: true
                 color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
                 border.color: Config.colors.border
                 border.width: 1
