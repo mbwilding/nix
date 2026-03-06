@@ -95,6 +95,78 @@ Scope {
     property int wifiStrength: -1
     property var wifiNetworks: []
     property string wifiConnecting: ""
+    property bool wifiEnabled: true
+
+    function toggleWifi() {
+        wifiToggleProc.command = ["nmcli", "radio", "wifi", root.wifiEnabled ? "off" : "on"];
+        wifiToggleProc.running = true;
+    }
+
+    Process {
+        id: wifiToggleProc
+        onExited: { wifiRadioProc.running = true; }
+    }
+
+    Process {
+        id: wifiRadioProc
+        command: ["nmcli", "radio", "wifi"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.wifiEnabled = this.text.trim() === "enabled";
+                if (root.wifiEnabled) wifiProc.running = true;
+                else { root.wifiNetworks = []; root.wifiSsid = ""; root.wifiStrength = -1; }
+            }
+        }
+    }
+
+    // Measures SSID text to compute popup width
+    TextMetrics {
+        id: wifiTextMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+    }
+
+    // Fixed-width reserves for bar labels (prevents layout shifts)
+    // All four use "100%" as the widest string — icons convey state changes.
+    TextMetrics {
+        id: statusTextMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+    }
+
+    readonly property int wifiLabelWidth: {
+        statusTextMetrics.text = "100%";
+        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
+    }
+
+    readonly property int btLabelWidth: {
+        statusTextMetrics.text = "100%";
+        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
+    }
+
+    readonly property int volumeLabelWidth: {
+        statusTextMetrics.text = "100%";
+        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
+    }
+
+    readonly property int batteryLabelWidth: {
+        statusTextMetrics.text = "100%";
+        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
+    }
+
+    readonly property int wifiPopupWidth: {
+        const nets = root.wifiNetworks;
+        const iconW = Config.bar.fontSizeStatus + Math.round(4 * Config.scale);
+        const checkW = Config.bar.fontSizeStatus;
+        const margins = Math.round(8 * Config.scale) * 6; // col margins + row left/right + spacing x2
+        let maxSsidW = Math.round(120 * Config.scale);
+        for (let i = 0; i < nets.length; i++) {
+            wifiTextMetrics.text = nets[i].ssid;
+            if (wifiTextMetrics.boundingRect.width > maxSsidW)
+                maxSsidW = wifiTextMetrics.boundingRect.width;
+        }
+        return iconW + maxSsidW + checkW + margins;
+    }
 
     Timer {
         interval: 5000
@@ -218,17 +290,34 @@ Scope {
         color: "transparent"
 
         implicitWidth: win.screen ? win.screen.width : 1920
-        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale) + 360
+        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale) + 500
 
         mask: Region {
-            item: root.anyPopupOpen ? win : pill
+            Region { item: pill }
+            Region {
+                item: wifiPopup
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: btPopup
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: volumePopup
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: calendarPopup
+                intersection: Intersection.Combine
+            }
         }
 
+        // Leftover maskRect removed
         Rectangle {
             id: pill
 
             implicitWidth: content.implicitWidth + Config.bar.padding * 2
-            implicitHeight: content.implicitHeight + Math.round(20 * Config.scale) * 2
+            implicitHeight: content.implicitHeight + Math.round(12 * Config.scale) * 2
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -297,11 +386,13 @@ Scope {
 
                         readonly property bool popupOpen: root.activePopup === "wifi"
 
-                        HoverHandler {
-                            onHoveredChanged: {
-                                if (hovered) root.openPopup("wifi");
-                                else root.keepPopup();
-                            }
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("wifi")
+                            onExited: root.keepPopup()
+                            onClicked: root.toggleWifi()
                         }
 
                         RowLayout {
@@ -314,10 +405,12 @@ Scope {
                             }
 
                             Text {
+                                width: root.wifiLabelWidth
                                 text: root.wifiSsid || "No WiFi"
                                 color: Config.colors.textSecondary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
+                                elide: Text.ElideRight
                             }
                         }
 
@@ -336,15 +429,14 @@ Scope {
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
 
-                            width: 240
-                            implicitHeight: wifiListCol.implicitHeight + Math.round(16 * Config.scale)
+                            width: root.wifiPopupWidth
+                            height: wifiListCol.implicitHeight + Math.round(16 * Config.scale)
 
                             radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
                             border.color: Config.colors.border
                             border.width: 1
                             z: 20
-                            clip: true
 
                             HoverHandler {
                                 onHoveredChanged: {
@@ -397,7 +489,6 @@ Scope {
                                                 color: parent.parent.isActive ? Config.colors.accent : Config.colors.textPrimary
                                                 font.family: Config.font.family
                                                 font.pixelSize: Config.bar.fontSizeStatus
-                                                elide: Text.ElideRight
                                             }
 
                                             Text {
@@ -442,10 +533,15 @@ Scope {
                         readonly property bool popupOpen: root.activePopup === "bt"
                         readonly property var adapter: Bluetooth.defaultAdapter
 
-                        HoverHandler {
-                            onHoveredChanged: {
-                                if (hovered) root.openPopup("bt");
-                                else root.keepPopup();
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("bt")
+                            onExited: root.keepPopup()
+                            onClicked: {
+                                if (btSection.adapter)
+                                    btSection.adapter.enabled = !btSection.adapter.enabled;
                             }
                         }
 
@@ -459,6 +555,7 @@ Scope {
                             }
 
                             Text {
+                                width: root.btLabelWidth
                                 text: {
                                     const adapter = btSection.adapter;
                                     if (!adapter || !adapter.enabled) return "Off";
@@ -468,6 +565,7 @@ Scope {
                                 color: Config.colors.textSecondary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
+                                elide: Text.ElideRight
                             }
                         }
 
@@ -486,15 +584,14 @@ Scope {
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
 
-                            width: 220
-                            implicitHeight: btPopupCol.implicitHeight + Math.round(16 * Config.scale)
+                            width: 260
+                            height: btPopupCol.implicitHeight + Math.round(16 * Config.scale)
 
                             radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
                             border.color: Config.colors.border
                             border.width: 1
                             z: 20
-                            clip: true
 
                             HoverHandler {
                                 onHoveredChanged: {
@@ -668,10 +765,23 @@ Scope {
                         readonly property var audio: Pipewire.defaultAudioSink?.audio ?? null
                         visible: Pipewire.defaultAudioSink !== null
 
-                        HoverHandler {
-                            onHoveredChanged: {
-                                if (hovered) root.openPopup("volume");
-                                else root.keepPopup();
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("volume")
+                            onExited: root.keepPopup()
+                            onClicked: {
+                                const a = volumeSection.audio;
+                                if (a) a.muted = !a.muted;
+                            }
+                            onWheel: wheel => {
+                                const a = volumeSection.audio;
+                                if (a) {
+                                    const delta = wheel.angleDelta.y / 120;
+                                    a.volume = Math.max(0, Math.min(1.0, a.volume + delta * 0.05));
+                                }
+                                root.keepAlive();
                             }
                         }
 
@@ -685,28 +795,14 @@ Scope {
                             }
 
                             Text {
+                                width: root.volumeLabelWidth
                                 text: {
                                     const a = volumeSection.audio;
-                                    if (!a || a.muted) return "Muted";
-                                    return Math.round(a.volume * 100) + "%";
+                                    return a ? Math.round(a.volume * 100) + "%" : "0%";
                                 }
                                 color: Config.colors.textSecondary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
-                            }
-                        }
-
-                        // Scroll wheel on trigger adjusts volume without opening popup
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            onWheel: wheel => {
-                                const a = volumeSection.audio;
-                                if (a) {
-                                    const delta = wheel.angleDelta.y / 120;
-                                    a.volume = Math.max(0, Math.min(1.5, a.volume + delta * 0.05));
-                                }
-                                root.keepAlive();
                             }
                         }
 
@@ -725,8 +821,8 @@ Scope {
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
 
-                            implicitWidth: Math.round(60 * Config.scale)
-                            implicitHeight: Math.round(200 * Config.scale)
+                            width: Math.round(60 * Config.scale)
+                            height: Math.round(200 * Config.scale)
 
                             radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
@@ -741,50 +837,18 @@ Scope {
                                 }
                             }
 
-                            // Mute button
-                            Rectangle {
-                                id: muteBtn
-                                anchors.top: parent.top
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.topMargin: Math.round(8 * Config.scale)
-                                implicitWidth: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
-                                implicitHeight: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
-                                radius: Math.round(6 * Config.scale)
-                                color: muteBtnMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-                                Behavior on color { ColorAnimation { duration: 80 } }
-
-                                IconImage {
-                                    anchors.centerIn: parent
-                                    implicitSize: Config.bar.batteryIconSize
-                                    source: Quickshell.iconPath(root.volumeIcon())
-                                }
-
-                                MouseArea {
-                                    id: muteBtnMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onEntered: root.keepVolumePopup()
-                                    onClicked: {
-                                        const a = volumeSection.audio;
-                                        if (a) a.muted = !a.muted;
-                                        root.keepVolumePopup();
-                                    }
-                                }
-                            }
-
                             // Slider track
                             Item {
                                 id: sliderArea
-                                anchors.top: muteBtn.bottom
-                                anchors.bottom: volLabel.top
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.topMargin: Math.round(8 * Config.scale)
-                                anchors.bottomMargin: Math.round(4 * Config.scale)
+                                anchors.topMargin: Math.round(10 * Config.scale)
+                                anchors.bottomMargin: Math.round(10 * Config.scale)
                                 width: Math.round(20 * Config.scale)
 
                                 readonly property real trackH: height
-                                readonly property real volFraction: Math.min((volumeSection.audio?.volume ?? 0) / 1.5, 1.0)
+                                readonly property real volFraction: Math.min(volumeSection.audio?.volume ?? 0, 1.0)
 
                                 Rectangle {
                                     anchors.horizontalCenter: parent.horizontalCenter
@@ -823,7 +887,7 @@ Scope {
                                     function setVolumeFromY(my) {
                                         const frac = 1.0 - Math.max(0, Math.min(1, my / sliderArea.trackH));
                                         const a = volumeSection.audio;
-                                        if (a) a.volume = frac * 1.5;
+                                        if (a) a.volume = frac * 1.0;
                                         root.keepVolumePopup();
                                     }
 
@@ -831,25 +895,10 @@ Scope {
                                     onPositionChanged: mouse => { if (pressed) setVolumeFromY(mouse.y) }
                                     onWheel: wheel => {
                                         const a = volumeSection.audio;
-                                        if (a) a.volume = Math.max(0, Math.min(1.5, a.volume + (wheel.angleDelta.y / 120) * 0.05));
+                                        if (a) a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
                                         root.keepVolumePopup();
                                     }
                                 }
-                            }
-
-                            Text {
-                                id: volLabel
-                                anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.bottomMargin: Math.round(8 * Config.scale)
-                                text: {
-                                    const a = volumeSection.audio;
-                                    if (!a || a.muted) return "–";
-                                    return Math.round(a.volume * 100) + "%";
-                                }
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
                             }
                         }
                     }
@@ -872,12 +921,18 @@ Scope {
                             source: {
                                 const b = root.battery;
                                 if (!b || !b.isLaptopBattery) return "";
-                                const n = b.iconName;
-                                return Quickshell.iconPath(n !== "" ? n : "battery-missing-symbolic");
+                                const pct = Math.round(b.percentage * 100);
+                                const charging = b.state === UPowerDeviceState.Charging
+                                             || b.state === UPowerDeviceState.FullyCharged;
+                                const level = Math.min(100, Math.round(pct / 10) * 10);
+                                const lvlStr = String(level).padStart(3, "0");
+                                const chargeSuffix = charging ? "-charging" : "";
+                                return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
                             }
                         }
 
                         Text {
+                            width: root.batteryLabelWidth
                             text: root.battery && root.battery.isLaptopBattery
                                 ? Math.round(root.battery.percentage * 100) + "%" : ""
                             color: {
@@ -1036,11 +1091,11 @@ Scope {
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
 
-                            width: calendarGrid.implicitWidth + Math.round(24 * Config.scale)
-                            implicitHeight: calHeaderRow.implicitHeight
-                                          + calDayNames.implicitHeight
-                                          + calendarGrid.implicitHeight
-                                          + Math.round(36 * Config.scale)
+                            width: 7 * calendarGrid.cellSize + Math.round(32 * Config.scale)
+                            height: calHeaderRow.height
+                                  + calDayNames.height
+                                  + calendarGrid.height
+                                  + Math.round(48 * Config.scale)
 
                             radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
@@ -1066,22 +1121,27 @@ Scope {
                                 }
                             }
 
-                            RowLayout {
+                             RowLayout {
                                 id: calHeaderRow
                                 anchors.top: parent.top
                                 anchors.left: parent.left
                                 anchors.right: parent.right
-                                anchors.topMargin: Math.round(12 * Config.scale)
-                                anchors.leftMargin: Math.round(12 * Config.scale)
-                                anchors.rightMargin: Math.round(12 * Config.scale)
+                                anchors.topMargin: Math.round(8 * Config.scale)
+                                anchors.leftMargin: Math.round(8 * Config.scale)
+                                anchors.rightMargin: Math.round(8 * Config.scale)
                                 spacing: 0
 
-                                Text {
-                                    text: "‹"
-                                    color: prevMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
-                                    font.family: Config.font.family
-                                    font.pixelSize: Config.bar.fontSizeStatus * 1.2
-                                    Behavior on color { ColorAnimation { duration: 80 } }
+                                Item {
+                                    width: Math.round(32 * Config.scale)
+                                    height: Math.round(32 * Config.scale)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "‹"
+                                        color: prevMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
+                                        font.family: Config.font.family
+                                        font.pixelSize: Config.bar.fontSizeStatus * 1.2
+                                        Behavior on color { ColorAnimation { duration: 80 } }
+                                    }
                                     MouseArea {
                                         id: prevMonthMouse
                                         anchors.fill: parent
@@ -1110,12 +1170,17 @@ Scope {
                                     font.weight: Font.Medium
                                 }
 
-                                Text {
-                                    text: "›"
-                                    color: nextMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
-                                    font.family: Config.font.family
-                                    font.pixelSize: Config.bar.fontSizeStatus * 1.2
-                                    Behavior on color { ColorAnimation { duration: 80 } }
+                                Item {
+                                    width: Math.round(32 * Config.scale)
+                                    height: Math.round(32 * Config.scale)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "›"
+                                        color: nextMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
+                                        font.family: Config.font.family
+                                        font.pixelSize: Config.bar.fontSizeStatus * 1.2
+                                        Behavior on color { ColorAnimation { duration: 80 } }
+                                    }
                                     MouseArea {
                                         id: nextMonthMouse
                                         anchors.fill: parent
@@ -1138,17 +1203,14 @@ Scope {
                             Row {
                                 id: calDayNames
                                 anchors.top: calHeaderRow.bottom
-                                anchors.left: parent.left
-                                anchors.right: parent.right
+                                anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.topMargin: Math.round(8 * Config.scale)
-                                anchors.leftMargin: Math.round(12 * Config.scale)
-                                anchors.rightMargin: Math.round(12 * Config.scale)
 
                                 Repeater {
                                     model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
                                     delegate: Text {
                                         required property string modelData
-                                        width: calDayNames.width / 7
+                                        width: calendarGrid.cellSize
                                         horizontalAlignment: Text.AlignHCenter
                                         text: modelData
                                         color: Config.colors.textMuted
@@ -1161,15 +1223,11 @@ Scope {
                             Grid {
                                 id: calendarGrid
                                 anchors.top: calDayNames.bottom
-                                anchors.left: parent.left
-                                anchors.right: parent.right
+                                anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.topMargin: Math.round(4 * Config.scale)
-                                anchors.leftMargin: Math.round(12 * Config.scale)
-                                anchors.rightMargin: Math.round(12 * Config.scale)
-                                anchors.bottomMargin: Math.round(12 * Config.scale)
 
                                 columns: 7
-                                property int cellSize: Math.round(30 * Config.scale)
+                                property int cellSize: Math.round(36 * Config.scale)
 
                                 property var cells: {
                                     const y = calendarPopup.displayYear;
@@ -1180,12 +1238,12 @@ Scope {
                                     const arr = [];
                                     for (let i = 0; i < offset; i++) arr.push(0);
                                     for (let d = 1; d <= daysInMonth; d++) arr.push(d);
-                                    while (arr.length % 7 !== 0) arr.push(0);
+                                    while (arr.length < 42) arr.push(0);
                                     return arr;
                                 }
 
                                 width: 7 * cellSize
-                                height: (cells.length / 7) * cellSize
+                                height: 6 * cellSize
 
                                 Repeater {
                                     model: calendarGrid.cells
