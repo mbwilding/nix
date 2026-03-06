@@ -11,6 +11,8 @@ Scope {
     property UPowerDevice battery: UPower.displayDevice
     property var firedLevels: []
     property bool ready: false
+    property bool initialStateHandled: false
+    property bool initialPercentageHandled: false
 
     Component.onCompleted: {
         Qt.callLater(() => {
@@ -34,6 +36,11 @@ Scope {
             if (!root.ready)
                 return;
 
+            if (!root.initialStateHandled) {
+                root.initialStateHandled = true;
+                return;
+            }
+
             const state = root.battery.state;
 
             if (state === UPowerDeviceState.Charging) {
@@ -50,6 +57,12 @@ Scope {
         function onPercentageChanged() {
             if (!root.ready)
                 return;
+
+            if (!root.initialPercentageHandled) {
+                root.initialPercentageHandled = true;
+                return;
+            }
+
             if (root.battery.state !== UPowerDeviceState.Discharging)
                 return;
 
