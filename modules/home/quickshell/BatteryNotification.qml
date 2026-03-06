@@ -38,12 +38,12 @@ Scope {
 
             if (state === UPowerDeviceState.Charging) {
                 root.firedLevels = [];
-                root.notify("Charger Connected", "Your device is now charging.", "battery-good-charging-symbolic");
+                root.notify(Config.battery.charging.title, Config.battery.charging.message, Config.battery.charging.icon);
             } else if (state === UPowerDeviceState.Discharging) {
                 root.firedLevels = [];
-                root.notify("Charger Disconnected", "Your device is now running on battery.", "battery-good-symbolic");
+                root.notify(Config.battery.discharging.title, Config.battery.discharging.message, Config.battery.discharging.icon);
             } else if (state === UPowerDeviceState.FullyCharged) {
-                root.notify("Battery Full", "Your battery is fully charged. You can disconnect the charger.", "battery-full-symbolic");
+                root.notify(Config.battery.fullyCharged.title, Config.battery.fullyCharged.message, Config.battery.fullyCharged.icon);
             }
         }
 
