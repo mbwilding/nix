@@ -191,7 +191,6 @@ Item {
             text: sliderPopup.label
             color: Config.colors.textPrimary
             font.family: Config.font.family
-            font.bold: true
             font.pixelSize: Config.bar.fontSizeStatus
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: sliderPopup.labelWidth
