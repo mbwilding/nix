@@ -458,6 +458,8 @@ in
 
         "$mod, L, exec, qs ipc call default lock"
         "$mod, A, exec, qs ipc call default toggleMixer"
+        "$mod, backspace, exec, qs ipc call notifications dismiss"
+        "$mod, Return, exec, qs ipc call notifications invoke"
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
         "$mod, Z, exec, hyprshot -m window -m active"
 

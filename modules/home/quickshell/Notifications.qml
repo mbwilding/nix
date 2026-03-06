@@ -10,6 +10,35 @@ import Quickshell.Services.Notifications
 Scope {
     id: root
 
+    // Returns the topmost (first) tracked notification, if any
+    function topNotification() {
+        return server.trackedNotifications.length > 0
+            ? server.trackedNotifications[0]
+            : null;
+    }
+
+    IpcHandler {
+        target: "notifications"
+
+        function dismiss() {
+            const n = root.topNotification();
+            if (n) n.dismiss();
+        }
+
+        function invoke() {
+            const n = root.topNotification();
+            if (!n) return;
+            const def = (n.actions ?? []).find(a => a.identifier === "default");
+            if (def) {
+                def.invoke();
+            } else if (n.desktopEntry && n.desktopEntry !== "") {
+                const entry = DesktopEntries.byId(n.desktopEntry);
+                if (entry) entry.launch();
+            }
+            n.dismiss();
+        }
+    }
+
     NotificationServer {
         id: server
         keepOnReload: true
@@ -30,7 +59,9 @@ Scope {
         anchors.bottom: true
         exclusiveZone: 0
         color: "transparent"
-        mask: Region {}
+        mask: Region {
+            item: notifColumn
+        }
 
         implicitWidth: Config.notifications.cardWidth + Math.round(16 * Config.scale)
 
