@@ -10,8 +10,7 @@ Item {
     id: root
 
     required property SystemTrayItem trayItem
-    // Emitted so the parent bar can reset its hide timer on hover
-    signal hovered()
+    signal hovered
 
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
@@ -22,11 +21,13 @@ Item {
         implicitWidth: Config.bar.iconSize + Math.round(8 * Config.scale)
         implicitHeight: Config.bar.iconSize + Math.round(8 * Config.scale)
         radius: Math.round(6 * Config.scale)
-        color: hoverArea.containsMouse
-            ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
-            : "transparent"
+        color: hoverArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15) : "transparent"
 
-        Behavior on color { ColorAnimation { duration: 100 } }
+        Behavior on color {
+            ColorAnimation {
+                duration: 100
+            }
+        }
 
         IconImage {
             id: icon
@@ -45,15 +46,15 @@ Item {
             onEntered: root.hovered()
 
             onClicked: mouse => {
-                root.hovered()
+                root.hovered();
                 if (mouse.button === Qt.RightButton) {
                     if (root.trayItem.hasMenu)
-                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y)
+                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y);
                 } else {
                     if (root.trayItem.hasMenu)
-                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y)
+                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y);
                     else
-                        root.trayItem.activate()
+                        root.trayItem.activate();
                 }
             }
         }

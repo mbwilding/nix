@@ -31,13 +31,7 @@ Scope {
     }
 
     function batteryNotify(level) {
-        batteryNotifyProc.command = [
-            "notify-send",
-            "--app-name=Battery",
-            "--app-icon=" + level.icon,
-            level.title,
-            level.message
-        ];
+        batteryNotifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + level.icon, level.title, level.message];
         batteryNotifyProc.running = true;
     }
 
@@ -49,7 +43,8 @@ Scope {
         target: root.battery
 
         function onStateChanged() {
-            if (!root.batteryReady) return;
+            if (!root.batteryReady)
+                return;
 
             if (!root.initialStateHandled) {
                 root.initialStateHandled = true;
@@ -70,14 +65,16 @@ Scope {
         }
 
         function onPercentageChanged() {
-            if (!root.batteryReady) return;
+            if (!root.batteryReady)
+                return;
 
             if (!root.initialPercentageHandled) {
                 root.initialPercentageHandled = true;
                 return;
             }
 
-            if (root.battery.state !== UPowerDeviceState.Discharging) return;
+            if (root.battery.state !== UPowerDeviceState.Discharging)
+                return;
 
             const pct = Math.round(root.battery.percentage * 100);
             const levels = Config.battery.warnLevels.slice().sort((a, b) => b.level - a.level);
@@ -97,7 +94,8 @@ Scope {
 
         function dismiss() {
             const card = root.topCard();
-            if (card) card.animateOut();
+            if (card)
+                card.animateOut();
         }
 
         function dismissAll() {
@@ -106,15 +104,18 @@ Scope {
 
         function invoke() {
             const card = root.topCard();
-            if (!card) return;
+            if (!card)
+                return;
             const n = card.notification;
-            if (!n) return;
+            if (!n)
+                return;
             const def = (n.actions ?? []).find(a => a.identifier === "default");
             if (def) {
                 def.invoke();
             } else if (n.desktopEntry && n.desktopEntry !== "") {
                 const entry = DesktopEntries.byId(n.desktopEntry);
-                if (entry) entry.launch();
+                if (entry)
+                    entry.launch();
             }
             card.animateOut();
         }
@@ -180,7 +181,8 @@ Scope {
                     Component.onCompleted: root.activeCards.push(this)
                     Component.onDestruction: {
                         const idx = root.activeCards.indexOf(this);
-                        if (idx !== -1) root.activeCards.splice(idx, 1);
+                        if (idx !== -1)
+                            root.activeCards.splice(idx, 1);
                         root.activeCardsChanged();
                     }
 
