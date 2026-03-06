@@ -120,6 +120,7 @@ in
       "render"
       "video"
       "wheel"
+      "dialout"
     ];
     isNormalUser = true;
     shell = pkgs.fish;
