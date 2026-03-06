@@ -456,14 +456,16 @@ in
         "$mod, Q, killactive,"
         "$mod, grave, exit,"
 
+        "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
+        "$mod, Z, exec, hyprshot -m window -m active"
+
+        # Quickshell
         "$mod, L, exec, qs ipc call default lock"
         "$mod, A, exec, qs ipc call default toggleMixer"
         "$mod, N, exec, qs ipc call notifications dismiss"
         "$mod, escape, exec, qs ipc call notifications dismissAll"
         "$mod, Y, exec, qs ipc call notifications invoke"
         "$mod, X, exec, systemctl --user restart quickshell.service"
-        "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
-        "$mod, Z, exec, hyprshot -m window -m active"
 
         # Switch window focus
         "$mod, h, movefocus, l"
