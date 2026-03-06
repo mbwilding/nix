@@ -31,8 +31,16 @@ Scope {
         });
     }
 
-    function batteryNotify(level) {
-        batteryNotifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + level.icon, level.title, level.message];
+    function batteryIconName(pct, charging) {
+        const level = Math.min(100, Math.round(pct / 10) * 10);
+        const lvlStr = String(level).padStart(3, "0");
+        const chargeSuffix = charging ? "-charging" : "";
+        return "battery-" + lvlStr + chargeSuffix + "-symbolic";
+    }
+
+    function batteryNotify(level, pct, charging) {
+        const icon = batteryIconName(pct, charging);
+        batteryNotifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + icon, level.title, level.message];
         batteryNotifyProc.running = true;
     }
 
@@ -54,16 +62,18 @@ Scope {
 
             const state = root.battery.state;
 
+            const pct = Math.round(root.battery.percentage * 100);
+
             if (state === UPowerDeviceState.Charging) {
                 root.firedLevels = [];
                 root.lastCheckedPct = -1;
-                root.batteryNotify(Config.battery.chargeLevels.charging);
+                root.batteryNotify(Config.battery.chargeLevels.charging, pct, true);
             } else if (state === UPowerDeviceState.Discharging) {
                 root.firedLevels = [];
-                root.lastCheckedPct = Math.round(root.battery.percentage * 100);
-                root.batteryNotify(Config.battery.chargeLevels.discharging);
+                root.lastCheckedPct = pct;
+                root.batteryNotify(Config.battery.chargeLevels.discharging, pct, false);
             } else if (state === UPowerDeviceState.FullyCharged) {
-                root.batteryNotify(Config.battery.chargeLevels.fullyCharged);
+                root.batteryNotify(Config.battery.chargeLevels.fullyCharged, pct, false);
             }
         }
 
@@ -92,7 +102,7 @@ Scope {
             for (const warn of levels) {
                 if (pct <= warn.level && !root.firedLevels.includes(warn.level)) {
                     root.firedLevels = root.firedLevels.concat([warn.level]);
-                    root.batteryNotify(warn);
+                    root.batteryNotify(warn, pct, false);
                     break;
                 }
             }

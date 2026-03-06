@@ -15,12 +15,12 @@ Item {
     // ── Public API ────────────────────────────────────────────────────────────
 
     property string activePopup: ""     // bound to root.activePopup
-    property int    sliderLabelWidth: 0 // bound to root.sliderLabelWidth
+    property int sliderLabelWidth: 0 // bound to root.sliderLabelWidth
 
     signal openPopupReq(string name)
-    signal keepPopupReq()
-    signal exitPopupReq()
-    signal keepAliveReq()
+    signal keepPopupReq
+    signal exitPopupReq
+    signal keepAliveReq
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: volumePopup
@@ -32,17 +32,20 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth:  volumeRow.implicitWidth
+    implicitWidth: volumeRow.implicitWidth
     implicitHeight: volumeRow.implicitHeight
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     function volumeIcon() {
         const a = volumeSection.audio;
-        if (!a || a.muted) return "audio-volume-muted-symbolic";
+        if (!a || a.muted)
+            return "audio-volume-muted-symbolic";
         const v = a.volume;
-        if (v <= 0.33) return "audio-volume-low-symbolic";
-        if (v <= 0.66) return "audio-volume-medium-symbolic";
+        if (v <= 0.33)
+            return "audio-volume-low-symbolic";
+        if (v <= 0.66)
+            return "audio-volume-medium-symbolic";
         return "audio-volume-high-symbolic";
     }
 
@@ -53,14 +56,16 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onEntered: volumeSection.openPopupReq("volume")
-        onExited:  volumeSection.keepPopupReq()
+        onExited: volumeSection.keepPopupReq()
         onClicked: {
             const a = volumeSection.audio;
-            if (a) a.muted = !a.muted;
+            if (a)
+                a.muted = !a.muted;
         }
         onWheel: wheel => {
             const a = volumeSection.audio;
-            if (a) a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
+            if (a)
+                a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
             volumeSection.keepAliveReq();
         }
     }
@@ -79,26 +84,28 @@ Item {
 
     BarSliderPopup {
         id: volumePopup
-        popupName:       "volume"
-        iconName:        volumeSection.volumeIcon()
-        fraction:        Math.min(volumeSection.audio?.volume ?? 0, 1.0)
-        activePopup:     volumeSection.activePopup
-        labelWidth:      volumeSection.sliderLabelWidth
+        popupName: "volume"
+        iconName: volumeSection.volumeIcon()
+        fraction: Math.min(volumeSection.audio?.volume ?? 0, 1.0)
+        activePopup: volumeSection.activePopup
+        labelWidth: volumeSection.sliderLabelWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom:           parent.top
-        anchors.bottomMargin:     Config.bar.popupOffset
+        anchors.bottom: parent.top
+        anchors.bottomMargin: Config.bar.popupOffset
 
         onOpenPopupReq: name => volumeSection.openPopupReq(name)
-        onExitPopupReq:      volumeSection.exitPopupReq()
+        onExitPopupReq: volumeSection.exitPopupReq()
 
         onSetFraction: v => {
             const a = volumeSection.audio;
-            if (a) a.volume = v;
+            if (a)
+                a.volume = v;
         }
         onScrollDelta: delta => {
             const a = volumeSection.audio;
-            if (a) a.volume = Math.max(0, Math.min(1.0, a.volume + delta * 0.05));
+            if (a)
+                a.volume = Math.max(0, Math.min(1.0, a.volume + delta * 0.05));
         }
     }
 }

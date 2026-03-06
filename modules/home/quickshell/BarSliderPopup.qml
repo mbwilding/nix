@@ -16,7 +16,7 @@ Rectangle {
 
     property string popupName: ""       // "volume" | "screen" | "kbd"
     property string iconName: ""        // icon to show inside the popup
-    property real   fraction: 0         // 0..1  current value
+    property real fraction: 0         // 0..1  current value
     property string activePopup: ""     // bound to root.activePopup
 
     property string label: Math.round(fraction * 100) + "%"
@@ -28,7 +28,7 @@ Rectangle {
     signal scrollDelta(real delta)      // mouse-wheel notch (+/- 1 per notch)
 
     signal openPopupReq(string name)
-    signal exitPopupReq()
+    signal exitPopupReq
 
     // ── Geometry / appearance ─────────────────────────────────────────────────
 
@@ -36,15 +36,25 @@ Rectangle {
 
     visible: opacity > 0
     opacity: popupOpen ? 1 : 0
-    scale:   popupOpen ? 1 : 0.92
+    scale: popupOpen ? 1 : 0.92
     transformOrigin: Item.Bottom
 
-    Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
-    Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 120
+            easing.type: Easing.InOutQuad
+        }
+    }
+    Behavior on scale {
+        NumberAnimation {
+            duration: 120
+            easing.type: Easing.InOutQuad
+        }
+    }
 
-    width:  Math.round(240 * Config.scale)
-    height: Math.round(56  * Config.scale)
-    radius: Math.round(10  * Config.scale)
+    width: Math.round(240 * Config.scale)
+    height: Math.round(56 * Config.scale)
+    radius: Math.round(10 * Config.scale)
 
     color: Config.colors.background
     border.color: Config.colors.border
@@ -55,8 +65,10 @@ Rectangle {
 
     HoverHandler {
         onHoveredChanged: {
-            if (hovered) sliderPopup.openPopupReq(sliderPopup.popupName);
-            else         sliderPopup.exitPopupReq();
+            if (hovered)
+                sliderPopup.openPopupReq(sliderPopup.popupName);
+            else
+                sliderPopup.exitPopupReq();
         }
     }
 
@@ -64,7 +76,7 @@ Rectangle {
 
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin:  Math.round(12 * Config.scale)
+        anchors.leftMargin: Math.round(12 * Config.scale)
         anchors.rightMargin: Math.round(12 * Config.scale)
         spacing: Math.round(10 * Config.scale)
 
@@ -80,13 +92,13 @@ Rectangle {
             height: Math.round(20 * Config.scale)
 
             readonly property real trackW: width
-            readonly property real frac:   Math.max(0, Math.min(1, sliderPopup.fraction))
+            readonly property real frac: Math.max(0, Math.min(1, sliderPopup.fraction))
 
             // Rail
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                width:  sliderTrack.trackW
+                width: sliderTrack.trackW
                 height: Math.round(6 * Config.scale)
                 radius: height / 2
                 color: Config.colors.border
@@ -96,7 +108,7 @@ Rectangle {
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                width:  sliderTrack.trackW * sliderTrack.frac
+                width: sliderTrack.trackW * sliderTrack.frac
                 height: Math.round(6 * Config.scale)
                 radius: height / 2
                 color: Config.colors.accent
@@ -106,11 +118,15 @@ Rectangle {
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 x: sliderTrack.trackW * sliderTrack.frac - width / 2
-                width:  Math.round(14 * Config.scale)
+                width: Math.round(14 * Config.scale)
                 height: width
                 radius: width / 2
                 color: Config.colors.accent
-                Behavior on x { NumberAnimation { duration: 60 } }
+                Behavior on x {
+                    NumberAnimation {
+                        duration: 60
+                    }
+                }
             }
 
             MouseArea {
@@ -125,8 +141,11 @@ Rectangle {
                     sliderPopup.openPopupReq(sliderPopup.popupName);
                 }
 
-                onPressed:         mouse => setFromX(mouse.x)
-                onPositionChanged: mouse => { if (pressed) setFromX(mouse.x) }
+                onPressed: mouse => setFromX(mouse.x)
+                onPositionChanged: mouse => {
+                    if (pressed)
+                        setFromX(mouse.x);
+                }
                 onWheel: wheel => {
                     sliderPopup.scrollDelta(wheel.angleDelta.y / 120);
                     sliderPopup.openPopupReq(sliderPopup.popupName);

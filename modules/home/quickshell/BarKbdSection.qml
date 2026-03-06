@@ -16,12 +16,12 @@ Item {
     // ── Public API ────────────────────────────────────────────────────────────
 
     property string activePopup: ""     // bound to root.activePopup
-    property int    sliderLabelWidth: 0 // bound to root.sliderLabelWidth
+    property int sliderLabelWidth: 0 // bound to root.sliderLabelWidth
 
     signal openPopupReq(string name)
-    signal keepPopupReq()
-    signal exitPopupReq()
-    signal keepAliveReq()
+    signal keepPopupReq
+    signal exitPopupReq
+    signal keepAliveReq
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: kbdPopup
@@ -29,15 +29,15 @@ Item {
     // ── State ─────────────────────────────────────────────────────────────────
 
     property string device: ""
-    property int    _max:    1
-    property int    _raw:   -1
-    property real   brightness: 0       // 0..1
+    property int _max: 1
+    property int _raw: -1
+    property real brightness: 0       // 0..1
 
     readonly property bool available: _max > 1
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth:  kbdRow.implicitWidth
+    implicitWidth: kbdRow.implicitWidth
     implicitHeight: kbdRow.implicitHeight
     visible: available
 
@@ -49,7 +49,8 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const dev = this.text.trim();
-                if (dev) kbdSection.device = "/sys/class/leds/" + dev;
+                if (dev)
+                    kbdSection.device = "/sys/class/leds/" + dev;
             }
         }
     }
@@ -60,7 +61,8 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) kbdSection._max = v;
+                if (!isNaN(v) && v > 0)
+                    kbdSection._max = v;
             }
         }
     }
@@ -92,12 +94,7 @@ Item {
 
     function setBrightness(frac) {
         const raw = Math.round(frac * kbdSection._max);
-        kbdWriteProc.command = [
-            "brightnessctl",
-            "--device=" + kbdSection.device.split("/").pop(),
-            "set",
-            String(raw)
-        ];
+        kbdWriteProc.command = ["brightnessctl", "--device=" + kbdSection.device.split("/").pop(), "set", String(raw)];
         kbdWriteProc.running = true;
     }
 
@@ -108,11 +105,9 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onEntered: kbdSection.openPopupReq("kbd")
-        onExited:  kbdSection.keepPopupReq()
+        onExited: kbdSection.keepPopupReq()
         onWheel: wheel => {
-            kbdSection.setBrightness(
-                Math.max(0, Math.min(1, kbdSection.brightness + (wheel.angleDelta.y / 120) * 0.05))
-            );
+            kbdSection.setBrightness(Math.max(0, Math.min(1, kbdSection.brightness + (wheel.angleDelta.y / 120) * 0.05)));
             kbdSection.keepAliveReq();
         }
     }
@@ -131,22 +126,20 @@ Item {
 
     BarSliderPopup {
         id: kbdPopup
-        popupName:   "kbd"
-        iconName:    "input-keyboard-brightness"
-        fraction:    kbdSection.brightness
+        popupName: "kbd"
+        iconName: "input-keyboard-brightness"
+        fraction: kbdSection.brightness
         activePopup: kbdSection.activePopup
-        labelWidth:  kbdSection.sliderLabelWidth
+        labelWidth: kbdSection.sliderLabelWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom:           parent.top
-        anchors.bottomMargin:     Config.bar.popupOffset
+        anchors.bottom: parent.top
+        anchors.bottomMargin: Config.bar.popupOffset
 
         onOpenPopupReq: name => kbdSection.openPopupReq(name)
-        onExitPopupReq:      kbdSection.exitPopupReq()
+        onExitPopupReq: kbdSection.exitPopupReq()
 
-        onSetFraction:  v     => kbdSection.setBrightness(v)
-        onScrollDelta:  delta => kbdSection.setBrightness(
-            Math.max(0, Math.min(1, kbdSection.brightness + delta * 0.05))
-        )
+        onSetFraction: v => kbdSection.setBrightness(v)
+        onScrollDelta: delta => kbdSection.setBrightness(Math.max(0, Math.min(1, kbdSection.brightness + delta * 0.05)))
     }
 }
