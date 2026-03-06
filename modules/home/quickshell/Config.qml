@@ -55,15 +55,19 @@ QtObject {
     }
 
     readonly property QtObject bar: QtObject {
-        readonly property int height: Math.round(40 * root.scale)
         readonly property int animateSpeed: 200
         readonly property int hideDelay: 4000
         readonly property int radius: Math.round(10 * root.scale)
-        readonly property int iconSize: Math.round(18 * root.scale)
-        readonly property int spacing: Math.round(12 * root.scale)
-        readonly property int padding: Math.round(16 * root.scale)
+        readonly property int iconSize: Math.round(20 * root.scale)
+        readonly property int powerIconSize: Math.round(16 * root.scale)
+        readonly property int batteryIconSize: Math.round(16 * root.scale)
+        readonly property int spacing: Math.round(10 * root.scale)
+        readonly property int padding: Math.round(14 * root.scale)
+        readonly property int sectionSpacing: Math.round(16 * root.scale)
         readonly property int fontSizeClock: root.font.sizeLg
-        readonly property string position: "bottom"
+        readonly property int fontSizeStatus: root.font.sizeMd
+        readonly property string clockFormat: "hh:mm"
+        readonly property int popupOffset: Math.round(4 * root.scale)
     }
 
     readonly property QtObject battery: QtObject {
