@@ -85,6 +85,7 @@ Item {
         width: batteryPopupRow.implicitWidth + Math.round(28 * Config.scale)
 
         radius: Math.round(Config.bar.popupRadius * Config.scale)
+        antialiasing: true
         color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1

@@ -173,6 +173,7 @@ Scope {
             anchors.bottomMargin: Math.round(72 * Config.scale)
 
             radius: Math.round(16 * Config.scale)
+            antialiasing: true
             color: Qt.rgba(0.12, 0.11, 0.22, 0.96)
             border.color: Config.colors.border
             border.width: 1
@@ -458,26 +459,6 @@ Scope {
             }
         }
 
-        // ── Subtle drop shadow beneath pill ──────────────────────────────────
-        Rectangle {
-            id: pillGlow
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.visible_ ? -Math.round(6 * Config.scale) : -(pill.implicitHeight + Math.round(40 * Config.scale))
-            Behavior on anchors.bottomMargin {
-                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutCubic }
-            }
-
-            width: pill.implicitWidth * 0.85
-            height: Math.round(18 * Config.scale)
-            radius: height / 2
-            color: "#000000"
-            opacity: root.visible_ ? 0.28 : 0
-            Behavior on opacity {
-                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
-            }
-        }
-
         Rectangle {
             id: pill
 
@@ -496,6 +477,7 @@ Scope {
             }
 
             radius: Config.bar.radius
+            antialiasing: true
             color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
             border.color: Config.colors.border
             border.width: 1
