@@ -171,7 +171,7 @@ Scope {
     // Panel
     PanelWindow {
         WlrLayershell.layer: WlrLayer.Overlay
-        anchors.bottom: true
+        anchors.top: true
         exclusiveZone: 0
         color: "transparent"
         mask: Region {}
@@ -187,7 +187,7 @@ Scope {
             color: Config.colors.background
 
             transform: Translate {
-                y: root.anyVisible ? 0 : panel.height
+                y: root.anyVisible ? 0 : -panel.height
                 Behavior on y {
                     NumberAnimation {
                         duration: Config.osd.animateSpeed
