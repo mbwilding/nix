@@ -460,6 +460,7 @@ in
         "$mod, A, exec, qs ipc call default toggleMixer"
         "$mod, N, exec, qs ipc call notifications dismiss"
         "$mod, Y, exec, qs ipc call notifications invoke"
+        "$mod, X, exec, systemctl --user restart quickshell.service"
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
         "$mod, Z, exec, hyprshot -m window -m active"
 
