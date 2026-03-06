@@ -129,20 +129,14 @@ Item {
         id: btPopup
         visible: opacity > 0
         opacity: btSection.popupOpen ? 1 : 0
-        scale: btSection.popupOpen ? 1 : 0.92
+        scale: btSection.popupOpen ? 1 : 0.90
         transformOrigin: Item.Bottom
 
         Behavior on opacity {
-            NumberAnimation {
-                duration: 120
-                easing.type: Easing.InOutQuad
-            }
+            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
         }
         Behavior on scale {
-            NumberAnimation {
-                duration: 120
-                easing.type: Easing.InOutQuad
-            }
+            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
         }
 
         anchors.horizontalCenter: parent.horizontalCenter
@@ -160,19 +154,47 @@ Item {
             )
         )
         Behavior on width {
-            NumberAnimation { duration: 120; easing.type: Easing.InOutQuad }
+            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
         }
         height: Math.min(
             btDevListCol.implicitHeight + Math.round(16 * Config.scale),
             Math.round(400 * Config.scale)
         )
 
-        radius: Math.round(10 * Config.scale)
-        color: Config.colors.background
+        radius: Math.round(Config.bar.popupRadius * Config.scale)
+        // Glassmorphic gradient fill
+        gradient: Gradient {
+            orientation: Gradient.Vertical
+            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
+        }
         border.color: Config.colors.border
         border.width: 1
         z: 20
         clip: true
+
+        // Top shine
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            radius: parent.radius
+            color: "#28ffffff"
+        }
+
+        // Drop shadow blob
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.bottom
+            anchors.topMargin: -Math.round(6 * Config.scale)
+            width: parent.width * 0.75
+            height: Math.round(18 * Config.scale)
+            radius: height / 2
+            color: Config.colors.shadowDark
+            opacity: 0.8
+            z: -1
+        }
 
         HoverHandler {
             onHoveredChanged: {

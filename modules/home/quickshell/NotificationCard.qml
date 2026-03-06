@@ -23,6 +23,7 @@ Item {
         visible_ = true;
         slideTranslate.x = 0;
         card.opacity = 1;
+        card.scale = 1;
     })
 
     Connections {
@@ -55,23 +56,23 @@ Item {
             NumberAnimation {
                 target: slideTranslate
                 property: "x"
-                to: card.width + 20
+                to: card.width + 24
                 duration: Config.notifications.animateSpeed
-                easing.type: Easing.InOutQuad
+                easing.type: Easing.InCubic
             }
             NumberAnimation {
                 target: card
                 property: "opacity"
                 to: 0
                 duration: Config.notifications.animateSpeed
-                easing.type: Easing.InOutQuad
+                easing.type: Easing.InCubic
             }
             NumberAnimation {
                 target: root
                 property: "latchedHeight"
                 to: 0
                 duration: Config.notifications.animateSpeed
-                easing.type: Easing.OutQuad
+                easing.type: Easing.OutCubic
             }
         }
 
@@ -80,6 +81,19 @@ Item {
                 root.notification?.dismiss();
             }
         }
+    }
+
+    // ── Drop shadow blob ──────────────────────────────────────────────────────
+    Rectangle {
+        anchors.horizontalCenter: card.horizontalCenter
+        anchors.top: card.bottom
+        anchors.topMargin: -Math.round(6 * Config.scale)
+        width: card.width * 0.75
+        height: Math.round(18 * Config.scale)
+        radius: height / 2
+        color: Config.colors.shadowDark
+        opacity: card.opacity * 0.85
+        z: -1
     }
 
     Rectangle {
@@ -92,29 +106,54 @@ Item {
             topMargin: Math.round(4 * Config.scale)
         }
 
-        implicitHeight: cardContent.implicitHeight + Math.round(20 * Config.scale)
+        implicitHeight: cardContent.implicitHeight + Math.round(22 * Config.scale)
         radius: Config.notifications.radius
-        color: Config.colors.background
+
+        // Glassmorphic gradient fill
+        gradient: Gradient {
+            orientation: Gradient.Vertical
+            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
+        }
 
         border.color: Config.colors.border
         border.width: 1
 
+        // Top shine rim
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            radius: parent.radius
+            color: "#28ffffff"
+            z: 1
+        }
+
         transform: Translate {
             id: slideTranslate
-            x: card.width + 20
+            x: card.width + 24
             Behavior on x {
                 NumberAnimation {
                     duration: Config.notifications.animateSpeed
-                    easing.type: Easing.InOutQuad
+                    easing.type: Easing.OutCubic
                 }
             }
         }
 
         opacity: 0
+        scale: 0.94
         Behavior on opacity {
             NumberAnimation {
                 duration: Config.notifications.animateSpeed
-                easing.type: Easing.InOutQuad
+                easing.type: Easing.OutCubic
+            }
+        }
+        Behavior on scale {
+            NumberAnimation {
+                duration: Config.notifications.animateSpeed
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.4
             }
         }
 
@@ -125,18 +164,36 @@ Item {
             onClicked: root.animateOut()
         }
 
-        // Left accent bar
-        Rectangle {
+        // Left accent bar — gradient from accent to accentAlt
+        Item {
             anchors {
                 left: parent.left
                 top: parent.top
                 bottom: parent.bottom
-                topMargin: Math.round(6 * Config.scale)
-                bottomMargin: Math.round(6 * Config.scale)
+                topMargin: Math.round(8 * Config.scale)
+                bottomMargin: Math.round(8 * Config.scale)
             }
             width: Config.notifications.accentBar
-            radius: Config.notifications.accentBar
-            color: Config.colors.accent
+            clip: true
+
+            // Glow layer
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -3
+                radius: width / 2
+                color: Config.colors.glowAccent
+                opacity: 0.55
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                radius: Config.notifications.accentBar
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                }
+            }
         }
 
         ColumnLayout {
@@ -146,12 +203,12 @@ Item {
                 left: parent.left
                 right: parent.right
                 top: parent.top
-                leftMargin: Math.round(16 * Config.scale)
-                rightMargin: Math.round(12 * Config.scale)
-                topMargin: Math.round(10 * Config.scale)
+                leftMargin: Math.round(18 * Config.scale)
+                rightMargin: Math.round(14 * Config.scale)
+                topMargin: Math.round(12 * Config.scale)
             }
 
-            spacing: Math.round(4 * Config.scale)
+            spacing: Math.round(5 * Config.scale)
 
             // Header: app icon + app name + timestamp
             RowLayout {
@@ -184,7 +241,7 @@ Item {
                     color: Config.colors.accent
                     font.family: Config.font.family
                     font.pixelSize: Config.notifications.fontSizeAppName
-                    font.weight: Font.Medium
+                    font.weight: Font.SemiBold
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
@@ -226,45 +283,59 @@ Item {
             // Actions
             RowLayout {
                 Layout.fillWidth: true
-                Layout.bottomMargin: Math.round(2 * Config.scale)
+                Layout.bottomMargin: Math.round(4 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
                 visible: (root.notification?.actions?.length ?? 0) > 0
 
                 Repeater {
                     model: root.notification?.actions ?? []
 
-                    delegate: Rectangle {
+                    delegate: Item {
                         required property NotificationAction modelData
 
-                        implicitHeight: Math.round(24 * Config.scale)
-                        implicitWidth: actionLabel.implicitWidth + Math.round(16 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: actionArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25) : Qt.rgba(1, 1, 1, 0.07)
-                        border.color: actionArea.containsMouse ? Config.colors.accent : Config.colors.border
-                        border.width: 1
+                        implicitHeight: Math.round(28 * Config.scale)
+                        implicitWidth: actionBg.implicitWidth
 
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 100
-                            }
-                        }
-                        Behavior on border.color {
-                            ColorAnimation {
-                                duration: 100
-                            }
+                        // Glow on hover
+                        Rectangle {
+                            anchors.fill: actionBg
+                            anchors.margins: -3
+                            radius: actionBg.radius + 3
+                            color: "transparent"
+                            border.color: Config.colors.accentGlow
+                            border.width: 2
+                            opacity: actionArea.containsMouse ? 0.45 : 0
+                            Behavior on opacity { NumberAnimation { duration: 120 } }
                         }
 
-                        Text {
-                            id: actionLabel
-                            anchors.centerIn: parent
-                            text: modelData.text
-                            color: actionArea.containsMouse ? Config.colors.accent : Config.colors.textPrimary
-                            font.family: Config.font.family
-                            font.pixelSize: Config.notifications.fontSizeAction
+                        Rectangle {
+                            id: actionBg
+                            anchors.fill: parent
+                            implicitWidth: actionLabel.implicitWidth + Math.round(18 * Config.scale)
+                            radius: Math.round(8 * Config.scale)
+                            color: actionArea.containsMouse
+                                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
+                                : Qt.rgba(1, 1, 1, 0.07)
+                            border.color: actionArea.containsMouse ? Config.colors.accent : Config.colors.border
+                            border.width: 1
 
                             Behavior on color {
-                                ColorAnimation {
-                                    duration: 100
+                                ColorAnimation { duration: 120 }
+                            }
+                            Behavior on border.color {
+                                ColorAnimation { duration: 120 }
+                            }
+
+                            Text {
+                                id: actionLabel
+                                anchors.centerIn: parent
+                                text: modelData.text
+                                color: actionArea.containsMouse ? Config.colors.accent : Config.colors.textPrimary
+                                font.family: Config.font.family
+                                font.pixelSize: Config.notifications.fontSizeAction
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 120 }
                                 }
                             }
                         }

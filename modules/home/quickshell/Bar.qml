@@ -164,31 +164,56 @@ Scope {
         Rectangle {
             id: pwDialog
 
-            width: Math.round(280 * Config.scale)
-            implicitHeight: pwDialogCol.implicitHeight + Math.round(32 * Config.scale)
+            width: Math.round(290 * Config.scale)
+            implicitHeight: pwDialogCol.implicitHeight + Math.round(36 * Config.scale)
 
             anchors.horizontalCenter: parent.horizontalCenter
             // Sit just above the bar pill (roughly 100px from the bottom)
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Math.round(72 * Config.scale)
 
-            radius: Math.round(12 * Config.scale)
-            color: Config.colors.background
+            radius: Math.round(16 * Config.scale)
+            // Glassmorphic gradient fill
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0; color: Qt.rgba(0.15, 0.14, 0.28, 0.96) }
+                GradientStop { position: 1.0; color: Qt.rgba(0.08, 0.08, 0.18, 0.92) }
+            }
             border.color: Config.colors.border
             border.width: 1
 
-            // Dismiss on click outside the card (within the mask — but mask only
-            // covers the card, so outside clicks pass through; Escape handles cancel)
+            // Top shine rim
+            Rectangle {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 1
+                radius: parent.radius
+                color: "#30ffffff"
+            }
+
+            // Soft drop-shadow blob
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                anchors.topMargin: -Math.round(8 * Config.scale)
+                width: parent.width * 0.8
+                height: Math.round(20 * Config.scale)
+                radius: height / 2
+                color: Config.colors.shadowDark
+                opacity: 0.7
+                z: -1
+            }
 
             ColumnLayout {
                 id: pwDialogCol
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: Math.round(20 * Config.scale)
-                anchors.leftMargin: Math.round(16 * Config.scale)
-                anchors.rightMargin: Math.round(16 * Config.scale)
-                spacing: Math.round(10 * Config.scale)
+                anchors.topMargin: Math.round(22 * Config.scale)
+                anchors.leftMargin: Math.round(18 * Config.scale)
+                anchors.rightMargin: Math.round(18 * Config.scale)
+                spacing: Math.round(12 * Config.scale)
 
                 Text {
                     Layout.fillWidth: true
@@ -211,77 +236,95 @@ Scope {
                 }
 
                 // Password input row
-                Rectangle {
+                Item {
                     Layout.fillWidth: true
-                    implicitHeight: Math.round(32 * Config.scale)
-                    radius: Math.round(6 * Config.scale)
-                    color: Qt.rgba(1, 1, 1, 0.06)
-                    border.color: pwField.activeFocus ? Config.colors.accent : Config.colors.border
-                    border.width: 1
-                    Behavior on border.color {
-                        ColorAnimation { duration: 100 }
+                    implicitHeight: Math.round(36 * Config.scale)
+
+                    // Glow ring on focus
+                    Rectangle {
+                        anchors.fill: pwInputRect
+                        anchors.margins: -3
+                        radius: pwInputRect.radius + 3
+                        color: "transparent"
+                        border.color: Config.colors.accentGlow
+                        border.width: 2
+                        opacity: pwField.activeFocus ? 0.5 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
                     }
 
-                    RowLayout {
+                    Rectangle {
+                        id: pwInputRect
                         anchors.fill: parent
-                        anchors.leftMargin: Math.round(8 * Config.scale)
-                        anchors.rightMargin: Math.round(4 * Config.scale)
-                        spacing: Math.round(4 * Config.scale)
-
-                        TextInput {
-                            id: pwField
-                            Layout.fillWidth: true
-                            color: Config.colors.textPrimary
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
-                            echoMode: pwShowBtn.showPw ? TextInput.Normal : TextInput.Password
-                            passwordCharacter: "\u2022"
-                            clip: true
-                            selectByMouse: true
-                            verticalAlignment: TextInput.AlignVCenter
-
-                            // Placeholder text
-                            Text {
-                                anchors.fill: parent
-                                text: "Password"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                                verticalAlignment: Text.AlignVCenter
-                                visible: pwField.text === "" && !pwField.activeFocus
-                            }
-
-                            Keys.onReturnPressed: {
-                                if (pwField.text.length > 0)
-                                    root.wifiConnectWithPassword(root.wifiPasswordPendingSsid, pwField.text);
-                            }
-                            Keys.onEscapePressed: {
-                                root.wifiPasswordDialogVisible = false;
-                                root.wifiPasswordPendingSsid = "";
-                            }
+                        radius: Math.round(8 * Config.scale)
+                        color: Qt.rgba(1, 1, 1, 0.06)
+                        border.color: pwField.activeFocus ? Config.colors.accent : Config.colors.border
+                        border.width: 1
+                        Behavior on border.color {
+                            ColorAnimation { duration: 120 }
                         }
 
-                        // Show/hide password toggle
-                        Rectangle {
-                            id: pwShowBtn
-                            property bool showPw: false
-                            implicitWidth: Math.round(22 * Config.scale)
-                            implicitHeight: Math.round(22 * Config.scale)
-                            radius: Math.round(4 * Config.scale)
-                            color: pwShowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent"
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: Math.round(10 * Config.scale)
+                            anchors.rightMargin: Math.round(6 * Config.scale)
+                            spacing: Math.round(4 * Config.scale)
 
-                            Text {
-                                anchors.centerIn: parent
-                                text: pwShowBtn.showPw ? "\ud83d\ude48" : "\ud83d\udc41"
-                                font.pixelSize: Math.round(11 * Config.scale)
+                            TextInput {
+                                id: pwField
+                                Layout.fillWidth: true
+                                color: Config.colors.textPrimary
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                                echoMode: pwShowBtn.showPw ? TextInput.Normal : TextInput.Password
+                                passwordCharacter: "\u2022"
+                                clip: true
+                                selectByMouse: true
+                                verticalAlignment: TextInput.AlignVCenter
+
+                                // Placeholder text
+                                Text {
+                                    anchors.fill: parent
+                                    text: "Password"
+                                    color: Config.colors.textMuted
+                                    font.family: Config.font.family
+                                    font.pixelSize: Config.bar.fontSizeStatus
+                                    verticalAlignment: Text.AlignVCenter
+                                    visible: pwField.text === "" && !pwField.activeFocus
+                                }
+
+                                Keys.onReturnPressed: {
+                                    if (pwField.text.length > 0)
+                                        root.wifiConnectWithPassword(root.wifiPasswordPendingSsid, pwField.text);
+                                }
+                                Keys.onEscapePressed: {
+                                    root.wifiPasswordDialogVisible = false;
+                                    root.wifiPasswordPendingSsid = "";
+                                }
                             }
 
-                            MouseArea {
-                                id: pwShowMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: pwShowBtn.showPw = !pwShowBtn.showPw
+                            // Show/hide password toggle
+                            Rectangle {
+                                id: pwShowBtn
+                                property bool showPw: false
+                                implicitWidth: Math.round(24 * Config.scale)
+                                implicitHeight: Math.round(24 * Config.scale)
+                                radius: Math.round(6 * Config.scale)
+                                color: pwShowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                                Behavior on color { ColorAnimation { duration: 80 } }
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: pwShowBtn.showPw ? "\ud83d\ude48" : "\ud83d\udc41"
+                                    font.pixelSize: Math.round(11 * Config.scale)
+                                }
+
+                                MouseArea {
+                                    id: pwShowMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: pwShowBtn.showPw = !pwShowBtn.showPw
+                                }
                             }
                         }
                     }
@@ -295,11 +338,12 @@ Scope {
                     // Cancel
                     Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: Math.round(28 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: pwCancelMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : Qt.rgba(1, 1, 1, 0.05)
+                        implicitHeight: Math.round(32 * Config.scale)
+                        radius: Math.round(8 * Config.scale)
+                        color: pwCancelMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
                         border.color: Config.colors.border
                         border.width: 1
+                        Behavior on color { ColorAnimation { duration: 80 } }
 
                         Text {
                             anchors.centerIn: parent
@@ -324,14 +368,17 @@ Scope {
                     // Connect
                     Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: Math.round(28 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: pwConnectMouse.containsMouse
-                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35)
-                               : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.2)
+                        implicitHeight: Math.round(32 * Config.scale)
+                        radius: Math.round(8 * Config.scale)
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, pwConnectMouse.containsMouse ? 0.45 : 0.28) }
+                            GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, pwConnectMouse.containsMouse ? 0.35 : 0.18) }
+                        }
                         border.color: Config.colors.accent
                         border.width: 1
                         opacity: pwField.text.length > 0 ? 1.0 : 0.4
+                        Behavior on opacity { NumberAnimation { duration: 120 } }
 
                         Text {
                             anchors.centerIn: parent
@@ -428,6 +475,35 @@ Scope {
             }
         }
 
+        // ── Drop-shadow glow blob (behind pill) ──────────────────────────────
+        Rectangle {
+            id: pillGlow
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: root.visible_ ? Math.round(4 * Config.scale) : -(pill.implicitHeight + Math.round(40 * Config.scale))
+            Behavior on anchors.bottomMargin {
+                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutCubic }
+            }
+
+            width: pill.implicitWidth + Math.round(60 * Config.scale)
+            height: Math.round(32 * Config.scale)
+            radius: height / 2
+            color: Config.colors.glowAccent
+            opacity: root.visible_ ? 0.55 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
+            }
+            // soften the glow with a second larger, more transparent layer
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width + Math.round(40 * Config.scale)
+                height: parent.height + Math.round(12 * Config.scale)
+                radius: height / 2
+                color: Config.colors.glowAccent
+                opacity: 0.25
+            }
+        }
+
         Rectangle {
             id: pill
 
@@ -441,14 +517,35 @@ Scope {
             Behavior on anchors.bottomMargin {
                 NumberAnimation {
                     duration: Config.bar.animateSpeed
-                    easing.type: Easing.InOutQuad
+                    easing.type: Easing.InOutCubic
                 }
             }
 
             radius: Config.bar.radius
-            color: Config.colors.background
+            color: "transparent"
             border.color: Config.colors.border
             border.width: 1
+
+            // Glassmorphic gradient fill
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: Qt.rgba(0.15, 0.14, 0.26, 0.94) }
+                    GradientStop { position: 1.0; color: Qt.rgba(0.08, 0.08, 0.18, 0.88) }
+                }
+            }
+
+            // Inner highlight rim (top edge shine)
+            Rectangle {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 1
+                radius: parent.radius
+                color: "#35ffffff"
+            }
 
             opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
@@ -501,6 +598,14 @@ Scope {
                     implicitHeight: Config.bar.batteryIconSize
                     color: Config.colors.border
                     visible: trayRepeater.count > 0
+                    // subtle gradient separator
+                    gradient: Gradient {
+                        orientation: Gradient.Vertical
+                        GradientStop { position: 0.0; color: "transparent" }
+                        GradientStop { position: 0.3; color: Config.colors.border }
+                        GradientStop { position: 0.7; color: Config.colors.border }
+                        GradientStop { position: 1.0; color: "transparent" }
+                    }
                 }
 
                 // ── Wifi ─────────────────────────────────────────────────────
@@ -592,6 +697,13 @@ Scope {
                     implicitWidth: 1
                     implicitHeight: Config.bar.batteryIconSize
                     color: Config.colors.border
+                    gradient: Gradient {
+                        orientation: Gradient.Vertical
+                        GradientStop { position: 0.0; color: "transparent" }
+                        GradientStop { position: 0.3; color: Config.colors.border }
+                        GradientStop { position: 0.7; color: Config.colors.border }
+                        GradientStop { position: 1.0; color: "transparent" }
+                    }
                 }
 
                 // ── Clock / Date ──────────────────────────────────────────────
