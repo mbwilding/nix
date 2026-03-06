@@ -244,10 +244,14 @@ Item {
                         border.width: 1
 
                         Behavior on color {
-                            ColorAnimation { duration: 100 }
+                            ColorAnimation {
+                                duration: 100
+                            }
                         }
                         Behavior on border.color {
-                            ColorAnimation { duration: 100 }
+                            ColorAnimation {
+                                duration: 100
+                            }
                         }
 
                         Text {
@@ -259,7 +263,9 @@ Item {
                             font.pixelSize: Config.notifications.fontSizeAction
 
                             Behavior on color {
-                                ColorAnimation { duration: 100 }
+                                ColorAnimation {
+                                    duration: 100
+                                }
                             }
                         }
 

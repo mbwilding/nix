@@ -21,7 +21,9 @@ Scope {
 
     IpcHandler {
         target: "bar"
-        function show() { root.show(); }
+        function show() {
+            root.show();
+        }
     }
 
     Timer {
@@ -45,14 +47,13 @@ Scope {
         exclusiveZone: 0
         color: "transparent"
 
-        // Window spans full screen width so pill can center; tall enough to hold pill + margin
         implicitWidth: win.screen ? win.screen.width : 1920
         implicitHeight: pill.implicitHeight + Math.round(24 * Config.scale)
 
-        // Input mask: only the pill area receives events
-        mask: Region { item: pill }
+        mask: Region {
+            item: pill
+        }
 
-        // ── The pill ──────────────────────────────────────────────────────
         Rectangle {
             id: pill
 
@@ -71,13 +72,19 @@ Scope {
             transform: Translate {
                 y: root.visible_ ? 0 : pill.implicitHeight + Math.round(24 * Config.scale)
                 Behavior on y {
-                    NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                        duration: Config.bar.animateSpeed
+                        easing.type: Easing.InOutQuad
+                    }
                 }
             }
 
             opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
-                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: Config.bar.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             MouseArea {
@@ -93,7 +100,6 @@ Scope {
                 width: implicitWidth
                 spacing: Math.round(6 * Config.scale)
 
-                // ── Row 1: System tray ──────────────────────────────────
                 Row {
                     Layout.alignment: Qt.AlignHCenter
                     spacing: Config.bar.spacing
@@ -110,7 +116,6 @@ Scope {
                     }
                 }
 
-                // Divider
                 Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: 1
@@ -118,12 +123,10 @@ Scope {
                     visible: trayRepeater.count > 0
                 }
 
-                // ── Row 2: Battery + Power + Clock ─────────────────────
                 RowLayout {
                     Layout.alignment: Qt.AlignHCenter
                     spacing: Config.bar.sectionSpacing
 
-                    // Battery
                     RowLayout {
                         id: batterySection
                         spacing: Math.round(5 * Config.scale)
@@ -133,21 +136,23 @@ Scope {
                             implicitSize: Config.bar.batteryIconSize
                             source: {
                                 const b = root.battery;
-                                if (!b || !b.isLaptopBattery) return "";
+                                if (!b || !b.isLaptopBattery)
+                                    return "";
                                 const n = b.iconName;
                                 return Quickshell.iconPath(n !== "" ? n : "battery-missing-symbolic");
                             }
                         }
 
                         Text {
-                            text: root.battery && root.battery.isLaptopBattery
-                                ? Math.round(root.battery.percentage * 100) + "%"
-                                : ""
+                            text: root.battery && root.battery.isLaptopBattery ? Math.round(root.battery.percentage * 100) + "%" : ""
                             color: {
-                                if (!root.battery || !root.battery.isLaptopBattery) return Config.colors.textPrimary;
+                                if (!root.battery || !root.battery.isLaptopBattery)
+                                    return Config.colors.textPrimary;
                                 const pct = root.battery.percentage * 100;
-                                if (pct <= 10) return "#ff6060";
-                                if (pct <= 20) return "#ffaa60";
+                                if (pct <= 10)
+                                    return "#ff6060";
+                                if (pct <= 20)
+                                    return "#ffaa60";
                                 return Config.colors.textPrimary;
                             }
                             font.family: Config.font.family
@@ -155,7 +160,6 @@ Scope {
                         }
                     }
 
-                    // Divider battery|power
                     Rectangle {
                         implicitWidth: 1
                         implicitHeight: Config.bar.batteryIconSize
@@ -163,15 +167,26 @@ Scope {
                         visible: batterySection.visible
                     }
 
-                    // Power profiles
                     RowLayout {
                         id: powerRow
                         spacing: Math.round(2 * Config.scale)
 
                         readonly property var profiles: [
-                            { profile: PowerProfile.PowerSaver,  glyph: "󰌪", label: "Power Saver"  },
-                            { profile: PowerProfile.Balanced,    glyph: "󰗑", label: "Balanced"     },
-                            { profile: PowerProfile.Performance, glyph: "󰓅", label: "Performance"  }
+                            {
+                                profile: PowerProfile.PowerSaver,
+                                glyph: "󰌪",
+                                label: "Power Saver"
+                            },
+                            {
+                                profile: PowerProfile.Balanced,
+                                glyph: "󰗑",
+                                label: "Balanced"
+                            },
+                            {
+                                profile: PowerProfile.Performance,
+                                glyph: "󰓅",
+                                label: "Performance"
+                            }
                         ]
 
                         Repeater {
@@ -186,14 +201,20 @@ Scope {
                                 radius: Math.round(5 * Config.scale)
                                 visible: !isPerf || PowerProfiles.hasPerformanceProfile
 
-                                color: isActive
-                                    ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
-                                    : (btnMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                                color: isActive ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25) : (btnMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
                                 border.color: isActive ? Config.colors.accent : Config.colors.border
                                 border.width: 1
 
-                                Behavior on color { ColorAnimation { duration: 100 } }
-                                Behavior on border.color { ColorAnimation { duration: 100 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 100
+                                    }
+                                }
+                                Behavior on border.color {
+                                    ColorAnimation {
+                                        duration: 100
+                                    }
+                                }
 
                                 Text {
                                     anchors.centerIn: parent
@@ -201,7 +222,11 @@ Scope {
                                     font.family: Config.font.family
                                     font.pixelSize: Config.bar.powerIconSize
                                     color: parent.isActive ? Config.colors.accent : Config.colors.textSecondary
-                                    Behavior on color { ColorAnimation { duration: 100 } }
+                                    Behavior on color {
+                                        ColorAnimation {
+                                            duration: 100
+                                        }
+                                    }
                                 }
 
                                 MouseArea {
@@ -241,14 +266,12 @@ Scope {
                         }
                     }
 
-                    // Divider power|clock
                     Rectangle {
                         implicitWidth: 1
                         implicitHeight: Config.bar.batteryIconSize
                         color: Config.colors.border
                     }
 
-                    // Clock
                     Text {
                         text: clock.time ? Qt.formatTime(clock.time, Config.bar.clockFormat) : "--:--"
                         color: Config.colors.textPrimary
