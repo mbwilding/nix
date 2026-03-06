@@ -27,6 +27,33 @@ Item {
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
 
+    // ── Popup width calculation ───────────────────────────────────────────────
+    // Measures the widest menu entry text to size the popup correctly.
+
+    TextMetrics {
+        id: entryTextMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+    }
+
+    readonly property int menuPopupWidth: {
+        const entries = menuOpener.children ? menuOpener.children.values : [];
+        const iconW = Config.bar.fontSizeStatus + Math.round(8 * Config.scale); // entry icon + spacing
+        const rowMargins = Math.round(8 * Config.scale) * 2;  // left + right row margin
+        const colPadding = Math.round(16 * Config.scale);     // popup left + right padding
+        let maxTextW = Math.round(100 * Config.scale);
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            if (!entry || entry.isSeparator) continue;
+            entryTextMetrics.text = entry.text || "";
+            const w = entryTextMetrics.boundingRect.width;
+            if (w > maxTextW) maxTextW = w;
+        }
+        return iconW + maxTextW + rowMargins + colPadding;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+
     Rectangle {
         id: iconContainer
 
@@ -96,7 +123,7 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: Math.max(Math.round(160 * Config.scale), menuCol.implicitWidth + Math.round(16 * Config.scale))
+        width: root.menuPopupWidth
         height: menuCol.implicitHeight + Math.round(16 * Config.scale)
 
         radius: Math.round(10 * Config.scale)
@@ -114,8 +141,10 @@ Item {
 
         Column {
             id: menuCol
-            anchors.centerIn: parent
-            width: parent.width - Math.round(16 * Config.scale)
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: Math.round(8 * Config.scale)
             spacing: Math.round(2 * Config.scale)
 
             Repeater {
@@ -126,11 +155,11 @@ Item {
                     required property QsMenuEntry modelData
                     width: menuCol.width
 
-                    // Separator
                     implicitHeight: modelData.isSeparator
                         ? Math.round(9 * Config.scale)
                         : entryRow.implicitHeight + Math.round(10 * Config.scale)
 
+                    // Separator
                     Rectangle {
                         visible: entryDelegate.modelData.isSeparator
                         anchors.verticalCenter: parent.verticalCenter
@@ -173,7 +202,6 @@ Item {
                                     ? Config.colors.textPrimary : Config.colors.textMuted
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
-                                elide: Text.ElideRight
                             }
                         }
 
