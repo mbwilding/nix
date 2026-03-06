@@ -7,16 +7,89 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
+import Quickshell.Services.UPower
 
 Scope {
     id: root
 
-    // Cards currently visible on screen (may outlive trackedNotifications when persistent)
     property var activeCards: []
 
-    // Returns the topmost visible card, if any
     function topCard() {
         return root.activeCards.find(c => c.visible_) ?? null;
+    }
+
+    property UPowerDevice battery: UPower.displayDevice
+    property var firedLevels: []
+    property bool batteryReady: false
+    property bool initialStateHandled: false
+    property bool initialPercentageHandled: false
+
+    Component.onCompleted: {
+        Qt.callLater(() => {
+            root.batteryReady = true;
+        });
+    }
+
+    function batteryNotify(level) {
+        batteryNotifyProc.command = [
+            "notify-send",
+            "--app-name=Battery",
+            "--app-icon=" + level.icon,
+            level.title,
+            level.message
+        ];
+        batteryNotifyProc.running = true;
+    }
+
+    Process {
+        id: batteryNotifyProc
+    }
+
+    Connections {
+        target: root.battery
+
+        function onStateChanged() {
+            if (!root.batteryReady) return;
+
+            if (!root.initialStateHandled) {
+                root.initialStateHandled = true;
+                return;
+            }
+
+            const state = root.battery.state;
+
+            if (state === UPowerDeviceState.Charging) {
+                root.firedLevels = [];
+                root.batteryNotify(Config.battery.chargeLevels.charging);
+            } else if (state === UPowerDeviceState.Discharging) {
+                root.firedLevels = [];
+                root.batteryNotify(Config.battery.chargeLevels.discharging);
+            } else if (state === UPowerDeviceState.FullyCharged) {
+                root.batteryNotify(Config.battery.chargeLevels.fullyCharged);
+            }
+        }
+
+        function onPercentageChanged() {
+            if (!root.batteryReady) return;
+
+            if (!root.initialPercentageHandled) {
+                root.initialPercentageHandled = true;
+                return;
+            }
+
+            if (root.battery.state !== UPowerDeviceState.Discharging) return;
+
+            const pct = Math.round(root.battery.percentage * 100);
+            const levels = Config.battery.warnLevels.slice().sort((a, b) => b.level - a.level);
+
+            for (const warn of levels) {
+                if (pct <= warn.level && !root.firedLevels.includes(warn.level)) {
+                    root.firedLevels = root.firedLevels.concat([warn.level]);
+                    root.batteryNotify(warn);
+                    break;
+                }
+            }
+        }
     }
 
     IpcHandler {
