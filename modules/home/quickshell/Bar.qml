@@ -21,7 +21,7 @@ Scope {
 
     IpcHandler {
         target: "bar"
-        function show() {
+        function toggle() {
             root.show();
         }
     }
