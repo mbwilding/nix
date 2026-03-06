@@ -19,6 +19,10 @@ Scope {
         hideTimer.restart();
     }
 
+    function keepAlive() {
+        hideTimer.restart();
+    }
+
     IpcHandler {
         target: "bar"
         function toggle() {
@@ -48,7 +52,7 @@ Scope {
         color: "transparent"
 
         implicitWidth: win.screen ? win.screen.width : 1920
-        implicitHeight: pill.implicitHeight + Math.round(24 * Config.scale)
+        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale)
 
         mask: Region {
             item: pill
@@ -62,22 +66,19 @@ Scope {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: Math.round(8 * Config.scale)
+            anchors.bottomMargin: root.visible_ ? Math.round(8 * Config.scale) : -(pill.implicitHeight + Math.round(8 * Config.scale))
+
+            Behavior on anchors.bottomMargin {
+                NumberAnimation {
+                    duration: Config.bar.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
+            }
 
             radius: Config.bar.radius
             color: Config.colors.background
             border.color: Config.colors.border
             border.width: 1
-
-            transform: Translate {
-                y: root.visible_ ? 0 : pill.implicitHeight + Math.round(24 * Config.scale)
-                Behavior on y {
-                    NumberAnimation {
-                        duration: Config.bar.animateSpeed
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
 
             opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
@@ -87,11 +88,8 @@ Scope {
                 }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: hideTimer.restart()
-                onPositionChanged: hideTimer.restart()
+            HoverHandler {
+                onHoveredChanged: if (hovered) root.keepAlive()
             }
 
             ColumnLayout {
@@ -111,7 +109,7 @@ Scope {
                         delegate: BarTrayItem {
                             required property SystemTrayItem modelData
                             trayItem: modelData
-                            onHovered: hideTimer.restart()
+                            onHovered: root.keepAlive()
                         }
                     }
                 }
@@ -234,10 +232,10 @@ Scope {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onEntered: hideTimer.restart()
+                                    onEntered: root.keepAlive()
                                     onClicked: {
                                         PowerProfiles.profile = parent.modelData.profile;
-                                        hideTimer.restart();
+                                        root.keepAlive();
                                     }
                                 }
 
@@ -273,7 +271,7 @@ Scope {
                     }
 
                     Text {
-                        text: clock.time ? Qt.formatTime(clock.time, Config.bar.clockFormat) : "--:--"
+                        text: Qt.formatTime(clock.date, Config.bar.clockFormat) || "--:--"
                         color: Config.colors.textPrimary
                         font.family: Config.font.family
                         font.pixelSize: Config.bar.fontSizeClock
