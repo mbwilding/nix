@@ -640,32 +640,32 @@ in
           [ ];
 
       windowrule = [
-        {
-          name = "Game";
-          tile = 0;
-          "match:content" = 3;
-        }
-        {
-          name = "Modals";
-          float = 1;
-          tile = 0;
-          "match:modal" = true;
-        }
-        {
-          name = "Proton";
-          tile = 0;
-          "match:xdg_tag" = "proton-game";
-        }
-        {
-          name = "SuppressMaximize";
-          suppress_event = "maximize";
-          "match:class" = ".*";
-        }
-        {
-          name = "IdleInhibitFullscreen";
-          idle_inhibit = "fullscreen";
-          "match:class" = ".*";
-        }
+        # {
+        #   name = "Game";
+        #   tile = 0;
+        #   "match:content" = 3;
+        # }
+        # {
+        #   name = "Modals";
+        #   float = 1;
+        #   tile = 0;
+        #   "match:modal" = true;
+        # }
+        # {
+        #   name = "Proton";
+        #   tile = 0;
+        #   "match:xdg_tag" = "proton-game";
+        # }
+        # {
+        #   name = "SuppressMaximize";
+        #   suppress_event = "maximize";
+        #   "match:class" = ".*";
+        # }
+        # {
+        #   name = "IdleInhibitFullscreen";
+        #   idle_inhibit = "fullscreen";
+        #   "match:class" = ".*";
+        # }
         {
           name = "UnrealEngine";
           workspace = "name:main";
