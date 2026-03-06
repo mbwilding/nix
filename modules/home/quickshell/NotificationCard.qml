@@ -66,14 +66,13 @@ Item {
                 duration: Config.notifications.animateSpeed
                 easing.type: Easing.InOutQuad
             }
-        }
-
-        NumberAnimation {
-            target: root
-            property: "latchedHeight"
-            to: 0
-            duration: Config.notifications.animateSpeed
-            easing.type: Easing.InOutQuad
+            NumberAnimation {
+                target: root
+                property: "latchedHeight"
+                to: 0
+                duration: Config.notifications.animateSpeed
+                easing.type: Easing.OutQuad
+            }
         }
 
         ScriptAction {
