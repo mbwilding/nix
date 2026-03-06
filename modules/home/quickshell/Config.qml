@@ -66,8 +66,9 @@ QtObject {
         readonly property int sectionSpacing: Math.round(24 * root.scale)
         readonly property int fontSizeClock: Math.round(root.font.sizeLg * 1.8)
         readonly property int fontSizeStatus: Math.round(root.font.sizeMd * 1.8)
-        readonly property string clockFormat: "hh:mm"
         readonly property int popupOffset: Math.round(6 * root.scale)
+        // true = 24-hour clock (HH:mm), false = 12-hour clock (hh:mm AP)
+        readonly property bool clock24h: true
     }
 
     readonly property QtObject battery: QtObject {
