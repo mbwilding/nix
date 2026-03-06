@@ -89,10 +89,10 @@ Item {
         anchors.top: card.bottom
         anchors.topMargin: -Math.round(6 * Config.scale)
         width: card.width * 0.75
-        height: Math.round(18 * Config.scale)
+        height: Math.round(16 * Config.scale)
         radius: height / 2
-        color: Config.colors.shadowDark
-        opacity: card.opacity * 0.85
+        color: "#000000"
+        opacity: card.opacity * 0.22
         z: -1
     }
 
@@ -108,16 +108,10 @@ Item {
 
         implicitHeight: cardContent.implicitHeight + Math.round(22 * Config.scale)
         radius: Config.notifications.radius
-
-        // Glassmorphic gradient fill
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
-            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
-        }
-
+        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1
+        clip: true
 
         // Top shine rim
         Rectangle {

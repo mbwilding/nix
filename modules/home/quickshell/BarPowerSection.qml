@@ -99,38 +99,11 @@ Item {
         height: powerPopupCol.implicitHeight + Math.round(20 * Config.scale)
 
         radius: Math.round(Config.bar.popupRadius * Config.scale)
-        // Glassmorphic gradient fill
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
-            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
-        }
+        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1
+        clip: true
         z: 20
-
-        // Top shine
-        Rectangle {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            radius: parent.radius
-            color: "#28ffffff"
-        }
-
-        // Drop shadow blob
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.bottom
-            anchors.topMargin: -Math.round(6 * Config.scale)
-            width: parent.width * 0.75
-            height: Math.round(18 * Config.scale)
-            radius: height / 2
-            color: Config.colors.shadowDark
-            opacity: 0.8
-            z: -1
-        }
 
         HoverHandler {
             onHoveredChanged: {

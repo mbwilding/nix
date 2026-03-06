@@ -52,60 +52,26 @@ Item {
                 color: Qt.rgba(1, 1, 1, 0.10)
             }
 
-            // Glow fill layer (blurred by being wider+taller)
+            // Gradient fill (accent → accentAlt, matching the volume slider)
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-
-                readonly property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
-                width: Math.min(parent.width, parent.width * root.displayValue)
-                height: Config.osd.barHeight + Math.round(4 * Config.scale)
-                radius: height / 2
-                opacity: 0.35
-                color: Qt.rgba(
-                    Config.colors.accent.r + (1 - Config.colors.accent.r) * excessRatio,
-                    Config.colors.accent.g * (1 - excessRatio),
-                    Config.colors.accent.b * (1 - excessRatio),
-                    1
-                )
-            }
-
-            // Gradient fill
-            Item {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                readonly property real excessRatio: Math.min(1.0, Math.max(0.0, (root.displayValue - 1.0) / 0.5))
                 width: Math.min(parent.width, parent.width * root.displayValue)
                 height: Config.osd.barHeight
-                clip: true
-
-                Rectangle {
-                    anchors.fill: parent
-                    radius: height / 2
-                    gradient: Gradient {
-                        orientation: Gradient.Horizontal
-                        GradientStop {
-                            position: 0.0
-                            color: Config.colors.accent
-                        }
-                        GradientStop {
-                            position: 1.0
-                            color: Qt.rgba(
-                                Config.colors.accent.r + (1 - Config.colors.accent.r) * parent.parent.excessRatio,
-                                Config.colors.accent.g * (1 - parent.parent.excessRatio),
-                                Config.colors.accent.b * (1 - parent.parent.excessRatio),
-                                1
-                            )
-                        }
-                    }
+                radius: height / 2
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
                 }
             }
         }
 
         Text {
             text: root.label
-            color: Config.colors.textSecondary
+            color: Config.colors.textPrimary
             font.family: Config.font.family
+            font.bold: true
             font.pixelSize: Config.font.sizeOsd
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: labelMetrics.boundingRect.width

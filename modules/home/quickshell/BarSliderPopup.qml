@@ -56,33 +56,15 @@ Item {
     width: Math.round(250 * Config.scale)
     height: Math.round(58 * Config.scale)
 
-    // ── Drop shadow blob ──────────────────────────────────────────────────────
-    Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.bottom
-        anchors.topMargin: -Math.round(6 * Config.scale)
-        width: parent.width * 0.75
-        height: Math.round(18 * Config.scale)
-        radius: height / 2
-        color: Config.colors.shadowDark
-        opacity: 0.8
-        z: -1
-    }
-
     // ── Popup card ────────────────────────────────────────────────────────────
     Rectangle {
         id: popupCard
         anchors.fill: parent
         radius: Math.round(Config.bar.popupRadius * Config.scale)
-
-        // Glassmorphic gradient fill
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.15, 0.28, 0.96) }
-            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.92) }
-        }
+        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1
+        clip: true
 
         // Top shine
         Rectangle {
@@ -91,7 +73,7 @@ Item {
             anchors.right: parent.right
             height: 1
             radius: parent.radius
-            color: "#28ffffff"
+            color: "#25ffffff"
         }
     }
 
@@ -171,11 +153,7 @@ Item {
                 width: Math.round(14 * Config.scale)
                 height: width
                 radius: width / 2
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: "#e0e0ff" }
-                    GradientStop { position: 1.0; color: Config.colors.accent }
-                }
+                color: "#e0e0ff"
                 Behavior on x {
                     NumberAnimation {
                         duration: 70
@@ -211,8 +189,9 @@ Item {
         // Percentage label
         Text {
             text: sliderPopup.label
-            color: Config.colors.textSecondary
+            color: Config.colors.textPrimary
             font.family: Config.font.family
+            font.bold: true
             font.pixelSize: Config.bar.fontSizeStatus
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: sliderPopup.labelWidth
