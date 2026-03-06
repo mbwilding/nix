@@ -30,8 +30,12 @@ Scope {
     // Tracks the currently visible tray popup Item for the input mask
     property Item activeTrayMenuPopup: null
 
-    function registerTrayPopup(item)  { root.activeTrayMenuPopup = item; }
-    function unregisterTrayPopup()    { root.activeTrayMenuPopup = null; }
+    function registerTrayPopup(item) {
+        root.activeTrayMenuPopup = item;
+    }
+    function unregisterTrayPopup() {
+        root.activeTrayMenuPopup = null;
+    }
 
     // Called by trigger hover-enter OR popup hover-enter
     function openPopup(name) {
@@ -53,7 +57,8 @@ Scope {
     // Called by trigger hover-exit (mouse leaving the trigger, not the popup)
     function keepPopup() {
         if (root.activePopup !== "") {
-            if (!root.popupHovered) popupCloseTimer.restart();
+            if (!root.popupHovered)
+                popupCloseTimer.restart();
             root.keepAlive();
         }
     }
@@ -68,7 +73,8 @@ Scope {
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
-        onTriggered: if (!root.popupHovered) root.closePopup()
+        onTriggered: if (!root.popupHovered)
+            root.closePopup()
     }
 
     // ── Bar show/hide ─────────────────────────────────────────────────────────
@@ -98,7 +104,8 @@ Scope {
     Timer {
         id: hideTimer
         interval: Config.bar.hideDelay
-        onTriggered: if (root.activePopup === "") root.visible_ = false
+        onTriggered: if (root.activePopup === "")
+            root.visible_ = false
     }
 
     // ── Clock ─────────────────────────────────────────────────────────────────
@@ -118,7 +125,7 @@ Scope {
 
     TextMetrics {
         id: statusTextMetrics
-        font.family:    Config.font.family
+        font.family: Config.font.family
         font.pixelSize: Config.bar.fontSizeStatus
         text: "100%"
     }
@@ -135,29 +142,31 @@ Scope {
         exclusiveZone: 0
         color: "transparent"
 
-        implicitWidth:  win.screen ? win.screen.width  : 1920
+        implicitWidth: win.screen ? win.screen.width : 1920
         implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
-            Region { item: pill }
             Region {
-                item: root.activePopup === "wifi"    ? wifiSection.popup    : null
+                item: pill
+            }
+            Region {
+                item: root.activePopup === "wifi" ? wifiSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "bt"      ? btSection.popup      : null
+                item: root.activePopup === "bt" ? btSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "volume"  ? volumeSection.popup  : null
+                item: root.activePopup === "volume" ? volumeSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "screen"  ? screenSection.popup  : null
+                item: root.activePopup === "screen" ? screenSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "kbd"     ? kbdSection.popup     : null
+                item: root.activePopup === "kbd" ? kbdSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
@@ -165,11 +174,11 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "power"   ? powerSection.popup   : null
+                item: root.activePopup === "power" ? powerSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "clock"   ? clockSection.popup   : null
+                item: root.activePopup === "clock" ? clockSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
@@ -181,33 +190,38 @@ Scope {
         Rectangle {
             id: pill
 
-            implicitWidth:  content.implicitWidth + Config.bar.padding * 2
+            implicitWidth: content.implicitWidth + Config.bar.padding * 2
             implicitHeight: content.implicitHeight + Math.round(12 * Config.scale) * 2
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.visible_
-                ? Math.round(8 * Config.scale)
-                : -(pill.implicitHeight + Math.round(8 * Config.scale))
+            anchors.bottomMargin: root.visible_ ? Math.round(8 * Config.scale) : -(pill.implicitHeight + Math.round(8 * Config.scale))
 
             Behavior on anchors.bottomMargin {
-                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: Config.bar.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             radius: Config.bar.radius
-            color:  Config.colors.background
+            color: Config.colors.background
             border.color: Config.colors.border
             border.width: 1
 
             opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
-                NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: Config.bar.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             HoverHandler {
                 onHoveredChanged: {
                     root.pillHovered = hovered;
-                    if (hovered) root.keepAlive();
+                    if (hovered)
+                        root.keepAlive();
                 }
             }
 
@@ -224,10 +238,10 @@ Scope {
                         id: trayDelegate
                         required property SystemTrayItem modelData
                         required property int index
-                        trayItem:    modelData
-                        popupName:   "tray-" + trayDelegate.index
+                        trayItem: modelData
+                        popupName: "tray-" + trayDelegate.index
                         activePopup: root.activePopup
-                        onHovered:       root.keepAlive()
+                        onHovered: root.keepAlive()
                         onOpenPopupReq: name => {
                             root.openPopup(name);
                             root.registerTrayPopup(trayDelegate.menuPopup);
@@ -242,7 +256,7 @@ Scope {
                 }
 
                 Rectangle {
-                    implicitWidth:  1
+                    implicitWidth: 1
                     implicitHeight: Config.bar.batteryIconSize
                     color: Config.colors.border
                     visible: trayRepeater.count > 0
@@ -270,7 +284,7 @@ Scope {
                 // ── Volume ────────────────────────────────────────────────────
                 BarVolumeSection {
                     id: volumeSection
-                    activePopup:     root.activePopup
+                    activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
@@ -281,7 +295,7 @@ Scope {
                 // ── Screen brightness ─────────────────────────────────────────
                 BarScreenSection {
                     id: screenSection
-                    activePopup:     root.activePopup
+                    activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
@@ -292,7 +306,7 @@ Scope {
                 // ── Keyboard brightness ───────────────────────────────────────
                 BarKbdSection {
                     id: kbdSection
-                    activePopup:     root.activePopup
+                    activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
@@ -318,7 +332,7 @@ Scope {
                 }
 
                 Rectangle {
-                    implicitWidth:  1
+                    implicitWidth: 1
                     implicitHeight: Config.bar.batteryIconSize
                     color: Config.colors.border
                 }
@@ -327,7 +341,7 @@ Scope {
                 BarClockSection {
                     id: clockSection
                     activePopup: root.activePopup
-                    clockDate:   clock.date
+                    clockDate: clock.date
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()

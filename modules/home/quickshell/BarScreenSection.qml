@@ -16,12 +16,12 @@ Item {
     // ── Public API ────────────────────────────────────────────────────────────
 
     property string activePopup: ""     // bound to root.activePopup
-    property int    sliderLabelWidth: 0 // bound to root.sliderLabelWidth
+    property int sliderLabelWidth: 0 // bound to root.sliderLabelWidth
 
     signal openPopupReq(string name)
-    signal keepPopupReq()
-    signal exitPopupReq()
-    signal keepAliveReq()
+    signal keepPopupReq
+    signal exitPopupReq
+    signal keepAliveReq
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: screenPopup
@@ -29,15 +29,15 @@ Item {
     // ── State ─────────────────────────────────────────────────────────────────
 
     property string device: ""
-    property int    _max:    1
-    property int    _raw:   -1
-    property real   brightness: 0       // 0..1
+    property int _max: 1
+    property int _raw: -1
+    property real brightness: 0       // 0..1
 
     readonly property bool available: _max > 1
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth:  screenRow.implicitWidth
+    implicitWidth: screenRow.implicitWidth
     implicitHeight: screenRow.implicitHeight
     visible: available
 
@@ -49,7 +49,8 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const dev = this.text.trim();
-                if (dev) screenSection.device = "/sys/class/backlight/" + dev;
+                if (dev)
+                    screenSection.device = "/sys/class/backlight/" + dev;
             }
         }
     }
@@ -60,7 +61,8 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0) screenSection._max = v;
+                if (!isNaN(v) && v > 0)
+                    screenSection._max = v;
             }
         }
     }
@@ -92,12 +94,7 @@ Item {
 
     function setBrightness(frac) {
         const raw = Math.round(frac * screenSection._max);
-        screenWriteProc.command = [
-            "brightnessctl",
-            "--device=" + screenSection.device.split("/").pop(),
-            "set",
-            String(raw)
-        ];
+        screenWriteProc.command = ["brightnessctl", "--device=" + screenSection.device.split("/").pop(), "set", String(raw)];
         screenWriteProc.running = true;
     }
 
@@ -108,11 +105,9 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onEntered: screenSection.openPopupReq("screen")
-        onExited:  screenSection.keepPopupReq()
+        onExited: screenSection.keepPopupReq()
         onWheel: wheel => {
-            screenSection.setBrightness(
-                Math.max(0, Math.min(1, screenSection.brightness + (wheel.angleDelta.y / 120) * 0.05))
-            );
+            screenSection.setBrightness(Math.max(0, Math.min(1, screenSection.brightness + (wheel.angleDelta.y / 120) * 0.05)));
             screenSection.keepAliveReq();
         }
     }
@@ -131,22 +126,20 @@ Item {
 
     BarSliderPopup {
         id: screenPopup
-        popupName:   "screen"
-        iconName:    "video-display-brightness-symbolic"
-        fraction:    screenSection.brightness
+        popupName: "screen"
+        iconName: "video-display-brightness-symbolic"
+        fraction: screenSection.brightness
         activePopup: screenSection.activePopup
-        labelWidth:  screenSection.sliderLabelWidth
+        labelWidth: screenSection.sliderLabelWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom:           parent.top
-        anchors.bottomMargin:     Config.bar.popupOffset
+        anchors.bottom: parent.top
+        anchors.bottomMargin: Config.bar.popupOffset
 
         onOpenPopupReq: name => screenSection.openPopupReq(name)
-        onExitPopupReq:      screenSection.exitPopupReq()
+        onExitPopupReq: screenSection.exitPopupReq()
 
-        onSetFraction:  v     => screenSection.setBrightness(v)
-        onScrollDelta:  delta => screenSection.setBrightness(
-            Math.max(0, Math.min(1, screenSection.brightness + delta * 0.05))
-        )
+        onSetFraction: v => screenSection.setBrightness(v)
+        onScrollDelta: delta => screenSection.setBrightness(Math.max(0, Math.min(1, screenSection.brightness + delta * 0.05)))
     }
 }

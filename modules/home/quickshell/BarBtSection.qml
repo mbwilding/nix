@@ -17,8 +17,8 @@ Item {
     property string activePopup: ""     // bound to root.activePopup
 
     signal openPopupReq(string name)
-    signal keepPopupReq()
-    signal exitPopupReq()
+    signal keepPopupReq
+    signal exitPopupReq
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: btPopup
@@ -29,7 +29,7 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth:  btRow.implicitWidth
+    implicitWidth: btRow.implicitWidth
     implicitHeight: btRow.implicitHeight
 
     readonly property bool popupOpen: activePopup === "bt"
@@ -38,12 +38,14 @@ Item {
 
     function btIcon() {
         const a = btSection.adapter;
-        if (!a || !a.enabled) return "network-bluetooth-inactive-symbolic";
+        if (!a || !a.enabled)
+            return "network-bluetooth-inactive-symbolic";
         const devs = a.devices;
         if (devs) {
             for (let i = 0; i < devs.count; i++) {
                 const d = devs.get(i).modelData;
-                if (d && d.connected) return "network-bluetooth-activated-symbolic";
+                if (d && d.connected)
+                    return "network-bluetooth-activated-symbolic";
             }
         }
         return "network-bluetooth-symbolic";
@@ -56,7 +58,7 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onEntered: btSection.openPopupReq("bt")
-        onExited:  btSection.keepPopupReq()
+        onExited: btSection.keepPopupReq()
         onClicked: {
             if (btSection.adapter)
                 btSection.adapter.enabled = !btSection.adapter.enabled;
@@ -79,11 +81,21 @@ Item {
         id: btPopup
         visible: opacity > 0
         opacity: btSection.popupOpen ? 1 : 0
-        scale:   btSection.popupOpen ? 1 : 0.92
+        scale: btSection.popupOpen ? 1 : 0.92
         transformOrigin: Item.Bottom
 
-        Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
-        Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.InOutQuad
+            }
+        }
+        Behavior on scale {
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.InOutQuad
+            }
+        }
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -100,16 +112,18 @@ Item {
 
         HoverHandler {
             onHoveredChanged: {
-                if (hovered) btSection.openPopupReq("bt");
-                else         btSection.exitPopupReq();
+                if (hovered)
+                    btSection.openPopupReq("bt");
+                else
+                    btSection.exitPopupReq();
             }
         }
 
         Column {
             id: btPopupCol
-            anchors.top:    parent.top
-            anchors.left:   parent.left
-            anchors.right:  parent.right
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.margins: Math.round(8 * Config.scale)
             spacing: Math.round(4 * Config.scale)
 
@@ -119,42 +133,44 @@ Item {
                 implicitHeight: btToggleRow.implicitHeight + Math.round(8 * Config.scale)
                 radius: Math.round(6 * Config.scale)
                 color: btToggleMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent"
-                Behavior on color { ColorAnimation { duration: 80 } }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 80
+                    }
+                }
 
                 RowLayout {
                     id: btToggleRow
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.left:  parent.left
+                    anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin:  Math.round(8 * Config.scale)
+                    anchors.leftMargin: Math.round(8 * Config.scale)
                     anchors.rightMargin: Math.round(8 * Config.scale)
                     spacing: Math.round(8 * Config.scale)
 
                     IconImage {
                         implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-                        source: Quickshell.iconPath(
-                            btSection.adapter && btSection.adapter.enabled
-                                ? "network-bluetooth-activated-symbolic"
-                                : "network-bluetooth-inactive-symbolic"
-                        )
+                        source: Quickshell.iconPath(btSection.adapter && btSection.adapter.enabled ? "network-bluetooth-activated-symbolic" : "network-bluetooth-inactive-symbolic")
                     }
 
                     Text {
                         Layout.fillWidth: true
-                        text: btSection.adapter && btSection.adapter.enabled
-                            ? "Bluetooth On" : "Bluetooth Off"
+                        text: btSection.adapter && btSection.adapter.enabled ? "Bluetooth On" : "Bluetooth Off"
                         color: Config.colors.textPrimary
-                        font.family:    Config.font.family
+                        font.family: Config.font.family
                         font.pixelSize: Config.bar.fontSizeStatus
                     }
 
                     Rectangle {
-                        implicitWidth:  Math.round(36 * Config.scale)
+                        implicitWidth: Math.round(36 * Config.scale)
                         implicitHeight: Math.round(18 * Config.scale)
                         radius: implicitHeight / 2
-                        color: btSection.adapter && btSection.adapter.enabled
-                            ? Config.colors.accent : Config.colors.border
-                        Behavior on color { ColorAnimation { duration: 120 } }
+                        color: btSection.adapter && btSection.adapter.enabled ? Config.colors.accent : Config.colors.border
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 120
+                            }
+                        }
                     }
                 }
 
@@ -180,29 +196,30 @@ Item {
             }
 
             Repeater {
-                model: (btSection.adapter && btSection.adapter.enabled)
-                    ? btSection.adapter.devices : null
+                model: (btSection.adapter && btSection.adapter.enabled) ? btSection.adapter.devices : null
 
                 delegate: Rectangle {
                     id: btDevEntry
                     required property var modelData
-                    readonly property var  device:      modelData
+                    readonly property var device: modelData
                     readonly property bool isConnected: device && device.connected
 
                     width: btPopupCol.width
                     implicitHeight: btDevRow.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
-                    color: isConnected
-                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                        : (btDevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                    color: isConnected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : (btDevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 80
+                        }
+                    }
 
                     RowLayout {
                         id: btDevRow
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.left:  parent.left
+                        anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.leftMargin:  Math.round(8 * Config.scale)
+                        anchors.leftMargin: Math.round(8 * Config.scale)
                         anchors.rightMargin: Math.round(8 * Config.scale)
                         spacing: Math.round(8 * Config.scale)
 
@@ -210,7 +227,8 @@ Item {
                             implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
                             source: {
                                 const d = btDevEntry.device;
-                                if (!d) return "";
+                                if (!d)
+                                    return "";
                                 const ico = d.icon || "";
                                 return Quickshell.iconPath(ico !== "" ? ico : "network-bluetooth-symbolic");
                             }
@@ -223,7 +241,7 @@ Item {
                                 return d ? (d.name || d.deviceName || "Unknown") : "";
                             }
                             color: btDevEntry.isConnected ? Config.colors.accent : Config.colors.textPrimary
-                            font.family:    Config.font.family
+                            font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizeStatus
                             elide: Text.ElideRight
                         }
@@ -231,7 +249,7 @@ Item {
                         Text {
                             text: btDevEntry.isConnected ? "✓" : ""
                             color: Config.colors.accent
-                            font.family:    Config.font.family
+                            font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizeStatus
                             visible: btDevEntry.isConnected
                         }
@@ -245,7 +263,8 @@ Item {
                         onEntered: btSection.openPopupReq("bt")
                         onClicked: {
                             const d = btDevEntry.device;
-                            if (d) d.connected = !d.connected;
+                            if (d)
+                                d.connected = !d.connected;
                             btSection.openPopupReq("bt");
                         }
                     }
