@@ -27,6 +27,10 @@ Scope {
             if (card) card.animateOut();
         }
 
+        function dismissAll() {
+            root.activeCards.filter(c => c.visible_).forEach(c => c.animateOut());
+        }
+
         function invoke() {
             const card = root.topCard();
             if (!card) return;
