@@ -100,7 +100,8 @@ Scope {
                     Connections {
                         target: modelData
                         function onClosed() {
-                            animateOut();
+                            if (Config.notifications.timeout !== 0)
+                                animateOut();
                         }
                     }
                 }
