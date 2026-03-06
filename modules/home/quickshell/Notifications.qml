@@ -16,7 +16,7 @@ Scope {
 
     // Returns the topmost visible card, if any
     function topCard() {
-        return root.activeCards.length > 0 ? root.activeCards[0] : null;
+        return root.activeCards.find(c => c.visible_) ?? null;
     }
 
     IpcHandler {
