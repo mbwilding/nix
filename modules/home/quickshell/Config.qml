@@ -69,6 +69,8 @@ QtObject {
         readonly property int popupOffset: Math.round(6 * root.scale)
         // true = 24-hour clock (HH:mm), false = 12-hour clock (hh:mm AP)
         readonly property bool clock24h: true
+        // Opacity for bar icons when their radio/feature is disabled or muted
+        readonly property real disabledOpacity: 0.6
     }
 
     readonly property QtObject battery: QtObject {

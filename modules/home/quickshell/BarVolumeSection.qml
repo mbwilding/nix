@@ -77,6 +77,10 @@ Item {
         IconImage {
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(volumeSection.volumeIcon())
+            opacity: (volumeSection.audio && volumeSection.audio.muted) ? Config.bar.disabledOpacity : 1.0
+            Behavior on opacity {
+                NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+            }
         }
     }
 
