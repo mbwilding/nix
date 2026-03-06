@@ -19,10 +19,14 @@ Scope {
     // ── Shared popup manager ──────────────────────────────────────────────────
     // Only one popup open at a time. Sections call root.openPopup("name") on
     // hover-enter and root.keepPopup() on hover-stay. Leaving both trigger and
-    // popup restarts the close timer; if no section reclaims it, closeTimer fires.
+    // popup either restarts the close timer (if pill still hovered) or starts a
+    // short grace-period timer; if nothing re-claims it in time, popup closes.
     property string activePopup: ""   // "wifi" | "bt" | "volume" | "screen" | "kbd" | "power" | "clock" | ""
 
     readonly property bool anyPopupOpen: activePopup !== ""
+
+    // True while the pointer is over the pill bar itself
+    property bool pillHovered: false
 
     // Tracks the currently visible tray popup Item for the input mask
     property Item activeTrayMenuPopup: null
@@ -34,19 +38,31 @@ Scope {
     // ComponentBehavior:Bound, so they call these root-level forwarders.
     function openPopup(name) {
         root.activePopup = name;
-        popupCloseTimer.restart();
+        popupCloseTimer.stop();
+        popupCloseTimerFast.stop();
         root.keepAlive();
     }
 
     function keepPopup() {
         if (root.activePopup !== "") {
-            popupCloseTimer.restart();
+            // If pointer is still over the pill, use the full delay.
+            // If pointer has left everything, use a short grace period so the
+            // popup closes quickly when focus moves away.
+            if (root.pillHovered) {
+                popupCloseTimerFast.stop();
+                popupCloseTimer.restart();
+            } else {
+                popupCloseTimer.stop();
+                popupCloseTimerFast.restart();
+            }
             root.keepAlive();
         }
     }
 
     function closePopup() {
         root.activePopup = "";
+        popupCloseTimer.stop();
+        popupCloseTimerFast.stop();
     }
 
     // Forwarders for Repeater delegates
@@ -56,9 +72,17 @@ Scope {
     function keepScreenPopup() { root.openPopup("screen") }
     function keepKbdPopup()    { root.openPopup("kbd") }
 
+    // Full-delay timer: runs while pointer is still over pill or popup
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
+        onTriggered: root.closePopup()
+    }
+
+    // Short grace-period timer: fires when pointer has left pill+popup area
+    Timer {
+        id: popupCloseTimerFast
+        interval: 150
         onTriggered: root.closePopup()
     }
 
@@ -527,7 +551,7 @@ Scope {
         color: "transparent"
 
         implicitWidth: win.screen ? win.screen.width : 1920
-        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale) + 500
+        implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
             Region { item: pill }
@@ -597,7 +621,10 @@ Scope {
             }
 
             HoverHandler {
-                onHoveredChanged: if (hovered) root.keepAlive()
+                onHoveredChanged: {
+                    root.pillHovered = hovered;
+                    if (hovered) root.keepAlive()
+                }
             }
 
             RowLayout {
