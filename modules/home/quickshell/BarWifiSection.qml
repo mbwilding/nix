@@ -296,7 +296,7 @@ Item {
         IconImage {
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(wifiSection.icon(wifiSection.strength))
-            opacity: wifiSection.enabled ? 1.0 : 0.4
+            opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
             Behavior on opacity {
                 NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
             }
