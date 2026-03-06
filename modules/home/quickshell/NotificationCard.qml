@@ -36,6 +36,7 @@ Item {
     function animateOut() {
         if (!root.visible_)
             return;
+        root.visible_ = false;
         dismissTimer.stop();
         exitAnim.start();
     }
@@ -77,7 +78,6 @@ Item {
 
         ScriptAction {
             script: {
-                root.visible_ = false;
                 root.notification?.dismiss();
             }
         }
