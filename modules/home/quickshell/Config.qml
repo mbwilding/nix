@@ -70,10 +70,10 @@ QtObject {
         readonly property int accentBar: Math.round(3 * root.scale)
         readonly property int bodyMaxLines: 0
         readonly property int fontSizeAppName: root.font.sizeLg
-        readonly property int fontSizeTimestamp: root.font.sizeMd
+        readonly property int fontSizeTimestamp: root.font.sizeLg
         readonly property int fontSizeSummary: root.font.sizeMd
         readonly property int fontSizeBody: root.font.sizeMd
-        readonly property int fontSizeAction: root.font.sizeMd
+        readonly property int fontSizeAction: root.font.sizeXs
     }
 
     readonly property QtObject bar: QtObject {
