@@ -586,40 +586,21 @@ Scope {
                 onHoveredChanged: if (hovered) root.keepAlive()
             }
 
-            ColumnLayout {
+            RowLayout {
                 id: content
                 anchors.centerIn: parent
-                width: implicitWidth
-                spacing: Math.round(6 * Config.scale)
+                spacing: Config.bar.sectionSpacing
 
                 // ── Tray ─────────────────────────────────────────────────────
-                Row {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: Config.bar.spacing
-                    visible: trayRepeater.count > 0
-
-                    Repeater {
-                        id: trayRepeater
-                        model: SystemTray.items
-                        delegate: BarTrayItem {
-                            required property SystemTrayItem modelData
-                            trayItem: modelData
-                            onHovered: root.keepAlive()
-                        }
+                Repeater {
+                    id: trayRepeater
+                    model: SystemTray.items
+                    delegate: BarTrayItem {
+                        required property SystemTrayItem modelData
+                        trayItem: modelData
+                        onHovered: root.keepAlive()
                     }
                 }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    implicitHeight: 1
-                    color: Config.colors.border
-                    visible: trayRepeater.count > 0
-                }
-
-                // ── Status row ────────────────────────────────────────────────
-                RowLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: Config.bar.sectionSpacing
 
                     // ── Wifi section ──────────────────────────────────────────
                     Item {
@@ -759,12 +740,6 @@ Scope {
                             }  // Column
                             }  // Flickable
                         }
-                    }
-
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
                     }
 
                     // ── Bluetooth section ─────────────────────────────────────
@@ -978,12 +953,6 @@ Scope {
                         }
                     }
 
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
-                    }
-
                     // ── Volume section ────────────────────────────────────────
                     Item {
                         id: volumeSection
@@ -1042,13 +1011,6 @@ Scope {
                         }
                     }
 
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
-                        visible: Pipewire.defaultAudioSink !== null
-                    }
-
                     // ── Screen brightness section ──────────────────────────────
                     Item {
                         id: screenSection
@@ -1095,13 +1057,6 @@ Scope {
                         }
                     }
 
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
-                        visible: root.screenAvailable
-                    }
-
                     // ── Keyboard brightness section ────────────────────────────
                     Item {
                         id: kbdSection
@@ -1146,13 +1101,6 @@ Scope {
                                 root.setKbdBrightness(Math.max(0, Math.min(1, root.kbdBrightness + delta * 0.05)));
                             }
                         }
-                    }
-
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
-                        visible: root.kbdAvailable
                     }
 
                     // ── Battery ───────────────────────────────────────────────
@@ -1223,13 +1171,6 @@ Scope {
                                 font.pixelSize: Config.bar.fontSizeStatus
                             }
                         }
-                    }
-
-                    Rectangle {
-                        implicitWidth: 1
-                        implicitHeight: Config.bar.batteryIconSize
-                        color: Config.colors.border
-                        visible: batterySection.visible
                     }
 
                     // ── Power profiles ────────────────────────────────────────
@@ -1617,7 +1558,6 @@ Scope {
                             }
                         }
                     }
-                }
             }
         }
     }
