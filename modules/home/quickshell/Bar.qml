@@ -47,6 +47,8 @@ Scope {
     function keepWifiPopup()   { root.openPopup("wifi") }
     function keepBtPopup()     { root.openPopup("bt") }
     function keepVolumePopup() { root.openPopup("volume") }
+    function keepScreenPopup() { root.openPopup("screen") }
+    function keepKbdPopup()    { root.openPopup("kbd") }
 
     Timer {
         id: popupCloseTimer
@@ -251,6 +253,126 @@ Scope {
         return "audio-volume-high-symbolic";
     }
 
+    // ── Screen & Keyboard brightness ─────────────────────────────────────────
+
+    property string screenDevice: ""
+    property string kbdDevice: ""
+    property int _screenMax: 1
+    property int _screenRaw: -1
+    property int _kbdMax: 1
+    property int _kbdRaw: -1
+    property real screenBrightness: 0   // 0..1
+    property real kbdBrightness: 0      // 0..1
+    readonly property bool screenAvailable: _screenMax > 1
+    readonly property bool kbdAvailable: _kbdMax > 1
+
+    Process {
+        command: ["sh", "-c", "ls /sys/class/backlight/ | head -1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const dev = this.text.trim();
+                if (dev) root.screenDevice = "/sys/class/backlight/" + dev;
+            }
+        }
+    }
+
+    Process {
+        command: ["sh", "-c", "ls /sys/class/leds/ | grep kbd_backlight | head -1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const dev = this.text.trim();
+                if (dev) root.kbdDevice = "/sys/class/leds/" + dev;
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", root.screenDevice + "/max_brightness"]
+        running: root.screenDevice !== ""
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v > 0) root._screenMax = v;
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", root.kbdDevice + "/max_brightness"]
+        running: root.kbdDevice !== ""
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v > 0) root._kbdMax = v;
+            }
+        }
+    }
+
+    Timer {
+        interval: 200
+        repeat: true
+        running: root.screenDevice !== ""
+        onTriggered: screenPollProc.running = true
+    }
+
+    Process {
+        id: screenPollProc
+        command: ["cat", root.screenDevice + "/brightness"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v !== root._screenRaw) {
+                    root._screenRaw = v;
+                    root.screenBrightness = root._screenMax > 0 ? v / root._screenMax : 0;
+                }
+            }
+        }
+    }
+
+    Timer {
+        interval: 200
+        repeat: true
+        running: root.kbdDevice !== ""
+        onTriggered: kbdPollProc.running = true
+    }
+
+    Process {
+        id: kbdPollProc
+        command: ["cat", root.kbdDevice + "/brightness"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const v = parseInt(this.text);
+                if (!isNaN(v) && v !== root._kbdRaw) {
+                    root._kbdRaw = v;
+                    root.kbdBrightness = root._kbdMax > 0 ? v / root._kbdMax : 0;
+                }
+            }
+        }
+    }
+
+    // Write brightness via brightnessctl (doesn't need root if user is in video group)
+    Process {
+        id: screenBrightnessProc
+    }
+
+    Process {
+        id: kbdBrightnessProc
+    }
+
+    function setScreenBrightness(frac) {
+        const raw = Math.round(frac * root._screenMax);
+        screenBrightnessProc.command = ["brightnessctl", "--device=" + root.screenDevice.split("/").pop(), "set", String(raw)];
+        screenBrightnessProc.running = true;
+    }
+
+    function setKbdBrightness(frac) {
+        const raw = Math.round(frac * root._kbdMax);
+        kbdBrightnessProc.command = ["brightnessctl", "--device=" + root.kbdDevice.split("/").pop(), "set", String(raw)];
+        kbdBrightnessProc.running = true;
+    }
+
     // ── Bluetooth ────────────────────────────────────────────────────────────
 
     function btIcon() {
@@ -279,6 +401,108 @@ Scope {
         return "";
     }
 
+    // ── Reusable vertical-slider popup ───────────────────────────────────────
+    // Used by volume, screen brightness, and keyboard brightness sections.
+    // Parent must position it (anchors.bottom: parent.top, etc.)
+    component SliderPopup: Rectangle {
+        id: sliderPopup
+
+        property string popupName: ""   // "volume" | "screen" | "kbd"
+        property real fraction: 0       // 0..1  current value
+        signal setFraction(real v)      // emitted when user drags/clicks
+        signal scrollDelta(real delta)  // emitted on mouse wheel (+/- 1 per notch)
+
+        readonly property bool popupOpen: root.activePopup === popupName
+
+        visible: opacity > 0
+        opacity: popupOpen ? 1 : 0
+        scale: popupOpen ? 1 : 0.92
+        transformOrigin: Item.Bottom
+
+        Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+        Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+
+        width: Math.round(60 * Config.scale)
+        height: Math.round(200 * Config.scale)
+
+        radius: Math.round(10 * Config.scale)
+        color: Config.colors.background
+        border.color: Config.colors.border
+        border.width: 1
+        z: 20
+
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) root.openPopup(sliderPopup.popupName);
+                else root.keepPopup();
+            }
+        }
+
+        Item {
+            id: sliderTrack
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Math.round(20 * Config.scale)
+            anchors.bottomMargin: Math.round(20 * Config.scale)
+            width: Math.round(20 * Config.scale)
+
+            readonly property real trackH: height
+            readonly property real frac: Math.max(0, Math.min(1, sliderPopup.fraction))
+
+            // Track background
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                width: Math.round(6 * Config.scale)
+                height: parent.trackH
+                radius: width / 2
+                color: Config.colors.border
+            }
+
+            // Track fill
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                width: Math.round(6 * Config.scale)
+                height: parent.trackH * parent.frac
+                radius: width / 2
+                color: Config.colors.accent
+            }
+
+            // Thumb
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: parent.trackH * (1 - parent.frac) - height / 2
+                width: Math.round(14 * Config.scale)
+                height: width
+                radius: width / 2
+                color: Config.colors.accent
+                Behavior on y { NumberAnimation { duration: 60 } }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.SizeVerCursor
+                onEntered: root.openPopup(sliderPopup.popupName)
+
+                function setFromY(my) {
+                    const v = 1.0 - Math.max(0, Math.min(1, my / sliderTrack.trackH));
+                    sliderPopup.setFraction(v);
+                    root.openPopup(sliderPopup.popupName);
+                }
+
+                onPressed: mouse => setFromY(mouse.y)
+                onPositionChanged: mouse => { if (pressed) setFromY(mouse.y) }
+                onWheel: wheel => {
+                    sliderPopup.scrollDelta(wheel.angleDelta.y / 120);
+                    root.openPopup(sliderPopup.popupName);
+                }
+            }
+        }
+    }
+
     // ── Window ───────────────────────────────────────────────────────────────
 
     PanelWindow {
@@ -304,6 +528,14 @@ Scope {
             }
             Region {
                 item: root.activePopup === "volume" ? volumePopup : null
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: root.activePopup === "screen" ? screenPopup : null
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: root.activePopup === "kbd" ? kbdPopup : null
                 intersection: Intersection.Combine
             }
             Region {
@@ -772,7 +1004,6 @@ Scope {
                         implicitWidth: volumeRow.implicitWidth
                         implicitHeight: volumeRow.implicitHeight
 
-                        readonly property bool popupOpen: root.activePopup === "volume"
                         readonly property var audio: Pipewire.defaultAudioSink?.audio ?? null
                         visible: Pipewire.defaultAudioSink !== null
 
@@ -789,8 +1020,7 @@ Scope {
                             onWheel: wheel => {
                                 const a = volumeSection.audio;
                                 if (a) {
-                                    const delta = wheel.angleDelta.y / 120;
-                                    a.volume = Math.max(0, Math.min(1.0, a.volume + delta * 0.05));
+                                    a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
                                 }
                                 root.keepAlive();
                             }
@@ -818,99 +1048,21 @@ Scope {
                             }
                         }
 
-                        // Volume popup
-                        Rectangle {
+                        SliderPopup {
                             id: volumePopup
-                            visible: opacity > 0
-                            opacity: volumeSection.popupOpen ? 1 : 0
-                            scale: volumeSection.popupOpen ? 1 : 0.92
-                            transformOrigin: Item.Bottom
-
-                            Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
-                            Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
-
+                            popupName: "volume"
+                            fraction: Math.min(volumeSection.audio?.volume ?? 0, 1.0)
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
 
-                            width: Math.round(60 * Config.scale)
-                            height: Math.round(200 * Config.scale)
-
-                            radius: Math.round(10 * Config.scale)
-                            color: Config.colors.background
-                            border.color: Config.colors.border
-                            border.width: 1
-                            z: 20
-
-                            HoverHandler {
-                                onHoveredChanged: {
-                                    if (hovered) root.openPopup("volume");
-                                    else root.keepPopup();
-                                }
+                            onSetFraction: v => {
+                                const a = volumeSection.audio;
+                                if (a) a.volume = v;
                             }
-
-                            // Slider track
-                            Item {
-                                id: sliderArea
-                                anchors.top: parent.top
-                                anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.topMargin: Math.round(20 * Config.scale)
-                                anchors.bottomMargin: Math.round(20 * Config.scale)
-                                width: Math.round(20 * Config.scale)
-
-                                readonly property real trackH: height
-                                readonly property real volFraction: Math.min(volumeSection.audio?.volume ?? 0, 1.0)
-
-                                Rectangle {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.bottom: parent.bottom
-                                    width: Math.round(6 * Config.scale)
-                                    height: parent.trackH
-                                    radius: width / 2
-                                    color: Config.colors.border
-                                }
-
-                                Rectangle {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.bottom: parent.bottom
-                                    width: Math.round(6 * Config.scale)
-                                    height: parent.trackH * parent.volFraction
-                                    radius: width / 2
-                                    color: Config.colors.accent
-                                }
-
-                                Rectangle {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    y: parent.trackH * (1 - parent.volFraction) - height / 2
-                                    width: Math.round(14 * Config.scale)
-                                    height: width
-                                    radius: width / 2
-                                    color: Config.colors.accent
-                                    Behavior on y { NumberAnimation { duration: 60 } }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.SizeVerCursor
-                                    onEntered: root.keepVolumePopup()
-
-                                    function setVolumeFromY(my) {
-                                        const frac = 1.0 - Math.max(0, Math.min(1, my / sliderArea.trackH));
-                                        const a = volumeSection.audio;
-                                        if (a) a.volume = frac * 1.0;
-                                        root.keepVolumePopup();
-                                    }
-
-                                    onPressed: mouse => setVolumeFromY(mouse.y)
-                                    onPositionChanged: mouse => { if (pressed) setVolumeFromY(mouse.y) }
-                                    onWheel: wheel => {
-                                        const a = volumeSection.audio;
-                                        if (a) a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
-                                        root.keepVolumePopup();
-                                    }
-                                }
+                            onScrollDelta: delta => {
+                                const a = volumeSection.audio;
+                                if (a) a.volume = Math.max(0, Math.min(1.0, a.volume + delta * 0.05));
                             }
                         }
                     }
@@ -920,6 +1072,128 @@ Scope {
                         implicitHeight: Config.bar.batteryIconSize
                         color: Config.colors.border
                         visible: Pipewire.defaultAudioSink !== null
+                    }
+
+                    // ── Screen brightness section ──────────────────────────────
+                    Item {
+                        id: screenSection
+                        implicitWidth: screenRow.implicitWidth
+                        implicitHeight: screenRow.implicitHeight
+                        visible: root.screenAvailable
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("screen")
+                            onExited: root.keepPopup()
+                            onWheel: wheel => {
+                                const delta = wheel.angleDelta.y / 120;
+                                root.setScreenBrightness(Math.max(0, Math.min(1, root.screenBrightness + delta * 0.05)));
+                                root.keepAlive();
+                            }
+                        }
+
+                        RowLayout {
+                            id: screenRow
+                            spacing: Math.round(6 * Config.scale)
+
+                            IconImage {
+                                implicitSize: Config.bar.batteryIconSize
+                                source: Quickshell.iconPath("video-display-brightness-symbolic")
+                            }
+
+                            Text {
+                                Layout.preferredWidth: root.volumeLabelWidth
+                                Layout.fillWidth: false
+                                text: Math.round(root.screenBrightness * 100) + "%"
+                                color: Config.colors.textSecondary
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                            }
+                        }
+
+                        SliderPopup {
+                            id: screenPopup
+                            popupName: "screen"
+                            fraction: root.screenBrightness
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: Config.bar.popupOffset
+
+                            onSetFraction: v => root.setScreenBrightness(v)
+                            onScrollDelta: delta => {
+                                root.setScreenBrightness(Math.max(0, Math.min(1, root.screenBrightness + delta * 0.05)));
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        implicitWidth: 1
+                        implicitHeight: Config.bar.batteryIconSize
+                        color: Config.colors.border
+                        visible: root.screenAvailable
+                    }
+
+                    // ── Keyboard brightness section ────────────────────────────
+                    Item {
+                        id: kbdSection
+                        implicitWidth: kbdRow.implicitWidth
+                        implicitHeight: kbdRow.implicitHeight
+                        visible: root.kbdAvailable
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("kbd")
+                            onExited: root.keepPopup()
+                            onWheel: wheel => {
+                                const delta = wheel.angleDelta.y / 120;
+                                root.setKbdBrightness(Math.max(0, Math.min(1, root.kbdBrightness + delta * 0.05)));
+                                root.keepAlive();
+                            }
+                        }
+
+                        RowLayout {
+                            id: kbdRow
+                            spacing: Math.round(6 * Config.scale)
+
+                            IconImage {
+                                implicitSize: Config.bar.batteryIconSize
+                                source: Quickshell.iconPath("input-keyboard-brightness")
+                            }
+
+                            Text {
+                                Layout.preferredWidth: root.volumeLabelWidth
+                                Layout.fillWidth: false
+                                text: Math.round(root.kbdBrightness * 100) + "%"
+                                color: Config.colors.textSecondary
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                            }
+                        }
+
+                        SliderPopup {
+                            id: kbdPopup
+                            popupName: "kbd"
+                            fraction: root.kbdBrightness
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: Config.bar.popupOffset
+
+                            onSetFraction: v => root.setKbdBrightness(v)
+                            onScrollDelta: delta => {
+                                root.setKbdBrightness(Math.max(0, Math.min(1, root.kbdBrightness + delta * 0.05)));
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        implicitWidth: 1
+                        implicitHeight: Config.bar.batteryIconSize
+                        color: Config.colors.border
+                        visible: root.kbdAvailable
                     }
 
                     // ── Battery ───────────────────────────────────────────────
