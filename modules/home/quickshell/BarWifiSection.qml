@@ -111,31 +111,6 @@ Item {
         wifiConnectProc.running = true;
     }
 
-    // Width metric for popup — computed from longest SSID
-    TextMetrics {
-        id: wifiTextMetrics
-        font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
-    }
-
-    property int popupWidth: Math.round(240 * Config.scale)
-
-    function recomputePopupWidth() {
-        const nets = wifiSection.networks;
-        const iconW = Config.bar.fontSizeStatus + Math.round(4 * Config.scale);
-        const checkW = Config.bar.fontSizeStatus;
-        const margins = Math.round(8 * Config.scale) * 6;
-        let maxSsidW = Math.round(140 * Config.scale);
-        for (let i = 0; i < nets.length; i++) {
-            wifiTextMetrics.text = nets[i].ssid;
-            if (wifiTextMetrics.boundingRect.width > maxSsidW)
-                maxSsidW = wifiTextMetrics.boundingRect.width;
-        }
-        wifiSection.popupWidth = Math.min(Math.round(400 * Config.scale), iconW + maxSsidW + checkW + margins);
-    }
-
-    onNetworksChanged: recomputePopupWidth()
-
     // ── Processes ─────────────────────────────────────────────────────────────
 
     Process {
@@ -329,7 +304,19 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: wifiSection.popupWidth
+        // Width tracks the widest network row (implicitWidth of the column),
+        // plus flickable margins (8+4) and scrollbar track+gap (3+3) = 18 units.
+        // Floor at 200, cap at 400.
+        width: Math.min(
+            Math.round(400 * Config.scale),
+            Math.max(
+                Math.round(200 * Config.scale),
+                wifiListCol.implicitWidth + Math.round(18 * Config.scale)
+            )
+        )
+        Behavior on width {
+            NumberAnimation { duration: 120; easing.type: Easing.InOutQuad }
+        }
         height: Math.min(
             wifiListCol.implicitHeight + Math.round(16 * Config.scale),
             Math.round(400 * Config.scale)
@@ -363,18 +350,16 @@ Item {
             anchors.bottomMargin: Math.round(8 * Config.scale)
             anchors.leftMargin: Math.round(8 * Config.scale)
             anchors.rightMargin: Math.round(4 * Config.scale)
-            contentWidth: width
+            contentWidth: wifiListCol.implicitWidth
             contentHeight: wifiListCol.implicitHeight
             clip: true
 
             Column {
                 id: wifiListCol
-                width: wifiFlickable.width
                 spacing: Math.round(2 * Config.scale)
 
                 // ── Empty-state placeholder ───────────────────────────────
                 Text {
-                    width: parent.width
                     text: !wifiSection.enabled ? "Wi-Fi is off" : "Scanning\u2026"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
@@ -382,6 +367,8 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     topPadding: Math.round(8 * Config.scale)
                     bottomPadding: Math.round(8 * Config.scale)
+                    leftPadding: Math.round(16 * Config.scale)
+                    rightPadding: Math.round(16 * Config.scale)
                     visible: wifiSection.networks.length === 0
                 }
 
@@ -394,7 +381,7 @@ Item {
                         readonly property bool isConnecting: wifiSection.connecting === modelData.ssid
                         readonly property bool hadError: wifiSection.lastError === modelData.ssid
 
-                        width: wifiListCol.width
+                        width: wifiEntryRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: wifiEntryRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: isActive
@@ -412,9 +399,7 @@ Item {
                             id: wifiEntryRow
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
-                            anchors.right: parent.right
                             anchors.leftMargin: Math.round(8 * Config.scale)
-                            anchors.rightMargin: Math.round(8 * Config.scale)
                             spacing: Math.round(8 * Config.scale)
 
                             IconImage {
@@ -423,7 +408,6 @@ Item {
                             }
 
                             Text {
-                                Layout.fillWidth: true
                                 text: wifiEntry.modelData.ssid
                                 color: wifiEntry.isActive
                                        ? Config.colors.accent
@@ -432,7 +416,6 @@ Item {
                                          : Config.colors.textPrimary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
-                                elide: Text.ElideRight
                             }
 
                             // Status indicator: spinner, check, error

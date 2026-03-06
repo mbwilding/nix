@@ -48,8 +48,6 @@ Item {
         a.discovering = btSection.popupOpen;
     }
 
-    onAdapterChanged: btSection.recomputePopupWidth()
-
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     function btIcon() {
@@ -78,33 +76,6 @@ Item {
             return "network-bluetooth-symbolic";
         const ico = d.icon || "";
         return ico !== "" ? ico : "network-bluetooth-symbolic";
-    }
-
-    // Width metric for popup — computed from longest device name
-    TextMetrics {
-        id: btTextMetrics
-        font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
-    }
-
-    property int popupWidth: Math.round(260 * Config.scale)
-
-    function recomputePopupWidth() {
-        const a = btSection.adapter;
-        const devs = a ? a.devices : null;
-        const iconW = Config.bar.fontSizeStatus + Math.round(4 * Config.scale);
-        const checkW = Config.bar.fontSizeStatus;
-        const margins = Math.round(8 * Config.scale) * 6;
-        let maxNameW = Math.round(160 * Config.scale);
-        if (devs) {
-            for (let i = 0; i < devs.count; i++) {
-                const d = devs.get(i).modelData;
-                btTextMetrics.text = btSection.deviceName(d);
-                if (btTextMetrics.boundingRect.width > maxNameW)
-                    maxNameW = btTextMetrics.boundingRect.width;
-            }
-        }
-        btSection.popupWidth = Math.min(Math.round(400 * Config.scale), iconW + maxNameW + checkW + margins);
     }
 
     // ── Notification helper ───────────────────────────────────────────────────
@@ -178,7 +149,19 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: btSection.popupWidth
+        // Width tracks the widest device row (implicitWidth of the column),
+        // plus flickable margins (8+4) and scrollbar track+gap (3+3) = 18 units.
+        // Floor at 200, cap at 400.
+        width: Math.min(
+            Math.round(400 * Config.scale),
+            Math.max(
+                Math.round(200 * Config.scale),
+                btDevListCol.implicitWidth + Math.round(18 * Config.scale)
+            )
+        )
+        Behavior on width {
+            NumberAnimation { duration: 120; easing.type: Easing.InOutQuad }
+        }
         height: Math.min(
             btDevListCol.implicitHeight + Math.round(16 * Config.scale),
             Math.round(400 * Config.scale)
@@ -212,18 +195,16 @@ Item {
             anchors.bottomMargin: Math.round(8 * Config.scale)
             anchors.leftMargin: Math.round(8 * Config.scale)
             anchors.rightMargin: Math.round(4 * Config.scale)
-            contentWidth: width
+            contentWidth: btDevListCol.implicitWidth
             contentHeight: btDevListCol.implicitHeight
             clip: true
 
             Column {
                 id: btDevListCol
-                width: btFlickable.width
                 spacing: Math.round(2 * Config.scale)
 
                 // ── Empty-state placeholder ───────────────────────────────
                 Text {
-                    width: parent.width
                     text: {
                         const a = btSection.adapter;
                         if (!a || !a.enabled)
@@ -238,6 +219,8 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     topPadding: Math.round(8 * Config.scale)
                     bottomPadding: Math.round(8 * Config.scale)
+                    leftPadding: Math.round(16 * Config.scale)
+                    rightPadding: Math.round(16 * Config.scale)
                     visible: {
                         const a = btSection.adapter;
                         return !a || !a.enabled || !a.devices || a.devices.count === 0;
@@ -259,9 +242,7 @@ Item {
                         readonly property bool isConnecting: devState === 3  // BluetoothDeviceState.Connecting
                         readonly property bool isDisconnecting: devState === 2
 
-                        Component.onCompleted: btSection.recomputePopupWidth()
-
-                        width: btDevListCol.width
+                        width: btDevRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: btDevRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: isConnected
@@ -295,9 +276,7 @@ Item {
                             id: btDevRow
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
-                            anchors.right: parent.right
                             anchors.leftMargin: Math.round(8 * Config.scale)
-                            anchors.rightMargin: Math.round(8 * Config.scale)
                             spacing: Math.round(8 * Config.scale)
 
                             IconImage {
@@ -306,14 +285,12 @@ Item {
                             }
 
                             Text {
-                                Layout.fillWidth: true
                                 text: btSection.deviceName(btDevEntry.device)
                                 color: btDevEntry.isConnected
                                        ? Config.colors.accent
                                        : Config.colors.textPrimary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
-                                elide: Text.ElideRight
                             }
 
                             // Status: connecting/disconnecting spinner, check if connected
