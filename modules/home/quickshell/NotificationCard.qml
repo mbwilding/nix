@@ -133,8 +133,12 @@ Item {
         }
 
         // Card tap
-        TapHandler {
-            onTapped: {
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onClicked: mouse => {
+                if (mouse.wasHeld)
+                    return;
                 const n = root.notification;
                 if (!n)
                     return;
@@ -223,10 +227,10 @@ Item {
 
                 // Close button
                 Rectangle {
-                    implicitWidth: Math.round(18 * Config.scale)
-                    implicitHeight: Math.round(18 * Config.scale)
-                    radius: Math.round(9 * Config.scale)
-                    color: closeHover.containsMouse ? Config.colors.border : "transparent"
+                    implicitWidth: Math.round(24 * Config.scale)
+                    implicitHeight: Math.round(24 * Config.scale)
+                    radius: Math.round(12 * Config.scale)
+                    color: closeArea.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : "transparent"
 
                     Behavior on color {
                         ColorAnimation {
@@ -237,16 +241,21 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: "✕"
-                        color: Config.colors.textMuted
+                        color: closeArea.containsMouse ? Config.colors.textPrimary : Config.colors.textMuted
                         font.family: Config.font.family
                         font.pixelSize: Config.notifications.fontSizeTimestamp
+
+                        Behavior on color {
+                            ColorAnimation { duration: 100 }
+                        }
                     }
 
-                    HoverHandler {
-                        id: closeHover
-                    }
-                    TapHandler {
-                        onTapped: root.animateOut()
+                    MouseArea {
+                        id: closeArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.animateOut()
                     }
                 }
             }
