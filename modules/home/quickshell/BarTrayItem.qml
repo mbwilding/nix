@@ -18,8 +18,8 @@ Item {
     Rectangle {
         id: iconContainer
 
-        implicitWidth: Config.bar.iconSize + Math.round(8 * Config.scale)
-        implicitHeight: Config.bar.iconSize + Math.round(8 * Config.scale)
+        implicitWidth: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
+        implicitHeight: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
         radius: Math.round(6 * Config.scale)
         color: hoverArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15) : "transparent"
 
@@ -32,7 +32,7 @@ Item {
         IconImage {
             id: icon
             anchors.centerIn: parent
-            implicitSize: Config.bar.iconSize
+            implicitSize: Config.bar.batteryIconSize
             source: root.trayItem.icon
         }
 

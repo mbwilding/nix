@@ -602,6 +602,13 @@ Scope {
                     }
                 }
 
+                Rectangle {
+                    implicitWidth: 1
+                    implicitHeight: Config.bar.batteryIconSize
+                    color: Config.colors.border
+                    visible: trayRepeater.count > 0
+                }
+
                     // ── Wifi section ──────────────────────────────────────────
                     Item {
                         id: wifiSection
