@@ -18,6 +18,7 @@ Scope {
     property int _kbdRaw: -1
     property int _screenMax: 1
     property int _screenRaw: -1
+    property real _volumeRaw: -1
     property real kbdBrightness: 0
     property real screenBrightness: 0
     property string kbdDevice: ""
@@ -59,6 +60,9 @@ Scope {
     }
 
     function show() {
+        root.volumeVisible = root.volumeAvailable;
+        root.screenVisible = root.screenAvailable;
+        root.kbdVisible = root.kbdAvailable;
         root.anyVisible = true;
         if (Config.osd.hideDelay > 0)
             hideTimer.restart();
@@ -73,13 +77,19 @@ Scope {
         target: root.volumeAvailable ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
-            root.volumeVisible = true;
+            const v = Pipewire.defaultAudioSink.audio.volume;
+            if (root._volumeRaw < 0) {
+                root._volumeRaw = v;
+                return;
+            }
+            root._volumeRaw = v;
             root.show();
             Sounds.playVolume();
         }
 
         function onMutedChanged() {
-            root.volumeVisible = true;
+            if (root._volumeRaw < 0)
+                return;
             root.show();
         }
     }
@@ -111,12 +121,11 @@ Scope {
             onStreamFinished: {
                 const v = parseInt(this.text);
                 if (!isNaN(v) && v !== root._screenRaw) {
+                    const firstRead = root._screenRaw === -1;
                     root._screenRaw = v;
                     root.screenBrightness = v / root._screenMax;
-                    if (root.screenAvailable) {
-                        root.screenVisible = true;
+                    if (!firstRead && root.screenAvailable)
                         root.show();
-                    }
                 }
             }
         }
@@ -149,12 +158,11 @@ Scope {
             onStreamFinished: {
                 const v = parseInt(this.text);
                 if (!isNaN(v) && v !== root._kbdRaw) {
+                    const firstRead = root._kbdRaw === -1;
                     root._kbdRaw = v;
                     root.kbdBrightness = v / root._kbdMax;
-                    if (root.kbdAvailable) {
-                        root.kbdVisible = true;
+                    if (!firstRead && root.kbdAvailable)
                         root.show();
-                    }
                 }
             }
         }
