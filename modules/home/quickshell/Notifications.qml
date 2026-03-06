@@ -11,23 +11,26 @@ import Quickshell.Services.Notifications
 Scope {
     id: root
 
-    // Returns the topmost (first) tracked notification, if any
-    function topNotification() {
-        return server.trackedNotifications.length > 0
-            ? server.trackedNotifications[0]
-            : null;
+    // Cards currently visible on screen (may outlive trackedNotifications when persistent)
+    property var activeCards: []
+
+    // Returns the topmost visible card, if any
+    function topCard() {
+        return root.activeCards.length > 0 ? root.activeCards[0] : null;
     }
 
     IpcHandler {
         target: "notifications"
 
         function dismiss() {
-            const n = root.topNotification();
-            if (n) n.dismiss();
+            const card = root.topCard();
+            if (card) card.animateOut();
         }
 
         function invoke() {
-            const n = root.topNotification();
+            const card = root.topCard();
+            if (!card) return;
+            const n = card.notification;
             if (!n) return;
             const def = (n.actions ?? []).find(a => a.identifier === "default");
             if (def) {
@@ -36,7 +39,7 @@ Scope {
                 const entry = DesktopEntries.byId(n.desktopEntry);
                 if (entry) entry.launch();
             }
-            n.dismiss();
+            card.animateOut();
         }
     }
 
@@ -97,6 +100,13 @@ Scope {
                     timeout: Config.notifications.timeout
                     width: Config.notifications.cardWidth
                     parent: notifColumn
+
+                    Component.onCompleted: root.activeCards.push(this)
+                    Component.onDestruction: {
+                        const idx = root.activeCards.indexOf(this);
+                        if (idx !== -1) root.activeCards.splice(idx, 1);
+                        root.activeCardsChanged();
+                    }
 
                     Connections {
                         target: modelData
