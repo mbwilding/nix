@@ -173,14 +173,10 @@ Scope {
             anchors.bottomMargin: Math.round(72 * Config.scale)
 
             radius: Math.round(16 * Config.scale)
-            // Glassmorphic gradient fill
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop { position: 0.0; color: Qt.rgba(0.15, 0.14, 0.28, 0.96) }
-                GradientStop { position: 1.0; color: Qt.rgba(0.08, 0.08, 0.18, 0.92) }
-            }
+            color: Qt.rgba(0.12, 0.11, 0.22, 0.96)
             border.color: Config.colors.border
             border.width: 1
+            clip: true
 
             // Top shine rim
             Rectangle {
@@ -190,19 +186,6 @@ Scope {
                 height: 1
                 radius: parent.radius
                 color: "#30ffffff"
-            }
-
-            // Soft drop-shadow blob
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                anchors.topMargin: -Math.round(8 * Config.scale)
-                width: parent.width * 0.8
-                height: Math.round(20 * Config.scale)
-                radius: height / 2
-                color: Config.colors.shadowDark
-                opacity: 0.7
-                z: -1
             }
 
             ColumnLayout {
@@ -475,32 +458,23 @@ Scope {
             }
         }
 
-        // ── Drop-shadow glow blob (behind pill) ──────────────────────────────
+        // ── Subtle drop shadow beneath pill ──────────────────────────────────
         Rectangle {
             id: pillGlow
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.visible_ ? Math.round(4 * Config.scale) : -(pill.implicitHeight + Math.round(40 * Config.scale))
+            anchors.bottomMargin: root.visible_ ? -Math.round(6 * Config.scale) : -(pill.implicitHeight + Math.round(40 * Config.scale))
             Behavior on anchors.bottomMargin {
                 NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutCubic }
             }
 
-            width: pill.implicitWidth + Math.round(60 * Config.scale)
-            height: Math.round(32 * Config.scale)
+            width: pill.implicitWidth * 0.85
+            height: Math.round(18 * Config.scale)
             radius: height / 2
-            color: Config.colors.glowAccent
-            opacity: root.visible_ ? 0.55 : 0
+            color: "#000000"
+            opacity: root.visible_ ? 0.28 : 0
             Behavior on opacity {
                 NumberAnimation { duration: Config.bar.animateSpeed; easing.type: Easing.InOutQuad }
-            }
-            // soften the glow with a second larger, more transparent layer
-            Rectangle {
-                anchors.centerIn: parent
-                width: parent.width + Math.round(40 * Config.scale)
-                height: parent.height + Math.round(12 * Config.scale)
-                radius: height / 2
-                color: Config.colors.glowAccent
-                opacity: 0.25
             }
         }
 
@@ -522,20 +496,9 @@ Scope {
             }
 
             radius: Config.bar.radius
-            color: "transparent"
+            color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
             border.color: Config.colors.border
             border.width: 1
-
-            // Glassmorphic gradient fill
-            Rectangle {
-                anchors.fill: parent
-                radius: parent.radius
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: Qt.rgba(0.15, 0.14, 0.26, 0.94) }
-                    GradientStop { position: 1.0; color: Qt.rgba(0.08, 0.08, 0.18, 0.88) }
-                }
-            }
 
             // Inner highlight rim (top edge shine)
             Rectangle {
@@ -544,7 +507,7 @@ Scope {
                 anchors.right: parent.right
                 height: 1
                 radius: parent.radius
-                color: "#35ffffff"
+                color: "#25ffffff"
             }
 
             opacity: root.visible_ ? 1 : 0

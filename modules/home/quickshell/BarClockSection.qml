@@ -122,10 +122,10 @@ Item {
             anchors.top: parent.bottom
             anchors.topMargin: -Math.round(8 * Config.scale)
             width: parent.width * 0.80
-            height: Math.round(20 * Config.scale)
+            height: Math.round(18 * Config.scale)
             radius: height / 2
-            color: Config.colors.shadowDark
-            opacity: 0.85
+            color: "#000000"
+            opacity: calendarPopup.opacity * 0.25
             z: -1
         }
 
@@ -133,13 +133,10 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: Math.round(Config.bar.popupRadius * Config.scale)
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
-                GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
-            }
+            color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
             border.color: Config.colors.border
             border.width: 1
+            clip: true
 
             // Top shine
             Rectangle {
@@ -148,7 +145,7 @@ Item {
                 anchors.right: parent.right
                 height: 1
                 radius: parent.radius
-                color: "#28ffffff"
+                color: "#25ffffff"
             }
         }
 
