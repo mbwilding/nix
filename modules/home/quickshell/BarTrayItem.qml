@@ -17,6 +17,7 @@ Item {
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
+    signal closePopupReq
 
     signal hovered
 
@@ -269,7 +270,7 @@ Item {
                                 onClicked: {
                                     if (entryDelegate.modelData.enabled) {
                                         entryDelegate.modelData.triggered();
-                                        root.keepPopupReq();
+                                        root.closePopupReq();
                                     }
                                 }
                             }
