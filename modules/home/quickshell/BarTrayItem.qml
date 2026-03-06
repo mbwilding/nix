@@ -52,6 +52,20 @@ Item {
         return iconW + maxTextW + rowMargins + colPadding;
     }
 
+    readonly property int menuPopupHeight: {
+        const entries = menuOpener.children ? menuOpener.children.values : [];
+        const rowH = Config.bar.fontSizeStatus + Math.round(10 * Config.scale); // text height + padding
+        const sepH = Math.round(9 * Config.scale);
+        const spacing = Math.round(2 * Config.scale);
+        const padding = Math.round(8 * Config.scale) * 2;
+        let total = 0;
+        for (let i = 0; i < entries.length; i++) {
+            if (i > 0) total += spacing;
+            total += entries[i] && entries[i].isSeparator ? sepH : rowH;
+        }
+        return total + padding;
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
 
     Rectangle {
@@ -124,12 +138,13 @@ Item {
         anchors.bottomMargin: Config.bar.popupOffset
 
         width: root.menuPopupWidth
-        height: menuCol.implicitHeight + Math.round(16 * Config.scale)
+        height: root.menuPopupHeight
 
         radius: Math.round(10 * Config.scale)
         color: Config.colors.background
         border.color: Config.colors.border
         border.width: 1
+        clip: true
         z: 20
 
         HoverHandler {
@@ -141,10 +156,9 @@ Item {
 
         Column {
             id: menuCol
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: Math.round(8 * Config.scale)
+            x: Math.round(8 * Config.scale)
+            y: Math.round(8 * Config.scale)
+            width: menuPopupRect.width - Math.round(8 * Config.scale) * 2
             spacing: Math.round(2 * Config.scale)
 
             Repeater {

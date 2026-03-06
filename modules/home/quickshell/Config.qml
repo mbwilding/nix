@@ -56,7 +56,7 @@ QtObject {
 
     readonly property QtObject bar: QtObject {
         readonly property int animateSpeed: 200
-        readonly property int hideDelay: 4000
+        readonly property int hideDelay: 1500
         readonly property int radius: Math.round(18 * root.scale)
         readonly property int iconSize: Math.round(36 * root.scale)
         readonly property int powerIconSize: Math.round(28 * root.scale)
@@ -64,8 +64,8 @@ QtObject {
         readonly property int spacing: Math.round(14 * root.scale)
         readonly property int padding: Math.round(24 * root.scale)
         readonly property int sectionSpacing: Math.round(24 * root.scale)
-        readonly property int fontSizeClock: Math.round(root.font.sizeLg * 1.8)
-        readonly property int fontSizeStatus: Math.round(root.font.sizeMd * 1.8)
+        readonly property int fontSizeClock: Math.round(root.font.sizeMd * 1.8)
+        readonly property int fontSizeStatus: Math.round(root.font.sizeSm * 1.8)
         readonly property int popupOffset: Math.round(6 * root.scale)
         // true = 24-hour clock (HH:mm), false = 12-hour clock (hh:mm AP)
         readonly property bool clock24h: true
