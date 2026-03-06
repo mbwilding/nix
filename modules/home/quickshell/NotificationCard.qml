@@ -10,17 +10,9 @@ Item {
     id: root
 
     required property Notification notification
-    property int animateSpeed: Config.notifications.animateSpeed
     property int timeout: Config.notifications.timeout
     property bool visible_: false
     property real latchedHeight: 0
-    property bool _pendingExit: false
-    readonly property bool atTop: y === 0
-
-    onYChanged: {
-        if (_pendingExit && atTop)
-            exitAnim.start();
-    }
 
     clip: false
     implicitHeight: latchedHeight
@@ -45,12 +37,7 @@ Item {
         if (!root.visible_)
             return;
         dismissTimer.stop();
-        if (root.atTop) {
-            exitAnim.start();
-        } else {
-            root._pendingExit = true;
-            root.animateSpeed = Math.round(Config.notifications.animateSpeed / 3);
-        }
+        exitAnim.start();
     }
 
     Timer {
@@ -68,14 +55,14 @@ Item {
                 target: slideTranslate
                 property: "x"
                 to: card.width + 20
-                duration: root.animateSpeed
+                duration: Config.notifications.animateSpeed
                 easing.type: Easing.InOutQuad
             }
             NumberAnimation {
                 target: card
                 property: "opacity"
                 to: 0
-                duration: root.animateSpeed
+                duration: Config.notifications.animateSpeed
                 easing.type: Easing.InOutQuad
             }
         }
@@ -84,7 +71,7 @@ Item {
             target: root
             property: "latchedHeight"
             to: 0
-            duration: root.animateSpeed
+            duration: Config.notifications.animateSpeed
             easing.type: Easing.InOutQuad
         }
 
@@ -118,7 +105,7 @@ Item {
             x: card.width + 20
             Behavior on x {
                 NumberAnimation {
-                    duration: root.animateSpeed
+                    duration: Config.notifications.animateSpeed
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -127,31 +114,16 @@ Item {
         opacity: 0
         Behavior on opacity {
             NumberAnimation {
-                duration: root.animateSpeed
+                duration: Config.notifications.animateSpeed
                 easing.type: Easing.InOutQuad
             }
         }
 
-        // Card tap
+        // Card tap — dismiss only
         MouseArea {
             anchors.fill: parent
-            propagateComposedEvents: true
-            onClicked: mouse => {
-                if (mouse.wasHeld)
-                    return;
-                const n = root.notification;
-                if (!n)
-                    return;
-                const def = (n.actions ?? []).find(a => a.identifier === "default");
-                if (def) {
-                    def.invoke();
-                } else if (n.desktopEntry && n.desktopEntry !== "") {
-                    const entry = DesktopEntries.byId(n.desktopEntry);
-                    if (entry)
-                        entry.launch();
-                }
-                root.animateOut();
-            }
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.animateOut()
         }
 
         // Left accent bar
@@ -182,7 +154,7 @@ Item {
 
             spacing: Math.round(4 * Config.scale)
 
-            // Header: app icon + app name + timestamp + close button
+            // Header: app icon + app name + timestamp
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(8 * Config.scale)
@@ -223,40 +195,6 @@ Item {
                     color: Config.colors.textMuted
                     font.family: Config.font.family
                     font.pixelSize: Config.notifications.fontSizeTimestamp
-                }
-
-                // Close button
-                Rectangle {
-                    implicitWidth: Math.round(24 * Config.scale)
-                    implicitHeight: Math.round(24 * Config.scale)
-                    radius: Math.round(12 * Config.scale)
-                    color: closeArea.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : "transparent"
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 100
-                        }
-                    }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "✕"
-                        color: closeArea.containsMouse ? Config.colors.textPrimary : Config.colors.textMuted
-                        font.family: Config.font.family
-                        font.pixelSize: Config.notifications.fontSizeTimestamp
-
-                        Behavior on color {
-                            ColorAnimation { duration: 100 }
-                        }
-                    }
-
-                    MouseArea {
-                        id: closeArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.animateOut()
-                    }
                 }
             }
 
@@ -302,30 +240,36 @@ Item {
                         implicitHeight: Math.round(24 * Config.scale)
                         implicitWidth: actionLabel.implicitWidth + Math.round(16 * Config.scale)
                         radius: Math.round(6 * Config.scale)
-                        color: actionHover.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.3) : Config.colors.border
-                        border.color: Config.colors.border
+                        color: actionArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25) : Qt.rgba(1, 1, 1, 0.07)
+                        border.color: actionArea.containsMouse ? Config.colors.accent : Config.colors.border
                         border.width: 1
 
                         Behavior on color {
-                            ColorAnimation {
-                                duration: 120
-                            }
+                            ColorAnimation { duration: 100 }
+                        }
+                        Behavior on border.color {
+                            ColorAnimation { duration: 100 }
                         }
 
                         Text {
                             id: actionLabel
                             anchors.centerIn: parent
                             text: modelData.text
-                            color: Config.colors.textPrimary
+                            color: actionArea.containsMouse ? Config.colors.accent : Config.colors.textPrimary
                             font.family: Config.font.family
                             font.pixelSize: Config.notifications.fontSizeAction
+
+                            Behavior on color {
+                                ColorAnimation { duration: 100 }
+                            }
                         }
 
-                        HoverHandler {
-                            id: actionHover
-                        }
-                        TapHandler {
-                            onTapped: {
+                        MouseArea {
+                            id: actionArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
                                 modelData.invoke();
                                 root.animateOut();
                             }
