@@ -24,3 +24,10 @@ To enter the shell manually without direnv:
 ```bash
 nix develop
 ```
+
+## TODO
+
+### Quickshell
+- Fix length of selectable area to be more than text in pop-ups, should extend
+- Rounded corners have lines to edge
+- Test bluetooth
