@@ -63,6 +63,7 @@ in
       home-manager
       imagemagick
       jdk
+      jfrog-cli
       jq
       kdePackages.baloo
       kdePackages.baloo-widgets
