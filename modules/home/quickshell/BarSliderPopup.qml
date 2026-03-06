@@ -9,7 +9,7 @@ import Quickshell.Widgets
 // brightness sections. Caller positions via anchors and binds fraction/iconName.
 //
 // Signals: openPopupReq / exitPopupReq bubble up to Bar.qml popup manager.
-Rectangle {
+Item {
     id: sliderPopup
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -36,30 +36,64 @@ Rectangle {
 
     visible: opacity > 0
     opacity: popupOpen ? 1 : 0
-    scale: popupOpen ? 1 : 0.92
+    scale: popupOpen ? 1 : 0.90
     transformOrigin: Item.Bottom
 
     Behavior on opacity {
         NumberAnimation {
-            duration: 120
-            easing.type: Easing.InOutQuad
+            duration: 150
+            easing.type: Easing.InOutCubic
         }
     }
     Behavior on scale {
         NumberAnimation {
-            duration: 120
-            easing.type: Easing.InOutQuad
+            duration: 150
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.6
         }
     }
 
-    width: Math.round(240 * Config.scale)
-    height: Math.round(56 * Config.scale)
-    radius: Math.round(10 * Config.scale)
+    width: Math.round(250 * Config.scale)
+    height: Math.round(58 * Config.scale)
 
-    color: Config.colors.background
-    border.color: Config.colors.border
-    border.width: 1
-    z: 20
+    // ── Drop shadow blob ──────────────────────────────────────────────────────
+    Rectangle {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.bottom
+        anchors.topMargin: -Math.round(6 * Config.scale)
+        width: parent.width * 0.75
+        height: Math.round(18 * Config.scale)
+        radius: height / 2
+        color: Config.colors.shadowDark
+        opacity: 0.8
+        z: -1
+    }
+
+    // ── Popup card ────────────────────────────────────────────────────────────
+    Rectangle {
+        id: popupCard
+        anchors.fill: parent
+        radius: Math.round(Config.bar.popupRadius * Config.scale)
+
+        // Glassmorphic gradient fill
+        gradient: Gradient {
+            orientation: Gradient.Vertical
+            GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.15, 0.28, 0.96) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.92) }
+        }
+        border.color: Config.colors.border
+        border.width: 1
+
+        // Top shine
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            radius: parent.radius
+            color: "#28ffffff"
+        }
+    }
 
     // ── Hover ─────────────────────────────────────────────────────────────────
 
@@ -101,17 +135,33 @@ Rectangle {
                 width: sliderTrack.trackW
                 height: Math.round(6 * Config.scale)
                 radius: height / 2
-                color: Config.colors.border
+                color: Qt.rgba(1, 1, 1, 0.10)
             }
 
-            // Fill
+            // Gradient fill
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 width: sliderTrack.trackW * sliderTrack.frac
                 height: Math.round(6 * Config.scale)
                 radius: height / 2
-                color: Config.colors.accent
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                }
+            }
+
+            // Thumb glow
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                x: sliderTrack.trackW * sliderTrack.frac - width / 2
+                width: Math.round(18 * Config.scale)
+                height: width
+                radius: width / 2
+                color: Config.colors.glowAccent
+                opacity: 0.55
+                Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
             }
 
             // Thumb
@@ -121,10 +171,15 @@ Rectangle {
                 width: Math.round(14 * Config.scale)
                 height: width
                 radius: width / 2
-                color: Config.colors.accent
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: "#e0e0ff" }
+                    GradientStop { position: 1.0; color: Config.colors.accent }
+                }
                 Behavior on x {
                     NumberAnimation {
-                        duration: 60
+                        duration: 70
+                        easing.type: Easing.OutQuart
                     }
                 }
             }
