@@ -179,16 +179,16 @@ Scope {
         implicitWidth: Config.osd.panelWidth
         implicitHeight: root.panelHeight
 
-        // Drop shadow glow blob (beneath the panel)
+        // Drop shadow beneath panel
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: root.panelHeight - Math.round(8 * Config.scale)
+            anchors.topMargin: root.panelHeight - Math.round(4 * Config.scale)
             width: Config.osd.panelWidth * 0.70
-            height: Math.round(20 * Config.scale)
+            height: Math.round(18 * Config.scale)
             radius: height / 2
-            color: Config.colors.glowAccent
-            opacity: root.anyVisible ? 0.40 : 0
+            color: "#000000"
+            opacity: root.anyVisible ? 0.22 : 0
             Behavior on opacity { NumberAnimation { duration: Config.osd.animateSpeed } }
             z: -1
         }
@@ -221,19 +221,15 @@ Scope {
                 }
             }
 
-            // Glassmorphic panel card
+            // Panel card
             Rectangle {
                 id: panel
                 anchors.fill: parent
                 radius: Config.osd.radius
-
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
-                    GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
-                }
+                color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
                 border.color: Config.colors.border
                 border.width: 1
+                clip: true
 
                 // Top shine rim
                 Rectangle {
@@ -242,7 +238,7 @@ Scope {
                     anchors.right: parent.right
                     height: 1
                     radius: parent.radius
-                    color: "#28ffffff"
+                    color: "#25ffffff"
                 }
 
                 Column {
