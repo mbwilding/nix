@@ -219,10 +219,20 @@ Item {
                             spacing: Math.round(8 * Config.scale)
 
                             IconImage {
-                                visible: entryDelegate.modelData.icon !== ""
+                                id: entryIcon
+                                readonly property string iconStr: entryDelegate.modelData.icon
+                                readonly property string resolved: {
+                                    if (iconStr === "") return "";
+                                    // Already a URL (qsimage raw data or file path) — use directly
+                                    if (iconStr.startsWith("image://") || iconStr.startsWith("/") || iconStr.startsWith("file://"))
+                                        return iconStr;
+                                    // Theme icon name — look up, but treat bare "image://icon/" as empty
+                                    const p = Quickshell.iconPath(iconStr);
+                                    return p === "image://icon/" ? "" : p;
+                                }
+                                visible: resolved !== "" && status !== Image.Error
                                 implicitSize: Config.bar.fontSizeStatus
-                                source: entryDelegate.modelData.icon !== ""
-                                    ? Quickshell.iconPath(entryDelegate.modelData.icon) : ""
+                                source: resolved
                                 Layout.alignment: Qt.AlignVCenter
                             }
 
