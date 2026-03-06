@@ -295,19 +295,19 @@ Scope {
         mask: Region {
             Region { item: pill }
             Region {
-                item: wifiPopup
+                item: root.activePopup === "wifi" ? wifiPopup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: btPopup
+                item: root.activePopup === "bt" ? btPopup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: volumePopup
+                item: root.activePopup === "volume" ? volumePopup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: calendarPopup
+                item: root.activePopup === "clock" ? calendarPopup : null
                 intersection: Intersection.Combine
             }
         }
@@ -405,7 +405,8 @@ Scope {
                             }
 
                             Text {
-                                width: root.wifiLabelWidth
+                                Layout.preferredWidth: root.wifiLabelWidth
+                                Layout.fillWidth: false
                                 text: root.wifiSsid || "No WiFi"
                                 color: Config.colors.textSecondary
                                 font.family: Config.font.family
@@ -430,13 +431,17 @@ Scope {
                             anchors.bottomMargin: Config.bar.popupOffset
 
                             width: root.wifiPopupWidth
-                            height: wifiListCol.implicitHeight + Math.round(16 * Config.scale)
+                            height: Math.min(
+                                wifiListCol.implicitHeight + Math.round(16 * Config.scale),
+                                Math.round(320 * Config.scale)
+                            )
 
                             radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
                             border.color: Config.colors.border
                             border.width: 1
                             z: 20
+                            clip: true
 
                             HoverHandler {
                                 onHoveredChanged: {
@@ -445,13 +450,17 @@ Scope {
                                 }
                             }
 
-                            Column {
-                                id: wifiListCol
-                                anchors.top: parent.top
-                                anchors.left: parent.left
-                                anchors.right: parent.right
+                            Flickable {
+                                anchors.fill: parent
                                 anchors.margins: Math.round(8 * Config.scale)
-                                spacing: Math.round(2 * Config.scale)
+                                contentWidth: width
+                                contentHeight: wifiListCol.implicitHeight
+                                clip: true
+
+                                Column {
+                                    id: wifiListCol
+                                    width: parent.width
+                                    spacing: Math.round(2 * Config.scale)
 
                                 Repeater {
                                     model: root.wifiNetworks
@@ -514,7 +523,8 @@ Scope {
                                         }
                                     }
                                 }
-                            }
+                            }  // Column
+                            }  // Flickable
                         }
                     }
 
@@ -555,7 +565,8 @@ Scope {
                             }
 
                             Text {
-                                width: root.btLabelWidth
+                                Layout.preferredWidth: root.btLabelWidth
+                                Layout.fillWidth: false
                                 text: {
                                     const adapter = btSection.adapter;
                                     if (!adapter || !adapter.enabled) return "Off";
@@ -795,7 +806,8 @@ Scope {
                             }
 
                             Text {
-                                width: root.volumeLabelWidth
+                                Layout.preferredWidth: root.volumeLabelWidth
+                                Layout.fillWidth: false
                                 text: {
                                     const a = volumeSection.audio;
                                     return a ? Math.round(a.volume * 100) + "%" : "0%";
@@ -843,8 +855,8 @@ Scope {
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.topMargin: Math.round(10 * Config.scale)
-                                anchors.bottomMargin: Math.round(10 * Config.scale)
+                                anchors.topMargin: Math.round(20 * Config.scale)
+                                anchors.bottomMargin: Math.round(20 * Config.scale)
                                 width: Math.round(20 * Config.scale)
 
                                 readonly property real trackH: height
@@ -932,7 +944,8 @@ Scope {
                         }
 
                         Text {
-                            width: root.batteryLabelWidth
+                            Layout.preferredWidth: root.batteryLabelWidth
+                            Layout.fillWidth: false
                             text: root.battery && root.battery.isLaptopBattery
                                 ? Math.round(root.battery.percentage * 100) + "%" : ""
                             color: {
