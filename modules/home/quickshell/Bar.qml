@@ -52,7 +52,7 @@ Scope {
         color: "transparent"
 
         implicitWidth: win.screen ? win.screen.width : 1920
-        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale)
+        implicitHeight: pill.implicitHeight + Math.round(16 * Config.scale) + Config.bar.fontSizeStatus + Math.round(16 * Config.scale)
 
         mask: Region {
             item: pill
@@ -62,7 +62,7 @@ Scope {
             id: pill
 
             implicitWidth: content.implicitWidth + Config.bar.padding * 2
-            implicitHeight: content.implicitHeight + Math.round(12 * Config.scale) * 2
+            implicitHeight: content.implicitHeight + Math.round(20 * Config.scale) * 2
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
