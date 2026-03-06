@@ -41,6 +41,15 @@ Item {
 
     readonly property bool popupOpen: activePopup === "bt"
 
+    onPopupOpenChanged: {
+        const a = btSection.adapter;
+        if (!a || !a.enabled)
+            return;
+        a.discovering = btSection.popupOpen;
+    }
+
+    onAdapterChanged: btSection.recomputePopupWidth()
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     function btIcon() {
@@ -69,6 +78,33 @@ Item {
             return "network-bluetooth-symbolic";
         const ico = d.icon || "";
         return ico !== "" ? ico : "network-bluetooth-symbolic";
+    }
+
+    // Width metric for popup — computed from longest device name
+    TextMetrics {
+        id: btTextMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+    }
+
+    property int popupWidth: Math.round(260 * Config.scale)
+
+    function recomputePopupWidth() {
+        const a = btSection.adapter;
+        const devs = a ? a.devices : null;
+        const iconW = Config.bar.fontSizeStatus + Math.round(4 * Config.scale);
+        const checkW = Config.bar.fontSizeStatus;
+        const margins = Math.round(8 * Config.scale) * 6;
+        let maxNameW = Math.round(160 * Config.scale);
+        if (devs) {
+            for (let i = 0; i < devs.count; i++) {
+                const d = devs.get(i).modelData;
+                btTextMetrics.text = btSection.deviceName(d);
+                if (btTextMetrics.boundingRect.width > maxNameW)
+                    maxNameW = btTextMetrics.boundingRect.width;
+            }
+        }
+        btSection.popupWidth = Math.min(Math.round(400 * Config.scale), iconW + maxNameW + checkW + margins);
     }
 
     // ── Notification helper ───────────────────────────────────────────────────
@@ -109,7 +145,7 @@ Item {
         IconImage {
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(btSection.btIcon())
-            opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : 0.4
+            opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : Config.bar.disabledOpacity
             Behavior on opacity {
                 NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
             }
@@ -142,7 +178,7 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: Math.round(260 * Config.scale)
+        width: btSection.popupWidth
         height: Math.min(
             btDevListCol.implicitHeight + Math.round(16 * Config.scale),
             Math.round(400 * Config.scale)
@@ -193,7 +229,7 @@ Item {
                         if (!a || !a.enabled)
                             return "Bluetooth is off";
                         if (!a.devices || a.devices.count === 0)
-                            return "No paired devices";
+                            return a.discovering ? "Scanning\u2026" : "No paired devices";
                         return "";
                     }
                     color: Config.colors.textMuted
@@ -222,6 +258,8 @@ Item {
                         readonly property bool isConnected: devState === 1   // BluetoothDeviceState.Connected
                         readonly property bool isConnecting: devState === 3  // BluetoothDeviceState.Connecting
                         readonly property bool isDisconnecting: devState === 2
+
+                        Component.onCompleted: btSection.recomputePopupWidth()
 
                         width: btDevListCol.width
                         implicitHeight: btDevRow.implicitHeight + Math.round(8 * Config.scale)
