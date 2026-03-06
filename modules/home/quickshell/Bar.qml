@@ -24,6 +24,12 @@ Scope {
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
+    // Tracks the currently visible tray popup Item for the input mask
+    property Item activeTrayMenuPopup: null
+
+    function registerTrayPopup(item) { root.activeTrayMenuPopup = item; }
+    function unregisterTrayPopup()   { root.activeTrayMenuPopup = null; }
+
     // Delegates (inside Repeaters) cannot reference section IDs directly due to
     // ComponentBehavior:Bound, so they call these root-level forwarders.
     function openPopup(name) {
@@ -546,13 +552,21 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
+                item: root.activePopup === "battery" ? batteryPopup : null
+                intersection: Intersection.Combine
+            }
+            Region {
                 item: root.activePopup === "power" ? powerPopup : null
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "clock" ? calendarPopup : null
-                intersection: Intersection.Combine
-            }
+                    item: root.activePopup === "clock" ? calendarPopup : null
+                    intersection: Intersection.Combine
+                }
+                Region {
+                    item: root.activeTrayMenuPopup
+                    intersection: Intersection.Combine
+                }
         }
 
         // Leftover maskRect removed
@@ -596,9 +610,22 @@ Scope {
                     id: trayRepeater
                     model: SystemTray.items
                     delegate: BarTrayItem {
+                        id: trayDelegate
                         required property SystemTrayItem modelData
+                        required property int index
                         trayItem: modelData
+                        popupName: "tray-" + trayDelegate.index
+                        activePopup: root.activePopup
                         onHovered: root.keepAlive()
+                        onOpenPopupReq: name => {
+                            root.openPopup(name)
+                            root.registerTrayPopup(trayDelegate.menuPopup)
+                        }
+                        onKeepPopupReq: root.keepPopup()
+                        onPopupOpenChanged: {
+                            if (!trayDelegate.popupOpen)
+                                root.unregisterTrayPopup()
+                        }
                     }
                 }
 
@@ -1117,19 +1144,21 @@ Scope {
                         implicitHeight: batteryIcon.implicitHeight
                         visible: root.battery !== null && root.battery.isLaptopBattery
 
-                        MouseArea {
-                            id: batteryMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.keepAlive()
+                        readonly property bool popupOpen: root.activePopup === "battery"
+                        readonly property var b: root.battery
+
+                        HoverHandler {
+                            onHoveredChanged: {
+                                if (hovered) root.openPopup("battery")
+                                else root.keepPopup()
+                            }
                         }
 
                         IconImage {
                             id: batteryIcon
                             implicitSize: Config.bar.batteryIconSize
                             source: {
-                                const b = root.battery;
+                                const b = batterySection.b;
                                 if (!b || !b.isLaptopBattery) return "";
                                 const pct = Math.round(b.percentage * 100);
                                 const charging = b.state === UPowerDeviceState.Charging
@@ -1141,41 +1170,77 @@ Scope {
                             }
                         }
 
-                        // Hover tooltip — shows percentage and charging state
+                        // Battery popup — icon + optional charging icon + percentage
                         Rectangle {
-                            visible: batteryMouse.containsMouse && batterySection.visible
+                            id: batteryPopup
+                            visible: opacity > 0
+                            opacity: batterySection.popupOpen ? 1 : 0
+                            scale: batterySection.popupOpen ? 1 : 0.92
+                            transformOrigin: Item.Bottom
+
+                            Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+                            Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.top
                             anchors.bottomMargin: Config.bar.popupOffset
-                            implicitWidth: batteryTipText.implicitWidth + Math.round(10 * Config.scale)
-                            implicitHeight: batteryTipText.implicitHeight + Math.round(6 * Config.scale)
-                            radius: Math.round(4 * Config.scale)
+
+                            height: Math.round(56 * Config.scale)
+                            width: batteryPopupRow.implicitWidth + Math.round(24 * Config.scale)
+
+                            radius: Math.round(10 * Config.scale)
                             color: Config.colors.background
                             border.color: Config.colors.border
                             border.width: 1
-                            z: 30
+                            z: 20
 
-                            Text {
-                                id: batteryTipText
+                            HoverHandler {
+                                onHoveredChanged: {
+                                    if (hovered) root.openPopup("battery")
+                                    else root.keepPopup()
+                                }
+                            }
+
+                            RowLayout {
+                                id: batteryPopupRow
                                 anchors.centerIn: parent
-                                text: {
-                                    const b = root.battery;
-                                    if (!b || !b.isLaptopBattery) return "";
-                                    const pct = Math.round(b.percentage * 100);
-                                    if (b.state === UPowerDeviceState.FullyCharged) return pct + "% · Full";
-                                    if (b.state === UPowerDeviceState.Charging)     return pct + "% · Charging";
-                                    return pct + "%";
+                                spacing: Math.round(8 * Config.scale)
+
+                                // Battery level icon
+                                IconImage {
+                                    implicitSize: Config.bar.batteryIconSize
+                                    source: batteryIcon.source
                                 }
-                                color: {
-                                    const b = root.battery;
-                                    if (!b || !b.isLaptopBattery) return Config.colors.textSecondary;
-                                    const pct = b.percentage * 100;
-                                    if (pct <= 10) return "#ff6060";
-                                    if (pct <= 20) return "#ffaa60";
-                                    return Config.colors.textSecondary;
+
+                                // Charging bolt — visible when charging or full
+                                IconImage {
+                                    implicitSize: Config.bar.batteryIconSize
+                                    source: Quickshell.iconPath("battery-full-charging-symbolic")
+                                    visible: {
+                                        const b = batterySection.b;
+                                        return b && (b.state === UPowerDeviceState.Charging
+                                                  || b.state === UPowerDeviceState.FullyCharged);
+                                    }
                                 }
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
+
+                                // Percentage
+                                Text {
+                                    text: {
+                                        const b = batterySection.b;
+                                        if (!b || !b.isLaptopBattery) return "";
+                                        return Math.round(b.percentage * 100) + "%";
+                                    }
+                                    color: {
+                                        const b = batterySection.b;
+                                        if (!b) return Config.colors.textSecondary;
+                                        const pct = b.percentage * 100;
+                                        if (pct <= 10) return "#ff6060";
+                                        if (pct <= 20) return "#ffaa60";
+                                        return Config.colors.textSecondary;
+                                    }
+                                    font.family: Config.font.family
+                                    font.pixelSize: Config.bar.fontSizeStatus
+                                }
                             }
                         }
                     }
