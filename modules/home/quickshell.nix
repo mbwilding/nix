@@ -39,6 +39,25 @@ in
     };
   };
 
+  xdg.dataFile = builtins.listToAttrs (
+    map
+      (size: {
+        name = "icons/hicolor/${size}x${size}/apps/spotify.png";
+        value.source = "${pkgs.spotify}/share/icons/hicolor/${size}x${size}/apps/spotify-client.png";
+      })
+      [
+        "16"
+        "22"
+        "24"
+        "32"
+        "48"
+        "64"
+        "128"
+        "256"
+        "512"
+      ]
+  );
+
   home = {
     packages = with pkgs; [
       coreutils
