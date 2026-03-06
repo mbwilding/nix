@@ -463,6 +463,7 @@ in
         "$mod, L, exec, qs ipc call default lock"
         "$mod, A, exec, qs ipc call default toggleMixer"
         "$mod, N, exec, qs ipc call notifications dismiss"
+        "$mod, W, exec, qs ipc call bar toggle"
         "$mod, escape, exec, qs ipc call notifications dismissAll"
         "$mod, Y, exec, qs ipc call notifications invoke"
         "$mod, X, exec, systemctl --user restart quickshell.service"
