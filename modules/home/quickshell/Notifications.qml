@@ -96,7 +96,6 @@ Scope {
                     required property Notification modelData
 
                     notification: modelData
-                    animateSpeed: Config.notifications.animateSpeed
                     timeout: Config.notifications.timeout
                     width: Config.notifications.cardWidth
                     parent: notifColumn
