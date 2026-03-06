@@ -531,6 +531,10 @@ Scope {
                         }
                         onKeepPopupReq: root.keepPopup()
                         onExitPopupReq: root.exitPopup()
+                        onClosePopupReq: {
+                            root.closePopup();
+                            root.unregisterTrayPopup();
+                        }
                         onPopupOpenChanged: {
                             if (!trayDelegate.popupOpen)
                                 root.unregisterTrayPopup();
@@ -628,6 +632,7 @@ Scope {
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
+                    onClosePopupReq: root.closePopup()
                 }
 
                 // ── Battery ───────────────────────────────────────────────────

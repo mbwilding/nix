@@ -18,6 +18,7 @@ Item {
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
+    signal closePopupReq
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: powerPopup
@@ -180,7 +181,7 @@ Item {
                         onEntered: powerSection.openPopupReq("power")
                         onClicked: {
                             PowerProfiles.profile = profileDelegate.modelData.profile;
-                            powerSection.openPopupReq("power");
+                            powerSection.closePopupReq();
                         }
                     }
                 }
