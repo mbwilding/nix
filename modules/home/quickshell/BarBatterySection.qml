@@ -130,7 +130,6 @@ Item {
                     return Config.colors.textPrimary;
                 }
                 font.family: Config.font.family
-                font.bold: true
                 font.pixelSize: Config.bar.fontSizeStatus
             }
         }
