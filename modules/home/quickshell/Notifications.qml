@@ -20,9 +20,6 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
-            const hints = notification.hints;
-            const hasOwnSound = hints["suppress-sound"] || hints["sound-file"] || hints["sound-name"];
-            if (!hasOwnSound) Sounds.playNotificationIfSilent(hints["sender-pid"] ?? -1);
         }
     }
 
@@ -33,6 +30,7 @@ Scope {
         anchors.bottom: true
         exclusiveZone: 0
         color: "transparent"
+        mask: Region {}
 
         implicitWidth: Config.notifications.cardWidth + Math.round(16 * Config.scale)
 
