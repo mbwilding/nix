@@ -84,6 +84,7 @@ Item {
             id: icon
             anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
+            mipmap: true
             source: root.trayItem.icon
         }
 
