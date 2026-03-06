@@ -18,15 +18,16 @@ Scope {
 
     // ── Shared popup manager ──────────────────────────────────────────────────
     // Only one popup open at a time. Sections call root.openPopup("name") on
-    // hover-enter and root.keepPopup() on hover-stay. Leaving both trigger and
-    // popup either restarts the close timer (if pill still hovered) or starts a
-    // short grace-period timer; if nothing re-claims it in time, popup closes.
+    // hover-enter and root.keepPopup() on hover-exit. Timers only run while
+    // the mouse is outside pill+popup; hovering either keeps everything alive.
     property string activePopup: ""   // "wifi" | "bt" | "volume" | "screen" | "kbd" | "power" | "clock" | ""
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
     // True while the pointer is over the pill bar itself
     property bool pillHovered: false
+    // True while the pointer is over the active popup rectangle
+    property bool popupHovered: false
 
     // Tracks the currently visible tray popup Item for the input mask
     property Item activeTrayMenuPopup: null
@@ -34,36 +35,36 @@ Scope {
     function registerTrayPopup(item) { root.activeTrayMenuPopup = item; }
     function unregisterTrayPopup()   { root.activeTrayMenuPopup = null; }
 
-    // Delegates (inside Repeaters) cannot reference section IDs directly due to
-    // ComponentBehavior:Bound, so they call these root-level forwarders.
+    // Called by trigger hover-enter OR popup hover-enter
     function openPopup(name) {
         root.activePopup = name;
+        root.popupHovered = true;
         popupCloseTimer.stop();
-        popupCloseTimerFast.stop();
         root.keepAlive();
     }
 
+    // Called by popup hover-exit (mouse leaving the popup rect)
+    function exitPopup() {
+        root.popupHovered = false;
+        if (root.activePopup !== "") {
+            popupCloseTimer.restart();
+            root.keepAlive();
+        }
+    }
+
+    // Called by trigger hover-exit (mouse leaving the trigger, not the popup)
     function keepPopup() {
         if (root.activePopup !== "") {
-            // If pointer is still over the pill, use the full delay.
-            // If pointer has left everything, use a short grace period so the
-            // popup closes quickly when focus moves away.
-            if (root.pillHovered) {
-                popupCloseTimerFast.stop();
-                popupCloseTimer.restart();
-            } else {
-                popupCloseTimer.stop();
-                popupCloseTimerFast.restart();
-            }
+            if (!root.popupHovered) popupCloseTimer.restart();
             root.keepAlive();
         }
     }
 
     function closePopup() {
         root.activePopup = "";
+        root.popupHovered = false;
         popupCloseTimer.stop();
-        popupCloseTimerFast.stop();
-        if (root.pillHovered) root.keepAlive();
+        root.keepAlive();
     }
 
     // Forwarders for Repeater delegates
@@ -73,18 +74,10 @@ Scope {
     function keepScreenPopup() { root.openPopup("screen") }
     function keepKbdPopup()    { root.openPopup("kbd") }
 
-    // Full-delay timer: runs while pointer is still over pill or popup
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
-        onTriggered: root.closePopup()
-    }
-
-    // Short grace-period timer: fires when pointer has left pill+popup area
-    Timer {
-        id: popupCloseTimerFast
-        interval: 150
-        onTriggered: root.closePopup()
+        onTriggered: if (!root.popupHovered) root.closePopup()
     }
 
     // ── Bar show/hide ─────────────────────────────────────────────────────────
@@ -108,7 +101,7 @@ Scope {
     Timer {
         id: hideTimer
         interval: Config.bar.hideDelay
-        onTriggered: root.visible_ = false
+        onTriggered: if (root.activePopup === "") root.visible_ = false
     }
 
     property UPowerDevice battery: UPower.displayDevice
@@ -451,7 +444,7 @@ Scope {
         HoverHandler {
             onHoveredChanged: {
                 if (hovered) root.openPopup(sliderPopup.popupName);
-                else root.keepPopup();
+                else root.exitPopup();
             }
         }
 
@@ -650,6 +643,7 @@ Scope {
                             root.registerTrayPopup(trayDelegate.menuPopup)
                         }
                         onKeepPopupReq: root.keepPopup()
+                        onExitPopupReq: root.exitPopup()
                         onPopupOpenChanged: {
                             if (!trayDelegate.popupOpen)
                                 root.unregisterTrayPopup()
@@ -722,7 +716,7 @@ Scope {
                             HoverHandler {
                                 onHoveredChanged: {
                                     if (hovered) root.openPopup("wifi");
-                                    else root.keepPopup();
+                                    else root.exitPopup();
                                 }
                             }
 
@@ -909,7 +903,7 @@ Scope {
                             HoverHandler {
                                 onHoveredChanged: {
                                     if (hovered) root.openPopup("bt");
-                                    else root.keepPopup();
+                                    else root.exitPopup();
                                 }
                             }
 
@@ -1225,7 +1219,7 @@ Scope {
                         HoverHandler {
                             onHoveredChanged: {
                                 if (hovered) root.openPopup("battery")
-                                else root.keepPopup()
+                                else root.exitPopup()
                             }
                         }
 
@@ -1272,7 +1266,7 @@ Scope {
                             HoverHandler {
                                 onHoveredChanged: {
                                     if (hovered) root.openPopup("battery")
-                                    else root.keepPopup()
+                                    else root.exitPopup()
                                 }
                             }
 
@@ -1386,7 +1380,7 @@ Scope {
                             HoverHandler {
                                 onHoveredChanged: {
                                     if (hovered) root.openPopup("power");
-                                    else root.keepPopup();
+                                    else root.exitPopup();
                                 }
                             }
 
@@ -1536,7 +1530,7 @@ Scope {
                             HoverHandler {
                                 onHoveredChanged: {
                                     if (hovered) root.openPopup("clock");
-                                    else root.keepPopup();
+                                    else root.exitPopup();
                                 }
                             }
 
