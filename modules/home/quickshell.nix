@@ -32,7 +32,7 @@ let
 in
 {
   programs.quickshell = {
-    enable = true;
+    enable = false;
     configs.default = config;
     activeConfig = "default";
     systemd = {
