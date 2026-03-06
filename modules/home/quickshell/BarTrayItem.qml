@@ -10,7 +10,19 @@ Item {
     id: root
 
     required property SystemTrayItem trayItem
-    signal hovered
+
+    // Popup manager integration — set by Bar.qml delegate
+    property string popupName: ""
+    property string activePopup: ""
+    signal openPopupReq(string name)
+    signal keepPopupReq()
+
+    signal hovered()
+
+    readonly property bool popupOpen: activePopup === popupName && popupName !== ""
+
+    // Expose the popup item so Bar.qml can include it in the input mask
+    readonly property Item menuPopup: menuPopupRect
 
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
@@ -21,12 +33,12 @@ Item {
         implicitWidth: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
         implicitHeight: Config.bar.batteryIconSize + Math.round(8 * Config.scale)
         radius: Math.round(6 * Config.scale)
-        color: hoverArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15) : "transparent"
+        color: (hoverArea.containsMouse || root.popupOpen)
+            ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
+            : "transparent"
 
         Behavior on color {
-            ColorAnimation {
-                duration: 100
-            }
+            ColorAnimation { duration: 100 }
         }
 
         IconImage {
@@ -43,18 +55,144 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             cursorShape: Qt.PointingHandCursor
 
-            onEntered: root.hovered()
+            onEntered: {
+                root.hovered()
+                if (root.trayItem.hasMenu && root.popupName !== "")
+                    root.openPopupReq(root.popupName)
+            }
+            onExited: root.keepPopupReq()
 
             onClicked: mouse => {
-                root.hovered();
-                if (mouse.button === Qt.RightButton) {
-                    if (root.trayItem.hasMenu)
-                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y);
+                root.hovered()
+                if (root.trayItem.hasMenu) {
+                    if (root.popupName !== "")
+                        root.openPopupReq(root.popupName)
                 } else {
-                    if (root.trayItem.hasMenu)
-                        root.trayItem.display(hoverArea.window, root.mapToItem(null, 0, 0).x, root.mapToItem(null, 0, 0).y);
-                    else
-                        root.trayItem.activate();
+                    root.trayItem.activate()
+                }
+            }
+        }
+    }
+
+    // ── Menu popup ────────────────────────────────────────────────────────────
+
+    QsMenuOpener {
+        id: menuOpener
+        menu: root.trayItem.menu
+    }
+
+    Rectangle {
+        id: menuPopupRect
+
+        visible: opacity > 0
+        opacity: root.popupOpen ? 1 : 0
+        scale: root.popupOpen ? 1 : 0.92
+        transformOrigin: Item.Bottom
+
+        Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+        Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.top
+        anchors.bottomMargin: Config.bar.popupOffset
+
+        width: Math.max(Math.round(160 * Config.scale), menuCol.implicitWidth + Math.round(16 * Config.scale))
+        height: menuCol.implicitHeight + Math.round(16 * Config.scale)
+
+        radius: Math.round(10 * Config.scale)
+        color: Config.colors.background
+        border.color: Config.colors.border
+        border.width: 1
+        z: 20
+
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) root.openPopupReq(root.popupName)
+                else root.keepPopupReq()
+            }
+        }
+
+        Column {
+            id: menuCol
+            anchors.centerIn: parent
+            width: parent.width - Math.round(16 * Config.scale)
+            spacing: Math.round(2 * Config.scale)
+
+            Repeater {
+                model: menuOpener.children
+
+                delegate: Item {
+                    id: entryDelegate
+                    required property QsMenuEntry modelData
+                    width: menuCol.width
+
+                    // Separator
+                    implicitHeight: modelData.isSeparator
+                        ? Math.round(9 * Config.scale)
+                        : entryRow.implicitHeight + Math.round(10 * Config.scale)
+
+                    Rectangle {
+                        visible: entryDelegate.modelData.isSeparator
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        height: 1
+                        color: Config.colors.border
+                    }
+
+                    // Menu row (non-separator)
+                    Rectangle {
+                        visible: !entryDelegate.modelData.isSeparator
+                        anchors.fill: parent
+                        radius: Math.round(6 * Config.scale)
+                        color: entryMouse.containsMouse && entryDelegate.modelData.enabled
+                            ? Qt.rgba(1, 1, 1, 0.07) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 80 } }
+
+                        RowLayout {
+                            id: entryRow
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: Math.round(8 * Config.scale)
+                            anchors.rightMargin: Math.round(8 * Config.scale)
+                            spacing: Math.round(8 * Config.scale)
+
+                            IconImage {
+                                visible: entryDelegate.modelData.icon !== ""
+                                implicitSize: Config.bar.fontSizeStatus
+                                source: entryDelegate.modelData.icon !== ""
+                                    ? Quickshell.iconPath(entryDelegate.modelData.icon) : ""
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            Text {
+                                Layout.fillWidth: true
+                                text: entryDelegate.modelData.text
+                                color: entryDelegate.modelData.enabled
+                                    ? Config.colors.textPrimary : Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        MouseArea {
+                            id: entryMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: entryDelegate.modelData.enabled
+                                ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            enabled: !entryDelegate.modelData.isSeparator
+                            onEntered: root.openPopupReq(root.popupName)
+                            onClicked: {
+                                if (entryDelegate.modelData.enabled) {
+                                    entryDelegate.modelData.triggered()
+                                    root.keepPopupReq()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
