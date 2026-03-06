@@ -60,13 +60,21 @@ Item {
         id: clockCol
         spacing: Math.round(1 * Config.scale)
 
-        Text {
+        // Time — rendered as two overlapping Texts so we can fake a gradient
+        // by stacking a clipped white-to-accent gradient label over a base text.
+        Item {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: clockSection.timeText(clockSection.clockDate)
-            color: Config.colors.textPrimary
-            font.family: Config.font.family
-            font.pixelSize: Config.bar.fontSizeClock
-            font.weight: Font.Medium
+            implicitWidth: timeBaseTxt.implicitWidth
+            implicitHeight: timeBaseTxt.implicitHeight
+
+            Text {
+                id: timeBaseTxt
+                text: clockSection.timeText(clockSection.clockDate)
+                color: Config.colors.accent
+                font.family: Config.font.family
+                font.pixelSize: Config.bar.fontSizeClock
+                font.weight: Font.Medium
+            }
         }
 
         Text {
@@ -80,23 +88,24 @@ Item {
 
     // ── Popup (calendar) ─────────────────────────────────────────────────────
 
-    Rectangle {
+    Item {
         id: calendarPopup
         visible: opacity > 0
         opacity: clockSection.popupOpen ? 1 : 0
-        scale: clockSection.popupOpen ? 1 : 0.92
+        scale: clockSection.popupOpen ? 1 : 0.90
         transformOrigin: Item.Bottom
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 120
-                easing.type: Easing.InOutQuad
+                duration: 150
+                easing.type: Easing.InOutCubic
             }
         }
         Behavior on scale {
             NumberAnimation {
-                duration: 120
-                easing.type: Easing.InOutQuad
+                duration: 150
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.5
             }
         }
 
@@ -104,13 +113,45 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: 7 * calendarGrid.cellSize + Math.round(32 * Config.scale)
-        height: calHeaderRow.height + calDayNames.height + calendarGrid.height + Math.round(48 * Config.scale)
+        width: 7 * calendarGrid.cellSize + Math.round(40 * Config.scale)
+        height: calHeaderRow.height + calDayNames.height + calendarGrid.height + Math.round(52 * Config.scale)
 
-        radius: Math.round(10 * Config.scale)
-        color: Config.colors.background
-        border.color: Config.colors.border
-        border.width: 1
+        // Drop shadow
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.bottom
+            anchors.topMargin: -Math.round(8 * Config.scale)
+            width: parent.width * 0.80
+            height: Math.round(20 * Config.scale)
+            radius: height / 2
+            color: Config.colors.shadowDark
+            opacity: 0.85
+            z: -1
+        }
+
+        // Glassmorphic card
+        Rectangle {
+            anchors.fill: parent
+            radius: Math.round(Config.bar.popupRadius * Config.scale)
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
+                GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
+            }
+            border.color: Config.colors.border
+            border.width: 1
+
+            // Top shine
+            Rectangle {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 1
+                radius: parent.radius
+                color: "#28ffffff"
+            }
+        }
+
         z: 20
 
         property int displayYear: new Date().getFullYear()
@@ -139,24 +180,28 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(8 * Config.scale)
+            anchors.topMargin: Math.round(10 * Config.scale)
+            anchors.leftMargin: Math.round(10 * Config.scale)
+            anchors.rightMargin: Math.round(10 * Config.scale)
             spacing: 0
 
-            Item {
+            // Prev month button
+            Rectangle {
                 width: Math.round(32 * Config.scale)
                 height: Math.round(32 * Config.scale)
+                radius: Math.round(8 * Config.scale)
+                color: prevMonthMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent"
+                Behavior on color { ColorAnimation { duration: 100 } }
+
                 Text {
                     anchors.centerIn: parent
                     text: "‹"
                     color: prevMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
                     font.family: Config.font.family
                     font.pixelSize: Config.bar.fontSizeStatus * 1.2
+                    font.weight: Font.Medium
                     Behavior on color {
-                        ColorAnimation {
-                            duration: 80
-                        }
+                        ColorAnimation { duration: 100 }
                     }
                 }
                 MouseArea {
@@ -184,22 +229,26 @@ Item {
                 color: Config.colors.textPrimary
                 font.family: Config.font.family
                 font.pixelSize: Config.bar.fontSizeStatus
-                font.weight: Font.Medium
+                font.weight: Font.SemiBold
             }
 
-            Item {
+            // Next month button
+            Rectangle {
                 width: Math.round(32 * Config.scale)
                 height: Math.round(32 * Config.scale)
+                radius: Math.round(8 * Config.scale)
+                color: nextMonthMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent"
+                Behavior on color { ColorAnimation { duration: 100 } }
+
                 Text {
                     anchors.centerIn: parent
                     text: "›"
                     color: nextMonthMouse.containsMouse ? Config.colors.accent : Config.colors.textSecondary
                     font.family: Config.font.family
                     font.pixelSize: Config.bar.fontSizeStatus * 1.2
+                    font.weight: Font.Medium
                     Behavior on color {
-                        ColorAnimation {
-                            duration: 80
-                        }
+                        ColorAnimation { duration: 100 }
                     }
                 }
                 MouseArea {
@@ -238,6 +287,7 @@ Item {
                     color: Config.colors.textMuted
                     font.family: Config.font.family
                     font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.8)
+                    font.weight: Font.Medium
                 }
             }
         }
@@ -284,14 +334,26 @@ Item {
                         return modelData > 0 && calendarPopup.displayYear === now.getFullYear() && calendarPopup.displayMonth === (now.getMonth() + 1) && modelData === now.getDate();
                     }
 
+                    // Outer glow for today
                     Rectangle {
+                        visible: parent.isToday
                         anchors.centerIn: parent
-                        width: calendarGrid.cellSize - Math.round(4 * Config.scale)
+                        width: calendarGrid.cellSize - Math.round(2 * Config.scale)
                         height: width
                         radius: width / 2
-                        color: parent.isToday ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.3) : "transparent"
+                        color: Config.colors.glowAccent
+                        opacity: 0.35
+                    }
+
+                    // Today fill circle
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: calendarGrid.cellSize - Math.round(6 * Config.scale)
+                        height: width
+                        radius: width / 2
+                        color: parent.isToday ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28) : "transparent"
                         border.color: parent.isToday ? Config.colors.accent : "transparent"
-                        border.width: 1
+                        border.width: parent.isToday ? 1 : 0
                     }
 
                     Text {
@@ -300,7 +362,7 @@ Item {
                         color: parent.isToday ? Config.colors.accent : Config.colors.textSecondary
                         font.family: Config.font.family
                         font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.85)
-                        font.weight: parent.isToday ? Font.Medium : Font.Normal
+                        font.weight: parent.isToday ? Font.SemiBold : Font.Normal
                     }
                 }
             }

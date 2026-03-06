@@ -179,19 +179,31 @@ Scope {
         implicitWidth: Config.osd.panelWidth
         implicitHeight: root.panelHeight
 
+        // Drop shadow glow blob (beneath the panel)
         Rectangle {
-            id: panel
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: root.panelHeight - Math.round(8 * Config.scale)
+            width: Config.osd.panelWidth * 0.70
+            height: Math.round(20 * Config.scale)
+            radius: height / 2
+            color: Config.colors.glowAccent
+            opacity: root.anyVisible ? 0.40 : 0
+            Behavior on opacity { NumberAnimation { duration: Config.osd.animateSpeed } }
+            z: -1
+        }
+
+        Item {
+            id: panelWrapper
             width: parent.width
             height: root.panelHeight
-            radius: Config.osd.radius
-            color: Config.colors.background
 
             transform: Translate {
-                y: root.anyVisible ? 0 : -panel.height
+                y: root.anyVisible ? 0 : -panelWrapper.height - Math.round(12 * Config.scale)
                 Behavior on y {
                     NumberAnimation {
                         duration: Config.osd.animateSpeed
-                        easing.type: Easing.InOutQuad
+                        easing.type: Easing.InOutCubic
                         onFinished: if (!root.anyVisible) {
                             root.volumeVisible = false;
                             root.screenVisible = false;
@@ -205,43 +217,71 @@ Scope {
             Behavior on opacity {
                 NumberAnimation {
                     duration: Config.osd.animateSpeed
-                    easing.type: Easing.InOutQuad
+                    easing.type: Easing.InOutCubic
                 }
             }
 
-            Column {
-                anchors {
-                    fill: parent
-                    topMargin: Math.round(8 * Config.scale)
-                    bottomMargin: Math.round(8 * Config.scale)
+            // Glassmorphic panel card
+            Rectangle {
+                id: panel
+                anchors.fill: parent
+                radius: Config.osd.radius
+
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: Qt.rgba(0.16, 0.14, 0.28, 0.97) }
+                    GradientStop { position: 1.0; color: Qt.rgba(0.09, 0.08, 0.18, 0.93) }
+                }
+                border.color: Config.colors.border
+                border.width: 1
+
+                // Top shine rim
+                Rectangle {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    radius: parent.radius
+                    color: "#28ffffff"
                 }
 
-                OsdRow {
-                    iconName: {
-                        const audio = Pipewire.defaultAudioSink?.audio;
-                        if (!audio || audio.muted)
-                            return "audio-volume-muted-symbolic";
-                        const vol = audio.volume;
-                        if (vol <= 0.33)
-                            return "audio-volume-low-symbolic";
-                        if (vol <= 0.66)
-                            return "audio-volume-medium-symbolic";
-                        return "audio-volume-high-symbolic";
+                Column {
+                    anchors {
+                        fill: parent
+                        topMargin: Math.round(8 * Config.scale)
+                        bottomMargin: Math.round(8 * Config.scale)
                     }
-                    value: Pipewire.defaultAudioSink?.audio.volume ?? 0
-                    label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
-                }
 
-                OsdRow {
-                    iconName: "video-display-brightness-symbolic"
-                    value: root.screenBrightness
-                    label: Math.round(root.screenBrightness * 100) + "%"
-                }
+                    OsdRow {
+                        visible: root.volumeVisible
+                        iconName: {
+                            const audio = Pipewire.defaultAudioSink?.audio;
+                            if (!audio || audio.muted)
+                                return "audio-volume-muted-symbolic";
+                            const vol = audio.volume;
+                            if (vol <= 0.33)
+                                return "audio-volume-low-symbolic";
+                            if (vol <= 0.66)
+                                return "audio-volume-medium-symbolic";
+                            return "audio-volume-high-symbolic";
+                        }
+                        value: Pipewire.defaultAudioSink?.audio.volume ?? 0
+                        label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                    }
 
-                OsdRow {
-                    iconName: "input-keyboard-brightness"
-                    value: root.kbdBrightness
-                    label: Math.round(root.kbdBrightness * 100) + "%"
+                    OsdRow {
+                        visible: root.screenVisible
+                        iconName: "video-display-brightness-symbolic"
+                        value: root.screenBrightness
+                        label: Math.round(root.screenBrightness * 100) + "%"
+                    }
+
+                    OsdRow {
+                        visible: root.kbdVisible
+                        iconName: "input-keyboard-brightness"
+                        value: root.kbdBrightness
+                        label: Math.round(root.kbdBrightness * 100) + "%"
+                    }
                 }
             }
         }
