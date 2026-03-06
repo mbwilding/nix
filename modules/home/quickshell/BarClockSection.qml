@@ -116,23 +116,11 @@ Item {
         width: 7 * calendarGrid.cellSize + Math.round(40 * Config.scale)
         height: calHeaderRow.height + calDayNames.height + calendarGrid.height + Math.round(52 * Config.scale)
 
-        // Drop shadow
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.bottom
-            anchors.topMargin: -Math.round(8 * Config.scale)
-            width: parent.width * 0.80
-            height: Math.round(18 * Config.scale)
-            radius: height / 2
-            color: "#000000"
-            opacity: calendarPopup.opacity * 0.25
-            z: -1
-        }
-
         // Glassmorphic card
         Rectangle {
             anchors.fill: parent
             radius: Math.round(Config.bar.popupRadius * Config.scale)
+            antialiasing: true
             color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
             border.color: Config.colors.border
             border.width: 1

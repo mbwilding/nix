@@ -83,19 +83,6 @@ Item {
         }
     }
 
-    // ── Drop shadow blob ──────────────────────────────────────────────────────
-    Rectangle {
-        anchors.horizontalCenter: card.horizontalCenter
-        anchors.top: card.bottom
-        anchors.topMargin: -Math.round(6 * Config.scale)
-        width: card.width * 0.75
-        height: Math.round(16 * Config.scale)
-        radius: height / 2
-        color: "#000000"
-        opacity: card.opacity * 0.22
-        z: -1
-    }
-
     Rectangle {
         id: card
 
@@ -108,6 +95,7 @@ Item {
 
         implicitHeight: cardContent.implicitHeight + Math.round(22 * Config.scale)
         radius: Config.notifications.radius
+        antialiasing: true
         color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1

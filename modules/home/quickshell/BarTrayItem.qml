@@ -144,6 +144,7 @@ Item {
         height: Math.min(menuCol.implicitHeight + Math.round(16 * Config.scale), root.maxPopupHeight)
 
         radius: Math.round(Config.bar.popupRadius * Config.scale)
+        antialiasing: true
         color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
         border.color: Config.colors.border
         border.width: 1
