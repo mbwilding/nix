@@ -18,8 +18,8 @@ Scope {
         });
     }
 
-    function notify(summary, body, icon) {
-        notifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + icon, summary, body];
+    function notify(level) {
+        notifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + level.icon, level.title, level.message];
         notifyProc.running = true;
     }
 
@@ -38,12 +38,12 @@ Scope {
 
             if (state === UPowerDeviceState.Charging) {
                 root.firedLevels = [];
-                root.notify(Config.battery.charging.title, Config.battery.charging.message, Config.battery.charging.icon);
+                root.notify(Config.battery.chargeLevels.charging);
             } else if (state === UPowerDeviceState.Discharging) {
                 root.firedLevels = [];
-                root.notify(Config.battery.discharging.title, Config.battery.discharging.message, Config.battery.discharging.icon);
+                root.notify(Config.battery.chargeLevels.discharging);
             } else if (state === UPowerDeviceState.FullyCharged) {
-                root.notify(Config.battery.fullyCharged.title, Config.battery.fullyCharged.message, Config.battery.fullyCharged.icon);
+                root.notify(Config.battery.chargeLevels.fullyCharged);
             }
         }
 
@@ -59,7 +59,7 @@ Scope {
             for (const warn of levels) {
                 if (pct <= warn.level && !root.firedLevels.includes(warn.level)) {
                     root.firedLevels = root.firedLevels.concat([warn.level]);
-                    root.notify(warn.title, warn.message, warn.icon);
+                    root.notify(warn);
                     break;
                 }
             }
