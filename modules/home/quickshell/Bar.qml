@@ -63,6 +63,7 @@ Scope {
         root.activePopup = "";
         popupCloseTimer.stop();
         popupCloseTimerFast.stop();
+        if (root.pillHovered) root.keepAlive();
     }
 
     // Forwarders for Repeater delegates

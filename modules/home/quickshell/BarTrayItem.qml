@@ -30,11 +30,27 @@ Item {
     // ── Popup width calculation ───────────────────────────────────────────────
     // Measures the widest menu entry text to size the popup correctly.
 
+    // Used for line-height measurement (text fixed to "Mg" for ascent+descent)
+    TextMetrics {
+        id: lineMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+        text: "Mg"
+    }
+
+    // Used for per-entry text width measurement (text mutated in JS loop)
     TextMetrics {
         id: entryTextMetrics
         font.family: Config.font.family
         font.pixelSize: Config.bar.fontSizeStatus
     }
+
+    // Actual rendered line height: max of icon size and text implicit height.
+    // Text.implicitHeight ≈ boundingRect.height (ascent+descent) + 1px headroom.
+    readonly property int entryLineHeight: Math.max(
+        Config.bar.fontSizeStatus,
+        Math.ceil(lineMetrics.boundingRect.height) + 1
+    )
 
     readonly property int menuPopupWidth: {
         const entries = menuOpener.children ? menuOpener.children.values : [];
@@ -54,7 +70,7 @@ Item {
 
     readonly property int menuPopupHeight: {
         const entries = menuOpener.children ? menuOpener.children.values : [];
-        const rowH = Config.bar.fontSizeStatus + Math.round(10 * Config.scale); // text height + padding
+        const rowH = root.entryLineHeight + Math.round(10 * Config.scale); // line height + vertical padding
         const sepH = Math.round(9 * Config.scale);
         const spacing = Math.round(2 * Config.scale);
         const padding = Math.round(8 * Config.scale) * 2;
