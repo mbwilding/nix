@@ -16,6 +16,7 @@ Item {
     property string activePopup: ""
     signal openPopupReq(string name)
     signal keepPopupReq()
+    signal exitPopupReq()
 
     signal hovered()
 
@@ -166,7 +167,7 @@ Item {
         HoverHandler {
             onHoveredChanged: {
                 if (hovered) root.openPopupReq(root.popupName)
-                else root.keepPopupReq()
+                else root.exitPopupReq()
             }
         }
 
