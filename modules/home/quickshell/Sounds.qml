@@ -9,7 +9,7 @@ QtObject {
     property Process procVolume: Process {}
     function playVolume() {
         if (Config.soundEnabled) {
-            procVolume.command = ["paplay", "@volumeSound@"];
+            procVolume.command = ["pw-play", "@volumeSound@"];
             procVolume.running = true;
         }
     }
