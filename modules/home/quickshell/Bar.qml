@@ -20,7 +20,7 @@ Scope {
     // Only one popup open at a time. Sections call root.openPopup("name") on
     // hover-enter and root.keepPopup() on hover-stay. Leaving both trigger and
     // popup restarts the close timer; if no section reclaims it, closeTimer fires.
-    property string activePopup: ""   // "wifi" | "bt" | "volume" | "clock" | ""
+    property string activePopup: ""   // "wifi" | "bt" | "volume" | "screen" | "kbd" | "power" | "clock" | ""
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -128,33 +128,15 @@ Scope {
         font.pixelSize: Config.bar.fontSizeStatus
     }
 
-    // Fixed-width reserves for bar labels (prevents layout shifts)
-    // All four use "100%" as the widest string — icons convey state changes.
+    // Fixed-width reserve for slider popup percentage labels
     TextMetrics {
         id: statusTextMetrics
         font.family: Config.font.family
         font.pixelSize: Config.bar.fontSizeStatus
+        text: "100%"
     }
 
-    readonly property int wifiLabelWidth: {
-        statusTextMetrics.text = "100%";
-        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
-    }
-
-    readonly property int btLabelWidth: {
-        statusTextMetrics.text = "100%";
-        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
-    }
-
-    readonly property int volumeLabelWidth: {
-        statusTextMetrics.text = "100%";
-        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
-    }
-
-    readonly property int batteryLabelWidth: {
-        statusTextMetrics.text = "100%";
-        return Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale);
-    }
+    readonly property int sliderLabelWidth: Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale)
 
     readonly property int wifiPopupWidth: {
         const nets = root.wifiNetworks;
@@ -401,14 +383,17 @@ Scope {
         return "";
     }
 
-    // ── Reusable vertical-slider popup ───────────────────────────────────────
+    // ── Reusable horizontal-slider popup ─────────────────────────────────────
     // Used by volume, screen brightness, and keyboard brightness sections.
+    // Layout: [icon] [====track====] [pct]
     // Parent must position it (anchors.bottom: parent.top, etc.)
     component SliderPopup: Rectangle {
         id: sliderPopup
 
         property string popupName: ""   // "volume" | "screen" | "kbd"
+        property string iconName: ""    // icon to show inside the popup
         property real fraction: 0       // 0..1  current value
+        property string label: Math.round(fraction * 100) + "%"
         signal setFraction(real v)      // emitted when user drags/clicks
         signal scrollDelta(real delta)  // emitted on mouse wheel (+/- 1 per notch)
 
@@ -422,8 +407,9 @@ Scope {
         Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
         Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
 
-        width: Math.round(60 * Config.scale)
-        height: Math.round(200 * Config.scale)
+        // Wide flat pill
+        width: Math.round(240 * Config.scale)
+        height: Math.round(56 * Config.scale)
 
         radius: Math.round(10 * Config.scale)
         color: Config.colors.background
@@ -438,67 +424,88 @@ Scope {
             }
         }
 
-        Item {
-            id: sliderTrack
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: Math.round(20 * Config.scale)
-            anchors.bottomMargin: Math.round(20 * Config.scale)
-            width: Math.round(20 * Config.scale)
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: Math.round(12 * Config.scale)
+            anchors.rightMargin: Math.round(12 * Config.scale)
+            spacing: Math.round(10 * Config.scale)
 
-            readonly property real trackH: height
-            readonly property real frac: Math.max(0, Math.min(1, sliderPopup.fraction))
-
-            // Track background
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                width: Math.round(6 * Config.scale)
-                height: parent.trackH
-                radius: width / 2
-                color: Config.colors.border
+            // Icon
+            IconImage {
+                implicitSize: Config.bar.batteryIconSize
+                source: Quickshell.iconPath(sliderPopup.iconName)
             }
 
-            // Track fill
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                width: Math.round(6 * Config.scale)
-                height: parent.trackH * parent.frac
-                radius: width / 2
-                color: Config.colors.accent
-            }
+            // Track area — fills remaining space
+            Item {
+                id: sliderTrack
+                Layout.fillWidth: true
+                height: Math.round(20 * Config.scale)
 
-            // Thumb
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: parent.trackH * (1 - parent.frac) - height / 2
-                width: Math.round(14 * Config.scale)
-                height: width
-                radius: width / 2
-                color: Config.colors.accent
-                Behavior on y { NumberAnimation { duration: 60 } }
-            }
+                readonly property real trackW: width
+                readonly property real frac: Math.max(0, Math.min(1, sliderPopup.fraction))
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.SizeVerCursor
-                onEntered: root.openPopup(sliderPopup.popupName)
-
-                function setFromY(my) {
-                    const v = 1.0 - Math.max(0, Math.min(1, my / sliderTrack.trackH));
-                    sliderPopup.setFraction(v);
-                    root.openPopup(sliderPopup.popupName);
+                // Background rail
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    width: parent.trackW
+                    height: Math.round(6 * Config.scale)
+                    radius: height / 2
+                    color: Config.colors.border
                 }
 
-                onPressed: mouse => setFromY(mouse.y)
-                onPositionChanged: mouse => { if (pressed) setFromY(mouse.y) }
-                onWheel: wheel => {
-                    sliderPopup.scrollDelta(wheel.angleDelta.y / 120);
-                    root.openPopup(sliderPopup.popupName);
+                // Filled portion
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    width: parent.trackW * parent.frac
+                    height: Math.round(6 * Config.scale)
+                    radius: height / 2
+                    color: Config.colors.accent
                 }
+
+                // Thumb
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: parent.trackW * parent.frac - width / 2
+                    width: Math.round(14 * Config.scale)
+                    height: width
+                    radius: width / 2
+                    color: Config.colors.accent
+                    Behavior on x { NumberAnimation { duration: 60 } }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.SizeHorCursor
+                    onEntered: root.openPopup(sliderPopup.popupName)
+
+                    function setFromX(mx) {
+                        const v = Math.max(0, Math.min(1, mx / sliderTrack.trackW));
+                        sliderPopup.setFraction(v);
+                        root.openPopup(sliderPopup.popupName);
+                    }
+
+                    onPressed: mouse => setFromX(mouse.x)
+                    onPositionChanged: mouse => { if (pressed) setFromX(mouse.x) }
+                    onWheel: wheel => {
+                        sliderPopup.scrollDelta(wheel.angleDelta.y / 120);
+                        root.openPopup(sliderPopup.popupName);
+                    }
+                }
+            }
+
+            // Percentage label
+            Text {
+                text: sliderPopup.label
+                color: Config.colors.textSecondary
+                font.family: Config.font.family
+                font.pixelSize: Config.bar.fontSizeStatus
+                horizontalAlignment: Text.AlignRight
+                Layout.preferredWidth: root.sliderLabelWidth
+                Layout.fillWidth: false
             }
         }
     }
@@ -536,6 +543,10 @@ Scope {
             }
             Region {
                 item: root.activePopup === "kbd" ? kbdPopup : null
+                intersection: Intersection.Combine
+            }
+            Region {
+                item: root.activePopup === "power" ? powerPopup : null
                 intersection: Intersection.Combine
             }
             Region {
@@ -634,16 +645,6 @@ Scope {
                             IconImage {
                                 implicitSize: Config.bar.batteryIconSize
                                 source: Quickshell.iconPath(root.wifiIcon(root.wifiStrength))
-                            }
-
-                            Text {
-                                Layout.preferredWidth: root.wifiLabelWidth
-                                Layout.fillWidth: false
-                                text: root.wifiSsid || "No WiFi"
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                                elide: Text.ElideRight
                             }
                         }
 
@@ -794,21 +795,6 @@ Scope {
                             IconImage {
                                 implicitSize: Config.bar.batteryIconSize
                                 source: Quickshell.iconPath(root.btIcon())
-                            }
-
-                            Text {
-                                Layout.preferredWidth: root.btLabelWidth
-                                Layout.fillWidth: false
-                                text: {
-                                    const adapter = btSection.adapter;
-                                    if (!adapter || !adapter.enabled) return "Off";
-                                    const name = root.btConnectedName();
-                                    return name !== "" ? name : "BT";
-                                }
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                                elide: Text.ElideRight
                             }
                         }
 
@@ -1034,23 +1020,12 @@ Scope {
                                 implicitSize: Config.bar.batteryIconSize
                                 source: Quickshell.iconPath(root.volumeIcon())
                             }
-
-                            Text {
-                                Layout.preferredWidth: root.volumeLabelWidth
-                                Layout.fillWidth: false
-                                text: {
-                                    const a = volumeSection.audio;
-                                    return a ? Math.round(a.volume * 100) + "%" : "0%";
-                                }
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
                         }
 
                         SliderPopup {
                             id: volumePopup
                             popupName: "volume"
+                            iconName: root.volumeIcon()
                             fraction: Math.min(volumeSection.audio?.volume ?? 0, 1.0)
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.top
@@ -1102,20 +1077,12 @@ Scope {
                                 implicitSize: Config.bar.batteryIconSize
                                 source: Quickshell.iconPath("video-display-brightness-symbolic")
                             }
-
-                            Text {
-                                Layout.preferredWidth: root.volumeLabelWidth
-                                Layout.fillWidth: false
-                                text: Math.round(root.screenBrightness * 100) + "%"
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
                         }
 
                         SliderPopup {
                             id: screenPopup
                             popupName: "screen"
+                            iconName: "video-display-brightness-symbolic"
                             fraction: root.screenBrightness
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.top
@@ -1163,20 +1130,12 @@ Scope {
                                 implicitSize: Config.bar.batteryIconSize
                                 source: Quickshell.iconPath("input-keyboard-brightness")
                             }
-
-                            Text {
-                                Layout.preferredWidth: root.volumeLabelWidth
-                                Layout.fillWidth: false
-                                text: Math.round(root.kbdBrightness * 100) + "%"
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
                         }
 
                         SliderPopup {
                             id: kbdPopup
                             popupName: "kbd"
+                            iconName: "input-keyboard-brightness"
                             fraction: root.kbdBrightness
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.top
@@ -1197,12 +1156,22 @@ Scope {
                     }
 
                     // ── Battery ───────────────────────────────────────────────
-                    RowLayout {
+                    Item {
                         id: batterySection
-                        spacing: Math.round(5 * Config.scale)
+                        implicitWidth: batteryIcon.implicitWidth
+                        implicitHeight: batteryIcon.implicitHeight
                         visible: root.battery !== null && root.battery.isLaptopBattery
 
+                        MouseArea {
+                            id: batteryMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.keepAlive()
+                        }
+
                         IconImage {
+                            id: batteryIcon
                             implicitSize: Config.bar.batteryIconSize
                             source: {
                                 const b = root.battery;
@@ -1217,20 +1186,42 @@ Scope {
                             }
                         }
 
-                        Text {
-                            Layout.preferredWidth: root.batteryLabelWidth
-                            Layout.fillWidth: false
-                            text: root.battery && root.battery.isLaptopBattery
-                                ? Math.round(root.battery.percentage * 100) + "%" : ""
-                            color: {
-                                if (!root.battery || !root.battery.isLaptopBattery) return Config.colors.textPrimary;
-                                const pct = root.battery.percentage * 100;
-                                if (pct <= 10) return "#ff6060";
-                                if (pct <= 20) return "#ffaa60";
-                                return Config.colors.textSecondary;
+                        // Hover tooltip — shows percentage and charging state
+                        Rectangle {
+                            visible: batteryMouse.containsMouse && batterySection.visible
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: Config.bar.popupOffset
+                            implicitWidth: batteryTipText.implicitWidth + Math.round(10 * Config.scale)
+                            implicitHeight: batteryTipText.implicitHeight + Math.round(6 * Config.scale)
+                            radius: Math.round(4 * Config.scale)
+                            color: Config.colors.background
+                            border.color: Config.colors.border
+                            border.width: 1
+                            z: 30
+
+                            Text {
+                                id: batteryTipText
+                                anchors.centerIn: parent
+                                text: {
+                                    const b = root.battery;
+                                    if (!b || !b.isLaptopBattery) return "";
+                                    const pct = Math.round(b.percentage * 100);
+                                    if (b.state === UPowerDeviceState.FullyCharged) return pct + "% · Full";
+                                    if (b.state === UPowerDeviceState.Charging)     return pct + "% · Charging";
+                                    return pct + "%";
+                                }
+                                color: {
+                                    const b = root.battery;
+                                    if (!b || !b.isLaptopBattery) return Config.colors.textSecondary;
+                                    const pct = b.percentage * 100;
+                                    if (pct <= 10) return "#ff6060";
+                                    if (pct <= 20) return "#ffaa60";
+                                    return Config.colors.textSecondary;
+                                }
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
                             }
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
                         }
                     }
 
@@ -1242,9 +1233,12 @@ Scope {
                     }
 
                     // ── Power profiles ────────────────────────────────────────
-                    RowLayout {
-                        id: powerRow
-                        spacing: Math.round(2 * Config.scale)
+                    Item {
+                        id: powerSection
+                        implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
+                        implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
+
+                        readonly property bool popupOpen: root.activePopup === "power"
 
                         readonly property var profiles: [
                             { profile: PowerProfile.PowerSaver,  glyph: "󰌪", label: "Power Saver" },
@@ -1252,68 +1246,118 @@ Scope {
                             { profile: PowerProfile.Performance, glyph: "󰓅", label: "Performance" }
                         ]
 
-                        Repeater {
-                            model: powerRow.profiles
-                            delegate: Rectangle {
-                                required property var modelData
-                                readonly property bool isActive: PowerProfiles.profile === modelData.profile
-                                readonly property bool isPerf: modelData.profile === PowerProfile.Performance
+                        readonly property var activeProfile: {
+                            for (let i = 0; i < profiles.length; i++)
+                                if (PowerProfiles.profile === profiles[i].profile) return profiles[i];
+                            return profiles[1]; // fallback to Balanced
+                        }
 
-                                implicitWidth: Config.bar.powerIconSize + Math.round(10 * Config.scale)
-                                implicitHeight: Config.bar.powerIconSize + Math.round(6 * Config.scale)
-                                radius: Math.round(5 * Config.scale)
-                                visible: !isPerf || PowerProfiles.hasPerformanceProfile
+                        MouseArea {
+                            id: powerMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.openPopup("power")
+                            onExited: root.keepPopup()
+                        }
 
-                                color: isActive
-                                    ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
-                                    : (btnMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
-                                border.color: isActive ? Config.colors.accent : Config.colors.border
-                                border.width: 1
+                        // Active profile glyph
+                        Text {
+                            id: powerGlyphText
+                            anchors.centerIn: parent
+                            text: powerSection.activeProfile.glyph
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.powerIconSize
+                            color: Config.colors.textSecondary
+                        }
 
-                                Behavior on color       { ColorAnimation { duration: 100 } }
-                                Behavior on border.color { ColorAnimation { duration: 100 } }
+                        // Power profile popup — vertical list of profile rows
+                        Rectangle {
+                            id: powerPopup
+                            visible: opacity > 0
+                            opacity: powerSection.popupOpen ? 1 : 0
+                            scale: powerSection.popupOpen ? 1 : 0.92
+                            transformOrigin: Item.Bottom
 
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: parent.modelData.glyph
-                                    font.family: Config.font.family
-                                    font.pixelSize: Config.bar.powerIconSize
-                                    color: parent.isActive ? Config.colors.accent : Config.colors.textSecondary
-                                    Behavior on color { ColorAnimation { duration: 100 } }
+                            Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+                            Behavior on scale   { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: Config.bar.popupOffset
+
+                            width: powerPopupCol.implicitWidth + Math.round(16 * Config.scale)
+                            height: powerPopupCol.implicitHeight + Math.round(16 * Config.scale)
+
+                            radius: Math.round(10 * Config.scale)
+                            color: Config.colors.background
+                            border.color: Config.colors.border
+                            border.width: 1
+                            z: 20
+
+                            HoverHandler {
+                                onHoveredChanged: {
+                                    if (hovered) root.openPopup("power");
+                                    else root.keepPopup();
                                 }
+                            }
 
-                                MouseArea {
-                                    id: btnMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onEntered: root.keepAlive()
-                                    onClicked: {
-                                        PowerProfiles.profile = parent.modelData.profile;
-                                        root.keepAlive();
-                                    }
-                                }
+                            Column {
+                                id: powerPopupCol
+                                anchors.centerIn: parent
+                                spacing: Math.round(2 * Config.scale)
 
-                                // Tooltip
-                                Rectangle {
-                                    visible: btnMouse.containsMouse
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.bottom: parent.top
-                                    anchors.bottomMargin: Config.bar.popupOffset
-                                    implicitWidth: tipText.implicitWidth + Math.round(10 * Config.scale)
-                                    implicitHeight: tipText.implicitHeight + Math.round(6 * Config.scale)
-                                    radius: Math.round(4 * Config.scale)
-                                    color: Config.colors.background
-                                    border.color: Config.colors.border
-                                    border.width: 1
-                                    z: 10
-                                    Text {
-                                        id: tipText
-                                        anchors.centerIn: parent
-                                        text: parent.parent.modelData.label
-                                        color: Config.colors.textSecondary
-                                        font.family: Config.font.family
-                                        font.pixelSize: Config.bar.fontSizeStatus
+                                 Repeater {
+                                    model: powerSection.profiles
+                                    delegate: Rectangle {
+                                        id: profileDelegate
+                                        required property var modelData
+                                        readonly property bool isActive: PowerProfiles.profile === modelData.profile
+                                        readonly property bool isPerf: modelData.profile === PowerProfile.Performance
+                                        visible: !isPerf || PowerProfiles.hasPerformanceProfile
+
+                                        implicitWidth: profileRow.implicitWidth + Math.round(16 * Config.scale)
+                                        implicitHeight: profileRow.implicitHeight + Math.round(10 * Config.scale)
+                                        radius: Math.round(6 * Config.scale)
+
+                                        color: isActive
+                                            ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+                                            : (profileMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                                        Behavior on color { ColorAnimation { duration: 80 } }
+
+                                        RowLayout {
+                                            id: profileRow
+                                            anchors.centerIn: parent
+                                            spacing: Math.round(8 * Config.scale)
+
+                                            Text {
+                                                text: profileDelegate.modelData.glyph
+                                                font.family: Config.font.family
+                                                font.pixelSize: Config.bar.powerIconSize
+                                                color: profileDelegate.isActive ? Config.colors.accent : Config.colors.textSecondary
+                                                Behavior on color { ColorAnimation { duration: 100 } }
+                                            }
+
+                                            Text {
+                                                text: profileDelegate.modelData.label
+                                                font.family: Config.font.family
+                                                font.pixelSize: Config.bar.fontSizeStatus
+                                                color: profileDelegate.isActive ? Config.colors.accent : Config.colors.textPrimary
+                                                Behavior on color { ColorAnimation { duration: 100 } }
+                                            }
+                                        }
+
+                                        MouseArea {
+                                            id: profileMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.PointingHandCursor
+                                            onEntered: root.openPopup("power")
+                                            onClicked: {
+                                                PowerProfiles.profile = profileDelegate.modelData.profile;
+                                                root.openPopup("power");
+                                            }
+                                        }
                                     }
                                 }
                             }
