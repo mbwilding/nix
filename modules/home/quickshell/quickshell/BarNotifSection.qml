@@ -32,18 +32,14 @@ Item {
             notifSection.exitPopupReq();
     }
 
-    // Called by Bar.qml when a live notification is dismissed externally —
-    // triggers the history card's collapse animation instead of an instant removal.
+    // Called by Bar.qml when a live notification is dismissed externally.
+    // If the popup is open, animate the history card out (it calls removeHistoryEntry on dismissed).
+    // If the popup is closed, no card exists — remove directly.
     property var _historyCards: ({})
     function animateOutEntry(snapId) {
         const card = notifSection._historyCards[snapId];
-        if (card) card.animateOut();
-    }
-
-    // Called by Bar.qml to instantly close the history popup (dismiss all).
-    function animateOutAll() {
-        if (notifSection.popupOpen)
-            notifSection.exitPopupReq();
+        if (card)
+            card.animateOut();
     }
 
     // Screen height for popup sizing
