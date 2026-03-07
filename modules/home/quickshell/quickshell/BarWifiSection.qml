@@ -42,14 +42,16 @@ Item {
     property string prevSsid: ""
     property bool wifiReady: false
 
-    Component.onCompleted: Qt.callLater(() => { wifiSection.wifiReady = true; })
+    Component.onCompleted: {
+        wifiProc.running = true;
+        Qt.callLater(() => { wifiSection.wifiReady = true; });
+    }
 
     onSsidChanged: {
         if (!wifiSection.wifiReady)
             return;
         const prev = wifiSection.prevSsid;
         const cur = wifiSection.ssid;
-        // Disconnected (not due to us connecting to something else)
         if (prev !== "" && cur === "" && wifiSection.connecting === "") {
             wifiNotifyProc.command = [
                 "notify-send",
@@ -145,12 +147,30 @@ Item {
         }
     }
 
+    // ── nmcli monitor — event-driven state refresh ─────────────────────────
+    // Fires one line per NetworkManager event; we re-run wifiProc on each one.
+    // This replaces the 5-second poll for connection state changes.
+    Process {
+        id: wifiMonitor
+        command: ["nmcli", "monitor"]
+        running: true
+        stdout: SplitParser {
+            onRead: line => {
+                if (line.trim() !== "")
+                    wifiProc.running = true;
+            }
+        }
+        // Restart monitor if it unexpectedly exits
+        onExited: Qt.callLater(() => { wifiMonitor.running = true; })
+    }
+
+    // Slow background poll (30 s) to keep signal-strength bars fresh.
+    // Connection state changes are handled immediately by wifiMonitor above.
     Timer {
         id: wifiPollTimer
-        interval: 5000
+        interval: 10000
         repeat: true
         running: true
-        triggeredOnStart: true
         onTriggered: wifiProc.running = true
     }
 
