@@ -51,6 +51,12 @@ Item {
         return profiles[1];  // fallback to Balanced
     }
 
+    function cycleProfile() {
+        const idx = profiles.findIndex(p => p.profile === PowerProfiles.profile);
+        const next = profiles[(idx + 1) % profiles.length];
+        PowerProfiles.profile = next.profile;
+    }
+
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
@@ -74,6 +80,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onEntered: powerSection.openPopupReq("power")
         onExited: powerSection.keepPopupReq()
+        onClicked: powerSection.cycleProfile()
     }
 
     BarButton {
