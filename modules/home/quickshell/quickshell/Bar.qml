@@ -28,7 +28,6 @@ Scope {
     signal removeHistoryEntry(var entryId)
     signal animateOutHistoryEntry(var snapId)
     signal dismissAllNotifs()
-    signal animateOutAllHistory()
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -697,9 +696,6 @@ Scope {
                         target: root
                         function onAnimateOutHistoryEntry(snapId) {
                             notifSection.animateOutEntry(snapId);
-                        }
-                        function onAnimateOutAllHistory() {
-                            notifSection.animateOutAll();
                         }
                     }
                 }
