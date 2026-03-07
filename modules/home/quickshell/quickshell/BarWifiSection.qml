@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
+import "components"
 
 // Wifi bar section: trigger icon + dropdown popup listing nearby networks.
 //
@@ -280,19 +281,9 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    Rectangle {
+    PopupContainer {
         id: wifiPopup
-        visible: opacity > 0
-        opacity: wifiSection.popupOpen ? 1 : 0
-        scale: wifiSection.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
-
-        Behavior on opacity {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
-        }
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
+        popupOpen: wifiSection.popupOpen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -316,13 +307,7 @@ Item {
             Math.round(400 * Config.scale)
         )
 
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
         z: 20
-        clip: true
 
         HoverHandler {
             onHoveredChanged: {

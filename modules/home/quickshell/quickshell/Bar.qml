@@ -8,6 +8,9 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import Quickshell.Services.Pipewire
+import "bar"
+import "services"
+import "components"
 
 Scope {
     id: root
@@ -161,7 +164,7 @@ Scope {
         }
 
         // Centred dialog card
-        Rectangle {
+        PopupCard {
             id: pwDialog
 
             width: Math.round(290 * Config.scale)
@@ -172,22 +175,7 @@ Scope {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Math.round(72 * Config.scale)
 
-            radius: Math.round(16 * Config.scale)
-            antialiasing: true
-            color: Qt.rgba(0.12, 0.11, 0.22, 0.96)
-            border.color: Config.colors.border
-            border.width: 1
-            clip: true
-
-            // Top shine rim
-            Rectangle {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 1
-                radius: parent.radius
-                color: "#30ffffff"
-            }
+            popupRadius: Math.round(16 * Config.scale)
 
             ColumnLayout {
                 id: pwDialogCol
@@ -604,25 +592,35 @@ Scope {
                 }
 
                 // ── Screen brightness ─────────────────────────────────────────
-                BarScreenSection {
+                BrightnessSection {
                     id: screenSection
+                    popupName: "screen"
+                    iconName: "video-display-brightness-symbolic"
                     activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
+                    brightness: BrightnessService.screenBrightness
+                    available: BrightnessService.screenAvailable
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onKeepAliveReq: root.keepAlive()
+                    onSetBrightnessReq: v => BrightnessService.setScreenBrightness(v)
                 }
 
                 // ── Keyboard brightness ───────────────────────────────────────
-                BarKbdSection {
+                BrightnessSection {
                     id: kbdSection
+                    popupName: "kbd"
+                    iconName: "input-keyboard-brightness"
                     activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
+                    brightness: BrightnessService.kbdBrightness
+                    available: BrightnessService.kbdAvailable
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onKeepAliveReq: root.keepAlive()
+                    onSetBrightnessReq: v => BrightnessService.setKbdBrightness(v)
                 }
 
                 // ── Power profiles ────────────────────────────────────────────

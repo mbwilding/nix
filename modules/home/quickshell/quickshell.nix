@@ -11,7 +11,16 @@ let
       }
       ''
         mkdir -p $out
+        # Copy root-level QML files
         cp ${./quickshell}/*.qml $out/
+        # Recursively copy any subdirectories containing QML files
+        for dir in ${./quickshell}/*/; do
+          if [ -d "$dir" ]; then
+            subdir=$(basename "$dir")
+            mkdir -p "$out/$subdir"
+            cp "$dir"*.qml "$out/$subdir/" 2>/dev/null || true
+          fi
+        done
         substituteInPlace $out/Sounds.qml \
           --subst-var volumeSound
       '';

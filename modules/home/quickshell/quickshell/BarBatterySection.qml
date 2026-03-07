@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.UPower
 import Quickshell.Widgets
+import "components"
 
 // Battery bar section: level icon trigger + small popup showing pct + charging status.
 //
@@ -63,19 +64,9 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    Rectangle {
+    PopupContainer {
         id: batteryPopup
-        visible: opacity > 0
-        opacity: batterySection.popupOpen ? 1 : 0
-        scale: batterySection.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
-
-        Behavior on opacity {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
-        }
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
+        popupOpen: batterySection.popupOpen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -84,12 +75,6 @@ Item {
         height: Math.round(56 * Config.scale)
         width: batteryPopupRow.implicitWidth + Math.round(28 * Config.scale)
 
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
-        clip: true
         z: 20
 
         HoverHandler {
