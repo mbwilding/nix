@@ -26,6 +26,9 @@ PopupContainer {
     // Fixed width for the label column so all sliders align consistently
     property int labelWidth: 0
 
+    // Optional vertical nudge for the icon inside the popup (positive = down)
+    property real iconOffset: 0
+
     signal setFraction(real v)          // user dragged/clicked to value v
     signal scrollDelta(real delta)      // mouse-wheel notch (+/- 1 per notch)
 
@@ -60,9 +63,16 @@ PopupContainer {
         anchors.rightMargin: Math.round(12 * Config.scale)
         spacing: Math.round(10 * Config.scale)
 
-        IconImage {
-            implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(sliderPopup.iconName)
+        Item {
+            implicitWidth: Config.bar.batteryIconSize
+            implicitHeight: Config.bar.batteryIconSize
+
+            IconImage {
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: sliderPopup.iconOffset
+                implicitSize: Config.bar.batteryIconSize
+                source: Quickshell.iconPath(sliderPopup.iconName)
+            }
         }
 
         // Track (fills remaining space)
