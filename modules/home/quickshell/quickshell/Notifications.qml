@@ -18,6 +18,27 @@ Scope {
         return root.activeCards.find(c => c.visible_) ?? null;
     }
 
+    // ── Notification history ──────────────────────────────────────────────────
+
+    // Array of snapshot objects: { id, appName, appIcon, desktopEntry, summary,
+    //                               body, actions[{identifier,text}], receivedAt }
+    property var notifHistory: []
+    property int unreadCount: 0
+
+    function clearHistory() {
+        root.notifHistory = [];
+    }
+
+    function removeHistoryEntry(entryId) {
+        root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
+    }
+
+    function markHistoryRead() {
+        root.unreadCount = 0;
+    }
+
+    // ── Battery ───────────────────────────────────────────────────────────────
+
     property UPowerDevice battery: UPower.displayDevice
     property var firedLevels: []
     property bool batteryReady: false
@@ -151,6 +172,26 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
+
+            // Snapshot into history
+            const actions = [];
+            const rawActions = notification.actions ?? [];
+            for (let i = 0; i < rawActions.length; i++) {
+                const a = rawActions[i];
+                actions.push({ identifier: a.identifier, text: a.text });
+            }
+            const snapshot = {
+                id: Date.now() + Math.random(),
+                appName: notification.appName ?? "",
+                appIcon: notification.appIcon ?? "",
+                desktopEntry: notification.desktopEntry ?? "",
+                summary: notification.summary ?? "",
+                body: notification.body ?? "",
+                actions: actions,
+                receivedAt: new Date()
+            };
+            root.notifHistory = [snapshot].concat(root.notifHistory);
+            root.unreadCount = root.unreadCount + 1;
         }
     }
 
