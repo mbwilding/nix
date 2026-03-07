@@ -6,6 +6,17 @@ ShellRoot {
     id: root
 
     Osd {}
-    Notifications {}
-    Bar {}
+
+    Notifications {
+        id: notifs
+    }
+
+    Bar {
+        notifHistory: notifs.notifHistory
+        unreadCount: notifs.unreadCount
+        onMarkHistoryRead: notifs.markHistoryRead()
+        onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
+        onClearHistory: notifs.clearHistory()
+    }
 }
+

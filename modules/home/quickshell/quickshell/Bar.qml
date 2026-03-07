@@ -21,7 +21,14 @@ Scope {
     // Only one popup open at a time. Sections call root.openPopup("name") on
     // hover-enter and root.keepPopup() on hover-exit. Timers only run while
     // the mouse is outside pill+popup; hovering either keeps everything alive.
-    property string activePopup: ""   // "wifi"|"bt"|"volume"|"screen"|"kbd"|"battery"|"power"|"clock"|""
+    property string activePopup: ""   // "wifi"|"bt"|"volume"|"screen"|"kbd"|"battery"|"power"|"notif"|"clock"|""
+
+    // ── Notification history (fed from shell.qml via Notifications scope) ─────
+    property var notifHistory: []
+    property int unreadCount: 0
+    signal markHistoryRead
+    signal removeHistoryEntry(var entryId)
+    signal clearHistory
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -452,6 +459,10 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
+                item: root.activePopup === "notif" ? notifSection.popup : null
+                intersection: Intersection.Combine
+            }
+            Region {
                 item: root.activeTrayMenuPopup
                 intersection: Intersection.Combine
             }
@@ -668,6 +679,21 @@ Scope {
                     activePopup: root.activePopup
                     onOpenPopupReq: name => root.openPopup(name)
                     onExitPopupReq: root.exitPopup()
+                }
+
+                // ── Notifications ─────────────────────────────────────────────
+                BarNotifSection {
+                    id: notifSection
+                    activePopup: root.activePopup
+                    availableHeight: win.screen ? win.screen.height : 800
+                    notifHistory: root.notifHistory
+                    unreadCount: root.unreadCount
+                    onOpenPopupReq: name => root.openPopup(name)
+                    onKeepPopupReq: root.keepPopup()
+                    onExitPopupReq: root.exitPopup()
+                    onMarkHistoryRead: root.markHistoryRead()
+                    onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
+                    onClearHistory: root.clearHistory()
                 }
 
                 Rectangle {
