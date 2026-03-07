@@ -68,6 +68,13 @@ Item {
     implicitWidth: wifiRow.implicitWidth
     implicitHeight: wifiRow.implicitHeight
 
+    containmentMask: Item {
+        x: -wifiPopup.width
+        y: -wifiPopup.height
+        width: wifiPopup.width * 2 + wifiSection.width
+        height: wifiPopup.height + wifiSection.height
+    }
+
     readonly property bool popupOpen: activePopup === "wifi"
 
     // ── Helpers ───────────────────────────────────────────────────────────────

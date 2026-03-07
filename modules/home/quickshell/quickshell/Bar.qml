@@ -464,6 +464,13 @@ Scope {
                 }
             }
 
+            containmentMask: Item {
+                x: 0
+                y: -win.implicitHeight
+                width: pill.width
+                height: win.implicitHeight + pill.height
+            }
+
             radius: Config.bar.radius
             antialiasing: true
             color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
@@ -500,6 +507,13 @@ Scope {
                 id: content
                 anchors.centerIn: parent
                 spacing: Config.bar.sectionSpacing
+
+                containmentMask: Item {
+                    x: 0
+                    y: -win.implicitHeight
+                    width: content.width
+                    height: win.implicitHeight + content.height
+                }
 
                 // ── Tray ─────────────────────────────────────────────────────
                 Repeater {

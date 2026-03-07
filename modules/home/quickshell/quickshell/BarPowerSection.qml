@@ -56,6 +56,13 @@ Item {
     implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
     implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
 
+    containmentMask: Item {
+        x: -powerPopup.width
+        y: -powerPopup.height
+        width: powerPopup.width * 2 + powerSection.width
+        height: powerPopup.height + powerSection.height
+    }
+
     readonly property bool popupOpen: activePopup === "power"
 
     // ── Trigger ───────────────────────────────────────────────────────────────

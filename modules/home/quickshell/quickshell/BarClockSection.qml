@@ -28,6 +28,13 @@ Item {
     implicitWidth: clockCol.implicitWidth
     implicitHeight: clockCol.implicitHeight
 
+    containmentMask: Item {
+        x: -(calendarPopup.width - clockSection.width)
+        y: -calendarPopup.height - Config.bar.popupOffset
+        width: Math.max(clockSection.width, calendarPopup.width)
+        height: calendarPopup.height + Config.bar.popupOffset + clockSection.height
+    }
+
     readonly property bool popupOpen: activePopup === "clock"
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -93,20 +100,11 @@ Item {
         id: calendarPopup
         visible: opacity > 0
         opacity: clockSection.popupOpen ? 1 : 0
-        scale: clockSection.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
 
         Behavior on opacity {
             NumberAnimation {
                 duration: 150
                 easing.type: Easing.InOutCubic
-            }
-        }
-        Behavior on scale {
-            NumberAnimation {
-                duration: 150
-                easing.type: Easing.OutBack
-                easing.overshoot: 0.5
             }
         }
 
