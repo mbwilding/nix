@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import "components"
 
 // Clock/date bar section: time + date labels + calendar popup.
 //
@@ -117,24 +118,9 @@ Item {
         height: calHeaderRow.height + calDayNames.height + calendarGrid.height + Math.round(52 * Config.scale)
 
         // Glassmorphic card
-        Rectangle {
+        PopupCard {
             anchors.fill: parent
-            radius: Math.round(Config.bar.popupRadius * Config.scale)
-            antialiasing: true
-            color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-            border.color: Config.colors.border
-            border.width: 1
-            clip: true
-
-            // Top shine
-            Rectangle {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 1
-                radius: parent.radius
-                color: "#25ffffff"
-            }
+            popupRadius: Config.bar.popupRadius
         }
 
         z: 20

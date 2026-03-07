@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import "components"
 
 Item {
     id: root
@@ -37,34 +38,10 @@ Item {
             source: Quickshell.iconPath(root.iconName)
         }
 
-        // Progress track
-        Item {
+        GradientProgressBar {
             Layout.fillWidth: true
-            implicitHeight: Config.osd.barHeight + Math.round(4 * Config.scale)
-
-            // Rail
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                width: parent.width
-                height: Config.osd.barHeight
-                radius: height / 2
-                color: Qt.rgba(1, 1, 1, 0.10)
-            }
-
-            // Gradient fill (accent → accentAlt, matching the volume slider)
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                width: Math.min(parent.width, parent.width * root.displayValue)
-                height: Config.osd.barHeight
-                radius: height / 2
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: Config.colors.accent }
-                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                }
-            }
+            barHeight: Config.osd.barHeight
+            value: root.displayValue
         }
 
         Text {

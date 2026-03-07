@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
+import "components"
 
 Item {
     id: root
@@ -83,7 +84,7 @@ Item {
         }
     }
 
-    Rectangle {
+    PopupCard {
         id: card
 
         anchors {
@@ -93,24 +94,8 @@ Item {
             topMargin: Math.round(4 * Config.scale)
         }
 
+        popupRadius: Config.notifications.radius
         implicitHeight: cardContent.implicitHeight + Math.round(22 * Config.scale)
-        radius: Config.notifications.radius
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
-        clip: true
-
-        // Top shine rim
-        Rectangle {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            radius: parent.radius
-            color: "#28ffffff"
-            z: 1
-        }
 
         transform: Translate {
             id: slideTranslate

@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
+import "components"
 
 Item {
     id: root
@@ -123,20 +124,10 @@ Item {
         onChildrenChanged: root.recomputePopupWidth()
     }
 
-    Rectangle {
+    PopupContainer {
         id: menuPopupRect
 
-        visible: opacity > 0
-        opacity: root.popupOpen ? 1 : 0
-        scale: root.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
-
-        Behavior on opacity {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
-        }
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
+        popupOpen: root.popupOpen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -145,23 +136,7 @@ Item {
         width: root.menuPopupWidth
         height: Math.min(menuCol.implicitHeight + Math.round(16 * Config.scale), root.maxPopupHeight)
 
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
-        clip: true
         z: 20
-
-        // Top shine
-        Rectangle {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            radius: parent.radius
-            color: "#28ffffff"
-        }
 
         HoverHandler {
             onHoveredChanged: {

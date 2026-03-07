@@ -4,12 +4,13 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import "components"
 
 // Horizontal slider popup pill used by volume, screen brightness, and keyboard
 // brightness sections. Caller positions via anchors and binds fraction/iconName.
 //
 // Signals: openPopupReq / exitPopupReq bubble up to Bar.qml popup manager.
-Item {
+PopupContainer {
     id: sliderPopup
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -17,7 +18,8 @@ Item {
     property string popupName: ""       // "volume" | "screen" | "kbd"
     property string iconName: ""        // icon to show inside the popup
     property real fraction: 0         // 0..1  current value
-    property string activePopup: ""     // bound to root.activePopup
+    // activePopup drives popupOpen (declared in PopupContainer)
+    property string activePopup: ""
 
     property string label: Math.round(fraction * 100) + "%"
 
@@ -32,51 +34,12 @@ Item {
 
     // ── Geometry / appearance ─────────────────────────────────────────────────
 
-    readonly property bool popupOpen: activePopup === popupName
-
-    visible: opacity > 0
-    opacity: popupOpen ? 1 : 0
-    scale: popupOpen ? 1 : 0.90
-    transformOrigin: Item.Bottom
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: 150
-            easing.type: Easing.InOutCubic
-        }
-    }
-    Behavior on scale {
-        NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.6
-        }
-    }
+    popupOpen: activePopup === popupName
 
     width: Math.round(250 * Config.scale)
     height: Math.round(58 * Config.scale)
 
-    // ── Popup card ────────────────────────────────────────────────────────────
-    Rectangle {
-        id: popupCard
-        anchors.fill: parent
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
-        clip: true
-
-        // Top shine
-        Rectangle {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            radius: parent.radius
-            color: "#25ffffff"
-        }
-    }
+    z: 20
 
     // ── Hover ─────────────────────────────────────────────────────────────────
 
@@ -111,28 +74,11 @@ Item {
             readonly property real trackW: width
             readonly property real frac: Math.max(0, Math.min(1, sliderPopup.fraction))
 
-            // Rail
-            Rectangle {
+            GradientProgressBar {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 width: sliderTrack.trackW
-                height: Math.round(6 * Config.scale)
-                radius: height / 2
-                color: Qt.rgba(1, 1, 1, 0.10)
-            }
-
-            // Gradient fill
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                width: sliderTrack.trackW * sliderTrack.frac
-                height: Math.round(6 * Config.scale)
-                radius: height / 2
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: Config.colors.accent }
-                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                }
+                value: sliderTrack.frac
             }
 
             // Thumb glow
