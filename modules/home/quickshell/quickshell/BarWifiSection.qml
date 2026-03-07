@@ -41,6 +41,7 @@ Item {
     property bool enabled: true
     property string lastConnected: ""   // SSID of last successful connection
     property string lastError: ""       // last connection error message
+    property var savedSsids: ({})       // set of SSIDs with saved NM connections
 
     // Track previous SSID to detect disconnections
     property string prevSsid: ""
@@ -55,6 +56,7 @@ Item {
 
     Component.onCompleted: {
         wifiProc.running = true;
+        wifiSavedProc.running = true;
     }
 
     onSsidChanged: {
@@ -217,8 +219,10 @@ Item {
         running: true
         stdout: SplitParser {
             onRead: line => {
-                if (line.trim() !== "" && !wifiSection.wifiScanning)
+                if (line.trim() !== "" && !wifiSection.wifiScanning) {
                     wifiProc.running = true;
+                    wifiSavedProc.running = true;
+                }
             }
         }
         // Restart monitor if it unexpectedly exits
@@ -233,6 +237,29 @@ Item {
         repeat: true
         running: true
         onTriggered: if (!wifiSection.wifiScanning) wifiProc.running = true
+    }
+
+    // Fetches the set of SSIDs that have a saved NM connection profile.
+    // Output: one "name:type" line per connection; we keep wireless ones.
+    Process {
+        id: wifiSavedProc
+        command: ["nmcli", "-t", "-f", "name,type", "con", "show"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const saved = {};
+                for (const line of this.text.trim().split("\n")) {
+                    if (!line) continue;
+                    const colon = line.lastIndexOf(":");
+                    if (colon < 0) continue;
+                    const type = line.slice(colon + 1).trim();
+                    if (type === "802-11-wireless") {
+                        const name = line.slice(0, colon);
+                        saved[name] = true;
+                    }
+                }
+                wifiSection.savedSsids = saved;
+            }
+        }
     }
 
     Process {
@@ -437,11 +464,11 @@ Item {
 
         availableItems: wifiSection.networks
             .filter(n => !n.active)
-            .map(n => ({ label: n.ssid, icon: wifiSection.icon(n.signal) }))
+            .map(n => ({ label: n.ssid, icon: wifiSection.icon(n.signal), saved: !!wifiSection.savedSsids[n.ssid] }))
 
         connectedItems: wifiSection.networks
             .filter(n => n.active)
-            .map(n => ({ label: n.ssid, icon: wifiSection.icon(n.signal) }))
+            .map(n => ({ label: n.ssid, icon: wifiSection.icon(n.signal), saved: true }))
 
         onHoverOpen: wifiSection.openPopupReq("wifi")
         onHoverExit: wifiSection.exitPopupReq()
