@@ -243,14 +243,15 @@ Item {
                 Repeater {
                     model: notifSection.notifHistory
 
-                    delegate: HistoryCard {
+                    delegate: NotificationCard {
                         id: histDelegate
                         required property var modelData
 
-                        snapshot: modelData
+                        historyMode: true
+                        snapshot: histDelegate.modelData
                         width: popupCol.width
 
-                        onDismissRequested: notifSection.removeHistoryEntry(histDelegate.modelData.id)
+                        onDismissed: notifSection.removeHistoryEntry(histDelegate.modelData.id)
                     }
                 }
             }
