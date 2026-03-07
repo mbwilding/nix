@@ -26,6 +26,7 @@ Scope {
     // ── Notification history (fed from shell.qml via Notifications scope) ─────
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
+    signal animateOutHistoryEntry(var snapId)
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -688,6 +689,13 @@ Scope {
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
+
+                    Connections {
+                        target: root
+                        function onAnimateOutHistoryEntry(snapId) {
+                            notifSection.animateOutEntry(snapId);
+                        }
+                    }
                 }
 
                 Rectangle {
