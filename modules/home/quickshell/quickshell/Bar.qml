@@ -144,9 +144,20 @@ Scope {
     }
 
     // ── Audio ─────────────────────────────────────────────────────────────────
+    // Track the default sink + source and all nodes so property bindings on
+    // sinks/sources in BarVolumeSection stay alive while the popup is open.
 
     PwObjectTracker {
-        objects: [Pipewire.defaultAudioSink]
+        objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
+    }
+
+    // Keep all audio nodes tracked so BarVolumeSection can enumerate them.
+    Repeater {
+        model: Pipewire.nodes
+        delegate: PwObjectTracker {
+            required property var modelData
+            objects: [modelData]
+        }
     }
 
     // ── Shared slider label width (so all sliders keep the same label column) ─
@@ -621,7 +632,7 @@ Scope {
                 BarVolumeSection {
                     id: volumeSection
                     activePopup: root.activePopup
-                    sliderLabelWidth: root.sliderLabelWidth
+                    availableHeight: win.screen ? win.screen.height : 800
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
