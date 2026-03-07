@@ -431,13 +431,23 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        // Width = widest row content + left margin (8) + right margin (8)
-        // + scrollbar gap (4) + scrollbar track (3) + scrollbar rightMargin (3) = +26.
-        // Floored at 200, no hard cap (content drives width).
-        width: Math.max(
-            Math.round(200 * Config.scale),
-            wifiListCol.implicitWidth + Math.round(26 * Config.scale)
-        )
+        // Width driven by the widest SSID text + icon + padding, measured via TextMetrics.
+        // Row content = icon(fontSizeStatus+4) + spacing(8) + text + left margin(8) + right margin(8).
+        // Popup adds viewport margins(8+4) + scrollbar(3) + scrollbar rightMargin(3) = +18 on top of row content.
+        // So total = textWidth + iconSize + spacing + left(8) + right(8) + +18 = textWidth + iconSize + 42.
+        readonly property real iconSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
+        readonly property real rowPadding: Math.round(8 * Config.scale) * 2 + Math.round(8 * Config.scale) + Math.round(18 * Config.scale)
+        readonly property real contentWidth: {
+            let maxW = 0;
+            const nets = wifiSection.networks;
+            for (let i = 0; i < nets.length; i++) {
+                wifiPopupTextMetrics.text = nets[i].ssid;
+                const w = wifiPopupTextMetrics.boundingRect.width;
+                if (w > maxW) maxW = w;
+            }
+            return maxW + wifiPopup.iconSize + wifiPopup.rowPadding;
+        }
+        width: Math.max(Math.round(200 * Config.scale), wifiPopup.contentWidth)
         Behavior on width {
             NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
         }
@@ -453,6 +463,12 @@ Item {
         height: Math.min(contentPadded, maxHeight)
 
         z: 20
+
+        TextMetrics {
+            id: wifiPopupTextMetrics
+            font.family: Config.font.family
+            font.pixelSize: Config.bar.fontSizeStatus
+        }
 
         HoverHandler {
             onHoveredChanged: {
@@ -525,7 +541,8 @@ Item {
                         readonly property bool isConnecting: wifiSection.connecting === modelData.ssid
                         readonly property bool hadError: wifiSection.lastError === modelData.ssid
 
-                        width: wifiEntryRow.implicitWidth + Math.round(16 * Config.scale)
+                        width: wifiListViewport.width
+                        implicitWidth: wifiEntryRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: wifiEntryRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: hadError
@@ -595,7 +612,8 @@ Item {
                         id: wifiActiveEntry
                         required property var modelData
 
-                        width: wifiActiveEntryRow.implicitWidth + Math.round(16 * Config.scale)
+                        width: wifiListViewport.width
+                        implicitWidth: wifiActiveEntryRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: wifiActiveEntryRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: wifiActiveMouse.containsMouse
