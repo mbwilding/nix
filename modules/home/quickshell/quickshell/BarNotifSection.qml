@@ -24,8 +24,6 @@ Item {
 
     // Bound from Bar.qml, which gets them from shell.qml's Notifications instance
     property var notifHistory: []
-    property int unreadCount: 0
-    signal markHistoryRead
     signal removeHistoryEntry(var entryId)
     signal clearHistory
 
@@ -55,10 +53,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onEntered: notifSection.openPopupReq("notif")
         onExited: notifSection.keepPopupReq()
-        onClicked: {
-            notifSection.openPopupReq("notif");
-            notifSection.markHistoryRead();
-        }
+        onClicked: notifSection.openPopupReq("notif")
     }
 
     BarButton {
@@ -72,13 +67,13 @@ Item {
             text: "\uF0F3"   // fa-bell (NerdFont)
             font.family: Config.font.family
             font.pixelSize: Math.round(Config.bar.batteryIconSize * 0.72)
-            color: notifSection.unreadCount > 0 ? Config.colors.accent : Config.colors.textMuted
+            color: notifSection.notifHistory.length > 0 ? Config.colors.accent : Config.colors.textMuted
             Behavior on color { ColorAnimation { duration: 200 } }
         }
 
         // Unread badge
         Rectangle {
-            visible: notifSection.unreadCount > 0
+            visible: notifSection.notifHistory.length > 0
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.topMargin: Math.round(4 * Config.scale)
@@ -97,7 +92,7 @@ Item {
             Text {
                 id: badgeText
                 anchors.centerIn: parent
-                text: notifSection.unreadCount > 99 ? "99+" : String(notifSection.unreadCount)
+                text: notifSection.notifHistory.length > 99 ? "99+" : String(notifSection.notifHistory.length)
                 color: "#1a1a2e"
                 font.family: Config.font.family
                 font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.65)

@@ -25,8 +25,6 @@ Scope {
 
     // ── Notification history (fed from shell.qml via Notifications scope) ─────
     property var notifHistory: []
-    property int unreadCount: 0
-    signal markHistoryRead
     signal removeHistoryEntry(var entryId)
     signal clearHistory
 
@@ -687,11 +685,9 @@ Scope {
                     activePopup: root.activePopup
                     availableHeight: win.screen ? win.screen.height : 800
                     notifHistory: root.notifHistory
-                    unreadCount: root.unreadCount
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
-                    onMarkHistoryRead: root.markHistoryRead()
                     onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
                     onClearHistory: root.clearHistory()
                 }
