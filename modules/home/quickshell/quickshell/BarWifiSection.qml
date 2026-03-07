@@ -41,13 +41,16 @@ Item {
     // Track previous SSID to detect disconnections
     property string prevSsid: ""
     property bool wifiReady: false
+    // True while wifi was just re-enabled and we're waiting to scan.
+    // Suppresses wifiMonitor and wifiProc updates until we're ready.
+    property bool wifiScanning: false
 
     Component.onCompleted: {
         wifiProc.running = true;
-        Qt.callLater(() => { wifiSection.wifiReady = true; });
     }
 
     onSsidChanged: {
+        console.log("onSsidChanged: wifiReady=", wifiSection.wifiReady, "prev=", wifiSection.prevSsid, "cur=", wifiSection.ssid, "connecting=", wifiSection.connecting);
         if (!wifiSection.wifiReady)
             return;
         const prev = wifiSection.prevSsid;
@@ -61,8 +64,10 @@ Item {
                 "Disconnected from " + prev
             ];
             wifiDisconnectedNotifyProc.running = true;
-        } else if (cur !== "" && prev === "" && wifiSection.connecting === "") {
-            // Auto-reconnect (e.g. re-enabling wifi) — not handled by wifiConnectProc
+        } else if (cur !== "" && prev === "" && wifiSection.connecting === ""
+                   && cur !== wifiSection.lastConnected) {
+            // Auto-reconnect (e.g. re-enabling wifi) — not handled by wifiConnectProc.
+            // Skip if wifiConnectProc just handled this SSID to avoid a double notification.
             wifiConnectedNotifyProc.command = [
                 "notify-send",
                 "--app-name=Wi-Fi",
@@ -71,6 +76,11 @@ Item {
                 "Connected to " + cur
             ];
             wifiConnectedNotifyProc.running = true;
+        } else if (cur !== "" && prev === "" && wifiSection.connecting === ""
+                   && cur === wifiSection.lastConnected) {
+            // wifiConnectProc already notified — clear the guard so future
+            // auto-reconnects to the same SSID do fire a notification.
+            wifiSection.lastConnected = "";
         }
         wifiSection.prevSsid = cur;
     }
@@ -102,6 +112,16 @@ Item {
             return "network-wireless-signal-good-symbolic";
         return "network-wireless-signal-excellent-symbolic";
     }
+
+    readonly property var connectAnimIcons: [
+        "network-wireless-signal-weak-symbolic",
+        "network-wireless-signal-ok-symbolic",
+        "network-wireless-signal-good-symbolic",
+        "network-wireless-signal-excellent-symbolic"
+    ]
+    readonly property string barIcon: (wifiSection.connecting !== "" || wifiSection.wifiScanning)
+        ? wifiSection.connectAnimIcons[wifiSection.connectAnimStep]
+        : wifiSection.icon(wifiSection.strength)
 
     function toggleWifi() {
         wifiToggleProc.command = ["nmcli", "radio", "wifi", wifiSection.enabled ? "off" : "on"];
@@ -147,18 +167,36 @@ Item {
             onStreamFinished: {
                 wifiSection.enabled = this.text.trim() === "enabled";
                 if (wifiSection.enabled) {
-                    // Clear stale state immediately so the icon shows offline
-                    // while we wait for wifiProc to find an active network.
+                    // Clear stale visual state immediately.
                     wifiSection.networks = [];
-                    wifiSection.ssid = "";
+                    wifiSection.strength = -1;
+                    // Enter scanning state: suppresses wifiMonitor/wifiProc updates
+                    // until the delay timer fires, preventing stale cached NM data
+                    // from briefly showing full signal.
+                    wifiSection.wifiScanning = true;
+                    wifiEnableDelayTimer.restart();
+                } else {
+                    // Let wifiProc run so ssid transitions through "" via onSsidChanged,
+                    // which is needed to fire the disconnect notification correctly.
+                    wifiSection.networks = [];
                     wifiSection.strength = -1;
                     wifiProc.running = true;
-                } else {
-                    wifiSection.networks = [];
-                    wifiSection.ssid = "";
-                    wifiSection.strength = -1;
                 }
             }
+        }
+    }
+
+    // Short delay after re-enabling wifi before the first scan, so NM has
+    // time to reflect actual state (scanning) rather than stale cached data.
+    // wifiScanning stays true until that specific wifiProc run completes.
+    Timer {
+        id: wifiEnableDelayTimer
+        interval: 1500
+        repeat: false
+        onTriggered: {
+            console.log("wifiEnableDelayTimer fired, setting scanForReal=true");
+            wifiProc.scanForReal = true;
+            wifiProc.running = true;
         }
     }
 
@@ -171,7 +209,7 @@ Item {
         running: true
         stdout: SplitParser {
             onRead: line => {
-                if (line.trim() !== "")
+                if (line.trim() !== "" && !wifiSection.wifiScanning)
                     wifiProc.running = true;
             }
         }
@@ -186,14 +224,25 @@ Item {
         interval: 10000
         repeat: true
         running: true
-        onTriggered: wifiProc.running = true
+        onTriggered: if (!wifiSection.wifiScanning) wifiProc.running = true
     }
 
     Process {
         id: wifiProc
         command: ["nmcli", "-t", "-f", "ssid,signal,active", "dev", "wifi"]
+        // Set true by wifiEnableDelayTimer to identify the post-delay scan.
+        property bool scanForReal: false
         stdout: StdioCollector {
             onStreamFinished: {
+                // While scanning (waiting for post-enable delay), drop all results
+                // except the one explicitly triggered by wifiEnableDelayTimer.
+                console.log("wifiProc finished: wifiScanning=", wifiSection.wifiScanning, "scanForReal=", wifiProc.scanForReal);
+                if (wifiSection.wifiScanning && !wifiProc.scanForReal) {
+                    console.log("wifiProc: dropping result (scanning window)");
+                    return;
+                }
+                wifiProc.scanForReal = false;
+                wifiSection.wifiScanning = false;
                 const seen = {};
                 const nets = [];
                 for (const line of this.text.trim().split("\n")) {
@@ -229,6 +278,12 @@ Item {
                 } else {
                     wifiSection.ssid = "";
                     wifiSection.strength = -1;
+                }
+                // Mark ready after first result so onSsidChanged can start
+                // firing notifications. prevSsid is now in sync with ssid.
+                if (!wifiSection.wifiReady) {
+                    wifiSection.prevSsid = wifiSection.ssid;
+                    wifiSection.wifiReady = true;
                 }
             }
         }
@@ -302,16 +357,22 @@ Item {
         id: wifiDisconnectedNotifyProc
     }
 
-    // Cycles 0-3 while connecting to animate the bar icon signal bars
+    // Cycles 0–3 while connecting or scanning to animate the bar icon signal bars
     property int connectAnimStep: 0
     Timer {
         id: connectAnimTimer
         interval: 350
         repeat: true
-        triggeredOnStart: true
-        running: wifiSection.connecting !== ""
-        onRunningChanged: if (!running) wifiSection.connectAnimStep = 0
-        onTriggered: wifiSection.connectAnimStep = (wifiSection.connectAnimStep + 1) % 4
+        running: wifiSection.connecting !== "" || wifiSection.wifiScanning
+        onRunningChanged: {
+            console.log("connectAnimTimer running:", running, "connecting:", wifiSection.connecting, "wifiScanning:", wifiSection.wifiScanning);
+            if (!running) wifiSection.connectAnimStep = 0;
+            else wifiSection.connectAnimStep = 0;
+        }
+        onTriggered: {
+            wifiSection.connectAnimStep = (wifiSection.connectAnimStep + 1) % 4;
+            console.log("connectAnimStep:", wifiSection.connectAnimStep);
+        }
     }
 
     // ── Trigger ───────────────────────────────────────────────────────────────
@@ -336,18 +397,7 @@ Item {
         IconImage {
             anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
-            source: {
-                if (wifiSection.connecting !== "") {
-                    const steps = [
-                        "network-wireless-signal-weak-symbolic",
-                        "network-wireless-signal-ok-symbolic",
-                        "network-wireless-signal-good-symbolic",
-                        "network-wireless-signal-excellent-symbolic"
-                    ];
-                    return Quickshell.iconPath(steps[wifiSection.connectAnimStep]);
-                }
-                return Quickshell.iconPath(wifiSection.icon(wifiSection.strength));
-            }
+            source: Quickshell.iconPath(wifiSection.barIcon)
             opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
             Behavior on opacity {
                 NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
