@@ -166,8 +166,8 @@ in
           update-props = {
             "node.description" = "Laptop";
             "node.nick" = "Internal Mics";
+            "node.disabled" = true;
           };
-          "node.disabled" = true;
         };
       }
       {
