@@ -256,24 +256,23 @@ Item {
                         continue;
                     const lastColon = line.lastIndexOf(":");
                     const secondLastColon = line.lastIndexOf(":", lastColon - 1);
-                    const active = line.slice(lastColon + 1);
+                    const active = line.slice(lastColon + 1) === "yes";
                     const signal = parseInt(line.slice(secondLastColon + 1, lastColon));
                     const ssid_ = line.slice(0, secondLastColon);
                     if (!ssid_)
                         continue;
-                    if (!seen[ssid_] || seen[ssid_] < signal) {
-                        seen[ssid_] = signal;
-                        const existing = nets.findIndex(n => n.ssid === ssid_);
-                        const entry = {
-                            ssid: ssid_,
-                            signal,
-                            active: active === "yes"
-                        };
-                        if (existing >= 0)
-                            nets[existing] = entry;
-                        else
-                            nets.push(entry);
+                    const existing = nets.findIndex(n => n.ssid === ssid_);
+                    if (existing >= 0) {
+                        const prev = nets[existing];
+                        // Always keep the active entry; otherwise keep the higher signal.
+                        if (active && !prev.active)
+                            nets[existing] = { ssid: ssid_, signal, active };
+                        else if (!active && !prev.active && signal > prev.signal)
+                            nets[existing] = { ssid: ssid_, signal, active };
+                    } else {
+                        nets.push({ ssid: ssid_, signal, active });
                     }
+                    seen[ssid_] = true;
                 }
                 nets.sort((a, b) => b.signal - a.signal);
                 wifiSection.networks = nets;
