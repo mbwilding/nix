@@ -28,6 +28,11 @@ Item {
     property real brightness: 0            // 0..1
     property bool available: false
 
+    // Optional vertical offset for the trigger icon (positive = down, negative = up)
+    property real iconOffset: 0
+    // Optional vertical offset for the icon inside the popup
+    property real popupIconOffset: 0
+
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
@@ -71,6 +76,7 @@ Item {
 
     IconImage {
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: brightnessSection.iconOffset
         implicitSize: Config.bar.batteryIconSize
         source: Quickshell.iconPath(brightnessSection.iconName)
     }
@@ -84,6 +90,7 @@ Item {
         fraction: brightnessSection.brightness
         activePopup: brightnessSection.activePopup
         labelWidth: brightnessSection.sliderLabelWidth
+        iconOffset: brightnessSection.popupIconOffset
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
