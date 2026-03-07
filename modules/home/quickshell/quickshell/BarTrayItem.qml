@@ -30,6 +30,13 @@ Item {
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
 
+    containmentMask: Item {
+        x: -(menuPopupRect.width - root.width) / 2
+        y: -menuPopupRect.height - Config.bar.popupOffset
+        width: Math.max(root.width, menuPopupRect.width)
+        height: menuPopupRect.height + Config.bar.popupOffset + root.height
+    }
+
     // ── Popup width calculation ───────────────────────────────────────────────
     // Measures the widest menu entry text to size the popup correctly.
 

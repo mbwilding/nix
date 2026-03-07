@@ -42,6 +42,13 @@ Item {
     implicitHeight: iconRow.implicitHeight
     visible: available
 
+    containmentMask: Item {
+        x: -(brightnessPopup.width - brightnessSection.width) / 2
+        y: -brightnessPopup.height - Config.bar.popupOffset
+        width: Math.max(brightnessSection.width, brightnessPopup.width)
+        height: brightnessPopup.height + Config.bar.popupOffset + brightnessSection.height
+    }
+
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {

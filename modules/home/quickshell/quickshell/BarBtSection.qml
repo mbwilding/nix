@@ -40,6 +40,13 @@ Item {
     implicitWidth: btRow.implicitWidth
     implicitHeight: btRow.implicitHeight
 
+    containmentMask: Item {
+        x: -btPopup.width
+        y: -btPopup.height
+        width: btPopup.width * 2 + btSection.width
+        height: btPopup.height + btSection.height
+    }
+
     readonly property bool popupOpen: activePopup === "bt"
 
     onPopupOpenChanged: {
