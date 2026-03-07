@@ -155,6 +155,7 @@ Item {
             id: slideTranslate
             x: card.width + 24
             Behavior on x {
+                enabled: !root.historyMode
                 NumberAnimation {
                     duration: Config.notifications.animateSpeed
                     easing.type: Easing.OutCubic
@@ -165,12 +166,14 @@ Item {
         opacity: 0
         scale: 0.94
         Behavior on opacity {
+            enabled: !root.historyMode
             NumberAnimation {
                 duration: Config.notifications.animateSpeed
                 easing.type: Easing.OutCubic
             }
         }
         Behavior on scale {
+            enabled: !root.historyMode
             NumberAnimation {
                 duration: Config.notifications.animateSpeed
                 easing.type: Easing.OutBack

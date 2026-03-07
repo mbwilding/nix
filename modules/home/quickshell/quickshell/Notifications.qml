@@ -28,6 +28,9 @@ Scope {
     property var _notifSnapshotIds: ({})
 
     function removeHistoryEntry(entryId) {
+        const entry = root.notifHistory.find(e => e.id === entryId);
+        if (entry?.liveNotif)
+            entry.liveNotif.dismiss();
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
     }
 
@@ -167,10 +170,11 @@ Scope {
         onNotification: notification => {
             notification.tracked = true;
 
-            // Snapshot into history — keep live action objects so they can still be invoked
+            // Snapshot into history — keep live notification + action objects so they can still be invoked
             const snapId = Date.now() + Math.random();
             const snapshot = {
                 id: snapId,
+                liveNotif: notification,              // live Notification object for dismiss/invoke
                 appName: notification.appName ?? "",
                 appIcon: notification.appIcon ?? "",
                 desktopEntry: notification.desktopEntry ?? "",
