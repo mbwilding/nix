@@ -13,6 +13,7 @@ Rectangle {
 
     property bool hovered: false
     property bool popupOpen: false
+    property bool clickable: true
 
     default property alias content: root.data
 
@@ -21,11 +22,11 @@ Rectangle {
 
     radius: Math.round(8 * Config.scale)
 
-    color: (hovered || popupOpen)
+    color: (clickable && (hovered || popupOpen))
         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
         : "transparent"
 
-    border.color: (hovered || popupOpen)
+    border.color: (clickable && (hovered || popupOpen))
         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35)
         : "transparent"
     border.width: 1
