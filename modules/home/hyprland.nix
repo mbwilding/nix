@@ -86,7 +86,7 @@ in
 {
   imports = [
     ./wofi.nix
-    ./quickshell.nix
+    ./quickshell/quickshell.nix
   ];
 
   home = {
