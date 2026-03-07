@@ -213,18 +213,17 @@ Item {
 
     // Overhead = everything in a name row except the name text itself.
     // RowLayout margins: left(8) + right(8) = 16 scaled
-    // RowLayout children (spacing=6 each gap, 3 gaps between 4 items = 18 scaled):
-    //   icon(fontSizeStatus*0.9) + spacing + [name] + spacing + muteBtn(22) + spacing + suspendBtn(22)
-    // = icon + muteBtn + suspendBtn + 3*spacing + 2*margin
+    // RowLayout children (spacing=6 each gap, 1 gap between 2 items = 6 scaled):
+    //   iconBtn(22) + spacing + [name]
+    // suspendBtn(22) + suspendBtn rightMargin(8) are outside rowContent but inside deviceRow
+    // = iconBtn + 1*spacing + 2*margin + suspendBtn + suspendBtn rightMargin + suspendBtn→rowContent gap(6)
     readonly property real _nameRowOverhead: Math.round(
-        Math.round(Config.bar.fontSizeStatus * 0.9)   // device icon
-        + Math.round(6 * Config.scale)                 // icon→name spacing
-        + Math.round(6 * Config.scale)                 // name→muteBtn spacing
-        + Math.round(22 * Config.scale)                // mute button
-        + Math.round(6 * Config.scale)                 // muteBtn→suspendBtn spacing
-        + Math.round(22 * Config.scale)                // suspend button
+        Math.round(22 * Config.scale)                  // icon mute button
+        + Math.round(6 * Config.scale)                 // iconBtn→name spacing
         + Math.round(8 * Config.scale)                 // left margin
-        + Math.round(8 * Config.scale))                // right margin
+        + Math.round(6 * Config.scale)                 // rowContent→suspendBtn gap (rightMargin)
+        + Math.round(22 * Config.scale)                // suspend button
+        + Math.round(8 * Config.scale))                // suspend button right margin
 
     // Slider row overhead: label(38) + gap(6) + thumbR(7) + scrollbar track(3) + scrollbar rightMargin(3)
     //                    + viewport leftMargin(8) + viewport rightMargin(4) + card border(1+1)
@@ -548,37 +547,12 @@ Item {
             opacity: deviceRow.isSuspended ? 0.45 : 1.0
             Behavior on opacity { NumberAnimation { duration: 150 } }
 
-            // ── Top row: icon + name + mute button ─────────────────────────
+            // ── Top row: mute-icon button + name ───────────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
 
-                // Device type icon
-                IconImage {
-                    implicitSize: Math.round(Config.bar.fontSizeStatus * 0.9)
-                    source: {
-                        if (!deviceRow.node) return "";
-                        if (deviceRow.isSinkDevice)
-                            return Quickshell.iconPath(deviceRow.volumeSection.nodeVolumeIcon(deviceRow.node));
-                        return Quickshell.iconPath(deviceRow.volumeSection.sourceIcon(deviceRow.node));
-                    }
-                    opacity: (deviceRow.nodeAudio && deviceRow.nodeAudio.muted)
-                             ? Config.bar.disabledOpacity : 1.0
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
-                }
-
-                // Device name
-                Text {
-                    Layout.fillWidth: true
-                    text: deviceRow.volumeSection.nodeName(deviceRow.node)
-                    color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    elide: Text.ElideRight
-                    Behavior on color { ColorAnimation { duration: 120 } }
-                }
-
-                // Mute toggle button
+                // Icon doubles as mute toggle button
                 Rectangle {
                     id: muteBtn
                     implicitWidth: Math.round(22 * Config.scale)
@@ -586,9 +560,13 @@ Item {
                     radius: Math.round(5 * Config.scale)
                     color: (muteBtnMouse.containsMouse && !deviceRow.isSuspended)
                         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
-                        : Qt.rgba(1, 1, 1, 0.06)
+                        : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
+                            ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                            : Qt.rgba(1, 1, 1, 0.06))
                     border.color: (muteBtnMouse.containsMouse && !deviceRow.isSuspended)
-                        ? Config.colors.accent : Config.colors.border
+                        ? Config.colors.accent
+                        : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
+                            ? Config.colors.accent : Config.colors.border)
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 80 } }
                     Behavior on border.color { ColorAnimation { duration: 80 } }
@@ -597,12 +575,7 @@ Item {
                         anchors.centerIn: parent
                         implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
                         source: {
-                            if (!deviceRow.nodeAudio) return "";
-                            if (deviceRow.nodeAudio.muted) {
-                                return deviceRow.isSinkDevice
-                                    ? Quickshell.iconPath("audio-volume-muted-symbolic")
-                                    : Quickshell.iconPath("microphone-sensitivity-muted-symbolic");
-                            }
+                            if (!deviceRow.node) return "";
                             if (deviceRow.isSinkDevice)
                                 return Quickshell.iconPath(deviceRow.volumeSection.nodeVolumeIcon(deviceRow.node));
                             return Quickshell.iconPath(deviceRow.volumeSection.sourceIcon(deviceRow.node));
@@ -627,6 +600,17 @@ Item {
                                 deviceRow.nodeAudio.muted = !deviceRow.nodeAudio.muted;
                         }
                     }
+                }
+
+                // Device name
+                Text {
+                    Layout.fillWidth: true
+                    text: deviceRow.volumeSection.nodeName(deviceRow.node)
+                    color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
+                    font.family: Config.font.family
+                    font.pixelSize: Config.bar.fontSizeStatus
+                    elide: Text.ElideRight
+                    Behavior on color { ColorAnimation { duration: 120 } }
                 }
             }
 
