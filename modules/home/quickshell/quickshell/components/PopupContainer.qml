@@ -16,20 +16,11 @@ PopupCard {
 
     visible: opacity > 0
     opacity: root.popupOpen ? 1 : 0
-    scale: root.popupOpen ? 1 : 0.90
-    transformOrigin: Item.Bottom
 
     Behavior on opacity {
         NumberAnimation {
             duration: 150
             easing.type: Easing.InOutCubic
-        }
-    }
-    Behavior on scale {
-        NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.5
         }
     }
 }
