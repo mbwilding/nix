@@ -126,7 +126,7 @@ Scope {
     Timer {
         id: hideTimer
         interval: Config.bar.hideDelay
-        onTriggered: if (root.activePopup === "")
+        onTriggered: if (root.activePopup === "" && !root.pillHovered)
             root.visible_ = false
     }
 
@@ -508,8 +508,7 @@ Scope {
             HoverHandler {
                 onHoveredChanged: {
                     root.pillHovered = hovered;
-                    if (hovered)
-                        root.keepAlive();
+                    root.keepAlive();
                 }
             }
 
