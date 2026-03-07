@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import Quickshell
 
 ShellRoot {
@@ -12,11 +13,15 @@ ShellRoot {
     }
 
     Bar {
+        id: bar
         notifHistory: notifs.notifHistory
         onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
-        onAnimateOutHistoryEntry: snapId => notifs.animateOutHistoryEntry(snapId)
         onDismissAllNotifs: notifs.dismissAll()
-        onAnimateOutAllHistory: notifs.animateOutAllHistory()
+    }
+
+    Connections {
+        target: notifs
+        function onAnimateOutHistoryEntry(snapId) { bar.animateOutHistoryEntry(snapId) }
     }
 }
 
