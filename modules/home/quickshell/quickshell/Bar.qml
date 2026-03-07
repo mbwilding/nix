@@ -574,6 +574,7 @@ Scope {
                 BarWifiSection {
                     id: wifiSection
                     activePopup: root.activePopup
+                    availableHeight: win.screen ? win.screen.height : 800
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
@@ -600,6 +601,7 @@ Scope {
                 BarBtSection {
                     id: btSection
                     activePopup: root.activePopup
+                    availableHeight: win.screen ? win.screen.height : 800
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
