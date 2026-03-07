@@ -42,12 +42,26 @@ Scope {
         objects: [Pipewire.defaultAudioSink]
     }
 
+    // Reset suppression counter whenever the default sink itself changes, so the
+    // first volume reading from the new device is silently swallowed (PW often
+    // fires volumeChanged with NaN or an uninitialized value during the switch).
+    Connections {
+        target: Pipewire
+        function onDefaultAudioSinkChanged() {
+            root._volumeRaw = -1;
+        }
+    }
+
     Connections {
         target: root.volumeAvailable ? Pipewire.defaultAudioSink.audio : null
 
         function onVolumeChanged() {
             const v = Pipewire.defaultAudioSink.audio.volume;
+            // Discard NaN / undefined readings that PW emits transiently during
+            // device switches — they must never reach the OSD or be written back.
+            if (v === undefined || isNaN(v)) return;
             if (root._volumeRaw < 0) {
+                // First valid reading after startup or a sink switch — baseline only.
                 root._volumeRaw = v;
                 return;
             }
@@ -147,14 +161,22 @@ Scope {
                             if (!audio || audio.muted)
                                 return "audio-volume-muted-symbolic";
                             const vol = audio.volume;
+                            if (isNaN(vol) || vol === undefined)
+                                return "audio-volume-muted-symbolic";
                             if (vol <= 0.33)
                                 return "audio-volume-low-symbolic";
                             if (vol <= 0.66)
                                 return "audio-volume-medium-symbolic";
                             return "audio-volume-high-symbolic";
                         }
-                        value: Pipewire.defaultAudioSink?.audio.volume ?? 0
-                        label: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+                        value: {
+                            const v = Pipewire.defaultAudioSink?.audio?.volume ?? 0;
+                            return (isNaN(v) || v === undefined) ? 0 : v;
+                        }
+                        label: {
+                            const v = Pipewire.defaultAudioSink?.audio?.volume;
+                            return (v === undefined || v === null || isNaN(v)) ? "0%" : Math.round(v * 100) + "%";
+                        }
                     }
 
                     OsdRow {

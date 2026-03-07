@@ -198,11 +198,12 @@ Item {
         + Math.round(8 * Config.scale)                 // left margin
         + Math.round(8 * Config.scale))                // right margin
 
-    // Slider row overhead: label(38) + gap(6) + scrollbar track(3) + scrollbar rightMargin(3)
+    // Slider row overhead: label(38) + gap(6) + thumbR(7) + scrollbar track(3) + scrollbar rightMargin(3)
     //                    + viewport leftMargin(8) + viewport rightMargin(4) + card border(1+1)
     readonly property real _sliderRowOverhead: Math.round(
         Math.round(38 * Config.scale)                  // label column
         + Math.round(6 * Config.scale)                 // track→label gap
+        + Math.round(7 * Config.scale)                 // half glow thumb (baked into _trackW)
         + Math.round(3 * Config.scale)                 // scrollbar width
         + Math.round(3 * Config.scale)                 // scrollbar rightMargin
         + Math.round(8 * Config.scale)                 // viewport leftMargin
@@ -562,23 +563,26 @@ Item {
 
                 // Label is fixed-width and right-anchored; track fills everything to its left.
                 // Clamp to 1 so we never divide by zero or go negative during layout.
+                // _thumbR: half the glow diameter — the track stops here so the thumb
+                // never overlaps the label even at 100%.
                 readonly property real _labelW: Math.round(38 * Config.scale)
                 readonly property real _gap: Math.round(6 * Config.scale)
-                readonly property real _trackW: Math.max(1, width - _labelW - _gap)
+                readonly property real _thumbR: Math.round(7 * Config.scale)   // half of 14px glow
+                readonly property real _trackW: Math.max(1, width - _labelW - _gap - _thumbR)
 
                 GradientProgressBar {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
+                    // Give the bar the same width as the usable track so fill matches thumb
                     width: parent._trackW
                     value: parent.frac
                     barHeight: Math.round(5 * Config.scale)
                 }
 
-                // Thumb glow — clamped so it never overlaps the label
+                // Thumb glow
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: Math.min(parent._trackW, Math.max(0,
-                           parent._trackW * parent.frac)) - width / 2
+                    x: parent._trackW * parent.frac - width / 2
                     width: Math.round(14 * Config.scale)
                     height: width
                     radius: width / 2
@@ -590,8 +594,7 @@ Item {
                 // Thumb
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: Math.min(parent._trackW, Math.max(0,
-                           parent._trackW * parent.frac)) - width / 2
+                    x: parent._trackW * parent.frac - width / 2
                     width: Math.round(10 * Config.scale)
                     height: width
                     radius: width / 2
