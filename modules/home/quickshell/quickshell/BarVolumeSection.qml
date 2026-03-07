@@ -147,8 +147,11 @@ Item {
         }
         onWheel: wheel => {
             const a = volumeSection.audio;
-            if (a)
-                a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
+            if (a) {
+                const cur = a.volume;
+                if (!isNaN(cur) && cur !== undefined)
+                    a.volume = Math.max(0, Math.min(1.0, cur + (wheel.angleDelta.y / 120) * 0.05));
+            }
             volumeSection.keepAliveReq();
         }
     }
@@ -180,11 +183,32 @@ Item {
         font.pixelSize: Config.bar.fontSizeStatus
     }
 
-    // icon(~fontSizeStatus) + iconSpacing(6) + label + dot(6+4) + muteBtn(22) + nameRowMargins(16)
+    // Overhead = everything in a name row except the name text itself.
+    // RowLayout margins: left(8) + right(8) = 16 scaled
+    // RowLayout children (spacing=6 each gap, 3 gaps between 4 items = 18 scaled):
+    //   icon(fontSizeStatus*0.9) + spacing + [name] + spacing + dot(6) + spacing + muteBtn(22)
+    // = icon + dot + muteBtn + 3*spacing + 2*margin
     readonly property real _nameRowOverhead: Math.round(
-        Config.bar.fontSizeStatus + 6 + 6 + 4 + 22 + 16, 0)
-    // slider row: label width(38) + gap(6) + scrollbar(3+3) + viewportMargins(8+4) + outerMargins(8+8)
-    readonly property real _sliderRowOverhead: Math.round(38 * Config.scale + 6 + 3 + 3 + 8 + 4 + 8 + 8, 0)
+        Math.round(Config.bar.fontSizeStatus * 0.9)   // device icon
+        + Math.round(6 * Config.scale)                 // icon→name spacing
+        + Math.round(6 * Config.scale)                 // name→dot spacing
+        + Math.round(6 * Config.scale)                 // dot size
+        + Math.round(6 * Config.scale)                 // dot→muteBtn spacing
+        + Math.round(22 * Config.scale)                // mute button
+        + Math.round(8 * Config.scale)                 // left margin
+        + Math.round(8 * Config.scale))                // right margin
+
+    // Slider row overhead: label(38) + gap(6) + scrollbar track(3) + scrollbar rightMargin(3)
+    //                    + viewport leftMargin(8) + viewport rightMargin(4) + card border(1+1)
+    readonly property real _sliderRowOverhead: Math.round(
+        Math.round(38 * Config.scale)                  // label column
+        + Math.round(6 * Config.scale)                 // track→label gap
+        + Math.round(3 * Config.scale)                 // scrollbar width
+        + Math.round(3 * Config.scale)                 // scrollbar rightMargin
+        + Math.round(8 * Config.scale)                 // viewport leftMargin
+        + Math.round(4 * Config.scale)                 // viewport rightMargin (to scrollbar)
+        + 2)                                           // PopupCard border (1px each side)
+
     readonly property real _popupOverhead: Math.max(_nameRowOverhead, _sliderRowOverhead)
 
     readonly property real _maxNodeNameWidth: {
@@ -530,14 +554,17 @@ Item {
                 Layout.fillWidth: true
                 implicitHeight: Math.round(18 * Config.scale)
 
-                readonly property real frac: deviceRow.nodeAudio
-                    ? Math.max(0, Math.min(1, deviceRow.nodeAudio.volume))
-                    : 0
+                readonly property real frac: {
+                    if (!deviceRow.nodeAudio) return 0;
+                    const v = deviceRow.nodeAudio.volume;
+                    return (isNaN(v) || v === undefined) ? 0 : Math.max(0, Math.min(1, v));
+                }
 
-                // Label is fixed-width and right-anchored; track fills everything to its left
+                // Label is fixed-width and right-anchored; track fills everything to its left.
+                // Clamp to 1 so we never divide by zero or go negative during layout.
                 readonly property real _labelW: Math.round(38 * Config.scale)
                 readonly property real _gap: Math.round(6 * Config.scale)
-                readonly property real _trackW: width - _labelW - _gap
+                readonly property real _trackW: Math.max(1, width - _labelW - _gap)
 
                 GradientProgressBar {
                     anchors.verticalCenter: parent.verticalCenter
@@ -587,7 +614,10 @@ Item {
                     }
                     function setFromX(mx) {
                         if (!deviceRow.nodeAudio) return;
-                        const v = Math.max(0, Math.min(1.0, mx / parent._trackW));
+                        const tw = parent._trackW;
+                        if (tw <= 0) return;
+                        const v = Math.max(0, Math.min(1.0, mx / tw));
+                        if (isNaN(v)) return;
                         deviceRow.nodeAudio.volume = v;
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
@@ -596,8 +626,10 @@ Item {
                     onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
                     onWheel: wheel => {
                         if (!deviceRow.nodeAudio) return;
+                        const cur = deviceRow.nodeAudio.volume;
+                        if (isNaN(cur) || cur === undefined) return;
                         deviceRow.nodeAudio.volume = Math.max(0,
-                            Math.min(1.0, deviceRow.nodeAudio.volume + (wheel.angleDelta.y / 120) * 0.05));
+                            Math.min(1.0, cur + (wheel.angleDelta.y / 120) * 0.05));
                         wheel.accepted = true;
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
@@ -609,7 +641,11 @@ Item {
                     id: volLabel
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
-                    text: deviceRow.nodeAudio ? Math.round(deviceRow.nodeAudio.volume * 100) + "%" : "0%"
+                    text: {
+                        if (!deviceRow.nodeAudio) return "0%";
+                        const v = deviceRow.nodeAudio.volume;
+                        return (isNaN(v) || v === undefined) ? "0%" : Math.round(v * 100) + "%";
+                    }
                     color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textSecondary
                     font.family: Config.font.family
                     font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.85)
