@@ -26,6 +26,19 @@ Item {
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
 
+    onNotifHistoryChanged: {
+        if (notifSection.notifHistory.length === 0 && notifSection.popupOpen)
+            notifSection.exitPopupReq();
+    }
+
+    // Called by Bar.qml when a live notification is dismissed externally —
+    // triggers the history card's collapse animation instead of an instant removal.
+    property var _historyCards: ({})
+    function animateOutEntry(snapId) {
+        const card = notifSection._historyCards[snapId];
+        if (card) card.animateOut();
+    }
+
     // Screen height for popup sizing
     property real availableHeight: 800
 
@@ -177,19 +190,6 @@ Item {
                 spacing: Math.round(6 * Config.scale)
                 y: -notifPopup.scrollY
 
-                // ── Empty state ───────────────────────────────────────────
-                Text {
-                    visible: notifSection.notifHistory.length === 0
-                    width: parent.width
-                    text: "No notifications"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    horizontalAlignment: Text.AlignHCenter
-                    topPadding: Math.round(12 * Config.scale)
-                    bottomPadding: Math.round(8 * Config.scale)
-                }
-
                 // ── History cards ─────────────────────────────────────────
                 Repeater {
                     model: notifSection.notifHistory
@@ -203,6 +203,15 @@ Item {
                         width: popupCol.width
 
                         onDismissed: notifSection.removeHistoryEntry(histDelegate.modelData.id)
+
+                        Component.onCompleted: {
+                            notifSection._historyCards[histDelegate.modelData.id] = histDelegate;
+                            notifSection._historyCardsChanged();
+                        }
+                        Component.onDestruction: {
+                            delete notifSection._historyCards[histDelegate.modelData.id];
+                            notifSection._historyCardsChanged();
+                        }
                     }
                 }
             }

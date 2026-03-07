@@ -27,7 +27,13 @@ Scope {
     // so we can remove history when the live card is dismissed.
     property var _notifSnapshotIds: ({})
 
+    // Emitted when a live toast is dismissed — tells the history popup to
+    // animate out the matching card, which then calls removeHistoryEntry itself.
+    signal animateOutHistoryEntry(var snapId)
+
     function removeHistoryEntry(entryId) {
+        // When called from the history card (user dismissed from history),
+        // also dismiss the live notification if still present.
         const entry = root.notifHistory.find(e => e.id === entryId);
         if (entry?.liveNotif)
             entry.liveNotif.dismiss();
@@ -238,7 +244,9 @@ Scope {
                     onDismissed: {
                         const snapId = root._notifSnapshotIds[notifCardDelegate.modelData.id];
                         if (snapId !== undefined) {
-                            root.removeHistoryEntry(snapId);
+                            // Signal the history popup to animate the card out first;
+                            // the card's onDismissed will then call removeHistoryEntry.
+                            root.animateOutHistoryEntry(snapId);
                             delete root._notifSnapshotIds[notifCardDelegate.modelData.id];
                         }
                     }
