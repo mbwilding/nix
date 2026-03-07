@@ -151,13 +151,25 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        // Width = widest row content + left margin (8) + right margin (8)
-        // + scrollbar gap (4) + scrollbar track (3) + scrollbar rightMargin (3) = +26.
-        // Floored at 200, no hard cap (content drives width).
-        width: Math.max(
-            Math.round(200 * Config.scale),
-            btDevListCol.implicitWidth + Math.round(26 * Config.scale)
-        )
+        // Width driven by the widest device name text + icon + padding, measured via TextMetrics.
+        readonly property real iconSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
+        readonly property real rowPadding: Math.round(8 * Config.scale) * 2 + Math.round(8 * Config.scale) + Math.round(18 * Config.scale)
+        readonly property real contentWidth: {
+            let maxW = 0;
+            const a = btSection.adapter;
+            const devs = (a && a.enabled) ? a.devices : null;
+            if (devs) {
+                for (let i = 0; i < devs.count; i++) {
+                    const d = devs.get(i).modelData;
+                    if (!d) continue;
+                    btPopupTextMetrics.text = btSection.deviceName(d);
+                    const w = btPopupTextMetrics.boundingRect.width;
+                    if (w > maxW) maxW = w;
+                }
+            }
+            return maxW + btPopup.iconSize + btPopup.rowPadding;
+        }
+        width: Math.max(Math.round(200 * Config.scale), btPopup.contentWidth)
         Behavior on width {
             NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
         }
@@ -173,6 +185,12 @@ Item {
         height: Math.min(contentPadded, maxHeight)
 
         z: 20
+
+        TextMetrics {
+            id: btPopupTextMetrics
+            font.family: Config.font.family
+            font.pixelSize: Config.bar.fontSizeStatus
+        }
 
         HoverHandler {
             onHoveredChanged: {
@@ -264,7 +282,8 @@ Item {
                         // Only show non-connected devices in this repeater.
                         visible: !isConnected
 
-                        width: btDevRow.implicitWidth + Math.round(16 * Config.scale)
+                        width: btListViewport.width
+                        implicitWidth: btDevRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: btDevRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: btDevMouse.containsMouse
@@ -383,7 +402,8 @@ Item {
                                 btSection.btConnectedCount--;
                         }
 
-                        width: btConnectedRow.implicitWidth + Math.round(16 * Config.scale)
+                        width: btListViewport.width
+                        implicitWidth: btConnectedRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: btConnectedRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
                         color: btConnectedMouse.containsMouse
