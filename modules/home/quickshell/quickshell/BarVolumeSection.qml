@@ -27,6 +27,7 @@ Item {
 
     // ── State ─────────────────────────────────────────────────────────────────
 
+    readonly property bool popupOpen: activePopup === "volume"
     readonly property var audio: Pipewire.defaultAudioSink?.audio ?? null
     visible: Pipewire.defaultAudioSink !== null
 

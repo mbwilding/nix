@@ -48,7 +48,6 @@ Scope {
     // Called by trigger hover-enter OR popup hover-enter
     function openPopup(name) {
         root.activePopup = name;
-        root.popupHovered = true;
         quickCloseTimer.stop();
         popupCloseTimer.stop();
         root.keepAlive();

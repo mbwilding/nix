@@ -36,6 +36,8 @@ Item {
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: brightnessPopup
 
+    readonly property bool popupOpen: activePopup === popupName
+
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: iconRow.implicitWidth
