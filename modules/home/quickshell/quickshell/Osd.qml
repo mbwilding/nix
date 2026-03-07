@@ -38,7 +38,6 @@ Scope {
             hideTimer.restart();
     }
 
-    // Volume
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
@@ -64,21 +63,27 @@ Scope {
         }
     }
 
-    // Show OSD when screen brightness changes (skip the first read)
     property bool _screenFirstRead: true
+    property bool _kbdFirstRead: true
     Connections {
         target: BrightnessService
+
         function onScreenBrightnessChanged() {
             if (root._screenFirstRead) {
                 root._screenFirstRead = false;
                 return;
             }
+
             if (root.screenAvailable)
                 root.show();
         }
+
         function onKbdBrightnessChanged() {
-            if (root._screenFirstRead)
+            if (root._kbdFirstRead) {
+                root._kbdFirstRead = false;
                 return;
+            }
+
             if (root.kbdAvailable)
                 root.show();
         }
