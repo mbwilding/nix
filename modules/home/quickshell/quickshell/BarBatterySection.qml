@@ -59,6 +59,7 @@ Item {
         anchors.fill: parent
         hovered: triggerHover.hovered
         popupOpen: batterySection.popupOpen
+        clickable: false
 
         IconImage {
             id: batteryIcon
