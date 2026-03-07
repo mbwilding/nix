@@ -25,6 +25,7 @@ Item {
     // Bound from Bar.qml, which gets them from shell.qml's Notifications instance
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
+    signal dismissAll()
 
     onNotifHistoryChanged: {
         if (notifSection.notifHistory.length === 0 && notifSection.popupOpen)
@@ -37,6 +38,12 @@ Item {
     function animateOutEntry(snapId) {
         const card = notifSection._historyCards[snapId];
         if (card) card.animateOut();
+    }
+
+    // Called by Bar.qml to instantly close the history popup (dismiss all).
+    function animateOutAll() {
+        if (notifSection.popupOpen)
+            notifSection.exitPopupReq();
     }
 
     // Screen height for popup sizing
@@ -65,7 +72,7 @@ Item {
         cursorShape: notifSection.notifHistory.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
         onEntered: if (notifSection.notifHistory.length > 0) notifSection.openPopupReq("notif")
         onExited: notifSection.keepPopupReq()
-        onClicked: if (notifSection.notifHistory.length > 0) notifSection.openPopupReq("notif")
+        onClicked: if (notifSection.notifHistory.length > 0) notifSection.dismissAll()
     }
 
     BarButton {

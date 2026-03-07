@@ -27,6 +27,8 @@ Scope {
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
     signal animateOutHistoryEntry(var snapId)
+    signal dismissAllNotifs()
+    signal animateOutAllHistory()
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -689,11 +691,15 @@ Scope {
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
+                    onDismissAll: root.dismissAllNotifs()
 
                     Connections {
                         target: root
                         function onAnimateOutHistoryEntry(snapId) {
                             notifSection.animateOutEntry(snapId);
+                        }
+                        function onAnimateOutAllHistory() {
+                            notifSection.animateOutAll();
                         }
                     }
                 }

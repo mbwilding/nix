@@ -27,16 +27,68 @@ Scope {
     // so we can remove history when the live card is dismissed.
     property var _notifSnapshotIds: ({})
 
+    // Snapshot IDs currently mid-chain (live card animating → history card animating).
+    // removeHistoryEntry defers the model update until the chain completes.
+    property var _pendingRemoval: ({})
+
     // Emitted when a live toast is dismissed — tells the history popup to
     // animate out the matching card, which then calls removeHistoryEntry itself.
     signal animateOutHistoryEntry(var snapId)
 
+    // Emitted to tell BarNotifSection to close the history popup immediately.
+    signal animateOutAllHistory()
+
+    // Dismiss every live toast and every history entry simultaneously.
+    // Live cards slide out; the history popup is closed instantly.
+    // History array is cleared after one animation cycle.
+    function dismissAll() {
+        // Animate out all live cards (each will call notification.dismiss() internally)
+        root.activeCards.filter(c => c.visible_).forEach(c => c.animateOut());
+
+        // Tell the history popup to close immediately (no card animations needed)
+        root.animateOutAllHistory();
+
+        // After live animations complete, wipe history and reset tracking state.
+        dismissAllTimer.restart();
+    }
+
+    Timer {
+        id: dismissAllTimer
+        interval: Config.notifications.animateSpeed + 50
+        repeat: false
+        onTriggered: {
+            root.notifHistory = [];
+            root._notifSnapshotIds = ({});
+            root._pendingRemoval = ({});
+        }
+    }
+
     function removeHistoryEntry(entryId) {
+        // If this entry is already mid-chain, this call is the final step
+        // (history card finished animating) — remove from history and clear flag.
+        if (root._pendingRemoval[entryId]) {
+            delete root._pendingRemoval[entryId];
+            root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
+            return;
+        }
+
         // When called from the history card (user dismissed from history),
-        // also dismiss the live notification if still present.
+        // animate out the live card if it's still on screen — animateOut()
+        // will call notification.dismiss() itself via ScriptAction.
         const entry = root.notifHistory.find(e => e.id === entryId);
-        if (entry?.liveNotif)
-            entry.liveNotif.dismiss();
+        if (entry?.liveNotif) {
+            const liveCard = root.activeCards.find(c => c.notification === entry.liveNotif);
+            if (liveCard) {
+                // Mark as pending so the model update is deferred until the
+                // full animation chain completes (live card → history card → here again).
+                root._pendingRemoval[entryId] = true;
+                liveCard.animateOut();
+                return;
+            } else {
+                // Live card already gone — dismiss the notification object directly.
+                entry.liveNotif.dismiss();
+            }
+        }
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
     }
 
@@ -244,10 +296,16 @@ Scope {
                     onDismissed: {
                         const snapId = root._notifSnapshotIds[notifCardDelegate.modelData.id];
                         if (snapId !== undefined) {
-                            // Signal the history popup to animate the card out first;
-                            // the card's onDismissed will then call removeHistoryEntry.
-                            root.animateOutHistoryEntry(snapId);
                             delete root._notifSnapshotIds[notifCardDelegate.modelData.id];
+                            if (root._pendingRemoval[snapId]) {
+                                // History card already animated out (user dismissed from history).
+                                // Complete the deferred model update now.
+                                root.removeHistoryEntry(snapId);
+                            } else {
+                                // Live card dismissed first — tell history popup to animate its card out.
+                                // History card's onDismissed will call removeHistoryEntry to finish.
+                                root.animateOutHistoryEntry(snapId);
+                            }
                         }
                     }
 

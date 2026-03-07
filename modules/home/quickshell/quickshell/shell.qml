@@ -15,6 +15,8 @@ ShellRoot {
         notifHistory: notifs.notifHistory
         onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
         onAnimateOutHistoryEntry: snapId => notifs.animateOutHistoryEntry(snapId)
+        onDismissAllNotifs: notifs.dismissAll()
+        onAnimateOutAllHistory: notifs.animateOutAllHistory()
     }
 }
 
