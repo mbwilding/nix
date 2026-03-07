@@ -69,10 +69,10 @@ Item {
     implicitHeight: wifiRow.implicitHeight
 
     containmentMask: Item {
-        x: -wifiPopup.width
-        y: -wifiPopup.height
-        width: wifiPopup.width * 2 + wifiSection.width
-        height: wifiPopup.height + wifiSection.height
+        x: wifiSection.popupOpen ? -Math.max(0, (wifiPopup.width - wifiSection.width) / 2) : 0
+        y: wifiSection.popupOpen ? -wifiPopup.height - Config.bar.popupOffset : 0
+        width: wifiSection.popupOpen ? Math.max(wifiSection.width, wifiPopup.width) : wifiSection.width
+        height: wifiSection.popupOpen ? wifiPopup.height + Config.bar.popupOffset + wifiSection.height : wifiSection.height
     }
 
     readonly property bool popupOpen: activePopup === "wifi"

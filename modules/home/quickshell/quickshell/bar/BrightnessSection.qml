@@ -43,10 +43,10 @@ Item {
     visible: available
 
     containmentMask: Item {
-        x: -(brightnessPopup.width - brightnessSection.width) / 2
-        y: -brightnessPopup.height - Config.bar.popupOffset
-        width: Math.max(brightnessSection.width, brightnessPopup.width)
-        height: brightnessPopup.height + Config.bar.popupOffset + brightnessSection.height
+        x: brightnessSection.popupOpen ? -Math.max(0, (brightnessPopup.width - brightnessSection.width) / 2) : 0
+        y: brightnessSection.popupOpen ? -brightnessPopup.height - Config.bar.popupOffset : 0
+        width: brightnessSection.popupOpen ? Math.max(brightnessSection.width, brightnessPopup.width) : brightnessSection.width
+        height: brightnessSection.popupOpen ? brightnessPopup.height + Config.bar.popupOffset + brightnessSection.height : brightnessSection.height
     }
 
     // ── Trigger ───────────────────────────────────────────────────────────────

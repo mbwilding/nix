@@ -34,10 +34,10 @@ Item {
     visible: b !== null && b.isLaptopBattery
 
     containmentMask: Item {
-        x: -batteryPopup.width
-        y: -batteryPopup.height
-        width: batteryPopup.width * 2 + batterySection.width
-        height: batteryPopup.height + batterySection.height
+        x: batterySection.popupOpen ? -Math.max(0, (batteryPopup.width - batterySection.width) / 2) : 0
+        y: batterySection.popupOpen ? -batteryPopup.height - Config.bar.popupOffset : 0
+        width: batterySection.popupOpen ? Math.max(batterySection.width, batteryPopup.width) : batterySection.width
+        height: batterySection.popupOpen ? batteryPopup.height + Config.bar.popupOffset + batterySection.height : batterySection.height
     }
 
     readonly property bool popupOpen: activePopup === "battery"

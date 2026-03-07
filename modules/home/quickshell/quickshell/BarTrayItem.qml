@@ -31,10 +31,10 @@ Item {
     implicitHeight: iconContainer.implicitHeight
 
     containmentMask: Item {
-        x: -(menuPopupRect.width - root.width) / 2
-        y: -menuPopupRect.height - Config.bar.popupOffset
-        width: Math.max(root.width, menuPopupRect.width)
-        height: menuPopupRect.height + Config.bar.popupOffset + root.height
+        x: root.popupOpen ? -Math.max(0, (menuPopupRect.width - root.width) / 2) : 0
+        y: root.popupOpen ? -menuPopupRect.height - Config.bar.popupOffset : 0
+        width: root.popupOpen ? Math.max(root.width, menuPopupRect.width) : root.width
+        height: root.popupOpen ? menuPopupRect.height + Config.bar.popupOffset + root.height : root.height
     }
 
     // ── Popup width calculation ───────────────────────────────────────────────
