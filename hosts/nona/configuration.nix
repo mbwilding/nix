@@ -137,6 +137,60 @@ in
     };
   };
 
+  services.pipewire.wireplumber.extraConfig."99-rename-devices" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [ { "device.name" = "alsa_card.pci-0000_c1_00.1"; } ];
+        actions.update-props = {
+          "device.description" = "HDMI Audio";
+          "device.nick" = "HDMI Audio";
+        };
+      }
+      {
+        matches = [ { "device.name" = "alsa_card.platform-snd_aloop.0"; } ];
+        actions.update-props = {
+          "device.description" = "OBS Loopback";
+          "device.nick" = "OBS Loopback";
+        };
+      }
+      {
+        matches = [ { "node.name" = "alsa_output.pci-0000_c1_00.6.HiFi__Speaker__sink"; } ];
+        actions.update-props = {
+          "node.description" = "Internal Speaker";
+          "node.nick" = "Internal Speaker";
+        };
+      }
+      {
+        matches = [ { "node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic2__source"; } ];
+        actions.update-props = {
+          "node.description" = "Internal Mic";
+          "node.nick" = "Internal Mic";
+        };
+      }
+      {
+        matches = [ { "node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic1__source"; } ];
+        actions.update-props = {
+          "node.description" = "Internal Mic (Digital)";
+          "node.nick" = "Internal Mic (Digital)";
+        };
+      }
+      {
+        matches = [ { "node.name" = "alsa_output.platform-snd_aloop.0.analog-stereo"; } ];
+        actions.update-props = {
+          "node.description" = "OBS Loopback";
+          "node.nick" = "OBS Loopback";
+        };
+      }
+      {
+        matches = [ { "node.name" = "alsa_input.platform-snd_aloop.0.analog-stereo"; } ];
+        actions.update-props = {
+          "node.description" = "OBS Loopback (Monitor)";
+          "node.nick" = "OBS Loopback (Monitor)";
+        };
+      }
+    ];
+  };
+
   environment = {
     sessionVariables = {
       WAYLANDDRV_PRIMARY_MONITOR = "eDP-1";
