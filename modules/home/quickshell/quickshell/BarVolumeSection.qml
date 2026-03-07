@@ -36,10 +36,10 @@ Item {
     implicitHeight: volumeRow.implicitHeight
 
     containmentMask: Item {
-        x: -volumePopup.width
-        y: -volumePopup.height
-        width: volumePopup.width * 2 + volumeSection.width
-        height: volumePopup.height + volumeSection.height
+        x: volumeSection.popupOpen ? -Math.max(0, (volumePopup.width - volumeSection.width) / 2) : 0
+        y: volumeSection.popupOpen ? -volumePopup.height - Config.bar.popupOffset : 0
+        width: volumeSection.popupOpen ? Math.max(volumeSection.width, volumePopup.width) : volumeSection.width
+        height: volumeSection.popupOpen ? volumePopup.height + Config.bar.popupOffset + volumeSection.height : volumeSection.height
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

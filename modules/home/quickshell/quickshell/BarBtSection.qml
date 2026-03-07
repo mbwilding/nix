@@ -41,10 +41,10 @@ Item {
     implicitHeight: btRow.implicitHeight
 
     containmentMask: Item {
-        x: -btPopup.width
-        y: -btPopup.height
-        width: btPopup.width * 2 + btSection.width
-        height: btPopup.height + btSection.height
+        x: btSection.popupOpen ? -Math.max(0, (btPopup.width - btSection.width) / 2) : 0
+        y: btSection.popupOpen ? -btPopup.height - Config.bar.popupOffset : 0
+        width: btSection.popupOpen ? Math.max(btSection.width, btPopup.width) : btSection.width
+        height: btSection.popupOpen ? btPopup.height + Config.bar.popupOffset + btSection.height : btSection.height
     }
 
     readonly property bool popupOpen: activePopup === "bt"

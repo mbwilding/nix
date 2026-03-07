@@ -49,6 +49,15 @@ Scope {
     function openPopup(name) {
         root.activePopup = name;
         root.popupHovered = true;
+        quickCloseTimer.stop();
+        popupCloseTimer.stop();
+        root.keepAlive();
+    }
+
+    // Called by popup hover-enter (keeps popup alive)
+    function enterPopup() {
+        root.popupHovered = true;
+        quickCloseTimer.stop();
         popupCloseTimer.stop();
         root.keepAlive();
     }
@@ -57,16 +66,15 @@ Scope {
     function exitPopup() {
         root.popupHovered = false;
         if (root.activePopup !== "") {
-            popupCloseTimer.restart();
+            quickCloseTimer.restart();
             root.keepAlive();
         }
     }
 
-    // Called by trigger hover-exit (mouse leaving the trigger, not the popup)
+    // Called by trigger hover-exit
     function keepPopup() {
         if (root.activePopup !== "") {
-            if (!root.popupHovered)
-                popupCloseTimer.restart();
+            quickCloseTimer.restart();
             root.keepAlive();
         }
     }
@@ -75,14 +83,21 @@ Scope {
         root.activePopup = "";
         root.popupHovered = false;
         popupCloseTimer.stop();
+        quickCloseTimer.stop();
         root.keepAlive();
     }
 
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
-        onTriggered: if (!root.popupHovered)
-            root.closePopup()
+        onTriggered: root.closePopup()
+    }
+
+    // Closes popup shortly after mouse leaves trigger and/or popup
+    Timer {
+        id: quickCloseTimer
+        interval: 300
+        onTriggered: root.closePopup()
     }
 
     // ── Bar show/hide ─────────────────────────────────────────────────────────
@@ -438,10 +453,6 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "clock" ? clockSection.popup : null
-                intersection: Intersection.Combine
-            }
-            Region {
                 item: root.activeTrayMenuPopup
                 intersection: Intersection.Combine
             }
@@ -671,11 +682,7 @@ Scope {
                 // ── Clock / Date ──────────────────────────────────────────────
                 BarClockSection {
                     id: clockSection
-                    activePopup: root.activePopup
                     clockDate: clock.date
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
                 }
             }
         }

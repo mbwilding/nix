@@ -57,10 +57,10 @@ Item {
     implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
 
     containmentMask: Item {
-        x: -powerPopup.width
-        y: -powerPopup.height
-        width: powerPopup.width * 2 + powerSection.width
-        height: powerPopup.height + powerSection.height
+        x: powerSection.popupOpen ? -Math.max(0, (powerPopup.width - powerSection.width) / 2) : 0
+        y: powerSection.popupOpen ? -powerPopup.height - Config.bar.popupOffset : 0
+        width: powerSection.popupOpen ? Math.max(powerSection.width, powerPopup.width) : powerSection.width
+        height: powerSection.popupOpen ? powerPopup.height + Config.bar.popupOffset + powerSection.height : powerSection.height
     }
 
     readonly property bool popupOpen: activePopup === "power"
