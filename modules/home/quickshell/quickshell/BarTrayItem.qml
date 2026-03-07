@@ -90,7 +90,7 @@ Item {
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            acceptedButtons: Qt.LeftButton
             cursorShape: Qt.PointingHandCursor
 
             onEntered: {
@@ -100,14 +100,9 @@ Item {
             }
             onExited: root.keepPopupReq()
 
-            onClicked: mouse => {
+            onClicked: {
                 root.hovered();
-                if (mouse.button === Qt.RightButton) {
-                    if (root.trayItem.hasMenu && root.popupName !== "")
-                        root.openPopupReq(root.popupName);
-                } else {
-                    root.trayItem.activate();
-                }
+                root.trayItem.activate();
             }
         }
     }
