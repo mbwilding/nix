@@ -411,7 +411,7 @@ Scope {
     PanelWindow {
         id: win
 
-        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
         exclusiveZone: 0
         color: "transparent"
