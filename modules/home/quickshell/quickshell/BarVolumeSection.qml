@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
 import "components"
@@ -62,13 +63,40 @@ Item {
         const result = [];
         for (let i = 0; i < vals.length; i++) {
             const n = vals[i];
-            if (n && n.audio !== null && !n.isSink && !n.isStream)
+            if (n && n.audio !== null && !n.isSink && !n.isStream
+                    && n.properties["device.class"] !== "monitor")
                 result.push(n);
         }
         return result;
     }
 
     visible: volumeSection.defaultSink !== null
+
+    // ── Suspend/resume state ───────────────────────────────────────────────────
+    // PipeWire node state doesn't update live in node.properties, so we track
+    // suspended nodes locally as a JS object keyed by node.name.
+    property var suspendedNodes: ({})
+
+    // Shared pactl process — commands are fire-and-forget, so one instance is fine.
+    Process {
+        id: pactlProc
+    }
+
+    function toggleSuspend(node, isSink) {
+        if (!node) return;
+        const name = node.name;
+        const wasSuspended = !!volumeSection.suspendedNodes[name];
+        const newState = !wasSuspended;
+        // Update local tracking (must reassign for QML binding to fire)
+        const copy = Object.assign({}, volumeSection.suspendedNodes);
+        if (newState) copy[name] = true;
+        else delete copy[name];
+        volumeSection.suspendedNodes = copy;
+        // Fire pactl
+        const subcmd = isSink ? "suspend-sink" : "suspend-source";
+        pactlProc.command = ["pactl", subcmd, name, newState ? "1" : "0"];
+        pactlProc.running = true;
+    }
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
@@ -186,15 +214,15 @@ Item {
     // Overhead = everything in a name row except the name text itself.
     // RowLayout margins: left(8) + right(8) = 16 scaled
     // RowLayout children (spacing=6 each gap, 3 gaps between 4 items = 18 scaled):
-    //   icon(fontSizeStatus*0.9) + spacing + [name] + spacing + dot(6) + spacing + muteBtn(22)
-    // = icon + dot + muteBtn + 3*spacing + 2*margin
+    //   icon(fontSizeStatus*0.9) + spacing + [name] + spacing + muteBtn(22) + spacing + suspendBtn(22)
+    // = icon + muteBtn + suspendBtn + 3*spacing + 2*margin
     readonly property real _nameRowOverhead: Math.round(
         Math.round(Config.bar.fontSizeStatus * 0.9)   // device icon
         + Math.round(6 * Config.scale)                 // icon→name spacing
-        + Math.round(6 * Config.scale)                 // name→dot spacing
-        + Math.round(6 * Config.scale)                 // dot size
-        + Math.round(6 * Config.scale)                 // dot→muteBtn spacing
+        + Math.round(6 * Config.scale)                 // name→muteBtn spacing
         + Math.round(22 * Config.scale)                // mute button
+        + Math.round(6 * Config.scale)                 // muteBtn→suspendBtn spacing
+        + Math.round(22 * Config.scale)                // suspend button
         + Math.round(8 * Config.scale)                 // left margin
         + Math.round(8 * Config.scale))                // right margin
 
@@ -415,6 +443,13 @@ Item {
 
         readonly property var nodeAudio: deviceRow.node?.audio ?? null
 
+        // Dim suspended non-default devices so they're visually distinct
+        readonly property bool isSuspended: deviceRow.volumeSection
+            ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
+            : false
+        opacity: (deviceRow.isSuspended && !deviceRow.isDefault) ? 0.6 : 1.0
+        Behavior on opacity { NumberAnimation { duration: 150 } }
+
         implicitHeight: rowContent.implicitHeight + Math.round(12 * Config.scale)
         radius: Math.round(6 * Config.scale)
 
@@ -489,15 +524,6 @@ Item {
                     Behavior on color { ColorAnimation { duration: 120 } }
                 }
 
-                // Default indicator dot
-                Rectangle {
-                    visible: deviceRow.isDefault
-                    width: Math.round(6 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Config.colors.accent
-                }
-
                 // Mute toggle button
                 Rectangle {
                     id: muteBtn
@@ -545,6 +571,52 @@ Item {
                             mouse.accepted = true;
                             if (deviceRow.nodeAudio)
                                 deviceRow.nodeAudio.muted = !deviceRow.nodeAudio.muted;
+                        }
+                    }
+                }
+
+                // Suspend / resume toggle button
+                Rectangle {
+                    id: suspendBtn
+                    readonly property bool isSuspended: deviceRow.volumeSection
+                        ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
+                        : false
+
+                    implicitWidth: Math.round(22 * Config.scale)
+                    implicitHeight: Math.round(22 * Config.scale)
+                    radius: Math.round(5 * Config.scale)
+                    color: suspendBtnMouse.containsMouse
+                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
+                        : (suspendBtn.isSuspended ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                                                  : Qt.rgba(1, 1, 1, 0.06))
+                    border.color: suspendBtnMouse.containsMouse
+                        ? Config.colors.accent
+                        : (suspendBtn.isSuspended ? Config.colors.accent : Config.colors.border)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 80 } }
+                    Behavior on border.color { ColorAnimation { duration: 80 } }
+
+                    IconImage {
+                        anchors.centerIn: parent
+                        implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
+                        source: suspendBtn.isSuspended
+                            ? Quickshell.iconPath("media-playback-start-symbolic")
+                            : Quickshell.iconPath("media-playback-pause-symbolic")
+                    }
+
+                    MouseArea {
+                        id: suspendBtnMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: {
+                            if (deviceRow.volumeSection)
+                                deviceRow.volumeSection.openPopupReq("volume");
+                        }
+                        onClicked: {
+                            mouse.accepted = true;
+                            if (deviceRow.volumeSection && deviceRow.node)
+                                deviceRow.volumeSection.toggleSuspend(deviceRow.node, deviceRow.isSinkDevice);
                         }
                     }
                 }
