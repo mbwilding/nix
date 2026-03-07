@@ -48,7 +48,7 @@ Item {
         const result = [];
         for (let i = 0; i < vals.length; i++) {
             const d = vals[i];
-            if (d && d.state !== 1)
+            if (d && !d.connected)
                 result.push({ label: btSection.deviceName(d), icon: btSection.deviceIcon(d), address: d.address || "" });
         }
         return result;
@@ -62,7 +62,7 @@ Item {
         const result = [];
         for (let i = 0; i < vals.length; i++) {
             const d = vals[i];
-            if (d && d.state === 1)
+            if (d && d.connected)
                 result.push({ label: btSection.deviceName(d), icon: btSection.deviceIcon(d), address: d.address || "" });
         }
         return result;
@@ -82,9 +82,12 @@ Item {
 
     readonly property bool popupOpen: activePopup === "bt"
 
-    // Do not toggle a.discovering on popup open — setting it to true causes
-    // the Bluetooth stack to clear a.devices temporarily, making the list
-    // flash empty ("Scanning…") while paired devices are momentarily dropped.
+    // Enable discovery while the popup is open so nearby devices appear.
+    onPopupOpenChanged: {
+        const a = btSection.adapter;
+        if (!a || !a.enabled) return;
+        a.discovering = btSection.popupOpen;
+    }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -181,7 +184,8 @@ Item {
         emptyText: {
             const a = btSection.adapter;
             if (!a || !a.enabled) return "Bluetooth is off";
-            return "No paired devices";
+            if (a.discovering) return "Scanning\u2026";
+            return "No devices found";
         }
 
         // JS arrays for width sizing only
@@ -191,7 +195,7 @@ Item {
         // Raw-model mode: Repeater uses the QML model directly for reactivity
         rawModel: (btSection.adapter && btSection.adapter.enabled)
                   ? btSection.adapter.devices : null
-        rawIsConnectedFn: d => d && d.state === 1
+        rawIsConnectedFn: d => d && d.connected
         rawLabelFn: d => btSection.deviceName(d)
         rawIconFn: d => btSection.deviceIcon(d)
 
@@ -201,7 +205,8 @@ Item {
         onRawAvailableClicked: d => {
             if (!d || d.state === 3 || d.state === 2) return;
             btSection.connectingAddress = d.address || "";
-            d.connect();
+            if (d.paired) d.connect();
+            else d.pair();
             btSection.openPopupReq("bt");
         }
 
@@ -232,7 +237,7 @@ Item {
             onDevStateChanged: {
                 const d = btWatcher.modelData;
                 if (!d) return;
-                if (btWatcher.devState === 1 && btSection.connectingAddress === (d.address || "")) {
+                if (d.connected && btSection.connectingAddress === (d.address || "")) {
                     btSection.connectingAddress = "";
                     btSection.btNotify(
                         "Bluetooth Connected",
