@@ -356,8 +356,8 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 if (root.historyMode) {
-                                    // Snapshot actions are plain JS objects — nothing to invoke.
-                                    // Just remove the entry from history.
+                                    // Live NotificationAction object stored in snapshot — invoke it.
+                                    actionDelegate.modelData.invoke();
                                     root.dismissed();
                                 } else {
                                     actionDelegate.modelData.invoke();
