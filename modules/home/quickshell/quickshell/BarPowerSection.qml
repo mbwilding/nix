@@ -68,6 +68,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
+        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -75,13 +76,20 @@ Item {
         onExited: powerSection.keepPopupReq()
     }
 
-    Text {
-        id: powerGlyphText
-        anchors.centerIn: parent
-        text: powerSection.activeProfile.glyph
-        font.family: Config.font.family
-        font.pixelSize: Config.bar.powerIconSize
-        color: Config.colors.textSecondary
+    BarButton {
+        id: triggerButton
+        anchors.fill: parent
+        hovered: triggerArea.containsMouse
+        popupOpen: powerSection.popupOpen
+
+        Text {
+            id: powerGlyphText
+            anchors.centerIn: parent
+            text: powerSection.activeProfile.glyph
+            font.family: Config.font.family
+            font.pixelSize: Config.bar.powerIconSize
+            color: Config.colors.textSecondary
+        }
     }
 
     // ── Popup ─────────────────────────────────────────────────────────────────

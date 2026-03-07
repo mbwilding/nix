@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import ".."
+import "../components"
 
 // Generic brightness bar section: trigger icon + horizontal slider popup.
 // Reads state from BrightnessService singleton; no internal polling.
@@ -40,8 +41,8 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth: iconRow.implicitWidth
-    implicitHeight: iconRow.implicitHeight
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: available
 
     containmentMask: Item {
@@ -54,6 +55,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
+        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -67,11 +69,14 @@ Item {
         }
     }
 
-    RowLayout {
-        id: iconRow
-        spacing: Math.round(6 * Config.scale)
+    BarButton {
+        id: triggerButton
+        anchors.fill: parent
+        hovered: triggerArea.containsMouse
+        popupOpen: brightnessSection.popupOpen
 
         IconImage {
+            anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(brightnessSection.iconName)
         }

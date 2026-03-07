@@ -65,8 +65,8 @@ Item {
 
     // ── Geometry (match pill row) ─────────────────────────────────────────────
 
-    implicitWidth: wifiRow.implicitWidth
-    implicitHeight: wifiRow.implicitHeight
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
     containmentMask: Item {
         x: wifiSection.popupOpen ? -Math.max(0, (wifiPopup.width - wifiSection.width) / 2) : 0
@@ -262,6 +262,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
+        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -272,11 +273,13 @@ Item {
         }
     }
 
-    RowLayout {
-        id: wifiRow
-        spacing: Math.round(6 * Config.scale)
+    BarButton {
+        anchors.fill: parent
+        hovered: triggerArea.containsMouse
+        popupOpen: wifiSection.popupOpen
 
         IconImage {
+            anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(wifiSection.icon(wifiSection.strength))
             opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity

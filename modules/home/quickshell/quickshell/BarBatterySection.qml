@@ -29,8 +29,8 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth: batteryIcon.implicitWidth
-    implicitHeight: batteryIcon.implicitHeight
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: b !== null && b.isLaptopBattery
 
     containmentMask: Item {
@@ -45,6 +45,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     HoverHandler {
+        id: triggerHover
         onHoveredChanged: {
             if (hovered)
                 batterySection.openPopupReq("battery");
@@ -53,19 +54,27 @@ Item {
         }
     }
 
-    IconImage {
-        id: batteryIcon
-        implicitSize: Config.bar.batteryIconSize
-        source: {
-            const b = batterySection.b;
-            if (!b || !b.isLaptopBattery)
-                return "";
-            const pct = Math.round(b.percentage * 100);
-            const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
-            const level = Math.min(100, Math.round(pct / 10) * 10);
-            const lvlStr = String(level).padStart(3, "0");
-            const chargeSuffix = charging ? "-charging" : "";
-            return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
+    BarButton {
+        id: batteryButton
+        anchors.fill: parent
+        hovered: triggerHover.hovered
+        popupOpen: batterySection.popupOpen
+
+        IconImage {
+            id: batteryIcon
+            anchors.centerIn: parent
+            implicitSize: Config.bar.batteryIconSize
+            source: {
+                const b = batterySection.b;
+                if (!b || !b.isLaptopBattery)
+                    return "";
+                const pct = Math.round(b.percentage * 100);
+                const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
+                const level = Math.min(100, Math.round(pct / 10) * 10);
+                const lvlStr = String(level).padStart(3, "0");
+                const chargeSuffix = charging ? "-charging" : "";
+                return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
+            }
         }
     }
 
