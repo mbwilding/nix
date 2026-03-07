@@ -31,9 +31,24 @@ Scope {
     // removeHistoryEntry defers the model update until the chain completes.
     property var _pendingRemoval: ({})
 
+    // Snapshot IDs from live-dismissed cards waiting for history animation to finish.
+    property var _pendingDirectRemovals: []
+
     // Emitted when a live toast is dismissed — tells the history popup to
     // animate out the matching card, which then calls removeHistoryEntry itself.
     signal animateOutHistoryEntry(var snapId)
+
+    // Fires after animateSpeed to flush direct removals (live card dismissed path).
+    Timer {
+        id: directRemovalTimer
+        interval: Config.notifications.animateSpeed + 50
+        repeat: false
+        onTriggered: {
+            const ids = root._pendingDirectRemovals;
+            root._pendingDirectRemovals = [];
+            root.notifHistory = root.notifHistory.filter(e => !ids.includes(e.id));
+        }
+    }
 
     // Dismiss every live toast and every history entry simultaneously.
     // Live cards slide out; history array is cleared after one animation cycle
@@ -51,6 +66,8 @@ Scope {
             root.notifHistory = [];
             root._notifSnapshotIds = ({});
             root._pendingRemoval = ({});
+            root._pendingDirectRemovals = [];
+            directRemovalTimer.stop();
         }
     }
 
@@ -77,12 +94,6 @@ Scope {
                 entry.liveNotif.dismiss();
             }
         }
-        root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
-    }
-
-    // Called when a live card has finished animating out — remove the history
-    // entry directly without going through the liveNotif branch.
-    function removeHistoryEntryDirect(entryId) {
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
     }
 
@@ -292,14 +303,13 @@ Scope {
                         if (snapId !== undefined) {
                             delete root._notifSnapshotIds[notifCardDelegate.modelData.id];
                             if (root._pendingRemoval[snapId]) {
-                                // History card dismissed first and deferred — finish now.
                                 delete root._pendingRemoval[snapId];
                             }
-                            // Animate the history card out if popup is open (visual only),
-                            // then remove the entry directly — don't rely on the card's
-                            // onDismissed to do the removal (type coercion issues through signal chain).
+                            // Tell the history card to animate out (if popup is open).
+                            // Delay the model update until the animation completes.
                             root.animateOutHistoryEntry(snapId);
-                            Qt.callLater(() => root.removeHistoryEntryDirect(snapId));
+                            root._pendingDirectRemovals.push(snapId);
+                            directRemovalTimer.restart();
                         }
                     }
 
