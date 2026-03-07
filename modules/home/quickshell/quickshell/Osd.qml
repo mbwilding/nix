@@ -3,9 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
+import "components"
+import "services"
 
 Scope {
     id: root
@@ -14,44 +15,13 @@ Scope {
     property bool kbdVisible: false
     property bool screenVisible: false
     property bool volumeVisible: false
-    property int _kbdMax: 1
-    property int _kbdRaw: -1
-    property int _screenMax: 1
-    property int _screenRaw: -1
     property real _volumeRaw: -1
-    property real kbdBrightness: 0
-    property real screenBrightness: 0
-    property string kbdDevice: ""
-    property string screenDevice: ""
-    readonly property bool kbdAvailable: _kbdMax > 1
-    readonly property bool screenAvailable: _screenMax > 1
+
+    readonly property bool kbdAvailable: BrightnessService.kbdAvailable
+    readonly property bool screenAvailable: BrightnessService.screenAvailable
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
     readonly property int panelHeight: root.rowCount * Config.osd.rowHeight + Math.round(16 * Config.scale)
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
-
-    Process {
-        command: ["sh", "-c", "ls /sys/class/backlight/ | head -1"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const dev = this.text.trim();
-                if (dev)
-                    root.screenDevice = "/sys/class/backlight/" + dev;
-            }
-        }
-    }
-
-    Process {
-        command: ["sh", "-c", "ls /sys/class/leds/ | grep kbd_backlight | head -1"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const dev = this.text.trim();
-                if (dev)
-                    root.kbdDevice = "/sys/class/leds/" + dev;
-            }
-        }
-    }
 
     Timer {
         id: hideTimer
@@ -94,77 +64,23 @@ Scope {
         }
     }
 
-    // Screen
-    Process {
-        command: ["cat", root.screenDevice + "/max_brightness"]
-        running: root.screenDevice !== ""
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0)
-                    root._screenMax = v;
+    // Show OSD when screen brightness changes (skip the first read)
+    property bool _screenFirstRead: true
+    Connections {
+        target: BrightnessService
+        function onScreenBrightnessChanged() {
+            if (root._screenFirstRead) {
+                root._screenFirstRead = false;
+                return;
             }
+            if (root.screenAvailable)
+                root.show();
         }
-    }
-
-    Timer {
-        interval: 200
-        repeat: true
-        running: root.screenDevice !== "" && (root.screenAvailable || root._screenMax === 1)
-        onTriggered: screenPollProc.running = true
-    }
-
-    Process {
-        id: screenPollProc
-        command: ["cat", root.screenDevice + "/brightness"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const v = parseInt(this.text);
-                if (!isNaN(v) && v !== root._screenRaw) {
-                    const firstRead = root._screenRaw === -1;
-                    root._screenRaw = v;
-                    root.screenBrightness = v / root._screenMax;
-                    if (!firstRead && root.screenAvailable)
-                        root.show();
-                }
-            }
-        }
-    }
-
-    // Keyboard
-    Process {
-        command: ["cat", root.kbdDevice + "/max_brightness"]
-        running: root.kbdDevice !== ""
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const v = parseInt(this.text);
-                if (!isNaN(v) && v > 0)
-                    root._kbdMax = v;
-            }
-        }
-    }
-
-    Timer {
-        interval: 200
-        repeat: true
-        running: root.kbdDevice !== "" && (root.kbdAvailable || root._kbdMax === 1)
-        onTriggered: kbdPollProc.running = true
-    }
-
-    Process {
-        id: kbdPollProc
-        command: ["cat", root.kbdDevice + "/brightness"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const v = parseInt(this.text);
-                if (!isNaN(v) && v !== root._kbdRaw) {
-                    const firstRead = root._kbdRaw === -1;
-                    root._kbdRaw = v;
-                    root.kbdBrightness = v / root._kbdMax;
-                    if (!firstRead && root.kbdAvailable)
-                        root.show();
-                }
-            }
+        function onKbdBrightnessChanged() {
+            if (root._screenFirstRead)
+                return;
+            if (root.kbdAvailable)
+                root.show();
         }
     }
 
@@ -208,25 +124,9 @@ Scope {
             }
 
             // Panel card
-            Rectangle {
-                id: panel
+            PopupCard {
                 anchors.fill: parent
-                radius: Config.osd.radius
-                antialiasing: true
-                color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-                border.color: Config.colors.border
-                border.width: 1
-                clip: true
-
-                // Top shine rim
-                Rectangle {
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 1
-                    radius: parent.radius
-                    color: "#25ffffff"
-                }
+                popupRadius: Config.osd.radius
 
                 Column {
                     anchors {
@@ -255,15 +155,15 @@ Scope {
                     OsdRow {
                         visible: root.screenVisible
                         iconName: "video-display-brightness-symbolic"
-                        value: root.screenBrightness
-                        label: Math.round(root.screenBrightness * 100) + "%"
+                        value: BrightnessService.screenBrightness
+                        label: Math.round(BrightnessService.screenBrightness * 100) + "%"
                     }
 
                     OsdRow {
                         visible: root.kbdVisible
                         iconName: "input-keyboard-brightness"
-                        value: root.kbdBrightness
-                        label: Math.round(root.kbdBrightness * 100) + "%"
+                        value: BrightnessService.kbdBrightness
+                        label: Math.round(BrightnessService.kbdBrightness * 100) + "%"
                     }
                 }
             }

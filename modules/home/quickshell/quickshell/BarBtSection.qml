@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import Quickshell.Widgets
+import "components"
 
 // BluetoothDeviceState enum values: Disconnected=0, Connected=1, Disconnecting=2, Connecting=3
 
@@ -125,19 +126,9 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    Rectangle {
+    PopupContainer {
         id: btPopup
-        visible: opacity > 0
-        opacity: btSection.popupOpen ? 1 : 0
-        scale: btSection.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
-
-        Behavior on opacity {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
-        }
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
+        popupOpen: btSection.popupOpen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -161,13 +152,7 @@ Item {
             Math.round(400 * Config.scale)
         )
 
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
         z: 20
-        clip: true
 
         HoverHandler {
             onHoveredChanged: {

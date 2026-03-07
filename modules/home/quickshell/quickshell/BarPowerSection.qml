@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.UPower
+import "components"
 
 // Power-profiles bar section: active profile glyph trigger + popup with profile list.
 //
@@ -78,19 +79,9 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    Rectangle {
+    PopupContainer {
         id: powerPopup
-        visible: opacity > 0
-        opacity: powerSection.popupOpen ? 1 : 0
-        scale: powerSection.popupOpen ? 1 : 0.90
-        transformOrigin: Item.Bottom
-
-        Behavior on opacity {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
-        }
-        Behavior on scale {
-            NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
+        popupOpen: powerSection.popupOpen
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -99,12 +90,6 @@ Item {
         width: powerPopupCol.implicitWidth + Math.round(20 * Config.scale)
         height: powerPopupCol.implicitHeight + Math.round(20 * Config.scale)
 
-        radius: Math.round(Config.bar.popupRadius * Config.scale)
-        antialiasing: true
-        color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-        border.color: Config.colors.border
-        border.width: 1
-        clip: true
         z: 20
 
         HoverHandler {
