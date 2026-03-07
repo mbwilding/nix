@@ -10,10 +10,26 @@ import "components"
 Item {
     id: root
 
-    required property Notification notification
+    // In live mode: set this to the Notification object.
+    // In history mode: leave null; set historyMode = true and snapshot = {...}.
+    property Notification notification: null
+
+    // History mode — display a static snapshot instead of a live notification.
+    property bool historyMode: false
+    property var snapshot: null   // { id, appName, appIcon, desktopEntry, summary, body, actions, receivedAt }
+
     property int timeout: Config.notifications.timeout
     property bool visible_: false
     property real latchedHeight: 0
+
+    // Set to true by dismissTimer before animateOut() so we can suppress
+    // the dismissed() signal (timeout = stay in history).
+    property bool _timedOut: false
+
+    // Emitted after the card has fully animated out.
+    // In live mode: NOT emitted on timeout (so timed-out entries stay in history).
+    // In history mode: emitted when the user interacts to remove the entry.
+    signal dismissed
 
     clip: false
     implicitHeight: latchedHeight
@@ -46,8 +62,11 @@ Item {
     Timer {
         id: dismissTimer
         interval: root.timeout
-        running: root.visible_ && root.timeout > 0
-        onTriggered: root.animateOut()
+        running: root.visible_ && root.timeout > 0 && !root.historyMode
+        onTriggered: {
+            root._timedOut = true;
+            root.animateOut();
+        }
     }
 
     SequentialAnimation {
@@ -79,7 +98,12 @@ Item {
 
         ScriptAction {
             script: {
-                root.notification?.dismiss();
+                if (!root._timedOut) {
+                    // Live mode: dismiss the notification server-side.
+                    // History mode: notification is null, nothing to dismiss.
+                    root.notification?.dismiss();
+                    root.dismissed();
+                }
             }
         }
     }
@@ -124,11 +148,17 @@ Item {
             }
         }
 
-        // Card tap — dismiss only
+        // Card tap — dismiss (live) or remove from history
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: root.animateOut()
+            onClicked: {
+                if (root.historyMode) {
+                    root.dismissed();
+                } else {
+                    root.animateOut();
+                }
+            }
         }
 
         // Left accent bar — gradient from accent to accentAlt
@@ -185,16 +215,15 @@ Item {
                 IconImage {
                     implicitSize: Config.notifications.iconSize
                     source: {
-                        const n = root.notification;
-                        if (!n)
-                            return "";
-                        if (n.appIcon !== "") {
-                            const path = Quickshell.iconPath(n.appIcon);
+                        const appIcon    = root.historyMode ? (root.snapshot?.appIcon    ?? "") : (root.notification?.appIcon    ?? "");
+                        const deskEntry  = root.historyMode ? (root.snapshot?.desktopEntry ?? "") : (root.notification?.desktopEntry ?? "");
+                        if (appIcon !== "") {
+                            const path = Quickshell.iconPath(appIcon);
                             if (path !== "")
                                 return path;
                         }
-                        if (n.desktopEntry !== "" && n.desktopEntry !== null) {
-                            const entry = DesktopEntries.byId(n.desktopEntry);
+                        if (deskEntry !== "" && deskEntry !== null) {
+                            const entry = DesktopEntries.byId(deskEntry);
                             if (entry && entry.icon !== "")
                                 return Quickshell.iconPath(entry.icon);
                         }
@@ -204,7 +233,7 @@ Item {
                 }
 
                 Text {
-                    text: root.notification?.appName ?? ""
+                    text: root.historyMode ? (root.snapshot?.appName ?? "") : (root.notification?.appName ?? "")
                     color: Config.colors.accent
                     font.family: Config.font.family
                     font.pixelSize: Config.notifications.fontSizeAppName
@@ -214,7 +243,13 @@ Item {
                 }
 
                 Text {
-                    text: Qt.formatTime(new Date(), "hh:mm")
+                    text: {
+                        if (root.historyMode) {
+                            const d = root.snapshot?.receivedAt;
+                            return d ? Qt.formatTime(d, "hh:mm") : "";
+                        }
+                        return Qt.formatTime(new Date(), "hh:mm");
+                    }
                     color: Config.colors.textMuted
                     font.family: Config.font.family
                     font.pixelSize: Config.notifications.fontSizeTimestamp
@@ -223,7 +258,7 @@ Item {
 
             // Summary
             Text {
-                text: root.notification?.summary ?? ""
+                text: root.historyMode ? (root.snapshot?.summary ?? "") : (root.notification?.summary ?? "")
                 color: Config.colors.textPrimary
                 font.family: Config.font.family
                 font.pixelSize: Config.notifications.fontSizeSummary
@@ -235,7 +270,7 @@ Item {
 
             // Body
             Text {
-                text: root.notification?.body ?? ""
+                text: root.historyMode ? (root.snapshot?.body ?? "") : (root.notification?.body ?? "")
                 color: Config.colors.textSecondary
                 font.family: Config.font.family
                 font.pixelSize: Config.notifications.fontSizeBody
@@ -252,13 +287,18 @@ Item {
                 Layout.fillWidth: true
                 Layout.bottomMargin: Math.round(4 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
-                visible: (root.notification?.actions?.length ?? 0) > 0
+
+                readonly property var _actions: root.historyMode
+                    ? (root.snapshot?.actions ?? [])
+                    : (root.notification?.actions ?? [])
+                visible: _actions.length > 0
 
                 Repeater {
-                    model: root.notification?.actions ?? []
+                    model: parent._actions
 
                     delegate: Item {
-                        required property NotificationAction modelData
+                        id: actionDelegate
+                        required property var modelData
 
                         implicitHeight: Math.round(28 * Config.scale)
                         implicitWidth: actionBg.implicitWidth
@@ -296,7 +336,9 @@ Item {
                             Text {
                                 id: actionLabel
                                 anchors.centerIn: parent
-                                text: modelData.text
+                                // In live mode modelData is a NotificationAction object with .text
+                                // In history mode modelData is a plain JS object {identifier, text}
+                                text: actionDelegate.modelData.text ?? ""
                                 color: actionArea.containsMouse ? Config.colors.accent : Config.colors.textPrimary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.notifications.fontSizeAction
@@ -313,8 +355,14 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                modelData.invoke();
-                                root.animateOut();
+                                if (root.historyMode) {
+                                    // Snapshot actions are plain JS objects — nothing to invoke.
+                                    // Just remove the entry from history.
+                                    root.dismissed();
+                                } else {
+                                    actionDelegate.modelData.invoke();
+                                    root.animateOut();
+                                }
                             }
                         }
                     }
