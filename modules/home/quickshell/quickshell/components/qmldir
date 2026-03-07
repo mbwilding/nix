@@ -1,4 +1,5 @@
 module components
+BarButton 1.0 BarButton.qml
 GradientProgressBar 1.0 GradientProgressBar.qml
 PopupCard 1.0 PopupCard.qml
 PopupContainer 1.0 PopupContainer.qml
