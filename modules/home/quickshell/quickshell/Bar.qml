@@ -152,11 +152,14 @@ Scope {
     }
 
     // Keep all audio nodes tracked so BarVolumeSection can enumerate them.
-    Repeater {
-        model: Pipewire.nodes
-        delegate: PwObjectTracker {
-            required property var modelData
-            objects: [modelData]
+    // A single tracker over the full values array is more robust than a
+    // Repeater: when Pipewire.nodes resets during a device switch the Repeater
+    // tears down all delegates simultaneously, leaving every node momentarily
+    // untracked and causing volume/mute to read as NaN/0 for that frame.
+    PwObjectTracker {
+        objects: {
+            void Pipewire.nodes.valuesChanged;
+            return Pipewire.nodes.values;
         }
     }
 
