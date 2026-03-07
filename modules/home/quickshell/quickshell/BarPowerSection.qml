@@ -51,12 +51,6 @@ Item {
         return profiles[1];  // fallback to Balanced
     }
 
-    function cycleProfile() {
-        const idx = profiles.findIndex(p => p.profile === PowerProfiles.profile);
-        const next = profiles[(idx + 1) % profiles.length];
-        PowerProfiles.profile = next.profile;
-    }
-
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
@@ -80,23 +74,15 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onEntered: powerSection.openPopupReq("power")
         onExited: powerSection.keepPopupReq()
-        onClicked: powerSection.cycleProfile()
     }
 
-    BarButton {
-        id: triggerButton
-        anchors.fill: parent
-        hovered: triggerArea.containsMouse
-        popupOpen: powerSection.popupOpen
-
-        Text {
-            id: powerGlyphText
-            anchors.centerIn: parent
-            text: powerSection.activeProfile.glyph
-            font.family: Config.font.family
-            font.pixelSize: Config.bar.powerIconSize
-            color: Config.colors.textSecondary
-        }
+    Text {
+        id: powerGlyphText
+        anchors.centerIn: parent
+        text: powerSection.activeProfile.glyph
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.powerIconSize
+        color: Config.colors.textSecondary
     }
 
     // ── Popup ─────────────────────────────────────────────────────────────────

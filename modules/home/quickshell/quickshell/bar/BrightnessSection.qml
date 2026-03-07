@@ -69,17 +69,10 @@ Item {
         }
     }
 
-    BarButton {
-        id: triggerButton
-        anchors.fill: parent
-        hovered: triggerArea.containsMouse
-        popupOpen: brightnessSection.popupOpen
-
-        IconImage {
-            anchors.centerIn: parent
-            implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(brightnessSection.iconName)
-        }
+    IconImage {
+        anchors.centerIn: parent
+        implicitSize: Config.bar.batteryIconSize
+        source: Quickshell.iconPath(brightnessSection.iconName)
     }
 
     // ── Popup ─────────────────────────────────────────────────────────────────
