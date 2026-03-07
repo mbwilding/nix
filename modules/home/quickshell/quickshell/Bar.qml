@@ -492,8 +492,10 @@ Scope {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.topMargin: 1
+                anchors.leftMargin: parent.radius
+                anchors.rightMargin: parent.radius
                 height: 1
-                radius: parent.radius
                 color: "#25ffffff"
             }
 
