@@ -23,9 +23,8 @@ Scope {
     // Array of snapshot objects: { id, appName, appIcon, desktopEntry, summary,
     //                               body, actions[{identifier,text}], receivedAt }
     property var notifHistory: []
-    property int unreadCount: 0
 
-    // Maps notification JS object identity (by unique key) → snapshot id
+    // Maps live notification id → snapshot id
     // so we can remove history when the live card is dismissed.
     property var _notifSnapshotIds: ({})
 
@@ -35,10 +34,6 @@ Scope {
 
     function removeHistoryEntry(entryId) {
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
-    }
-
-    function markHistoryRead() {
-        root.unreadCount = 0;
     }
 
     // ── Battery ───────────────────────────────────────────────────────────────
@@ -183,13 +178,7 @@ Scope {
                 return;
             }
 
-            // Snapshot into history
-            const actions = [];
-            const rawActions = notification.actions ?? [];
-            for (let i = 0; i < rawActions.length; i++) {
-                const a = rawActions[i];
-                actions.push({ identifier: a.identifier, text: a.text });
-            }
+            // Snapshot into history — keep live action objects so they can still be invoked
             const snapId = Date.now() + Math.random();
             const snapshot = {
                 id: snapId,
@@ -198,11 +187,10 @@ Scope {
                 desktopEntry: notification.desktopEntry ?? "",
                 summary: notification.summary ?? "",
                 body: notification.body ?? "",
-                actions: actions,
+                actions: notification.actions ?? [],   // live NotificationAction objects
                 receivedAt: new Date()
             };
             root.notifHistory = [snapshot].concat(root.notifHistory);
-            root.unreadCount = root.unreadCount + 1;
 
             // Remember which snapshot this notification maps to
             root._notifSnapshotIds[notification.id] = snapId;
