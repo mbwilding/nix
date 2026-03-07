@@ -148,7 +148,7 @@ Item {
         onWheel: wheel => {
             const a = volumeSection.audio;
             if (a)
-                a.volume = Math.max(0, Math.min(1.5, a.volume + (wheel.angleDelta.y / 120) * 0.05));
+                a.volume = Math.max(0, Math.min(1.0, a.volume + (wheel.angleDelta.y / 120) * 0.05));
             volumeSection.keepAliveReq();
         }
     }
@@ -172,6 +172,35 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
+    // Measure node names so the popup is wide enough to show the longest one
+    // without truncation. Recomputed whenever the node lists change.
+    TextMetrics {
+        id: nameTm
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizeStatus
+    }
+
+    // icon(~fontSizeStatus) + iconSpacing(6) + label + dot(6+4) + muteBtn(22) + nameRowMargins(16)
+    readonly property real _nameRowOverhead: Math.round(
+        Config.bar.fontSizeStatus + 6 + 6 + 4 + 22 + 16, 0)
+    // slider row: label width(38) + gap(6) + scrollbar(3+3) + viewportMargins(8+4) + outerMargins(8+8)
+    readonly property real _sliderRowOverhead: Math.round(38 * Config.scale + 6 + 3 + 3 + 8 + 4 + 8 + 8, 0)
+    readonly property real _popupOverhead: Math.max(_nameRowOverhead, _sliderRowOverhead)
+
+    readonly property real _maxNodeNameWidth: {
+        // depend on both lists
+        void volumeSection.sinkNodes;
+        void volumeSection.sourceNodes;
+        const all = volumeSection.sinkNodes.concat(volumeSection.sourceNodes);
+        let maxW = 0;
+        for (let i = 0; i < all.length; i++) {
+            nameTm.text = volumeSection.nodeName(all[i]);
+            const w = nameTm.advanceWidth;
+            if (w > maxW) maxW = w;
+        }
+        return maxW;
+    }
+
     PopupContainer {
         id: volumePopup
         popupOpen: volumeSection.popupOpen
@@ -188,7 +217,10 @@ Item {
                                            - Math.round(16 * Config.scale)
         readonly property real _contentH: popupCol.implicitHeight + Math.round(16 * Config.scale)
 
-        width: Math.round(300 * Config.scale)
+        // Minimum 260px, grows to fit the longest device name
+        width: Math.max(Math.round(260 * Config.scale),
+                        volumeSection._maxNodeNameWidth + volumeSection._popupOverhead)
+        Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.InOutCubic } }
         height: Math.min(_contentH, _maxHeight)
 
         // ── Hover ─────────────────────────────────────────────────────────
@@ -413,8 +445,8 @@ Item {
                     source: {
                         if (!deviceRow.node) return "";
                         if (deviceRow.isSinkDevice)
-                            return Quickshell.iconPath(volumeSection.nodeVolumeIcon(deviceRow.node));
-                        return Quickshell.iconPath(volumeSection.sourceIcon(deviceRow.node));
+                            return Quickshell.iconPath(deviceRow.volumeSection.nodeVolumeIcon(deviceRow.node));
+                        return Quickshell.iconPath(deviceRow.volumeSection.sourceIcon(deviceRow.node));
                     }
                     opacity: (deviceRow.nodeAudio && deviceRow.nodeAudio.muted)
                              ? Config.bar.disabledOpacity : 1.0
@@ -424,7 +456,7 @@ Item {
                 // Device name
                 Text {
                     Layout.fillWidth: true
-                    text: volumeSection.nodeName(deviceRow.node)
+                    text: deviceRow.volumeSection.nodeName(deviceRow.node)
                     color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
                     font.family: Config.font.family
                     font.pixelSize: Config.bar.fontSizeStatus
@@ -467,8 +499,8 @@ Item {
                                     : Quickshell.iconPath("microphone-sensitivity-muted-symbolic");
                             }
                             if (deviceRow.isSinkDevice)
-                                return Quickshell.iconPath(volumeSection.nodeVolumeIcon(deviceRow.node));
-                            return Quickshell.iconPath(volumeSection.sourceIcon(deviceRow.node));
+                                return Quickshell.iconPath(deviceRow.volumeSection.nodeVolumeIcon(deviceRow.node));
+                            return Quickshell.iconPath(deviceRow.volumeSection.sourceIcon(deviceRow.node));
                         }
                         opacity: (deviceRow.nodeAudio && deviceRow.nodeAudio.muted)
                                  ? Config.bar.disabledOpacity : 1.0
@@ -502,22 +534,24 @@ Item {
                     ? Math.max(0, Math.min(1, deviceRow.nodeAudio.volume))
                     : 0
 
+                // Label is fixed-width and right-anchored; track fills everything to its left
+                readonly property real _labelW: Math.round(38 * Config.scale)
+                readonly property real _gap: Math.round(6 * Config.scale)
+                readonly property real _trackW: width - _labelW - _gap
+
                 GradientProgressBar {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
-                    anchors.right: volLabel.left
-                    anchors.rightMargin: Math.round(6 * Config.scale)
+                    width: parent._trackW
                     value: parent.frac
                     barHeight: Math.round(5 * Config.scale)
                 }
 
-                // Thumb glow
+                // Thumb glow — clamped so it never overlaps the label
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: {
-                        const trackW = parent.width - volLabel.width - Math.round(6 * Config.scale);
-                        return trackW * parent.frac - width / 2;
-                    }
+                    x: Math.min(parent._trackW, Math.max(0,
+                           parent._trackW * parent.frac)) - width / 2
                     width: Math.round(14 * Config.scale)
                     height: width
                     radius: width / 2
@@ -529,10 +563,8 @@ Item {
                 // Thumb
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: {
-                        const trackW = parent.width - volLabel.width - Math.round(6 * Config.scale);
-                        return trackW * parent.frac - width / 2;
-                    }
+                    x: Math.min(parent._trackW, Math.max(0,
+                           parent._trackW * parent.frac)) - width / 2
                     width: Math.round(10 * Config.scale)
                     height: width
                     radius: width / 2
@@ -540,14 +572,13 @@ Item {
                     Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                 }
 
-                // Slider mouse area
+                // Slider mouse area — only over the track, not the label
                 MouseArea {
                     id: sliderMouse
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
-                    anchors.right: volLabel.left
-                    anchors.rightMargin: Math.round(6 * Config.scale)
+                    width: parent._trackW
                     hoverEnabled: true
                     cursorShape: Qt.SizeHorCursor
                     onEntered: {
@@ -556,7 +587,7 @@ Item {
                     }
                     function setFromX(mx) {
                         if (!deviceRow.nodeAudio) return;
-                        const v = Math.max(0, Math.min(1.5, mx / width));
+                        const v = Math.max(0, Math.min(1.0, mx / parent._trackW));
                         deviceRow.nodeAudio.volume = v;
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
@@ -566,14 +597,14 @@ Item {
                     onWheel: wheel => {
                         if (!deviceRow.nodeAudio) return;
                         deviceRow.nodeAudio.volume = Math.max(0,
-                            Math.min(1.5, deviceRow.nodeAudio.volume + (wheel.angleDelta.y / 120) * 0.05));
+                            Math.min(1.0, deviceRow.nodeAudio.volume + (wheel.angleDelta.y / 120) * 0.05));
                         wheel.accepted = true;
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
                     }
                 }
 
-                // Volume percentage label
+                // Volume percentage label — fixed width, right-anchored
                 Text {
                     id: volLabel
                     anchors.verticalCenter: parent.verticalCenter
@@ -583,7 +614,7 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.85)
                     horizontalAlignment: Text.AlignRight
-                    width: Math.round(38 * Config.scale)
+                    width: parent._labelW
                     Behavior on color { ColorAnimation { duration: 120 } }
                 }
             }
