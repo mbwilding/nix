@@ -162,9 +162,12 @@ in
       }
       {
         matches = [ { "node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic2__source"; } ];
-        actions.update-props = {
-          "node.description" = "Laptop";
-          "node.nick" = "Internal Mics";
+        actions = {
+          update-props = {
+            "node.description" = "Laptop";
+            "node.nick" = "Internal Mics";
+          };
+          "node.disabled" = true;
         };
       }
       {
