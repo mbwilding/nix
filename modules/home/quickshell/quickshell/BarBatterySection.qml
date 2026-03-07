@@ -33,6 +33,13 @@ Item {
     implicitHeight: batteryIcon.implicitHeight
     visible: b !== null && b.isLaptopBattery
 
+    containmentMask: Item {
+        x: -batteryPopup.width
+        y: -batteryPopup.height
+        width: batteryPopup.width * 2 + batterySection.width
+        height: batteryPopup.height + batterySection.height
+    }
+
     readonly property bool popupOpen: activePopup === "battery"
 
     // ── Trigger ───────────────────────────────────────────────────────────────

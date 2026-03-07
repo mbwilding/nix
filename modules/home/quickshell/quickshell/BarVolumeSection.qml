@@ -35,6 +35,13 @@ Item {
     implicitWidth: volumeRow.implicitWidth
     implicitHeight: volumeRow.implicitHeight
 
+    containmentMask: Item {
+        x: -volumePopup.width
+        y: -volumePopup.height
+        width: volumePopup.width * 2 + volumeSection.width
+        height: volumePopup.height + volumeSection.height
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     function volumeIcon() {
