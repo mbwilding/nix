@@ -244,16 +244,6 @@ PopupContainer {
                 }
             }
 
-            // ── Separator — only when both JS lists non-empty ─────────────
-            Rectangle {
-                visible: root.rawModel === null
-                         && root.availableItems.length > 0
-                         && root.connectedItems.length > 0
-                width: parent.width
-                height: Math.round(1 * Config.scale)
-                color: Config.colors.border
-            }
-
             // ── Connected header ──────────────────────────────────────────
             Text {
                 visible: root.rawModel === null && root.connectedItems.length > 0
@@ -263,7 +253,7 @@ PopupContainer {
                 font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
-                topPadding: Math.round(4 * Config.scale)
+                topPadding: root.availableItems.length > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
                 bottomPadding: Math.round(2 * Config.scale)
             }
 
@@ -402,18 +392,6 @@ PopupContainer {
                 }
             }
 
-            // ── Raw separator ─────────────────────────────────────────────
-            // Shown when rawModel is active and there's at least one device
-            // of each kind. Counts are derived from rawModel.values reactively.
-            Rectangle {
-                visible: root.rawModel !== null
-                         && root._rawAvailableCount > 0
-                         && root._rawConnectedCount > 0
-                width: parent.width
-                height: Math.round(1 * Config.scale)
-                color: Config.colors.border
-            }
-
             // ── Raw connected header ──────────────────────────────────────
             Text {
                 visible: root.rawModel !== null && root._rawConnectedCount > 0
@@ -423,7 +401,7 @@ PopupContainer {
                 font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
-                topPadding: Math.round(4 * Config.scale)
+                topPadding: root._rawAvailableCount > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
                 bottomPadding: Math.round(2 * Config.scale)
             }
 
