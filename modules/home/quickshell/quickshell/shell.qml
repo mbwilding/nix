@@ -14,7 +14,6 @@ ShellRoot {
     Bar {
         notifHistory: notifs.notifHistory
         onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
-        onClearHistory: notifs.clearHistory()
     }
 }
 
