@@ -196,6 +196,7 @@ Item {
         rawModel: (btSection.adapter && btSection.adapter.enabled)
                   ? btSection.adapter.devices : null
         rawIsConnectedFn: d => d && d.connected
+        rawSavedFn: d => d && d.paired
         rawLabelFn: d => btSection.deviceName(d)
         rawIconFn: d => btSection.deviceIcon(d)
 
