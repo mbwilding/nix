@@ -35,18 +35,29 @@ Item {
     implicitHeight: latchedHeight
     implicitWidth: Config.notifications.cardWidth
 
-    Component.onCompleted: Qt.callLater(() => {
-        root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
-        visible_ = true;
-        slideTranslate.x = 0;
-        card.opacity = 1;
-        card.scale = 1;
-    })
+    Component.onCompleted: {
+        if (root.historyMode) {
+            // Appear instantly — no slide-in animation
+            root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
+            root.visible_ = true;
+            slideTranslate.x = 0;
+            card.opacity = 1;
+            card.scale = 1;
+        } else {
+            Qt.callLater(() => {
+                root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
+                visible_ = true;
+                slideTranslate.x = 0;
+                card.opacity = 1;
+                card.scale = 1;
+            });
+        }
+    }
 
     Connections {
         target: card
         function onImplicitHeightChanged() {
-            if (!exitAnim.running)
+            if (!exitAnim.running && !historyExitAnim.running)
                 root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
         }
     }
@@ -56,7 +67,10 @@ Item {
             return;
         root.visible_ = false;
         dismissTimer.stop();
-        exitAnim.start();
+        if (root.historyMode)
+            historyExitAnim.start();
+        else
+            exitAnim.start();
     }
 
     Timer {
@@ -69,6 +83,7 @@ Item {
         }
     }
 
+    // Live exit: slide out + fade + height collapse
     SequentialAnimation {
         id: exitAnim
 
@@ -99,12 +114,27 @@ Item {
         ScriptAction {
             script: {
                 if (!root._timedOut) {
-                    // Live mode: dismiss the notification server-side.
-                    // History mode: notification is null, nothing to dismiss.
                     root.notification?.dismiss();
                     root.dismissed();
                 }
             }
+        }
+    }
+
+    // History exit: height collapse only — cards above slide up, no slide/fade
+    SequentialAnimation {
+        id: historyExitAnim
+
+        NumberAnimation {
+            target: root
+            property: "latchedHeight"
+            to: 0
+            duration: Config.notifications.animateSpeed
+            easing.type: Easing.OutCubic
+        }
+
+        ScriptAction {
+            script: root.dismissed()
         }
     }
 
@@ -148,17 +178,11 @@ Item {
             }
         }
 
-        // Card tap — dismiss (live) or remove from history
+        // Card tap — dismiss (live) or collapse and remove from history
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                if (root.historyMode) {
-                    root.dismissed();
-                } else {
-                    root.animateOut();
-                }
-            }
+            onClicked: root.animateOut()
         }
 
         // Left accent bar — gradient from accent to accentAlt
@@ -355,14 +379,8 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                if (root.historyMode) {
-                                    // Live NotificationAction object stored in snapshot — invoke it.
-                                    actionDelegate.modelData.invoke();
-                                    root.dismissed();
-                                } else {
-                                    actionDelegate.modelData.invoke();
-                                    root.animateOut();
-                                }
+                                actionDelegate.modelData.invoke();
+                                root.animateOut();
                             }
                         }
                     }

@@ -26,7 +26,6 @@ Scope {
     // ── Notification history (fed from shell.qml via Notifications scope) ─────
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
-    signal clearHistory
 
     readonly property bool anyPopupOpen: activePopup !== ""
 
@@ -689,7 +688,6 @@ Scope {
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
-                    onClearHistory: root.clearHistory()
                 }
 
                 Rectangle {

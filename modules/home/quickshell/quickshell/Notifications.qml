@@ -20,17 +20,12 @@ Scope {
 
     // ── Notification history ──────────────────────────────────────────────────
 
-    // Array of snapshot objects: { id, appName, appIcon, desktopEntry, summary,
-    //                               body, actions[{identifier,text}], receivedAt }
+    // Array of snapshot objects
     property var notifHistory: []
 
     // Maps live notification id → snapshot id
     // so we can remove history when the live card is dismissed.
     property var _notifSnapshotIds: ({})
-
-    function clearHistory() {
-        root.notifHistory = [];
-    }
 
     function removeHistoryEntry(entryId) {
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
@@ -171,12 +166,6 @@ Scope {
 
         onNotification: notification => {
             notification.tracked = true;
-
-            // Skip system/internal notifications from history
-            const systemApps = ["Battery", "Bluetooth", "WiFi"];
-            if (systemApps.includes(notification.appName ?? "")) {
-                return;
-            }
 
             // Snapshot into history — keep live action objects so they can still be invoked
             const snapId = Date.now() + Math.random();

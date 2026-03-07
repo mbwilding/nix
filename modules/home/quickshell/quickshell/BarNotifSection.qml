@@ -25,7 +25,6 @@ Item {
     // Bound from Bar.qml, which gets them from shell.qml's Notifications instance
     property var notifHistory: []
     signal removeHistoryEntry(var entryId)
-    signal clearHistory
 
     // Screen height for popup sizing
     property real availableHeight: 800
@@ -50,53 +49,61 @@ Item {
         id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onEntered: notifSection.openPopupReq("notif")
+        cursorShape: notifSection.notifHistory.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onEntered: if (notifSection.notifHistory.length > 0) notifSection.openPopupReq("notif")
         onExited: notifSection.keepPopupReq()
-        onClicked: notifSection.openPopupReq("notif")
+        onClicked: if (notifSection.notifHistory.length > 0) notifSection.openPopupReq("notif")
     }
 
     BarButton {
         anchors.fill: parent
         hovered: triggerArea.containsMouse
         popupOpen: notifSection.popupOpen
+        clickable: notifSection.notifHistory.length > 0
 
-        // Bell icon
-        Text {
-            anchors.centerIn: parent
-            text: "\uF0F3"   // fa-bell (NerdFont)
-            font.family: Config.font.family
-            font.pixelSize: Math.round(Config.bar.batteryIconSize * 0.72)
-            color: notifSection.notifHistory.length > 0 ? Config.colors.accent : Config.colors.textMuted
-            Behavior on color { ColorAnimation { duration: 200 } }
-        }
+        // Bell icon + badge — dim when nothing in history
+        Item {
+            anchors.fill: parent
+            opacity: notifSection.notifHistory.length > 0 ? 1.0 : Config.bar.disabledOpacity
+            Behavior on opacity { NumberAnimation { duration: 200 } }
 
-        // Unread badge
-        Rectangle {
-            visible: notifSection.notifHistory.length > 0
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: Math.round(4 * Config.scale)
-            anchors.rightMargin: Math.round(4 * Config.scale)
-
-            width: badgeText.implicitWidth + Math.round(6 * Config.scale)
-            height: Math.round(14 * Config.scale)
-            radius: height / 2
-
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: Config.colors.accent }
-                GradientStop { position: 1.0; color: Config.colors.accentAlt }
+            // Bell icon
+            Text {
+                anchors.centerIn: parent
+                text: "\uF0F3"   // fa-bell (NerdFont)
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.batteryIconSize * 0.72)
+                color: notifSection.notifHistory.length > 0 ? Config.colors.accent : Config.colors.textMuted
+                Behavior on color { ColorAnimation { duration: 200 } }
             }
 
-            Text {
-                id: badgeText
-                anchors.centerIn: parent
-                text: notifSection.notifHistory.length > 99 ? "99+" : String(notifSection.notifHistory.length)
-                color: "#1a1a2e"
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.65)
-                font.weight: Font.Bold
+            // Badge
+            Rectangle {
+                visible: notifSection.notifHistory.length > 0
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: Math.round(4 * Config.scale)
+                anchors.rightMargin: Math.round(4 * Config.scale)
+
+                width: badgeText.implicitWidth + Math.round(6 * Config.scale)
+                height: Math.round(14 * Config.scale)
+                radius: height / 2
+
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                }
+
+                Text {
+                    id: badgeText
+                    anchors.centerIn: parent
+                    text: notifSection.notifHistory.length > 99 ? "99+" : String(notifSection.notifHistory.length)
+                    color: "#1a1a2e"
+                    font.family: Config.font.family
+                    font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.65)
+                    font.weight: Font.Bold
+                }
             }
         }
     }
@@ -169,57 +176,6 @@ Item {
                 width: viewport.width
                 spacing: Math.round(6 * Config.scale)
                 y: -notifPopup.scrollY
-
-                // ── Header row: title + clear-all button ──────────────────
-                Item {
-                    width: parent.width
-                    implicitHeight: headerRow.implicitHeight + Math.round(4 * Config.scale)
-
-                    RowLayout {
-                        id: headerRow
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: "Notifications"
-                            color: Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
-                            font.weight: Font.SemiBold
-                            Layout.fillWidth: true
-                        }
-
-                        // Clear all — only shown when history is non-empty
-                        Rectangle {
-                            visible: notifSection.notifHistory.length > 0
-                            implicitWidth: clearAllLabel.implicitWidth + Math.round(12 * Config.scale)
-                            implicitHeight: Math.round(20 * Config.scale)
-                            radius: Math.round(5 * Config.scale)
-                            color: clearAllMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-                            border.color: Config.colors.border
-                            border.width: 1
-                            Behavior on color { ColorAnimation { duration: 80 } }
-
-                            Text {
-                                id: clearAllLabel
-                                anchors.centerIn: parent
-                                text: "Clear all"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.72)
-                            }
-
-                            MouseArea {
-                                id: clearAllMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: notifSection.clearHistory()
-                            }
-                        }
-                    }
-                }
 
                 // ── Empty state ───────────────────────────────────────────
                 Text {
