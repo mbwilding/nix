@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
@@ -38,9 +37,36 @@ Item {
     // Track which device address is in a pending connect/disconnect operation
     property string connectingAddress: ""
 
-    // Count of currently connected devices — maintained by delegate onDevStateChanged.
-    // Used to show/hide the separator between available and connected lists.
-    property int btConnectedCount: 0
+    // Flat JS arrays used only for popup width measurement.
+    // Populated on popupOpen so sizing is fresh each time.
+    // The actual rows are rendered via rawModel in BarSectionPopup.
+    readonly property var availableDevices: {
+        void btSection.popupOpen;
+        const a = btSection.adapter;
+        const vals = (a && a.enabled && a.devices) ? a.devices.values : null;
+        if (!vals || vals.length === 0) return [];
+        const result = [];
+        for (let i = 0; i < vals.length; i++) {
+            const d = vals[i];
+            if (d && d.state !== 1)
+                result.push({ label: btSection.deviceName(d), icon: btSection.deviceIcon(d), address: d.address || "" });
+        }
+        return result;
+    }
+
+    readonly property var connectedDevices: {
+        void btSection.popupOpen;
+        const a = btSection.adapter;
+        const vals = (a && a.enabled && a.devices) ? a.devices.values : null;
+        if (!vals || vals.length === 0) return [];
+        const result = [];
+        for (let i = 0; i < vals.length; i++) {
+            const d = vals[i];
+            if (d && d.state === 1)
+                result.push({ label: btSection.deviceName(d), icon: btSection.deviceIcon(d), address: d.address || "" });
+        }
+        return result;
+    }
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
@@ -56,12 +82,9 @@ Item {
 
     readonly property bool popupOpen: activePopup === "bt"
 
-    onPopupOpenChanged: {
-        const a = btSection.adapter;
-        if (!a || !a.enabled)
-            return;
-        a.discovering = btSection.popupOpen;
-    }
+    // Do not toggle a.discovering on popup open — setting it to true causes
+    // the Bluetooth stack to clear a.devices temporarily, making the list
+    // flash empty ("Scanning…") while paired devices are momentarily dropped.
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -69,10 +92,10 @@ Item {
         const a = btSection.adapter;
         if (!a || !a.enabled)
             return "network-bluetooth-inactive-symbolic";
-        const devs = a.devices;
-        if (devs) {
-            for (let i = 0; i < devs.count; i++) {
-                const d = devs.get(i).modelData;
+        const vals = a.devices ? a.devices.values : null;
+        if (vals) {
+            for (let i = 0; i < vals.length; i++) {
+                const d = vals[i];
                 if (d && d.connected)
                     return "network-bluetooth-activated-symbolic";
             }
@@ -143,7 +166,7 @@ Item {
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    PopupContainer {
+    BarSectionPopup {
         id: btPopup
         popupOpen: btSection.popupOpen
 
@@ -151,354 +174,71 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        // Width driven by the widest device name text + icon + padding, measured via TextMetrics.
-        readonly property real iconSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-        readonly property real rowPadding: Math.round(8 * Config.scale) * 2 + Math.round(8 * Config.scale) + Math.round(18 * Config.scale)
-        readonly property real contentWidth: {
-            let maxW = 0;
+        availableHeight: btSection.availableHeight
+                         - btSection.height
+                         - Config.bar.popupOffset
+
+        emptyText: {
             const a = btSection.adapter;
-            const devs = (a && a.enabled) ? a.devices : null;
-            if (devs) {
-                for (let i = 0; i < devs.count; i++) {
-                    const d = devs.get(i).modelData;
-                    if (!d) continue;
-                    btPopupTextMetrics.text = btSection.deviceName(d);
-                    const w = btPopupTextMetrics.boundingRect.width;
-                    if (w > maxW) maxW = w;
-                }
-            }
-            return maxW + btPopup.iconSize + btPopup.rowPadding;
-        }
-        width: Math.max(Math.round(200 * Config.scale), btPopup.contentWidth)
-        Behavior on width {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
+            if (!a || !a.enabled) return "Bluetooth is off";
+            return "No paired devices";
         }
 
-        // Max usable height: screen height minus bar pill, offset, and a small margin.
-        readonly property real maxHeight: btSection.availableHeight
-                                          - btSection.height
-                                          - Config.bar.popupOffset
-                                          - Math.round(16 * Config.scale)
-        // Content height including padding.
-        readonly property real contentPadded: btDevListCol.implicitHeight + Math.round(16 * Config.scale)
-        // Popup height: full content unless it exceeds the screen.
-        height: Math.min(contentPadded, maxHeight)
+        // JS arrays for width sizing only
+        availableItems: btSection.availableDevices
+        connectedItems: btSection.connectedDevices
 
-        z: 20
+        // Raw-model mode: Repeater uses the QML model directly for reactivity
+        rawModel: (btSection.adapter && btSection.adapter.enabled)
+                  ? btSection.adapter.devices : null
+        rawIsConnectedFn: d => d && d.state === 1
+        rawLabelFn: d => btSection.deviceName(d)
+        rawIconFn: d => btSection.deviceIcon(d)
 
-        TextMetrics {
-            id: btPopupTextMetrics
-            font.family: Config.font.family
-            font.pixelSize: Config.bar.fontSizeStatus
+        onHoverOpen: btSection.openPopupReq("bt")
+        onHoverExit: btSection.exitPopupReq()
+
+        onRawAvailableClicked: d => {
+            if (!d || d.state === 3 || d.state === 2) return;
+            btSection.connectingAddress = d.address || "";
+            d.connect();
+            btSection.openPopupReq("bt");
         }
 
-        HoverHandler {
-            onHoveredChanged: {
-                if (hovered)
-                    btSection.openPopupReq("bt");
-                else
-                    btSection.exitPopupReq();
-            }
+        onRawConnectedClicked: d => {
+            if (!d || d.state === 2) return;
+            const name = btSection.deviceName(d);
+            btSection.connectingAddress = d.address || "";
+            btDisconnectNotifyTimer.targetName = name;
+            btDisconnectNotifyTimer.targetAddress = d.address || "";
+            d.disconnect();
+            btDisconnectNotifyTimer.restart();
+            btSection.openPopupReq("bt");
         }
+    }
 
-        // ── Device list (no drag — scroll-only via WheelHandler) ──────────
+    // ── Connect notification watcher ──────────────────────────────────────────
+    // A non-visual Repeater over the live device model watches each device's
+    // state. When a device we initiated connect on reaches state=1, notify.
 
-        // Track scroll offset manually.
-        property real scrollY: 0
-        // Clamp scrollY whenever content or popup height changes.
-        readonly property real maxScrollY: Math.max(0, btDevListCol.implicitHeight - btListViewport.height)
-        onMaxScrollYChanged: {
-            if (btPopup.scrollY > btPopup.maxScrollY)
-                btPopup.scrollY = btPopup.maxScrollY;
-        }
+    Repeater {
+        model: (btSection.adapter && btSection.adapter.enabled)
+               ? btSection.adapter.devices : null
+        delegate: Item {
+            id: btWatcher
+            required property var modelData
+            readonly property int devState: modelData ? modelData.state : 0
 
-        WheelHandler {
-            target: null
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-            onWheel: event => {
-                const step = Math.round(40 * Config.scale);
-                btPopup.scrollY = Math.max(0,
-                    Math.min(btPopup.maxScrollY,
-                        btPopup.scrollY - event.angleDelta.y / 120 * step));
-            }
-        }
-
-        Item {
-            id: btListViewport
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: btScrollbar.left
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(4 * Config.scale)
-            clip: true
-
-            Column {
-                id: btDevListCol
-                spacing: Math.round(2 * Config.scale)
-                y: -btPopup.scrollY
-
-                // ── Empty-state placeholder ───────────────────────────────
-                Text {
-                    text: {
-                        const a = btSection.adapter;
-                        if (!a || !a.enabled)
-                            return "Bluetooth is off";
-                        if (!a.devices || a.devices.count === 0)
-                            return a.discovering ? "Scanning\u2026" : "No paired devices";
-                        return "";
-                    }
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    horizontalAlignment: Text.AlignHCenter
-                    topPadding: Math.round(8 * Config.scale)
-                    bottomPadding: Math.round(8 * Config.scale)
-                    leftPadding: Math.round(16 * Config.scale)
-                    rightPadding: Math.round(16 * Config.scale)
-                    visible: {
-                        const a = btSection.adapter;
-                        return !a || !a.enabled || !a.devices || a.devices.count === 0;
-                    }
-                }
-
-                // ── Available (non-connected) devices ─────────────────────
-                Repeater {
-                    model: (btSection.adapter && btSection.adapter.enabled)
-                           ? btSection.adapter.devices
-                           : null
-
-                    delegate: Rectangle {
-                        id: btDevEntry
-                        required property var modelData
-                        readonly property var device: modelData
-                        readonly property int devState: device ? device.state : 0
-                        readonly property bool isConnected: devState === 1
-                        readonly property bool isConnecting: devState === 3
-                        readonly property bool isDisconnecting: devState === 2
-
-                        // Only show non-connected devices in this repeater.
-                        visible: !isConnected
-
-                        width: btListViewport.width
-                        implicitWidth: btDevRow.implicitWidth + Math.round(16 * Config.scale)
-                        implicitHeight: btDevRow.implicitHeight + Math.round(8 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: btDevMouse.containsMouse
-                               ? Qt.rgba(1, 1, 1, 0.07)
-                               : "transparent"
-                        Behavior on color {
-                            ColorAnimation { duration: 80 }
-                        }
-
-                        onDevStateChanged: {
-                            const d = btDevEntry.device;
-                            if (!d)
-                                return;
-                            const addr = d.address || "";
-                            const name = btSection.deviceName(d);
-                            if (btDevEntry.devState === 1 && btSection.connectingAddress === addr) {
-                                btSection.connectingAddress = "";
-                                btSection.btNotify(
-                                    "Bluetooth Connected",
-                                    "Connected to " + name,
-                                    "network-bluetooth-activated-symbolic"
-                                );
-                            }
-                        }
-
-                        RowLayout {
-                            id: btDevRow
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: Math.round(8 * Config.scale)
-                            spacing: Math.round(8 * Config.scale)
-
-                            IconImage {
-                                implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-                                source: Quickshell.iconPath(btSection.deviceIcon(btDevEntry.device))
-                            }
-
-                            Text {
-                                text: btSection.deviceName(btDevEntry.device)
-                                color: Config.colors.textPrimary
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
-
-                            Text {
-                                text: (btDevEntry.isConnecting || btDevEntry.isDisconnecting)
-                                      ? "\u2026"
-                                      : ""
-                                color: Config.colors.accent
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                                visible: btDevEntry.isConnecting || btDevEntry.isDisconnecting
-                            }
-                        }
-
-                        MouseArea {
-                            id: btDevMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: btSection.openPopupReq("bt")
-                            onClicked: {
-                                const d = btDevEntry.device;
-                                if (!d || btDevEntry.isConnecting || btDevEntry.isDisconnecting)
-                                    return;
-                                btSection.connectingAddress = d.address || "";
-                                d.connect();
-                                btSection.openPopupReq("bt");
-                            }
-                        }
-                    }
-                }
-
-                // ── Separator ─────────────────────────────────────────────
-                Rectangle {
-                    // Show only when there are both connected and non-connected devices.
-                    readonly property int totalCount: {
-                        const a = btSection.adapter;
-                        return (a && a.enabled && a.devices) ? a.devices.count : 0;
-                    }
-                    visible: btSection.btConnectedCount > 0
-                             && btSection.btConnectedCount < totalCount
-                    width: btListViewport.width
-                    height: Math.round(1 * Config.scale)
-                    color: Config.colors.border
-                }
-
-                // ── Connected devices (pinned to bottom) ──────────────────
-                Repeater {
-                    model: (btSection.adapter && btSection.adapter.enabled)
-                           ? btSection.adapter.devices
-                           : null
-
-                    delegate: Rectangle {
-                        id: btConnectedEntry
-                        required property var modelData
-                        readonly property var device: modelData
-                        readonly property int devState: device ? device.state : 0
-                        readonly property bool isConnected: devState === 1
-                        readonly property bool isConnecting: devState === 3
-                        readonly property bool isDisconnecting: devState === 2
-
-                        // Only show connected devices in this repeater.
-                        visible: isConnected
-
-                        // Maintain btSection.btConnectedCount for separator visibility.
-                        onIsConnectedChanged: {
-                            btSection.btConnectedCount += btConnectedEntry.isConnected ? 1 : -1;
-                        }
-                        Component.onCompleted: {
-                            if (btConnectedEntry.isConnected)
-                                btSection.btConnectedCount++;
-                        }
-                        Component.onDestruction: {
-                            if (btConnectedEntry.isConnected)
-                                btSection.btConnectedCount--;
-                        }
-
-                        width: btListViewport.width
-                        implicitWidth: btConnectedRow.implicitWidth + Math.round(16 * Config.scale)
-                        implicitHeight: btConnectedRow.implicitHeight + Math.round(8 * Config.scale)
-                        radius: Math.round(6 * Config.scale)
-                        color: btConnectedMouse.containsMouse
-                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
-                               : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                        Behavior on color {
-                            ColorAnimation { duration: 80 }
-                        }
-
-                        RowLayout {
-                            id: btConnectedRow
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: Math.round(8 * Config.scale)
-                            spacing: Math.round(8 * Config.scale)
-
-                            IconImage {
-                                implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
-                                source: Quickshell.iconPath(btSection.deviceIcon(btConnectedEntry.device))
-                            }
-
-                            Text {
-                                text: btSection.deviceName(btConnectedEntry.device)
-                                color: Config.colors.accent
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
-
-                            Text {
-                                text: btConnectedEntry.isDisconnecting ? "\u2026" : "\u2713"
-                                color: Config.colors.accent
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
-                            }
-                        }
-
-                        MouseArea {
-                            id: btConnectedMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: btSection.openPopupReq("bt")
-                            onClicked: {
-                                const d = btConnectedEntry.device;
-                                if (!d || btConnectedEntry.isDisconnecting)
-                                    return;
-                                const name = btSection.deviceName(d);
-                                btSection.connectingAddress = d.address || "";
-                                d.disconnect();
-                                btDisconnectNotifyTimer.targetName = name;
-                                btDisconnectNotifyTimer.targetAddress = d.address || "";
-                                btDisconnectNotifyTimer.restart();
-                                btSection.openPopupReq("bt");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Scrollbar column — always present so viewport width is stable.
-        // Track rectangle always visible; thumb only shown when content overflows.
-        Item {
-            id: btScrollbar
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(3 * Config.scale)
-            width: Math.round(3 * Config.scale)
-
-            Rectangle {
-                anchors.fill: parent
-                radius: width / 2
-                color: Config.colors.border
-                visible: btPopup.maxScrollY > 0
-            }
-
-            Rectangle {
-                readonly property real ratio: btListViewport.height / Math.max(btDevListCol.implicitHeight, 1)
-                readonly property real thumbH: Math.max(Math.round(20 * Config.scale), btScrollbar.height * ratio)
-                readonly property real travel: btScrollbar.height - thumbH
-                readonly property real scrollRatio: btPopup.maxScrollY > 0
-                                                    ? btPopup.scrollY / btPopup.maxScrollY
-                                                    : 0
-
-                width: parent.width
-                height: thumbH
-                y: travel * scrollRatio
-                radius: width / 2
-                color: Config.colors.textMuted
-                visible: btPopup.maxScrollY > 0
-                Behavior on y {
-                    NumberAnimation { duration: 60 }
+            onDevStateChanged: {
+                const d = btWatcher.modelData;
+                if (!d) return;
+                if (btWatcher.devState === 1 && btSection.connectingAddress === (d.address || "")) {
+                    btSection.connectingAddress = "";
+                    btSection.btNotify(
+                        "Bluetooth Connected",
+                        "Connected to " + btSection.deviceName(d),
+                        "network-bluetooth-activated-symbolic"
+                    );
                 }
             }
         }
@@ -515,15 +255,13 @@ Item {
 
         onTriggered: {
             btSection.connectingAddress = "";
-            const devs = btSection.adapter ? btSection.adapter.devices : null;
-            if (!devs)
-                return;
-            for (let i = 0; i < devs.count; i++) {
-                const d = devs.get(i).modelData;
-                if (!d)
-                    continue;
-                if ((d.address || "") !== btDisconnectNotifyTimer.targetAddress)
-                    continue;
+            const vals = (btSection.adapter && btSection.adapter.devices)
+                         ? btSection.adapter.devices.values : null;
+            if (!vals) return;
+            for (let i = 0; i < vals.length; i++) {
+                const d = vals[i];
+                if (!d) continue;
+                if ((d.address || "") !== btDisconnectNotifyTimer.targetAddress) continue;
                 if (d.state === 0) {
                     btSection.btNotify(
                         "Bluetooth Disconnected",
