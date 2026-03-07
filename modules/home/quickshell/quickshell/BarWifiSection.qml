@@ -28,6 +28,11 @@ Item {
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: wifiPopup
 
+    // ── Public API (sizing) ───────────────────────────────────────────────────
+
+    // Screen height passed in from Bar.qml so the popup can cap itself.
+    property real availableHeight: 800
+
     // ── State ─────────────────────────────────────────────────────────────────
 
     property string ssid: ""
@@ -44,13 +49,16 @@ Item {
     // True while wifi was just re-enabled and we're waiting to scan.
     // Suppresses wifiMonitor and wifiProc updates until we're ready.
     property bool wifiScanning: false
+    // Consecutive wifiProc results showing no active network.
+    // We require 2 in a row before clearing ssid, to avoid spurious
+    // disconnect notifications from transient nmcli scan glitches.
+    property int noActiveCount: 0
 
     Component.onCompleted: {
         wifiProc.running = true;
     }
 
     onSsidChanged: {
-        console.log("onSsidChanged: wifiReady=", wifiSection.wifiReady, "prev=", wifiSection.prevSsid, "cur=", wifiSection.ssid, "connecting=", wifiSection.connecting);
         if (!wifiSection.wifiReady)
             return;
         const prev = wifiSection.prevSsid;
@@ -170,6 +178,7 @@ Item {
                     // Clear stale visual state immediately.
                     wifiSection.networks = [];
                     wifiSection.strength = -1;
+                    wifiSection.noActiveCount = 0;
                     // Enter scanning state: suppresses wifiMonitor/wifiProc updates
                     // until the delay timer fires, preventing stale cached NM data
                     // from briefly showing full signal.
@@ -180,6 +189,7 @@ Item {
                     // which is needed to fire the disconnect notification correctly.
                     wifiSection.networks = [];
                     wifiSection.strength = -1;
+                    wifiSection.noActiveCount = 2; // force immediate clear on disable
                     wifiProc.running = true;
                 }
             }
@@ -194,7 +204,6 @@ Item {
         interval: 1500
         repeat: false
         onTriggered: {
-            console.log("wifiEnableDelayTimer fired, setting scanForReal=true");
             wifiProc.scanForReal = true;
             wifiProc.running = true;
         }
@@ -236,9 +245,7 @@ Item {
             onStreamFinished: {
                 // While scanning (waiting for post-enable delay), drop all results
                 // except the one explicitly triggered by wifiEnableDelayTimer.
-                console.log("wifiProc finished: wifiScanning=", wifiSection.wifiScanning, "scanForReal=", wifiProc.scanForReal);
                 if (wifiSection.wifiScanning && !wifiProc.scanForReal) {
-                    console.log("wifiProc: dropping result (scanning window)");
                     return;
                 }
                 wifiProc.scanForReal = false;
@@ -273,11 +280,17 @@ Item {
                 wifiSection.networks = nets;
                 const cur = nets.find(n => n.active);
                 if (cur) {
+                    wifiSection.noActiveCount = 0;
                     wifiSection.ssid = cur.ssid;
                     wifiSection.strength = cur.signal;
                 } else {
-                    wifiSection.ssid = "";
-                    wifiSection.strength = -1;
+                    wifiSection.noActiveCount++;
+                    // Only clear ssid after 2 consecutive empty results, to avoid
+                    // spurious disconnect notifications from transient nmcli glitches.
+                    if (wifiSection.noActiveCount >= 2) {
+                        wifiSection.ssid = "";
+                        wifiSection.strength = -1;
+                    }
                 }
                 // Mark ready after first result so onSsidChanged can start
                 // firing notifications. prevSsid is now in sync with ssid.
@@ -357,6 +370,11 @@ Item {
         id: wifiDisconnectedNotifyProc
     }
 
+    Process {
+        id: wifiDisconnectProc
+        onExited: wifiProc.running = true
+    }
+
     // Cycles 0–3 while connecting or scanning to animate the bar icon signal bars
     property int connectAnimStep: 0
     Timer {
@@ -365,13 +383,11 @@ Item {
         repeat: true
         running: wifiSection.connecting !== "" || wifiSection.wifiScanning
         onRunningChanged: {
-            console.log("connectAnimTimer running:", running, "connecting:", wifiSection.connecting, "wifiScanning:", wifiSection.wifiScanning);
             if (!running) wifiSection.connectAnimStep = 0;
             else wifiSection.connectAnimStep = 0;
         }
         onTriggered: {
             wifiSection.connectAnimStep = (wifiSection.connectAnimStep + 1) % 4;
-            console.log("connectAnimStep:", wifiSection.connectAnimStep);
         }
     }
 
@@ -415,23 +431,26 @@ Item {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        // Width tracks the widest network row (implicitWidth of the column),
-        // plus flickable margins (8+4) and scrollbar track+gap (3+3) = 18 units.
-        // Floor at 200, cap at 400.
-        width: Math.min(
-            Math.round(400 * Config.scale),
-            Math.max(
-                Math.round(200 * Config.scale),
-                wifiListCol.implicitWidth + Math.round(18 * Config.scale)
-            )
+        // Width = widest row content + left margin (8) + right margin (8)
+        // + scrollbar gap (4) + scrollbar track (3) + scrollbar rightMargin (3) = +26.
+        // Floored at 200, no hard cap (content drives width).
+        width: Math.max(
+            Math.round(200 * Config.scale),
+            wifiListCol.implicitWidth + Math.round(26 * Config.scale)
         )
         Behavior on width {
             NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
         }
-        height: Math.min(
-            wifiListCol.implicitHeight + Math.round(16 * Config.scale),
-            Math.round(400 * Config.scale)
-        )
+
+        // Max usable height: screen height minus bar pill, offset, and a small margin.
+        readonly property real maxHeight: wifiSection.availableHeight
+                                          - wifiSection.height
+                                          - Config.bar.popupOffset
+                                          - Math.round(16 * Config.scale)
+        // Content height including padding.
+        readonly property real contentPadded: wifiListCol.implicitHeight + Math.round(16 * Config.scale)
+        // Popup height: full content unless it exceeds the screen.
+        height: Math.min(contentPadded, maxHeight)
 
         z: 20
 
@@ -444,10 +463,30 @@ Item {
             }
         }
 
-        // ── Scrollable network list ────────────────────────────────────────
+        // ── Network list (no drag — scroll-only via WheelHandler) ─────────
 
-        Flickable {
-            id: wifiFlickable
+        // Track scroll offset manually.
+        property real scrollY: 0
+        // Clamp scrollY whenever content or popup height changes.
+        readonly property real maxScrollY: Math.max(0, wifiListCol.implicitHeight - wifiListViewport.height)
+        onMaxScrollYChanged: {
+            if (wifiPopup.scrollY > wifiPopup.maxScrollY)
+                wifiPopup.scrollY = wifiPopup.maxScrollY;
+        }
+
+        WheelHandler {
+            target: null
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+            onWheel: event => {
+                const step = Math.round(40 * Config.scale);
+                wifiPopup.scrollY = Math.max(0,
+                    Math.min(wifiPopup.maxScrollY,
+                        wifiPopup.scrollY - event.angleDelta.y / 120 * step));
+            }
+        }
+
+        Item {
+            id: wifiListViewport
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -456,13 +495,12 @@ Item {
             anchors.bottomMargin: Math.round(8 * Config.scale)
             anchors.leftMargin: Math.round(8 * Config.scale)
             anchors.rightMargin: Math.round(4 * Config.scale)
-            contentWidth: wifiListCol.implicitWidth
-            contentHeight: wifiListCol.implicitHeight
             clip: true
 
             Column {
                 id: wifiListCol
                 spacing: Math.round(2 * Config.scale)
+                y: -wifiPopup.scrollY
 
                 // ── Empty-state placeholder ───────────────────────────────
                 Text {
@@ -478,25 +516,23 @@ Item {
                     visible: wifiSection.networks.length === 0
                 }
 
+                // ── Available networks ────────────────────────────────────
                 Repeater {
-                    model: wifiSection.networks
+                    model: wifiSection.networks.filter(n => n.ssid !== wifiSection.ssid)
                     delegate: Rectangle {
                         id: wifiEntry
                         required property var modelData
-                        readonly property bool isActive: modelData.active
                         readonly property bool isConnecting: wifiSection.connecting === modelData.ssid
                         readonly property bool hadError: wifiSection.lastError === modelData.ssid
 
                         width: wifiEntryRow.implicitWidth + Math.round(16 * Config.scale)
                         implicitHeight: wifiEntryRow.implicitHeight + Math.round(8 * Config.scale)
                         radius: Math.round(6 * Config.scale)
-                        color: isActive
-                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                               : hadError
-                                 ? Qt.rgba(1, 0.3, 0.3, 0.12)
-                                 : wifiEntryMouse.containsMouse
-                                   ? Qt.rgba(1, 1, 1, 0.07)
-                                   : "transparent"
+                        color: hadError
+                               ? Qt.rgba(1, 0.3, 0.3, 0.12)
+                               : wifiEntryMouse.containsMouse
+                                 ? Qt.rgba(1, 1, 1, 0.07)
+                                 : "transparent"
                         Behavior on color {
                             ColorAnimation { duration: 80 }
                         }
@@ -512,31 +548,18 @@ Item {
                                 implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
                                 source: Quickshell.iconPath(wifiSection.icon(wifiEntry.modelData.signal))
                             }
-
                             Text {
                                 text: wifiEntry.modelData.ssid
-                                color: wifiEntry.isActive
-                                       ? Config.colors.accent
-                                       : wifiEntry.hadError
-                                         ? "#ff6666"
-                                         : Config.colors.textPrimary
+                                color: wifiEntry.hadError ? "#ff6666" : Config.colors.textPrimary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
                             }
-
-                            // Status indicator: spinner, check, error
                             Text {
-                                text: wifiEntry.isConnecting
-                                      ? "\u2026"
-                                      : wifiEntry.isActive
-                                        ? "\u2713"
-                                        : wifiEntry.hadError
-                                          ? "\u00d7"
-                                          : ""
+                                text: wifiEntry.isConnecting ? "\u2026" : "\u00d7"
                                 color: wifiEntry.hadError ? "#ff6666" : Config.colors.accent
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizeStatus
-                                visible: wifiEntry.isActive || wifiEntry.isConnecting || wifiEntry.hadError
+                                visible: wifiEntry.isConnecting || wifiEntry.hadError
                             }
                         }
 
@@ -547,7 +570,7 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: wifiSection.openPopupReq("wifi")
                             onClicked: {
-                                if (!wifiEntry.isActive && !wifiEntry.isConnecting) {
+                                if (!wifiEntry.isConnecting) {
                                     wifiSection.lastError = "";
                                     wifiSection.connectWifi(wifiEntry.modelData.ssid);
                                 }
@@ -556,10 +579,76 @@ Item {
                         }
                     }
                 }
+
+                // ── Separator ─────────────────────────────────────────────
+                Rectangle {
+                    visible: wifiSection.ssid !== "" && wifiSection.networks.filter(n => n.ssid !== wifiSection.ssid).length > 0
+                    width: wifiListViewport.width
+                    height: Math.round(1 * Config.scale)
+                    color: Config.colors.border
+                }
+
+                // ── Connected network (pinned to bottom) ──────────────────
+                Repeater {
+                    model: wifiSection.networks.filter(n => n.ssid === wifiSection.ssid)
+                    delegate: Rectangle {
+                        id: wifiActiveEntry
+                        required property var modelData
+
+                        width: wifiActiveEntryRow.implicitWidth + Math.round(16 * Config.scale)
+                        implicitHeight: wifiActiveEntryRow.implicitHeight + Math.round(8 * Config.scale)
+                        radius: Math.round(6 * Config.scale)
+                        color: wifiActiveMouse.containsMouse
+                               ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
+                               : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+                        Behavior on color {
+                            ColorAnimation { duration: 80 }
+                        }
+
+                        RowLayout {
+                            id: wifiActiveEntryRow
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: Math.round(8 * Config.scale)
+                            spacing: Math.round(8 * Config.scale)
+
+                            IconImage {
+                                implicitSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
+                                source: Quickshell.iconPath(wifiSection.icon(wifiActiveEntry.modelData.signal))
+                            }
+                            Text {
+                                text: wifiActiveEntry.modelData.ssid
+                                color: Config.colors.accent
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                            }
+                            Text {
+                                text: "\u2713"
+                                color: Config.colors.accent
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizeStatus
+                            }
+                        }
+
+                        MouseArea {
+                            id: wifiActiveMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: wifiSection.openPopupReq("wifi")
+                            onClicked: {
+                                wifiSection.openPopupReq("wifi");
+                                wifiDisconnectProc.command = ["nmcli", "dev", "disconnect", "wlan0"];
+                                wifiDisconnectProc.running = true;
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        // Scrollbar
+        // Scrollbar column — always present so viewport width is stable.
+        // Track rectangle and thumb only shown when content overflows.
         Item {
             id: wifiScrollbar
             anchors.top: parent.top
@@ -570,21 +659,19 @@ Item {
             anchors.rightMargin: Math.round(3 * Config.scale)
             width: Math.round(3 * Config.scale)
 
-            readonly property bool needed: wifiFlickable.contentHeight > wifiFlickable.height
-            visible: needed
-
             Rectangle {
                 anchors.fill: parent
                 radius: width / 2
                 color: Config.colors.border
+                visible: wifiPopup.maxScrollY > 0
             }
 
             Rectangle {
-                readonly property real ratio: wifiFlickable.height / Math.max(wifiFlickable.contentHeight, 1)
+                readonly property real ratio: wifiListViewport.height / Math.max(wifiListCol.implicitHeight, 1)
                 readonly property real thumbH: Math.max(Math.round(20 * Config.scale), wifiScrollbar.height * ratio)
                 readonly property real travel: wifiScrollbar.height - thumbH
-                readonly property real scrollRatio: wifiFlickable.contentHeight > wifiFlickable.height
-                                                    ? wifiFlickable.contentY / (wifiFlickable.contentHeight - wifiFlickable.height)
+                readonly property real scrollRatio: wifiPopup.maxScrollY > 0
+                                                    ? wifiPopup.scrollY / wifiPopup.maxScrollY
                                                     : 0
 
                 width: parent.width
@@ -592,6 +679,7 @@ Item {
                 y: travel * scrollRatio
                 radius: width / 2
                 color: Config.colors.textMuted
+                visible: wifiPopup.maxScrollY > 0
                 Behavior on y {
                     NumberAnimation { duration: 60 }
                 }
