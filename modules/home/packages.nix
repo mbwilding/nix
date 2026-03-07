@@ -94,6 +94,7 @@ in
       nmap
       nodejs
       opencode
+      opencode-desktop
       openssh
       pavucontrol
       php85Packages.php-cs-fixer
