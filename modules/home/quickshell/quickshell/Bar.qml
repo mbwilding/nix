@@ -625,6 +625,8 @@ Scope {
                     sliderLabelWidth: root.sliderLabelWidth
                     brightness: BrightnessService.screenBrightness
                     available: BrightnessService.screenAvailable
+                    iconOffset: -3
+                    popupIconOffset: -3
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
