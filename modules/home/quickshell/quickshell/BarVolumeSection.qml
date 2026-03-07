@@ -213,17 +213,16 @@ Item {
 
     // Overhead = everything in a name row except the name text itself.
     // RowLayout margins: left(8) + right(8) = 16 scaled
-    // RowLayout children (spacing=6 each gap, 1 gap between 2 items = 6 scaled):
-    //   iconBtn(22) + spacing + [name]
-    // suspendBtn(22) + suspendBtn rightMargin(8) are outside rowContent but inside deviceRow
-    // = iconBtn + 1*spacing + 2*margin + suspendBtn + suspendBtn rightMargin + suspendBtn→rowContent gap(6)
+    // RowLayout children (spacing=6 each gap, 3 gaps between 4 items):
+    //   muteBtn(22) + spacing + [name] + spacing + suspendBtn(22)
+    // = muteBtn + suspendBtn + 2*spacing + 2*margin
     readonly property real _nameRowOverhead: Math.round(
-        Math.round(22 * Config.scale)                  // icon mute button
-        + Math.round(6 * Config.scale)                 // iconBtn→name spacing
-        + Math.round(8 * Config.scale)                 // left margin
-        + Math.round(6 * Config.scale)                 // rowContent→suspendBtn gap (rightMargin)
+        Math.round(22 * Config.scale)                  // mute icon button
+        + Math.round(6 * Config.scale)                 // muteBtn→name spacing
+        + Math.round(6 * Config.scale)                 // name→suspendBtn spacing
         + Math.round(22 * Config.scale)                // suspend button
-        + Math.round(8 * Config.scale))                // suspend button right margin
+        + Math.round(8 * Config.scale)                 // left margin
+        + Math.round(8 * Config.scale))                // right margin
 
     // Slider row overhead: label(38) + gap(6) + thumbR(7) + scrollbar track(3) + scrollbar rightMargin(3)
     //                    + viewport leftMargin(8) + viewport rightMargin(4) + card border(1+1)
@@ -485,69 +484,16 @@ Item {
         }
 
         // Suspend button — always full opacity, anchored independently
-        Rectangle {
-            id: suspendBtn
-            readonly property bool isSuspended: deviceRow.volumeSection
-                ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
-                : false
-
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: Math.round(8 * Config.scale)
-
-            implicitWidth: Math.round(22 * Config.scale)
-            implicitHeight: Math.round(22 * Config.scale)
-            radius: Math.round(5 * Config.scale)
-            color: suspendBtnMouse.containsMouse
-                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
-                : (suspendBtn.isSuspended ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
-                                          : Qt.rgba(1, 1, 1, 0.06))
-            border.color: suspendBtnMouse.containsMouse
-                ? Config.colors.accent
-                : (suspendBtn.isSuspended ? Config.colors.accent : Config.colors.border)
-            border.width: 1
-            Behavior on color { ColorAnimation { duration: 80 } }
-            Behavior on border.color { ColorAnimation { duration: 80 } }
-
-            IconImage {
-                anchors.centerIn: parent
-                implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
-                source: suspendBtn.isSuspended
-                    ? Quickshell.iconPath("media-playback-start-symbolic")
-                    : Quickshell.iconPath("media-playback-pause-symbolic")
-            }
-
-            MouseArea {
-                id: suspendBtnMouse
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    if (deviceRow.volumeSection)
-                        deviceRow.volumeSection.openPopupReq("volume");
-                }
-                onClicked: {
-                    mouse.accepted = true;
-                    if (deviceRow.volumeSection && deviceRow.node)
-                        deviceRow.volumeSection.toggleSuspend(deviceRow.node, deviceRow.isSinkDevice);
-                }
-            }
-        }
-
         ColumnLayout {
             id: rowContent
             anchors.left: parent.left
-            anchors.right: suspendBtn.left
+            anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(6 * Config.scale)
+            anchors.rightMargin: Math.round(8 * Config.scale)
             spacing: Math.round(4 * Config.scale)
 
-            // Dim suspended devices; suspend button is a sibling so stays bright
-            opacity: deviceRow.isSuspended ? 0.45 : 1.0
-            Behavior on opacity { NumberAnimation { duration: 150 } }
-
-            // ── Top row: mute-icon button + name ───────────────────────────
+            // ── Top row: mute-icon button + name + suspend button ───────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
@@ -602,7 +548,7 @@ Item {
                     }
                 }
 
-                // Device name
+                // Device name — dims when suspended
                 Text {
                     Layout.fillWidth: true
                     text: deviceRow.volumeSection.nodeName(deviceRow.node)
@@ -610,14 +556,64 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.bar.fontSizeStatus
                     elide: Text.ElideRight
+                    opacity: deviceRow.isSuspended ? 0.45 : 1.0
                     Behavior on color { ColorAnimation { duration: 120 } }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+
+                // Suspend / resume toggle button — always full opacity
+                Rectangle {
+                    id: suspendBtn
+                    readonly property bool isSuspended: deviceRow.volumeSection
+                        ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
+                        : false
+
+                    implicitWidth: Math.round(22 * Config.scale)
+                    implicitHeight: Math.round(22 * Config.scale)
+                    radius: Math.round(5 * Config.scale)
+                    color: suspendBtnMouse.containsMouse
+                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
+                        : (suspendBtn.isSuspended ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                                                  : Qt.rgba(1, 1, 1, 0.06))
+                    border.color: suspendBtnMouse.containsMouse
+                        ? Config.colors.accent
+                        : (suspendBtn.isSuspended ? Config.colors.accent : Config.colors.border)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 80 } }
+                    Behavior on border.color { ColorAnimation { duration: 80 } }
+
+                    IconImage {
+                        anchors.centerIn: parent
+                        implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
+                        source: suspendBtn.isSuspended
+                            ? Quickshell.iconPath("media-playback-start-symbolic")
+                            : Quickshell.iconPath("media-playback-pause-symbolic")
+                    }
+
+                    MouseArea {
+                        id: suspendBtnMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: {
+                            if (deviceRow.volumeSection)
+                                deviceRow.volumeSection.openPopupReq("volume");
+                        }
+                        onClicked: {
+                            mouse.accepted = true;
+                            if (deviceRow.volumeSection && deviceRow.node)
+                                deviceRow.volumeSection.toggleSuspend(deviceRow.node, deviceRow.isSinkDevice);
+                        }
+                    }
                 }
             }
 
-            // ── Slider row ─────────────────────────────────────────────────
+            // ── Slider row — dims when suspended ───────────────────────────
             Item {
                 Layout.fillWidth: true
                 implicitHeight: Math.round(18 * Config.scale)
+                opacity: deviceRow.isSuspended ? 0.45 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 150 } }
 
                 readonly property real frac: {
                     if (!deviceRow.nodeAudio) return 0;
