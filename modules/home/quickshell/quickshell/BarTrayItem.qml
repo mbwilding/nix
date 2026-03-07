@@ -72,22 +72,11 @@ Item {
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    Rectangle {
+    BarButton {
         id: iconContainer
 
-        implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-        implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-        radius: Math.round(8 * Config.scale)
-        color: (hoverArea.containsMouse || root.popupOpen) ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent"
-        border.color: (hoverArea.containsMouse || root.popupOpen) ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35) : "transparent"
-        border.width: 1
-
-        Behavior on color {
-            ColorAnimation { duration: 120 }
-        }
-        Behavior on border.color {
-            ColorAnimation { duration: 120 }
-        }
+        hovered: hoverArea.containsMouse
+        popupOpen: root.popupOpen
 
         IconImage {
             id: icon
@@ -113,8 +102,8 @@ Item {
 
             onClicked: mouse => {
                 root.hovered();
-                if (root.trayItem.hasMenu) {
-                    if (root.popupName !== "")
+                if (mouse.button === Qt.RightButton) {
+                    if (root.trayItem.hasMenu && root.popupName !== "")
                         root.openPopupReq(root.popupName);
                 } else {
                     root.trayItem.activate();

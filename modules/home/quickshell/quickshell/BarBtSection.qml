@@ -37,8 +37,8 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth: btRow.implicitWidth
-    implicitHeight: btRow.implicitHeight
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
     containmentMask: Item {
         x: btSection.popupOpen ? -Math.max(0, (btPopup.width - btSection.width) / 2) : 0
@@ -106,6 +106,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
+        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -117,11 +118,13 @@ Item {
         }
     }
 
-    RowLayout {
-        id: btRow
-        spacing: Math.round(6 * Config.scale)
+    BarButton {
+        anchors.fill: parent
+        hovered: triggerArea.containsMouse
+        popupOpen: btSection.popupOpen
 
         IconImage {
+            anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(btSection.btIcon())
             opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : Config.bar.disabledOpacity

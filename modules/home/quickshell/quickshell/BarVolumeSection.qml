@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
+import "components"
 
 // Volume bar section: trigger icon (mute toggle + scroll) + horizontal slider popup.
 //
@@ -33,8 +34,8 @@ Item {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth: volumeRow.implicitWidth
-    implicitHeight: volumeRow.implicitHeight
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
     containmentMask: Item {
         x: volumeSection.popupOpen ? -Math.max(0, (volumePopup.width - volumeSection.width) / 2) : 0
@@ -60,6 +61,7 @@ Item {
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
+        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
@@ -78,11 +80,14 @@ Item {
         }
     }
 
-    RowLayout {
-        id: volumeRow
-        spacing: Math.round(6 * Config.scale)
+    BarButton {
+        id: triggerButton
+        anchors.fill: parent
+        hovered: triggerArea.containsMouse
+        popupOpen: volumeSection.popupOpen
 
         IconImage {
+            anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
             source: Quickshell.iconPath(volumeSection.volumeIcon())
             opacity: (volumeSection.audio && volumeSection.audio.muted) ? Config.bar.disabledOpacity : 1.0
