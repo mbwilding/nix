@@ -28,6 +28,7 @@ PopupContainer {
     // Raw-model mode
     property var rawModel: null
     property var rawIsConnectedFn: null
+    property var rawSavedFn: null
     property var rawLabelFn: null
     property var rawIconFn: null
 
@@ -175,6 +176,19 @@ PopupContainer {
 
             // ══ JS-array mode (wifi) ══════════════════════════════════════
 
+            // ── Available header ──────────────────────────────────────────
+            Text {
+                visible: root.rawModel === null && root.availableItems.length > 0
+                text: "Available"
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                width: parent.width
+                leftPadding: Math.round(4 * Config.scale)
+                topPadding: Math.round(4 * Config.scale)
+                bottomPadding: Math.round(2 * Config.scale)
+            }
+
             // ── Available rows ────────────────────────────────────────────
             Repeater {
                 model: root.rawModel === null ? root.availableItems : []
@@ -208,6 +222,17 @@ PopupContainer {
                         }
                     }
 
+                    Rectangle {
+                        visible: !!availRow.modelData.saved
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        width: Math.round(6 * Config.scale)
+                        height: width
+                        radius: width / 2
+                        color: Config.colors.textMuted
+                    }
+
                     MouseArea {
                         id: availMouse
                         anchors.fill: parent
@@ -227,6 +252,19 @@ PopupContainer {
                 width: parent.width
                 height: Math.round(1 * Config.scale)
                 color: Config.colors.border
+            }
+
+            // ── Connected header ──────────────────────────────────────────
+            Text {
+                visible: root.rawModel === null && root.connectedItems.length > 0
+                text: "Connected"
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                width: parent.width
+                leftPadding: Math.round(4 * Config.scale)
+                topPadding: Math.round(4 * Config.scale)
+                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Connected rows ────────────────────────────────────────────
@@ -264,6 +302,17 @@ PopupContainer {
                         }
                     }
 
+                    Rectangle {
+                        visible: !!connRow.modelData.saved
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        width: Math.round(6 * Config.scale)
+                        height: width
+                        radius: width / 2
+                        color: Config.colors.accent
+                    }
+
                     MouseArea {
                         id: connMouse
                         anchors.fill: parent
@@ -279,6 +328,19 @@ PopupContainer {
             // Uses the QML model directly in a Repeater so Qt handles
             // reactivity natively. visible: filtering separates connected
             // from available rows; a separator is shown between them.
+
+            // ── Raw available header ──────────────────────────────────────
+            Text {
+                visible: root.rawModel !== null && root._rawAvailableCount > 0
+                text: "Available"
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                width: parent.width
+                leftPadding: Math.round(4 * Config.scale)
+                topPadding: Math.round(4 * Config.scale)
+                bottomPadding: Math.round(2 * Config.scale)
+            }
 
             // ── Raw available rows ────────────────────────────────────────
             Repeater {
@@ -318,6 +380,17 @@ PopupContainer {
                         }
                     }
 
+                    Rectangle {
+                        visible: root.rawSavedFn ? root.rawSavedFn(rawAvailRow.modelData) : false
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        width: Math.round(6 * Config.scale)
+                        height: width
+                        radius: width / 2
+                        color: Config.colors.textMuted
+                    }
+
                     MouseArea {
                         id: rawAvailMouse
                         anchors.fill: parent
@@ -339,6 +412,19 @@ PopupContainer {
                 width: parent.width
                 height: Math.round(1 * Config.scale)
                 color: Config.colors.border
+            }
+
+            // ── Raw connected header ──────────────────────────────────────
+            Text {
+                visible: root.rawModel !== null && root._rawConnectedCount > 0
+                text: "Connected"
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                width: parent.width
+                leftPadding: Math.round(4 * Config.scale)
+                topPadding: Math.round(4 * Config.scale)
+                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Raw connected rows ────────────────────────────────────────
@@ -379,6 +465,17 @@ PopupContainer {
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizeStatus
                         }
+                    }
+
+                    Rectangle {
+                        visible: root.rawSavedFn ? root.rawSavedFn(rawConnRow.modelData) : false
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        width: Math.round(6 * Config.scale)
+                        height: width
+                        radius: width / 2
+                        color: Config.colors.accent
                     }
 
                     MouseArea {
