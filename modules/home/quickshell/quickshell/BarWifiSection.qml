@@ -53,14 +53,24 @@ Item {
         const prev = wifiSection.prevSsid;
         const cur = wifiSection.ssid;
         if (prev !== "" && cur === "" && wifiSection.connecting === "") {
-            wifiNotifyProc.command = [
+            wifiDisconnectedNotifyProc.command = [
                 "notify-send",
                 "--app-name=Wi-Fi",
                 "--app-icon=network-wireless-offline-symbolic",
                 "Wi-Fi Disconnected",
                 "Disconnected from " + prev
             ];
-            wifiNotifyProc.running = true;
+            wifiDisconnectedNotifyProc.running = true;
+        } else if (cur !== "" && prev === "" && wifiSection.connecting === "") {
+            // Auto-reconnect (e.g. re-enabling wifi) — not handled by wifiConnectProc
+            wifiConnectedNotifyProc.command = [
+                "notify-send",
+                "--app-name=Wi-Fi",
+                "--app-icon=network-wireless-symbolic",
+                "Wi-Fi Connected",
+                "Connected to " + cur
+            ];
+            wifiConnectedNotifyProc.running = true;
         }
         wifiSection.prevSsid = cur;
     }
@@ -136,9 +146,14 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 wifiSection.enabled = this.text.trim() === "enabled";
-                if (wifiSection.enabled)
+                if (wifiSection.enabled) {
+                    // Clear stale state immediately so the icon shows offline
+                    // while we wait for wifiProc to find an active network.
+                    wifiSection.networks = [];
+                    wifiSection.ssid = "";
+                    wifiSection.strength = -1;
                     wifiProc.running = true;
-                else {
+                } else {
                     wifiSection.networks = [];
                     wifiSection.ssid = "";
                     wifiSection.strength = -1;
@@ -241,14 +256,14 @@ Item {
                 wifiSection.lastConnected = ssid_;
                 wifiSection.lastError = "";
                 wifiSection.connecting = "";
-                wifiNotifyProc.command = [
+                wifiConnectedNotifyProc.command = [
                     "notify-send",
                     "--app-name=Wi-Fi",
                     "--app-icon=network-wireless-symbolic",
                     "Wi-Fi Connected",
                     "Connected to " + ssid_
                 ];
-                wifiNotifyProc.running = true;
+                wifiConnectedNotifyProc.running = true;
                 wifiProc.running = true;
             } else if (errText.includes("secrets") || errText.includes("password") || errText.includes("no-secrets")) {
                 // Password required
@@ -260,14 +275,14 @@ Item {
                 wifiSection.connecting = "";
                 wifiSection.lastError = ssid_;
                 wifiSection.lastConnected = "";
-                wifiNotifyProc.command = [
+                wifiFailedNotifyProc.command = [
                     "notify-send",
                     "--app-name=Wi-Fi",
                     "--app-icon=network-wireless-offline-symbolic",
                     "Wi-Fi Failed",
                     "Could not connect to " + ssid_
                 ];
-                wifiNotifyProc.running = true;
+                wifiFailedNotifyProc.running = true;
                 wifiProc.running = true;
             }
             wifiConnectProc.stdoutText = "";
@@ -276,7 +291,27 @@ Item {
     }
 
     Process {
-        id: wifiNotifyProc
+        id: wifiConnectedNotifyProc
+    }
+
+    Process {
+        id: wifiFailedNotifyProc
+    }
+
+    Process {
+        id: wifiDisconnectedNotifyProc
+    }
+
+    // Cycles 0-3 while connecting to animate the bar icon signal bars
+    property int connectAnimStep: 0
+    Timer {
+        id: connectAnimTimer
+        interval: 350
+        repeat: true
+        triggeredOnStart: true
+        running: wifiSection.connecting !== ""
+        onRunningChanged: if (!running) wifiSection.connectAnimStep = 0
+        onTriggered: wifiSection.connectAnimStep = (wifiSection.connectAnimStep + 1) % 4
     }
 
     // ── Trigger ───────────────────────────────────────────────────────────────
@@ -301,7 +336,18 @@ Item {
         IconImage {
             anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(wifiSection.icon(wifiSection.strength))
+            source: {
+                if (wifiSection.connecting !== "") {
+                    const steps = [
+                        "network-wireless-signal-weak-symbolic",
+                        "network-wireless-signal-ok-symbolic",
+                        "network-wireless-signal-good-symbolic",
+                        "network-wireless-signal-excellent-symbolic"
+                    ];
+                    return Quickshell.iconPath(steps[wifiSection.connectAnimStep]);
+                }
+                return Quickshell.iconPath(wifiSection.icon(wifiSection.strength));
+            }
             opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
             Behavior on opacity {
                 NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
