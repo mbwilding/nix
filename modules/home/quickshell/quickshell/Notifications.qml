@@ -25,6 +25,10 @@ Scope {
     property var notifHistory: []
     property int unreadCount: 0
 
+    // Maps notification JS object identity (by unique key) → snapshot id
+    // so we can remove history when the live card is dismissed.
+    property var _notifSnapshotIds: ({})
+
     function clearHistory() {
         root.notifHistory = [];
     }
@@ -173,6 +177,12 @@ Scope {
         onNotification: notification => {
             notification.tracked = true;
 
+            // Skip system/internal notifications from history
+            const systemApps = ["Battery", "Bluetooth", "WiFi"];
+            if (systemApps.includes(notification.appName ?? "")) {
+                return;
+            }
+
             // Snapshot into history
             const actions = [];
             const rawActions = notification.actions ?? [];
@@ -180,8 +190,9 @@ Scope {
                 const a = rawActions[i];
                 actions.push({ identifier: a.identifier, text: a.text });
             }
+            const snapId = Date.now() + Math.random();
             const snapshot = {
-                id: Date.now() + Math.random(),
+                id: snapId,
                 appName: notification.appName ?? "",
                 appIcon: notification.appIcon ?? "",
                 desktopEntry: notification.desktopEntry ?? "",
@@ -192,6 +203,9 @@ Scope {
             };
             root.notifHistory = [snapshot].concat(root.notifHistory);
             root.unreadCount = root.unreadCount + 1;
+
+            // Remember which snapshot this notification maps to
+            root._notifSnapshotIds[notification.id] = snapId;
         }
     }
 
@@ -232,12 +246,21 @@ Scope {
             Instantiator {
                 model: server.trackedNotifications
                 delegate: NotificationCard {
+                    id: notifCardDelegate
                     required property Notification modelData
 
                     notification: modelData
                     timeout: Config.notifications.timeout
                     width: Config.notifications.cardWidth
                     parent: notifColumn
+
+                    onDismissed: {
+                        const snapId = root._notifSnapshotIds[notifCardDelegate.modelData.id];
+                        if (snapId !== undefined) {
+                            root.removeHistoryEntry(snapId);
+                            delete root._notifSnapshotIds[notifCardDelegate.modelData.id];
+                        }
+                    }
 
                     Component.onCompleted: root.activeCards.push(this)
                     Component.onDestruction: {
@@ -248,10 +271,10 @@ Scope {
                     }
 
                     Connections {
-                        target: modelData
+                        target: notifCardDelegate.modelData
                         function onClosed() {
                             if (Config.notifications.timeout !== 0)
-                                animateOut();
+                                notifCardDelegate.animateOut();
                         }
                     }
                 }
