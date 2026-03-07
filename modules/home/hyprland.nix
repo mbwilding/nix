@@ -467,6 +467,7 @@ in
         "$mod, escape, exec, qs ipc call notifications dismissAll"
         "$mod, Y, exec, qs ipc call notifications invoke"
         "$mod, X, exec, systemctl --user restart quickshell.service"
+        "$mod, G, exec, notify-send Title Message --app-name=App"
 
         # Switch window focus
         "$mod, h, movefocus, l"
