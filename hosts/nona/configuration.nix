@@ -142,50 +142,50 @@ in
       {
         matches = [ { "device.name" = "alsa_card.pci-0000_c1_00.1"; } ];
         actions.update-props = {
-          "device.nick" = "HDMI";
           "device.description" = "HDMI";
+          "device.nick" = "HDMI";
         };
       }
       {
         matches = [ { "device.name" = "alsa_card.platform-snd_aloop.0"; } ];
         actions.update-props = {
-          "device.nick" = "Loopback";
-          "device.description" = "OBS Loopback";
+          "device.description" = "Loopback";
+          "device.nick" = "OBS Loopback";
         };
       }
       {
         matches = [ { "node.name" = "alsa_output.pci-0000_c1_00.6.HiFi__Speaker__sink"; } ];
         actions.update-props = {
-          "node.nick" = "Laptop";
-          "node.description" = "Internal Speakers";
+          "node.description" = "Laptop";
+          "node.nick" = "Internal Speakers";
         };
       }
       {
         matches = [ { "node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic2__source"; } ];
         actions.update-props = {
-          "node.nick" = "Laptop";
-          "node.description" = "Internal Mics";
+          "node.description" = "Laptop";
+          "node.nick" = "Internal Mics";
         };
       }
       {
         matches = [ { "node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic1__source"; } ];
         actions.update-props = {
-          "node.nick" = "Laptop";
-          "node.description" = "Internal Mic (Digital)";
+          "node.description" = "Laptop";
+          "node.nick" = "Internal Mics (Digital)";
         };
       }
       {
         matches = [ { "node.name" = "alsa_output.platform-snd_aloop.0.analog-stereo"; } ];
         actions.update-props = {
-          "node.nic" = "Loopback";
-          "node.description" = "OBS Loopback";
+          "node.description" = "Loopback";
+          "node.nick" = "OBS Loopback";
         };
       }
       {
         matches = [ { "node.name" = "alsa_input.platform-snd_aloop.0.analog-stereo"; } ];
         actions.update-props = {
-          "node.nick" = "Loopback";
-          "node.description" = "OBS Loopback (Monitor)";
+          "node.description" = "Loopback";
+          "node.nick" = "OBS Loopback (Monitor)";
         };
       }
     ];
