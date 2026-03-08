@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -43,7 +44,6 @@ Scope {
 
         onPamMessage: {
             root.pamIsError = pam.messageIsError;
-            // Only show the message if it's an error — plain prompts like "Password: " are redundant
             root.pamMessage = pam.messageIsError ? pam.message : "";
             if (pam.responseRequired) {
                 root.pamAuthenticating = true;
@@ -108,6 +108,7 @@ Scope {
 
             Item {
                 anchors.fill: parent
+                clip: true
 
                 Connections {
                     target: root
@@ -135,6 +136,14 @@ Scope {
                     fillMode: Image.PreserveAspectCrop
                     visible: root.bgImagePath !== ""
                     smooth: true
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        blurEnabled: true
+                        autoPaddingEnabled: false
+                        blur: 0.6
+                        blurMax: 64
+                        blurMultiplier: 0.7
+                    }
                 }
 
                 Rectangle {
@@ -153,9 +162,7 @@ Scope {
 
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: Config.bar.clock24h
-                                ? Qt.formatTime(clock.date, "HH:mm")
-                                : Qt.formatTime(clock.date, "hh:mm") + " " + Qt.formatTime(clock.date, "AP")
+                            text: Config.bar.clock24h ? Qt.formatTime(clock.date, "HH:mm") : Qt.formatTime(clock.date, "hh:mm") + " " + Qt.formatTime(clock.date, "AP")
                             color: Config.colors.accent
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizeClock * 2.2)
@@ -270,7 +277,11 @@ Scope {
                                     border.width: Math.round(4 * Config.scale)
                                     border.color: root.pamIsError ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
                                     opacity: passwordInput.activeFocus ? 1.0 : 0.0
-                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                    Behavior on opacity {
+                                        NumberAnimation {
+                                            duration: 150
+                                        }
+                                    }
                                 }
 
                                 RowLayout {
