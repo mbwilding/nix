@@ -18,6 +18,7 @@ Item {
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
+    signal closePopupReq
 
     // Expose popup rect for Bar.qml input mask
     property alias popup: notifPopup
@@ -29,7 +30,7 @@ Item {
 
     onNotifHistoryChanged: {
         if (notifSection.notifHistory.length === 0 && notifSection.popupOpen)
-            notifSection.exitPopupReq();
+            notifSection.closePopupReq();
     }
 
     // Called by Bar.qml when a live notification is dismissed externally.
