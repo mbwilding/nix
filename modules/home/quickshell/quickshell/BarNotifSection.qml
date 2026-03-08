@@ -52,6 +52,17 @@ Item {
 
     readonly property bool popupOpen: activePopup === "notif"
 
+    // HoverHandler does not synthesize a hover-enter when an item first becomes
+    // visible under a stationary cursor — so the first time the popup appears the
+    // quickCloseTimer (started by the trigger's onExited) is never cancelled by
+    // the popup's HoverHandler, and the popup closes 600 ms later.
+    // Fix: whenever the popup transitions from closed→open, re-emit openPopupReq
+    // after one event-loop cycle so Bar.qml's openPopup() cancels the timer.
+    onPopupOpenChanged: {
+        if (notifSection.popupOpen)
+            Qt.callLater(() => { notifSection.openPopupReq("notif"); });
+    }
+
     containmentMask: Item {
         x: notifSection.popupOpen ? -Math.max(0, (notifPopup.width - notifSection.width) / 2) : 0
         y: notifSection.popupOpen ? -notifPopup.height - Config.bar.popupOffset : 0
@@ -215,6 +226,7 @@ Item {
                         width: popupCol.width
 
                         onDismissed: notifSection.removeHistoryEntry(histDelegate.modelData.id)
+                        onHovered: notifSection.openPopupReq("notif")
 
                         Component.onCompleted: {
                             notifSection._historyCards[histDelegate.modelData.id] = histDelegate;
