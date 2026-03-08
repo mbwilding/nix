@@ -9,6 +9,8 @@ import Quickshell.Wayland
 import Quickshell.Services.Notifications
 import Quickshell.Services.UPower
 
+import ".."
+
 Scope {
     id: root
 
