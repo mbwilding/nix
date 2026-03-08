@@ -710,6 +710,7 @@ Scope {
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
+                    onClosePopupReq: root.closePopup()
                     onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
                     onDismissAll: root.dismissAllNotifs()
 
