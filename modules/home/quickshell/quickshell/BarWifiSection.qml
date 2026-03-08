@@ -407,10 +407,14 @@ BarSectionItem {
             wifiSection.openPopupReq("wifi");
         }
 
-        onConnectedClicked: {
+        onConnectedClicked: index => {
             wifiSection.openPopupReq("wifi");
-            wifiDisconnectProc.command = ["nmcli", "dev", "disconnect", "wlan0"];
-            wifiDisconnectProc.running = true;
+            const nets = wifiSection.networks.filter(n => n.active);
+            const net = nets[index];
+            if (net) {
+                wifiDisconnectProc.command = ["nmcli", "con", "down", "id", net.ssid];
+                wifiDisconnectProc.running = true;
+            }
         }
     }
 }
