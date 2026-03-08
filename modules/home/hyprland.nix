@@ -460,8 +460,7 @@ in
         # "$mod, Z, exec, hyprshot -m window -m active"
 
         # Quickshell
-        "$mod, Z, exec, qs ipc call default lock"
-        "$mod, A, exec, qs ipc call default toggleMixer"
+        "$mod, Z, exec, qs ipc call lockscreen lock"
         "$mod, N, exec, qs ipc call notifications dismiss"
         "$mod, W, exec, qs ipc call bar toggle"
         "$mod, escape, exec, qs ipc call notifications dismissAll"
