@@ -9,29 +9,27 @@ import Quickshell.Wayland
 import Quickshell.Services.Pam
 import "components"
 
-// Lock screen using the ext-session-lock-v1 Wayland protocol.
-// Lock:   qs ipc call lockscreen lock
-// Unlock: qs ipc call lockscreen unlock
 Scope {
     id: root
 
+    property bool pamAuthenticating: false
+    property bool pamIsError: false
+    property string bgImagePath: ""
+    property string pamMessage: ""
     property var notifHistory: []
 
-    // ── Lock screen background ────────────────────────────────────────────────
-    property string bgImagePath: ""
+    signal clearPasswordField
+    signal focusPasswordField
+    signal shakePasswordField
 
-    // Takes a screenshot before locking so we can blur it as the background.
-    // grim writes to /tmp/qs-lock-bg.png; on exit we apply the lock.
     Process {
         id: grimProc
         command: ["grim", "/tmp/qs-lock-bg.png"]
         onExited: (code, status) => {
             if (code === 0) {
-                // Force Image to reload the new file even if path is unchanged
                 root.bgImagePath = "";
                 root.bgImagePath = "file:///tmp/qs-lock-bg.png";
             }
-            // Lock regardless (even if grim failed — safety first)
             sessionLock.locked = true;
             root.pamMessage = "";
             root.pamIsError = false;
@@ -39,15 +37,6 @@ Scope {
             pam.start();
         }
     }
-
-    // ── PAM authentication ────────────────────────────────────────────────────
-    property string pamMessage: ""
-    property bool pamIsError: false
-    property bool pamAuthenticating: false
-
-    signal focusPasswordField()
-    signal shakePasswordField()
-    signal clearPasswordField()
 
     PamContext {
         id: pam
@@ -68,9 +57,7 @@ Scope {
                 sessionLock.locked = false;
             } else {
                 root.pamIsError = true;
-                root.pamMessage = result === PamResult.MaxTries
-                    ? "Too many attempts"
-                    : (pam.message !== "" ? pam.message : "Authentication failed");
+                root.pamMessage = result === PamResult.MaxTries ? "Too many attempts" : (pam.message !== "" ? pam.message : "Authentication failed");
                 root.clearPasswordField();
                 root.shakePasswordField();
                 pamRetryTimer.restart();
@@ -97,14 +84,16 @@ Scope {
         }
     }
 
-    // ── IPC ──────────────────────────────────────────────────────────────────
     IpcHandler {
         target: "lockscreen"
-        function lock() { grimProc.running = true; }
-        function unlock() { sessionLock.locked = false; }
+        function lock() {
+            grimProc.running = true;
+        }
+        function unlock() {
+            sessionLock.locked = false;
+        }
     }
 
-    // ── Session lock ─────────────────────────────────────────────────────────
     WlSessionLock {
         id: sessionLock
         locked: false
@@ -117,12 +106,17 @@ Scope {
 
                 Connections {
                     target: root
-                    function onFocusPasswordField() { passwordInput.forceActiveFocus(); }
-                    function onShakePasswordField()  { shakeAnim.restart(); }
-                    function onClearPasswordField()  { passwordInput.text = ""; }
+                    function onFocusPasswordField() {
+                        passwordInput.forceActiveFocus();
+                    }
+                    function onShakePasswordField() {
+                        shakeAnim.restart();
+                    }
+                    function onClearPasswordField() {
+                        passwordInput.text = "";
+                    }
                 }
 
-                // ── Background: blurred screenshot + dark tint ────────────
                 Rectangle {
                     anchors.fill: parent
                     color: "#ff0d0d18"
@@ -151,12 +145,10 @@ Scope {
                     visible: root.bgImagePath !== ""
                 }
 
-                // ── Main layout ───────────────────────────────────────────
                 Column {
                     anchors.centerIn: parent
                     spacing: Math.round(32 * Config.scale)
 
-                    // ── Password input ────────────────────────────────────
                     Item {
                         id: passwordArea
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -166,13 +158,53 @@ Scope {
                         SequentialAnimation {
                             id: shakeAnim
                             property real restX: 0
-                            ScriptAction { script: { shakeAnim.restX = passwordArea.x; } }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(10 * Config.scale); duration: 50; easing.type: Easing.InOutQuad }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX + Math.round(18 * Config.scale); duration: 70; easing.type: Easing.InOutQuad }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(14 * Config.scale); duration: 60; easing.type: Easing.InOutQuad }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX + Math.round(10 * Config.scale); duration: 60; easing.type: Easing.InOutQuad }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(6 * Config.scale);  duration: 50; easing.type: Easing.InOutQuad }
-                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX;                                 duration: 40; easing.type: Easing.InOutQuad }
+                            ScriptAction {
+                                script: {
+                                    shakeAnim.restX = passwordArea.x;
+                                }
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX - Math.round(10 * Config.scale)
+                                duration: 50
+                                easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX + Math.round(18 * Config.scale)
+                                duration: 70
+                                easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX - Math.round(14 * Config.scale)
+                                duration: 60
+                                easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX + Math.round(10 * Config.scale)
+                                duration: 60
+                                easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX - Math.round(6 * Config.scale)
+                                duration: 50
+                                easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: passwordArea
+                                property: "x"
+                                to: shakeAnim.restX
+                                duration: 40
+                                easing.type: Easing.InOutQuad
+                            }
                         }
 
                         Column {
@@ -180,7 +212,6 @@ Scope {
                             width: parent.width
                             spacing: Math.round(10 * Config.scale)
 
-                            // PAM message
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 visible: root.pamMessage !== ""
@@ -189,36 +220,38 @@ Scope {
                                 font.family: Config.font.family
                                 font.pixelSize: Math.round(11 * Config.scale)
                                 opacity: 0.9
-                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 150
+                                    }
+                                }
                             }
 
-                            // Password field card
                             Rectangle {
                                 width: parent.width
                                 height: Math.round(44 * Config.scale)
                                 radius: Math.round(12 * Config.scale)
                                 color: Config.colors.surface
-                                border.width: passwordInput.activeFocus
-                                    ? Math.round(1.5 * Config.scale)
-                                    : Config.panelBorder.width
-                                border.color: root.pamIsError
-                                    ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b,
-                                              passwordInput.activeFocus ? 0.9 : 0.5)
-                                    : passwordInput.activeFocus
-                                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.8)
-                                        : Config.panelBorder.color
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
+                                border.width: passwordInput.activeFocus ? Math.round(1.5 * Config.scale) : Config.panelBorder.width
+                                border.color: root.pamIsError ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, passwordInput.activeFocus ? 0.9 : 0.5) : passwordInput.activeFocus ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.8) : Config.panelBorder.color
+                                Behavior on border.color {
+                                    ColorAnimation {
+                                        duration: 150
+                                    }
+                                }
 
                                 Rectangle {
                                     anchors.fill: parent
                                     radius: parent.radius
                                     color: "transparent"
                                     border.width: Math.round(4 * Config.scale)
-                                    border.color: root.pamIsError
-                                        ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
-                                        : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                                    border.color: root.pamIsError ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
                                     opacity: passwordInput.activeFocus ? 1.0 : 0.0
-                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                    Behavior on opacity {
+                                        NumberAnimation {
+                                            duration: 150
+                                        }
+                                    }
                                 }
 
                                 RowLayout {
@@ -229,13 +262,15 @@ Scope {
 
                                     Text {
                                         text: root.pamAuthenticating ? "\uF13E" : "\uF023"
-                                        color: root.pamIsError ? Config.colors.danger
-                                             : passwordInput.activeFocus ? Config.colors.accent
-                                             : Config.colors.textMuted
+                                        color: root.pamIsError ? Config.colors.danger : passwordInput.activeFocus ? Config.colors.accent : Config.colors.textMuted
                                         font.family: Config.font.family
                                         font.pixelSize: Math.round(14 * Config.scale)
                                         opacity: 0.8
-                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                        Behavior on color {
+                                            ColorAnimation {
+                                                duration: 150
+                                            }
+                                        }
                                     }
 
                                     Item {
@@ -298,7 +333,9 @@ Scope {
                                                     text = "";
                                                 }
                                             }
-                                            Keys.onEscapePressed: { text = ""; }
+                                            Keys.onEscapePressed: {
+                                                text = "";
+                                            }
                                         }
                                     }
 
@@ -311,7 +348,8 @@ Scope {
                                         opacity: 0.7
 
                                         RotationAnimator on rotation {
-                                            from: 0; to: 360
+                                            from: 0
+                                            to: 360
                                             duration: 900
                                             loops: Animation.Infinite
                                             running: pam.active && !pam.responseRequired
@@ -322,7 +360,6 @@ Scope {
                         }
                     }
 
-                    // ── Notifications ─────────────────────────────────────────
                     Item {
                         id: notifContainer
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -339,9 +376,7 @@ Scope {
                             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                             onWheel: event => {
                                 const step = Math.round(36 * Config.scale);
-                                notifContainer.scrollY = Math.max(0,
-                                    Math.min(notifContainer.maxScrollY,
-                                        notifContainer.scrollY - event.angleDelta.y / 120 * step));
+                                notifContainer.scrollY = Math.max(0, Math.min(notifContainer.maxScrollY, notifContainer.scrollY - event.angleDelta.y / 120 * step));
                             }
                         }
 
@@ -361,7 +396,9 @@ Scope {
                                     font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
                                     font.weight: Font.Medium
                                 }
-                                Item { Layout.fillWidth: true }
+                                Item {
+                                    Layout.fillWidth: true
+                                }
                                 Text {
                                     text: root.notifHistory.length > 99 ? "99+" : String(root.notifHistory.length)
                                     color: Config.colors.accentAlt
@@ -399,11 +436,8 @@ Scope {
                             color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
 
                             Rectangle {
-                                readonly property real _h: notifContainer.maxScrollY <= 0 ? parent.height
-                                    : Math.max(Math.round(28 * Config.scale),
-                                        parent.height * (notifContainer.height / notifInnerCol.implicitHeight))
-                                readonly property real _y: notifContainer.maxScrollY <= 0 ? 0
-                                    : (parent.height - _h) * (notifContainer.scrollY / notifContainer.maxScrollY)
+                                readonly property real _h: notifContainer.maxScrollY <= 0 ? parent.height : Math.max(Math.round(28 * Config.scale), parent.height * (notifContainer.height / notifInnerCol.implicitHeight))
+                                readonly property real _y: notifContainer.maxScrollY <= 0 ? 0 : (parent.height - _h) * (notifContainer.scrollY / notifContainer.maxScrollY)
                                 y: _y
                                 width: parent.width
                                 height: _h
