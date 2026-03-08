@@ -1,0 +1,3 @@
+module osd
+Osd 1.0 Osd.qml
+OsdRow 1.0 OsdRow.qml
