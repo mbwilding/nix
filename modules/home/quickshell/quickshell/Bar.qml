@@ -262,7 +262,7 @@ Scope {
                         id: pwInputRect
                         anchors.fill: parent
                         radius: Math.round(8 * Config.scale)
-                        color: Qt.rgba(1, 1, 1, 0.06)
+                        color: Config.colors.surfaceAlt
                         border.color: pwField.activeFocus ? Config.colors.accent : Config.colors.border
                         border.width: 1
                         Behavior on border.color {
@@ -315,7 +315,7 @@ Scope {
                                 implicitWidth: Math.round(24 * Config.scale)
                                 implicitHeight: Math.round(24 * Config.scale)
                                 radius: Math.round(6 * Config.scale)
-                                color: pwShowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                                color: pwShowMouse.containsMouse ? Config.colors.surfaceHover : "transparent"
                                 Behavior on color { ColorAnimation { duration: 80 } }
 
                                 Text {
@@ -346,7 +346,7 @@ Scope {
                         Layout.fillWidth: true
                         implicitHeight: Math.round(32 * Config.scale)
                         radius: Math.round(8 * Config.scale)
-                        color: pwCancelMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+                        color: pwCancelMouse.containsMouse ? Config.colors.surfaceHover : Config.colors.surfaceAlt
                         border.color: Config.colors.border
                         border.width: 1
                         Behavior on color { ColorAnimation { duration: 80 } }
@@ -383,7 +383,7 @@ Scope {
                         }
                         border.color: Config.colors.accent
                         border.width: 1
-                        opacity: pwField.text.length > 0 ? 1.0 : 0.4
+                        opacity: pwField.text.length > 0 ? 1.0 : 0.35
                         Behavior on opacity { NumberAnimation { duration: 120 } }
 
                         Text {
@@ -503,11 +503,50 @@ Scope {
 
             radius: Config.bar.radius
             antialiasing: true
-            color: Qt.rgba(0.12, 0.11, 0.22, 0.95)
-            border.color: Config.colors.border
-            border.width: 1
+            // Deep navy-purple — matches PopupCard surface color
+            color: Config.colors.surface
+            // No hard border — glow layers below provide all the framing
+            border.width: 0
 
-            // Inner highlight rim (top edge shine)
+            // ── Multi-layer floating island glow ─────────────────────────────
+            // Layer 1: wide diffuse shadow (darkest, outermost)
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -10
+                radius: parent.radius + 10
+                color: "transparent"
+                border.color: Config.colors.shadowDark
+                border.width: 10
+                opacity: 0.8
+                z: -3
+                antialiasing: true
+            }
+            // Layer 2: medium neon cyan halo
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -4
+                radius: parent.radius + 4
+                color: "transparent"
+                border.color: Config.colors.glowAccent
+                border.width: 3
+                opacity: 0.25
+                z: -2
+                antialiasing: true
+            }
+            // Layer 3: tight neon glow rim (just outside border)
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -2
+                radius: parent.radius + 2
+                color: "transparent"
+                border.color: Config.colors.accent
+                border.width: 1
+                opacity: 0.18
+                z: -1
+                antialiasing: true
+            }
+
+            // Inner highlight rim — neon cyan top-shine
             Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -516,7 +555,7 @@ Scope {
                 anchors.leftMargin: parent.radius
                 anchors.rightMargin: parent.radius
                 height: 1
-                color: "#25ffffff"
+                color: Config.colors.separator
             }
 
             opacity: root.visible_ ? 1 : 0
@@ -581,12 +620,12 @@ Scope {
                     implicitHeight: Config.bar.batteryIconSize
                     color: Config.colors.border
                     visible: trayRepeater.count > 0
-                    // subtle gradient separator
+                    // neon cyan gradient separator
                     gradient: Gradient {
                         orientation: Gradient.Vertical
                         GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.3; color: Config.colors.border }
-                        GradientStop { position: 0.7; color: Config.colors.border }
+                        GradientStop { position: 0.25; color: Config.colors.borderBright }
+                        GradientStop { position: 0.75; color: Config.colors.borderBright }
                         GradientStop { position: 1.0; color: "transparent" }
                     }
                 }
@@ -701,8 +740,8 @@ Scope {
                     gradient: Gradient {
                         orientation: Gradient.Vertical
                         GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.3; color: Config.colors.border }
-                        GradientStop { position: 0.7; color: Config.colors.border }
+                        GradientStop { position: 0.25; color: Config.colors.borderBright }
+                        GradientStop { position: 0.75; color: Config.colors.borderBright }
                         GradientStop { position: 1.0; color: "transparent" }
                     }
                 }

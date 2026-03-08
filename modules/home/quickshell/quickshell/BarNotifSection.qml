@@ -115,7 +115,7 @@ Item {
                     id: badgeText
                     anchors.centerIn: parent
                     text: notifSection.notifHistory.length > 99 ? "99+" : String(notifSection.notifHistory.length)
-                    color: "#1a1a2e"
+                    color: Config.colors.badgeText
                     font.family: Config.font.family
                     font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.65)
                     font.weight: Font.Bold

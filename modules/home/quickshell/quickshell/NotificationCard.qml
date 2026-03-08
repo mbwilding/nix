@@ -164,7 +164,7 @@ Item {
         }
 
         opacity: 0
-        scale: 0.94
+        scale: 0.92
         Behavior on opacity {
             enabled: !root.historyMode
             NumberAnimation {
@@ -177,7 +177,7 @@ Item {
             NumberAnimation {
                 duration: Config.notifications.animateSpeed
                 easing.type: Easing.OutBack
-                easing.overshoot: 0.4
+                easing.overshoot: 0.6
             }
         }
 
@@ -200,13 +200,13 @@ Item {
             width: Config.notifications.accentBar
             clip: true
 
-            // Glow layer
+            // Glow layer — wider neon halo behind the stripe
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: -3
+                anchors.margins: -4
                 radius: width / 2
                 color: Config.colors.glowAccent
-                opacity: 0.55
+                opacity: 0.45
             }
 
             Rectangle {
@@ -330,16 +330,16 @@ Item {
                         implicitHeight: Math.round(28 * Config.scale)
                         implicitWidth: actionBg.implicitWidth
 
-                        // Glow on hover
+                        // Neon glow ring on hover
                         Rectangle {
                             anchors.fill: actionBg
                             anchors.margins: -3
                             radius: actionBg.radius + 3
                             color: "transparent"
-                            border.color: Config.colors.accentGlow
+                            border.color: Config.colors.accent
                             border.width: 2
-                            opacity: actionArea.containsMouse ? 0.45 : 0
-                            Behavior on opacity { NumberAnimation { duration: 120 } }
+                            opacity: actionArea.containsMouse ? 0.55 : 0
+                            Behavior on opacity { NumberAnimation { duration: 80 } }
                         }
 
                         Rectangle {
@@ -349,7 +349,7 @@ Item {
                             radius: Math.round(8 * Config.scale)
                             color: actionArea.containsMouse
                                 ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
-                                : Qt.rgba(1, 1, 1, 0.07)
+                                : Config.colors.surfaceAlt
                             border.color: actionArea.containsMouse ? Config.colors.accent : Config.colors.border
                             border.width: 1
 

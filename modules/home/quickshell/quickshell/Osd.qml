@@ -146,6 +146,7 @@ Scope {
             PopupCard {
                 anchors.fill: parent
                 popupRadius: Config.osd.radius
+                showShine: false
 
                 Column {
                     anchors {

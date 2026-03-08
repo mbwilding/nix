@@ -422,7 +422,7 @@ Item {
                     ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
                     : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18);
             }
-            return rowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent";
+            return rowMouse.containsMouse ? Config.colors.surfaceAlt : "transparent";
         }
         Behavior on color { ColorAnimation { duration: 80 } }
 
@@ -472,7 +472,7 @@ Item {
                         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
                             ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
-                            : Qt.rgba(1, 1, 1, 0.06))
+                            : Config.colors.surfaceAlt)
                     border.color: muteBtnMouse.containsMouse
                         ? Config.colors.accent
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
@@ -573,7 +573,7 @@ Item {
                     width: Math.round(14 * Config.scale)
                     height: width
                     radius: width / 2
-                    color: "#e0e0ff"
+                    color: Config.colors.sliderThumb
                     Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                 }
 

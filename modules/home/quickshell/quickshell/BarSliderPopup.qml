@@ -110,7 +110,7 @@ PopupContainer {
                 width: Math.round(14 * Config.scale)
                 height: width
                 radius: width / 2
-                color: "#e0e0ff"
+                color: Config.colors.sliderThumb
                 Behavior on x {
                     NumberAnimation {
                         duration: 70

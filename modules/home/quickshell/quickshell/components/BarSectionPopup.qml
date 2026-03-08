@@ -96,7 +96,7 @@ PopupContainer {
         root._maxLabelWidth + root._iconSize + root._rowOverhead
     )
     Behavior on width {
-        NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
+        NumberAnimation { duration: 100; easing.type: Easing.InOutQuart }
     }
 
     // ── Height ────────────────────────────────────────────────────────────────
@@ -200,8 +200,8 @@ PopupContainer {
                     width: parent.width
                     height: availRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
-                    color: availMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent"
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                    color: availMouse.containsMouse ? Config.colors.rowHover : "transparent"
+                    Behavior on color { ColorAnimation { duration: 60 } }
 
                     RowLayout {
                         id: availRowLayout
@@ -269,9 +269,14 @@ PopupContainer {
                     height: connRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
                     color: connMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
+                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
+                    border.color: connMouse.containsMouse
+                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
+                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 60 } }
+                    Behavior on border.color { ColorAnimation { duration: 60 } }
 
                     RowLayout {
                         id: connRowLayout
@@ -336,8 +341,8 @@ PopupContainer {
                     width: parent.width
                     height: visible ? rawAvailLayout.implicitHeight + Math.round(8 * Config.scale) : 0
                     radius: Math.round(6 * Config.scale)
-                    color: rawAvailMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent"
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                    color: rawAvailMouse.containsMouse ? Config.colors.rowHover : "transparent"
+                    Behavior on color { ColorAnimation { duration: 60 } }
 
                     RowLayout {
                         id: rawAvailLayout
@@ -410,9 +415,14 @@ PopupContainer {
                     height: visible ? rawConnLayout.implicitHeight + Math.round(8 * Config.scale) : 0
                     radius: Math.round(6 * Config.scale)
                     color: rawConnMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
+                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
+                    border.color: rawConnMouse.containsMouse
+                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
+                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 60 } }
+                    Behavior on border.color { ColorAnimation { duration: 60 } }
 
                     RowLayout {
                         id: rawConnLayout
@@ -490,7 +500,8 @@ PopupContainer {
             height: thumbH
             y: travel * scrollRatio
             radius: width / 2
-            color: Config.colors.textMuted
+            color: Config.colors.accent
+            opacity: 0.6
             visible: root.maxScrollY > 0
             Behavior on y { NumberAnimation { duration: 60 } }
         }
