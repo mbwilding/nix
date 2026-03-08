@@ -187,6 +187,15 @@ Item {
             anchors.rightMargin: Math.round(4 * Config.scale)
             clip: true
 
+            // Keep popup open when hovering over cards — mirrors BarSectionPopup's
+            // per-row onEntered: root.hoverOpen() which prevents the popup-level
+            // HoverHandler from losing hovered=true when child MouseAreas take focus.
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered) notifSection.openPopupReq("notif")
+                }
+            }
+
             Column {
                 id: popupCol
                 width: viewport.width
