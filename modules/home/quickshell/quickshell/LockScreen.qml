@@ -123,29 +123,47 @@ Scope {
                         property real gx2: 0.75
                         property real gy2: 0.65
 
-                        SequentialAnimation on gx1 {
-                            loops: Animation.Infinite
-                            running: true
-                            NumberAnimation { from: 0.15; to: 0.75; duration: 17000; easing.type: Easing.InOutSine }
-                            NumberAnimation { from: 0.75; to: 0.15; duration: 17000; easing.type: Easing.InOutSine }
+                        // Velocities in normalized units/s
+                        property real vx1: 0.0
+                        property real vy1: 0.0
+                        property real vx2: 0.0
+                        property real vy2: 0.0
+
+                        Component.onCompleted: {
+                            gx1 = Math.random();
+                            gy1 = Math.random();
+                            gx2 = Math.random();
+                            gy2 = Math.random();
+                            // Slow drift, random direction
+                            const s1 = 0.018 + Math.random() * 0.012;
+                            const a1 = Math.random() * Math.PI * 2;
+                            vx1 = Math.cos(a1) * s1;
+                            vy1 = Math.sin(a1) * s1;
+                            const s2 = 0.018 + Math.random() * 0.012;
+                            const a2 = Math.random() * Math.PI * 2;
+                            vx2 = Math.cos(a2) * s2;
+                            vy2 = Math.sin(a2) * s2;
                         }
-                        SequentialAnimation on gy1 {
-                            loops: Animation.Infinite
+
+                        FrameAnimation {
                             running: true
-                            NumberAnimation { from: 0.20; to: 0.65; duration: 23000; easing.type: Easing.InOutSine }
-                            NumberAnimation { from: 0.65; to: 0.20; duration: 23000; easing.type: Easing.InOutSine }
-                        }
-                        SequentialAnimation on gx2 {
-                            loops: Animation.Infinite
-                            running: true
-                            NumberAnimation { from: 0.80; to: 0.25; duration: 19000; easing.type: Easing.InOutSine }
-                            NumberAnimation { from: 0.25; to: 0.80; duration: 19000; easing.type: Easing.InOutSine }
-                        }
-                        SequentialAnimation on gy2 {
-                            loops: Animation.Infinite
-                            running: true
-                            NumberAnimation { from: 0.70; to: 0.30; duration: 21000; easing.type: Easing.InOutSine }
-                            NumberAnimation { from: 0.30; to: 0.70; duration: 21000; easing.type: Easing.InOutSine }
+                            onTriggered: {
+                                const dt = Math.min(frameTime, 0.05);
+                                let x1 = bgCanvas.gx1 + bgCanvas.vx1 * dt;
+                                let y1 = bgCanvas.gy1 + bgCanvas.vy1 * dt;
+                                let x2 = bgCanvas.gx2 + bgCanvas.vx2 * dt;
+                                let y2 = bgCanvas.gy2 + bgCanvas.vy2 * dt;
+                                if (x1 < 0) { x1 = 0; bgCanvas.vx1 = Math.abs(bgCanvas.vx1); }
+                                else if (x1 > 1) { x1 = 1; bgCanvas.vx1 = -Math.abs(bgCanvas.vx1); }
+                                if (y1 < 0) { y1 = 0; bgCanvas.vy1 = Math.abs(bgCanvas.vy1); }
+                                else if (y1 > 1) { y1 = 1; bgCanvas.vy1 = -Math.abs(bgCanvas.vy1); }
+                                if (x2 < 0) { x2 = 0; bgCanvas.vx2 = Math.abs(bgCanvas.vx2); }
+                                else if (x2 > 1) { x2 = 1; bgCanvas.vx2 = -Math.abs(bgCanvas.vx2); }
+                                if (y2 < 0) { y2 = 0; bgCanvas.vy2 = Math.abs(bgCanvas.vy2); }
+                                else if (y2 > 1) { y2 = 1; bgCanvas.vy2 = -Math.abs(bgCanvas.vy2); }
+                                bgCanvas.gx1 = x1; bgCanvas.gy1 = y1;
+                                bgCanvas.gx2 = x2; bgCanvas.gy2 = y2;
+                            }
                         }
 
                         onGx1Changed: requestPaint()
@@ -187,11 +205,29 @@ Scope {
                         id: dvdBouncer
                         anchors.fill: parent
 
-                        property real dvdX: 80
-                        property real dvdY: 80
-                        property real dvdVX: 120   // px/s
-                        property real dvdVY: 90    // px/s
+                        property real dvdX: 0
+                        property real dvdY: 0
+                        property real dvdVX: 0
+                        property real dvdVY: 0
                         property color dvdColor: Config.colors.accent
+
+                        // Speed in px/s — real DVD moves at equal x/y (45°)
+                        readonly property real dvdSpeed: 120
+
+                        Component.onCompleted: {
+                            const logoW = 220;
+                            const logoH = Math.round(220 * 465.84 / 1058.4);
+                            const maxX = dvdBouncer.width - logoW;
+                            const maxY = dvdBouncer.height - logoH;
+                            dvdX = Math.random() * maxX;
+                            dvdY = Math.random() * maxY;
+                            // Random one of 4 diagonal directions (true 45°)
+                            dvdVX = (Math.random() < 0.5 ? 1 : -1) * dvdSpeed;
+                            dvdVY = (Math.random() < 0.5 ? 1 : -1) * dvdSpeed;
+                            // Start on a random color
+                            dvdColorIdx = Math.floor(Math.random() * dvdColors.length);
+                            dvdColor = dvdColors[dvdColorIdx];
+                        }
 
                         readonly property var dvdColors: [
                             Config.colors.accent,
