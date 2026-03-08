@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -14,7 +13,6 @@ Scope {
 
     property bool pamAuthenticating: false
     property bool pamIsError: false
-    property string bgImagePath: ""
     property string pamMessage: ""
     property var notifHistory: []
 
@@ -22,19 +20,17 @@ Scope {
     signal focusPasswordField
     signal shakePasswordField
 
-    Process {
-        id: grimProc
-        command: ["grim", "/tmp/qs-lock-bg.png"]
-        onExited: (code, status) => {
-            if (code === 0) {
-                root.bgImagePath = "";
-                root.bgImagePath = "file:///tmp/qs-lock-bg.png";
-            }
+    IpcHandler {
+        target: "lockscreen"
+        function lock() {
             sessionLock.locked = true;
             root.pamMessage = "";
             root.pamIsError = false;
             root.clearPasswordField();
             pam.start();
+        }
+        function unlock() {
+            sessionLock.locked = false;
         }
     }
 
@@ -84,16 +80,6 @@ Scope {
         }
     }
 
-    IpcHandler {
-        target: "lockscreen"
-        function lock() {
-            grimProc.running = true;
-        }
-        function unlock() {
-            sessionLock.locked = false;
-        }
-    }
-
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
@@ -125,31 +111,81 @@ Scope {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "#ff0d0d18"
-                    visible: root.bgImagePath === ""
-                }
+                    color: "#0d0d18"
 
-                Image {
-                    id: bgImage
-                    anchors.fill: parent
-                    source: root.bgImagePath
-                    fillMode: Image.PreserveAspectCrop
-                    visible: root.bgImagePath !== ""
-                    smooth: true
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        blurEnabled: true
-                        autoPaddingEnabled: false
-                        blur: 0.6
-                        blurMax: 64
-                        blurMultiplier: 0.7
+                    Canvas {
+                        id: bgCanvas
+                        anchors.fill: parent
+
+                        property real gx1: 0.25
+                        property real gy1: 0.30
+                        property real gx2: 0.75
+                        property real gy2: 0.65
+
+                        NumberAnimation on gx1 {
+                            from: 0.15
+                            to: 0.75
+                            duration: 17000
+                            loops: Animation.Infinite
+                            running: true
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation on gy1 {
+                            from: 0.20
+                            to: 0.65
+                            duration: 23000
+                            loops: Animation.Infinite
+                            running: true
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation on gx2 {
+                            from: 0.80
+                            to: 0.25
+                            duration: 19000
+                            loops: Animation.Infinite
+                            running: true
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation on gy2 {
+                            from: 0.70
+                            to: 0.30
+                            duration: 21000
+                            loops: Animation.Infinite
+                            running: true
+                            easing.type: Easing.InOutSine
+                        }
+
+                        onGx1Changed: requestPaint()
+                        onGy1Changed: requestPaint()
+                        onGx2Changed: requestPaint()
+                        onGy2Changed: requestPaint()
+
+                        onPaint: {
+                            const ctx = getContext("2d");
+                            const w = width, h = height;
+                            ctx.clearRect(0, 0, w, h);
+
+                            // Base
+                            ctx.fillStyle = "#0d0d18";
+                            ctx.fillRect(0, 0, w, h);
+
+                            // Blob 1 — accent (#c0aaff)
+                            const r1 = Math.min(w, h) * 0.6;
+                            const g1 = ctx.createRadialGradient(gx1 * w, gy1 * h, 0, gx1 * w, gy1 * h, r1);
+                            g1.addColorStop(0, "rgba(192, 170, 255, 0.30)");
+                            g1.addColorStop(1, "rgba(192, 170, 255, 0.00)");
+                            ctx.fillStyle = g1;
+                            ctx.fillRect(0, 0, w, h);
+
+                            // Blob 2 — accentAlt (#ff9ff3)
+                            const r2 = Math.min(w, h) * 0.55;
+                            const g2 = ctx.createRadialGradient(gx2 * w, gy2 * h, 0, gx2 * w, gy2 * h, r2);
+                            g2.addColorStop(0, "rgba(255, 159, 243, 0.25)");
+                            g2.addColorStop(1, "rgba(255, 159, 243, 0.00)");
+                            ctx.fillStyle = g2;
+                            ctx.fillRect(0, 0, w, h);
+                        }
                     }
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "#aa0d0d18"
-                    visible: root.bgImagePath !== ""
                 }
 
                 Column {
