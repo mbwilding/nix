@@ -2,7 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+
 import "bar"
+import "notifications"
 
 ShellRoot {
     id: root
