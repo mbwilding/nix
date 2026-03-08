@@ -4,13 +4,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
-import Quickshell.Bluetooth
 import Quickshell.Io
 import Quickshell.Wayland
-import Quickshell.Widgets
 import Quickshell.Services.Pam
-import Quickshell.Services.UPower
-import Quickshell.Services.Pipewire
 import "components"
 
 // Lock screen using the ext-session-lock-v1 Wayland protocol.
@@ -20,22 +16,6 @@ Scope {
     id: root
 
     property var notifHistory: []
-
-    // ── WiFi state ───────────────────────────────────────────────────────────
-    property bool wifiEnabled: true
-    property int wifiStrength: -1
-    property string wifiSsid: ""
-    property var wifiNetworks: []
-
-    // ── Bluetooth ────────────────────────────────────────────────────────────
-    readonly property var btAdapter: Bluetooth.defaultAdapter
-
-    // ── System battery ───────────────────────────────────────────────────────
-    readonly property var sysBattery: UPower.displayDevice
-
-    // ── Volume ───────────────────────────────────────────────────────────────
-    readonly property var defaultSink: Pipewire.defaultAudioSink
-    readonly property var audio: defaultSink?.audio ?? null
 
     // ── Lock screen background ────────────────────────────────────────────────
     property string bgImagePath: ""
@@ -63,10 +43,8 @@ Scope {
     // ── PAM authentication ────────────────────────────────────────────────────
     property string pamMessage: ""
     property bool pamIsError: false
-    property bool pamAuthenticating: false  // true while a PAM session is active
+    property bool pamAuthenticating: false
 
-    // Signal emitted to request focus on the password field inside the surface.
-    // (Direct id reference across ComponentBehavior: Bound boundary is not allowed.)
     signal focusPasswordField()
     signal shakePasswordField()
     signal clearPasswordField()
@@ -78,7 +56,6 @@ Scope {
         onPamMessage: {
             root.pamMessage = pam.message;
             root.pamIsError = pam.messageIsError;
-            // When PAM wants a response, focus the password field
             if (pam.responseRequired) {
                 root.pamAuthenticating = true;
                 root.focusPasswordField();
@@ -90,13 +67,10 @@ Scope {
             if (result === PamResult.Success) {
                 sessionLock.locked = false;
             } else {
-                // Wrong password — shake, clear, and restart PAM after a short delay
                 root.pamIsError = true;
-                if (result === PamResult.MaxTries) {
-                    root.pamMessage = "Too many attempts";
-                } else {
-                    root.pamMessage = pam.message !== "" ? pam.message : "Authentication failed";
-                }
+                root.pamMessage = result === PamResult.MaxTries
+                    ? "Too many attempts"
+                    : (pam.message !== "" ? pam.message : "Authentication failed");
                 root.clearPasswordField();
                 root.shakePasswordField();
                 pamRetryTimer.restart();
@@ -109,12 +83,10 @@ Scope {
             root.pamMessage = "PAM error: " + PamError.toString(error);
             root.clearPasswordField();
             root.shakePasswordField();
-            // Retry after delay (start failed, etc.)
             pamRetryTimer.restart();
         }
     }
 
-    // Restart PAM after a failed attempt
     Timer {
         id: pamRetryTimer
         interval: 1200
@@ -128,99 +100,9 @@ Scope {
     // ── IPC ──────────────────────────────────────────────────────────────────
     IpcHandler {
         target: "lockscreen"
-        function lock() {
-            // Take screenshot first; grimProc.onExited applies the lock
-            grimProc.running = true;
-        }
+        function lock() { grimProc.running = true; }
         function unlock() { sessionLock.locked = false; }
     }
-
-    // ── WiFi polling (only runs while locked) ─────────────────────────────
-    Process {
-        id: lockWifiMonitor
-        command: ["nmcli", "monitor"]
-        running: sessionLock.locked
-        stdout: SplitParser {
-            onRead: line => {
-                if (line.trim() !== "") lockWifiProc.running = true;
-            }
-        }
-        onExited: if (sessionLock.locked) Qt.callLater(() => { lockWifiMonitor.running = true; })
-    }
-
-    Process {
-        id: lockWifiProc
-        command: ["nmcli", "-t", "-f", "ssid,signal,active", "dev", "wifi"]
-        running: sessionLock.locked
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const nets = [];
-                for (const line of this.text.trim().split("\n")) {
-                    if (!line) continue;
-                    const lastColon = line.lastIndexOf(":");
-                    const secondLastColon = line.lastIndexOf(":", lastColon - 1);
-                    const active = line.slice(lastColon + 1) === "yes";
-                    const signal = parseInt(line.slice(secondLastColon + 1, lastColon));
-                    const ssid = line.slice(0, secondLastColon);
-                    if (!ssid) continue;
-                    const existing = nets.findIndex(n => n.ssid === ssid);
-                    if (existing >= 0) {
-                        if (active && !nets[existing].active)
-                            nets[existing] = { ssid, signal, active };
-                        else if (!active && !nets[existing].active && signal > nets[existing].signal)
-                            nets[existing] = { ssid, signal, active };
-                    } else {
-                        nets.push({ ssid, signal, active });
-                    }
-                }
-                nets.sort((a, b) => b.signal - a.signal);
-                root.wifiNetworks = nets;
-                const cur = nets.find(n => n.active);
-                root.wifiSsid    = cur ? cur.ssid   : "";
-                root.wifiStrength = cur ? cur.signal : -1;
-                lockWifiRadioProc.running = true;
-            }
-        }
-    }
-
-    Process {
-        id: lockWifiRadioProc
-        command: ["nmcli", "radio", "wifi"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                root.wifiEnabled = this.text.trim() === "enabled";
-            }
-        }
-    }
-
-    Timer {
-        interval: 15000
-        repeat: true
-        running: sessionLock.locked
-        onTriggered: lockWifiProc.running = true
-    }
-
-    // ── Helper functions ─────────────────────────────────────────────────────
-    function wifiIcon(sig) {
-        if (!root.wifiEnabled || sig < 0) return "network-wireless-offline-symbolic";
-        if (sig < 25) return "network-wireless-signal-weak-symbolic";
-        if (sig < 50) return "network-wireless-signal-ok-symbolic";
-        if (sig < 75) return "network-wireless-signal-good-symbolic";
-        return "network-wireless-signal-excellent-symbolic";
-    }
-
-    function btDeviceName(d) {
-        if (!d) return "Unknown";
-        return d.name || d.deviceName || d.address || "Unknown";
-    }
-
-    function btDeviceIcon(d) {
-        if (!d) return "network-bluetooth-symbolic";
-        return (d.icon || "") !== "" ? d.icon : "network-bluetooth-symbolic";
-    }
-
-    // ── Clock ─────────────────────────────────────────────────────────────────
-    SystemClock { id: wallClock; precision: SystemClock.Seconds }
 
     // ── Session lock ─────────────────────────────────────────────────────────
     WlSessionLock {
@@ -233,8 +115,6 @@ Scope {
             Item {
                 anchors.fill: parent
 
-                // Forward signals from Scope into this surface's context
-                // (direct id references across ComponentBehavior: Bound boundaries are not allowed)
                 Connections {
                     target: root
                     function onFocusPasswordField() { passwordInput.forceActiveFocus(); }
@@ -243,14 +123,12 @@ Scope {
                 }
 
                 // ── Background: blurred screenshot + dark tint ────────────
-                // Fallback solid fill shown if no screenshot is available yet
                 Rectangle {
                     anchors.fill: parent
                     color: "#ff0d0d18"
                     visible: root.bgImagePath === ""
                 }
 
-                // Screenshot captured just before locking
                 Image {
                     id: bgImage
                     anchors.fill: parent
@@ -267,73 +145,24 @@ Scope {
                     }
                 }
 
-                // Dark tint so widgets stay legible over the blur
                 Rectangle {
                     anchors.fill: parent
                     color: "#aa0d0d18"
                     visible: root.bgImagePath !== ""
                 }
 
-                // ── Main layout: everything centered ──────────────────
+                // ── Main layout ───────────────────────────────────────────
                 Column {
                     anchors.centerIn: parent
                     spacing: Math.round(32 * Config.scale)
 
-                    // ── Clock ──────────────────────────────────────────────
-                    Column {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: Math.round(4 * Config.scale)
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Qt.formatTime(wallClock.time,
-                                Config.bar.clock24h ? "HH:mm" : "hh:mm AP")
-                            color: Config.colors.accent
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(88 * Config.scale)
-                            font.weight: Font.Light
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Qt.formatDate(wallClock.time, "dddd, MMMM d")
-                            color: Config.colors.textSecondary
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(20 * Config.scale)
-                        }
-
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Qt.formatDate(wallClock.time, "yyyy")
-                            color: Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(13 * Config.scale)
-                            opacity: 0.55
-                        }
-
-                        // Accent underline (centered)
-                        Rectangle {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            width: Math.round(180 * Config.scale)
-                            height: Math.round(2 * Config.scale)
-                            radius: height / 2
-                            gradient: Gradient {
-                                orientation: Gradient.Horizontal
-                                GradientStop { position: 0.0; color: "transparent" }
-                                GradientStop { position: 0.5; color: Config.colors.accent }
-                                GradientStop { position: 1.0; color: "transparent" }
-                            }
-                        }
-                    }
-
-                    // ── Password input ─────────────────────────────────────
+                    // ── Password input ────────────────────────────────────
                     Item {
                         id: passwordArea
                         anchors.horizontalCenter: parent.horizontalCenter
                         width: Math.round(360 * Config.scale)
                         height: passwordCol.implicitHeight
 
-                        // Horizontal shake animation on auth failure
                         SequentialAnimation {
                             id: shakeAnim
                             property real restX: 0
@@ -351,7 +180,7 @@ Scope {
                             width: parent.width
                             spacing: Math.round(10 * Config.scale)
 
-                            // PAM / error message
+                            // PAM message
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 visible: root.pamMessage !== ""
@@ -380,7 +209,6 @@ Scope {
                                         : Config.panelBorder.color
                                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                                // Glow on focus
                                 Rectangle {
                                     anchors.fill: parent
                                     radius: parent.radius
@@ -399,7 +227,6 @@ Scope {
                                     anchors.rightMargin: Math.round(14 * Config.scale)
                                     spacing: Math.round(10 * Config.scale)
 
-                                    // Lock icon
                                     Text {
                                         text: root.pamAuthenticating ? "\uF13E" : "\uF023"
                                         color: root.pamIsError ? Config.colors.danger
@@ -415,7 +242,6 @@ Scope {
                                         Layout.fillWidth: true
                                         height: Math.round(20 * Config.scale)
 
-                                        // Placeholder text
                                         Text {
                                             anchors.verticalCenter: parent.verticalCenter
                                             visible: passwordInput.text.length === 0
@@ -426,7 +252,6 @@ Scope {
                                             opacity: 0.45
                                         }
 
-                                        // Password dots
                                         Row {
                                             anchors.verticalCenter: parent.verticalCenter
                                             visible: passwordInput.text.length > 0
@@ -444,7 +269,6 @@ Scope {
                                                 }
                                             }
 
-                                            // Overflow indicator
                                             Text {
                                                 visible: passwordInput.text.length > 32
                                                 text: "+" + (passwordInput.text.length - 32)
@@ -455,7 +279,6 @@ Scope {
                                             }
                                         }
 
-                                        // Hidden TextInput for key capture
                                         TextInput {
                                             id: passwordInput
                                             anchors.fill: parent
@@ -475,13 +298,10 @@ Scope {
                                                     text = "";
                                                 }
                                             }
-                                            Keys.onEscapePressed: {
-                                                text = "";
-                                            }
+                                            Keys.onEscapePressed: { text = ""; }
                                         }
                                     }
 
-                                    // Spinner while PAM is processing
                                     Text {
                                         visible: pam.active && !pam.responseRequired
                                         text: "\uF110"
@@ -502,225 +322,9 @@ Scope {
                         }
                     }
 
-                    // ── Status chips row ───────────────────────────────────
-                    Row {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: Math.round(10 * Config.scale)
-
-                        // WiFi chip
-                        Rectangle {
-                            width: wifiChipRow.implicitWidth + Math.round(24 * Config.scale)
-                            height: Math.round(36 * Config.scale)
-                            radius: height / 2
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            RowLayout {
-                                id: wifiChipRow
-                                anchors.centerIn: parent
-                                spacing: Math.round(7 * Config.scale)
-
-                                IconImage {
-                                    implicitSize: Math.round(15 * Config.scale)
-                                    source: Quickshell.iconPath(root.wifiIcon(root.wifiStrength))
-                                    opacity: root.wifiEnabled ? 1.0 : 0.4
-                                    Behavior on opacity { NumberAnimation { duration: 200 } }
-                                }
-
-                                Text {
-                                    text: {
-                                        if (!root.wifiEnabled) return "Off";
-                                        if (root.wifiSsid !== "") return root.wifiSsid;
-                                        return "No network";
-                                    }
-                                    color: root.wifiSsid !== "" ? Config.colors.accent : Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(12 * Config.scale)
-                                    font.weight: Font.Medium
-                                    elide: Text.ElideRight
-                                    maximumLineCount: 1
-                                    Behavior on color { ColorAnimation { duration: 200 } }
-                                }
-
-                                // Signal strength dot
-                                Rectangle {
-                                    visible: root.wifiEnabled
-                                    width: Math.round(6 * Config.scale)
-                                    height: width
-                                    radius: width / 2
-                                    color: root.wifiSsid !== "" ? Config.colors.success : Config.colors.danger
-                                    Behavior on color { ColorAnimation { duration: 200 } }
-                                }
-                            }
-                        }
-
-                        // Bluetooth chip (only when adapter present)
-                        Rectangle {
-                            visible: root.btAdapter !== null
-                            width: btChipRow.implicitWidth + Math.round(24 * Config.scale)
-                            height: Math.round(36 * Config.scale)
-                            radius: height / 2
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            RowLayout {
-                                id: btChipRow
-                                anchors.centerIn: parent
-                                spacing: Math.round(7 * Config.scale)
-
-                                IconImage {
-                                    implicitSize: Math.round(15 * Config.scale)
-                                    source: {
-                                        const a = root.btAdapter;
-                                        if (!a || !a.enabled) return Quickshell.iconPath("network-bluetooth-inactive-symbolic");
-                                        const vals = a.devices ? a.devices.values : null;
-                                        if (vals) {
-                                            for (let i = 0; i < vals.length; i++) {
-                                                if (vals[i] && vals[i].connected)
-                                                    return Quickshell.iconPath("network-bluetooth-activated-symbolic");
-                                            }
-                                        }
-                                        return Quickshell.iconPath("network-bluetooth-symbolic");
-                                    }
-                                    opacity: (root.btAdapter && root.btAdapter.enabled) ? 1.0 : 0.4
-                                    Behavior on opacity { NumberAnimation { duration: 200 } }
-                                }
-
-                                Text {
-                                    text: {
-                                        const a = root.btAdapter;
-                                        if (!a || !a.enabled) return "Off";
-                                        const vals = a.devices ? a.devices.values : null;
-                                        if (vals) {
-                                            for (let i = 0; i < vals.length; i++) {
-                                                if (vals[i] && vals[i].connected)
-                                                    return root.btDeviceName(vals[i]);
-                                            }
-                                        }
-                                        return "No devices";
-                                    }
-                                    color: {
-                                        const a = root.btAdapter;
-                                        if (!a || !a.enabled) return Config.colors.textMuted;
-                                        const vals = a.devices ? a.devices.values : null;
-                                        if (vals) {
-                                            for (let i = 0; i < vals.length; i++) {
-                                                if (vals[i] && vals[i].connected) return Config.colors.accent;
-                                            }
-                                        }
-                                        return Config.colors.textMuted;
-                                    }
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(12 * Config.scale)
-                                    font.weight: Font.Medium
-                                    elide: Text.ElideRight
-                                    maximumLineCount: 1
-                                    Behavior on color { ColorAnimation { duration: 200 } }
-                                }
-                            }
-                        }
-
-                        // Battery chip (only when laptop battery present)
-                        Rectangle {
-                            visible: root.sysBattery !== null && root.sysBattery.isLaptopBattery
-                            width: battChipRow.implicitWidth + Math.round(24 * Config.scale)
-                            height: Math.round(36 * Config.scale)
-                            radius: height / 2
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            RowLayout {
-                                id: battChipRow
-                                anchors.centerIn: parent
-                                spacing: Math.round(7 * Config.scale)
-
-                                IconImage {
-                                    implicitSize: Math.round(15 * Config.scale)
-                                    source: {
-                                        const b = root.sysBattery;
-                                        if (!b || !b.isLaptopBattery) return "";
-                                        const pct = Math.round(b.percentage * 100);
-                                        const charging = b.state === UPowerDeviceState.Charging
-                                                      || b.state === UPowerDeviceState.FullyCharged;
-                                        const level = Math.min(100, Math.round(pct / 10) * 10);
-                                        return Quickshell.iconPath("battery-" + String(level).padStart(3, "0")
-                                            + (charging ? "-charging" : "") + "-symbolic");
-                                    }
-                                }
-
-                                Text {
-                                    text: {
-                                        const b = root.sysBattery;
-                                        if (!b || !b.isLaptopBattery) return "";
-                                        return Math.round(b.percentage * 100) + "%";
-                                    }
-                                    color: {
-                                        const b = root.sysBattery;
-                                        if (!b) return Config.colors.textPrimary;
-                                        const pct = b.percentage * 100;
-                                        if (pct <= 10) return Config.colors.danger;
-                                        if (pct <= 20) return Config.colors.warning;
-                                        return Config.colors.success;
-                                    }
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(12 * Config.scale)
-                                    font.weight: Font.Medium
-                                    Behavior on color { ColorAnimation { duration: 200 } }
-                                }
-                            }
-                        }
-
-                        // Volume chip (only when audio sink present)
-                        Rectangle {
-                            visible: root.audio !== null
-                            width: volChipRow.implicitWidth + Math.round(24 * Config.scale)
-                            height: Math.round(36 * Config.scale)
-                            radius: height / 2
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            RowLayout {
-                                id: volChipRow
-                                anchors.centerIn: parent
-                                spacing: Math.round(7 * Config.scale)
-
-                                IconImage {
-                                    implicitSize: Math.round(15 * Config.scale)
-                                    source: {
-                                        const a = root.audio;
-                                        if (!a || a.muted) return Quickshell.iconPath("audio-volume-muted-symbolic");
-                                        if (a.volume < 0.33) return Quickshell.iconPath("audio-volume-low-symbolic");
-                                        if (a.volume < 0.66) return Quickshell.iconPath("audio-volume-medium-symbolic");
-                                        return Quickshell.iconPath("audio-volume-high-symbolic");
-                                    }
-                                    opacity: (root.audio && root.audio.muted) ? 0.4 : 1.0
-                                    Behavior on opacity { NumberAnimation { duration: 150 } }
-                                }
-
-                                Text {
-                                    text: {
-                                        const a = root.audio;
-                                        if (!a) return "–";
-                                        if (a.muted) return "Muted";
-                                        return Math.round(a.volume * 100) + "%";
-                                    }
-                                    color: (root.audio && root.audio.muted)
-                                        ? Config.colors.textMuted : Config.colors.textPrimary
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(12 * Config.scale)
-                                    font.weight: Font.Medium
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                }
-                            }
-                        }
-                    }
-
-                    // ── Notifications (scrollable, below chips) ────────────
+                    // ── Notifications ─────────────────────────────────────────
                     Item {
+                        id: notifContainer
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: root.notifHistory.length > 0
                         width: Math.round(360 * Config.scale)
@@ -728,27 +332,25 @@ Scope {
                         clip: true
 
                         property real scrollY: 0
-                        readonly property real maxScrollY: Math.max(0, notifInnerCol.implicitHeight - height)
+                        readonly property real maxScrollY: Math.max(0, notifInnerCol.implicitHeight - notifContainer.height)
 
                         WheelHandler {
                             target: null
                             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                             onWheel: event => {
-                                const container = parent;
                                 const step = Math.round(36 * Config.scale);
-                                container.scrollY = Math.max(0,
-                                    Math.min(container.maxScrollY,
-                                        container.scrollY - event.angleDelta.y / 120 * step));
+                                notifContainer.scrollY = Math.max(0,
+                                    Math.min(notifContainer.maxScrollY,
+                                        notifContainer.scrollY - event.angleDelta.y / 120 * step));
                             }
                         }
 
                         Column {
                             id: notifInnerCol
-                            width: parent.width - Math.round(6 * Config.scale)
+                            width: notifContainer.width - Math.round(6 * Config.scale)
                             spacing: Math.round(6 * Config.scale)
-                            y: -parent.scrollY
+                            y: -notifContainer.scrollY
 
-                            // Header
                             RowLayout {
                                 width: parent.width
 
@@ -787,9 +389,8 @@ Scope {
                             }
                         }
 
-                        // Thin scrollbar
                         Rectangle {
-                            visible: parent.maxScrollY > 0
+                            visible: notifContainer.maxScrollY > 0
                             anchors.right: parent.right
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
@@ -798,11 +399,11 @@ Scope {
                             color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
 
                             Rectangle {
-                                readonly property real _h: parent.parent.maxScrollY <= 0 ? parent.height
+                                readonly property real _h: notifContainer.maxScrollY <= 0 ? parent.height
                                     : Math.max(Math.round(28 * Config.scale),
-                                        parent.height * (parent.parent.height / notifInnerCol.implicitHeight))
-                                readonly property real _y: parent.parent.maxScrollY <= 0 ? 0
-                                    : (parent.height - _h) * (parent.parent.scrollY / parent.parent.maxScrollY)
+                                        parent.height * (notifContainer.height / notifInnerCol.implicitHeight))
+                                readonly property real _y: notifContainer.maxScrollY <= 0 ? 0
+                                    : (parent.height - _h) * (notifContainer.scrollY / notifContainer.maxScrollY)
                                 y: _y
                                 width: parent.width
                                 height: _h
