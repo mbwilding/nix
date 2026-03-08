@@ -556,6 +556,7 @@ Scope {
                         required property int index
                         trayItem: modelData
                         popupName: "tray-" + trayDelegate.index
+                        availableHeight: win.screen ? win.screen.height : 800
                         activePopup: root.activePopup
                         onHovered: root.keepAlive()
                         onOpenPopupReq: name => {
