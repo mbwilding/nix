@@ -15,43 +15,31 @@ import "components"
 Scope {
     id: root
 
+    property Item activeTrayMenuPopup: null
+    property bool pillHovered: false
+    property bool popupHovered: false
     property bool visible_: false
-
-    // ── Shared popup manager ──────────────────────────────────────────────────
-    // Only one popup open at a time. Sections call root.openPopup("name") on
-    // hover-enter and root.keepPopup() on hover-exit. Timers only run while
-    // the mouse is outside pill+popup; hovering either keeps everything alive.
-    property string activePopup: ""   // "wifi"|"bt"|"volume"|"brightness"|"battery"|"power"|"notif"|"clock"|""
-
-    // ── Notification history (fed from shell.qml via Notifications scope) ─────
+    property bool wifiPasswordDialogVisible: false
+    property string activePopup: ""
+    property string wifiPasswordPendingSsid: ""
     property var notifHistory: []
-    signal removeHistoryEntry(var entryId)
-    signal animateOutHistoryEntry(var snapId)
-    signal dismissAllNotifs()
 
     readonly property bool anyPopupOpen: activePopup !== ""
+    readonly property int sliderLabelWidth: Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale)
 
-    // True while the pointer is over the pill bar itself
-    property bool pillHovered: false
-    // True while the pointer is over the active popup rectangle
-    property bool popupHovered: false
-
-    // Tracks the currently visible tray popup Item for the input mask
-    property Item activeTrayMenuPopup: null
-
-    // ── WiFi password dialog state (hoisted so passwordWin can see it) ────────
-    property bool wifiPasswordDialogVisible: false
-    property string wifiPasswordPendingSsid: ""
+    signal removeHistoryEntry(var entryId)
+    signal animateOutHistoryEntry(var snapId)
+    signal dismissAllNotifs
     signal wifiConnectWithPassword(string ssid_, string password)
 
     function registerTrayPopup(item) {
         root.activeTrayMenuPopup = item;
     }
+
     function unregisterTrayPopup() {
         root.activeTrayMenuPopup = null;
     }
 
-    // Called by trigger hover-enter OR popup hover-enter
     function openPopup(name) {
         root.activePopup = name;
         quickCloseTimer.stop();
@@ -59,7 +47,6 @@ Scope {
         root.keepAlive();
     }
 
-    // Called by popup hover-enter (keeps popup alive)
     function enterPopup() {
         root.popupHovered = true;
         quickCloseTimer.stop();
@@ -67,7 +54,6 @@ Scope {
         root.keepAlive();
     }
 
-    // Called by popup hover-exit (mouse leaving the popup rect)
     function exitPopup() {
         root.popupHovered = false;
         if (root.activePopup !== "") {
@@ -76,7 +62,6 @@ Scope {
         }
     }
 
-    // Called by trigger hover-exit
     function keepPopup() {
         if (root.activePopup !== "") {
             quickCloseTimer.restart();
@@ -92,21 +77,6 @@ Scope {
         root.keepAlive();
     }
 
-    Timer {
-        id: popupCloseTimer
-        interval: Config.bar.hideDelay
-        onTriggered: root.closePopup()
-    }
-
-    // Closes popup shortly after mouse leaves trigger and/or popup
-    Timer {
-        id: quickCloseTimer
-        interval: 600
-        onTriggered: root.closePopup()
-    }
-
-    // ── Bar show/hide ─────────────────────────────────────────────────────────
-
     function show() {
         root.visible_ = true;
         hideTimer.restart();
@@ -114,6 +84,18 @@ Scope {
 
     function keepAlive() {
         hideTimer.restart();
+    }
+
+    Timer {
+        id: popupCloseTimer
+        interval: Config.bar.hideDelay
+        onTriggered: root.closePopup()
+    }
+
+    Timer {
+        id: quickCloseTimer
+        interval: 600
+        onTriggered: root.closePopup()
     }
 
     IpcHandler {
@@ -136,34 +118,21 @@ Scope {
             root.visible_ = false
     }
 
-    // ── Clock ─────────────────────────────────────────────────────────────────
-
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
     }
 
-    // ── Audio ─────────────────────────────────────────────────────────────────
-    // Track the default sink + source and all nodes so property bindings on
-    // sinks/sources in BarVolumeSection stay alive while the popup is open.
-
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
     }
 
-    // Keep all audio nodes tracked so BarVolumeSection can enumerate them.
-    // A single tracker over the full values array is more robust than a
-    // Repeater: when Pipewire.nodes resets during a device switch the Repeater
-    // tears down all delegates simultaneously, leaving every node momentarily
-    // untracked and causing volume/mute to read as NaN/0 for that frame.
     PwObjectTracker {
         objects: {
             void Pipewire.nodes.valuesChanged;
             return Pipewire.nodes.values;
         }
     }
-
-    // ── Shared slider label width (so all sliders keep the same label column) ─
 
     TextMetrics {
         id: statusTextMetrics
@@ -172,44 +141,29 @@ Scope {
         text: "100%"
     }
 
-    readonly property int sliderLabelWidth: Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale)
-
-    // ── WiFi password overlay window ──────────────────────────────────────────
-    // Separate WlrLayer.Overlay window so TextInput receives keyboard events.
-    // The bar PanelWindow (WlrLayer.Top, no keyboard interactivity) cannot host
-    // a focusable TextInput, so we use a dedicated overlay here.
-
     PanelWindow {
         id: passwordWin
-
-        WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+        WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
-        exclusiveZone: 0
         color: "transparent"
-
-        implicitWidth: passwordWin.screen ? passwordWin.screen.width : 1920
+        exclusiveZone: 0
         implicitHeight: passwordWin.screen ? passwordWin.screen.height : 1080
-
+        implicitWidth: passwordWin.screen ? passwordWin.screen.width : 1920
         visible: root.wifiPasswordDialogVisible
-
         mask: Region {
             item: pwDialog
         }
 
-        // Centred dialog card
         PopupCard {
             id: pwDialog
 
-            width: Math.round(290 * Config.scale)
-            implicitHeight: pwDialogCol.implicitHeight + Math.round(36 * Config.scale)
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            // Sit just above the bar pill (roughly 100px from the bottom)
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Math.round(72 * Config.scale)
-
+            anchors.horizontalCenter: parent.horizontalCenter
+            implicitHeight: pwDialogCol.implicitHeight + Math.round(36 * Config.scale)
             popupRadius: Math.round(16 * Config.scale)
+            width: Math.round(290 * Config.scale)
 
             ColumnLayout {
                 id: pwDialogCol
@@ -241,12 +195,10 @@ Scope {
                     elide: Text.ElideMiddle
                 }
 
-                // Password input row
                 Item {
                     Layout.fillWidth: true
                     implicitHeight: Math.round(36 * Config.scale)
 
-                    // Glow ring on focus
                     Rectangle {
                         anchors.fill: pwInputRect
                         anchors.margins: -3
@@ -255,7 +207,11 @@ Scope {
                         border.color: Config.colors.accentGlow
                         border.width: 2
                         opacity: pwField.activeFocus ? 0.5 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
 
                     Rectangle {
@@ -266,7 +222,9 @@ Scope {
                         border.color: pwField.activeFocus ? Config.colors.accent : Config.colors.border
                         border.width: 1
                         Behavior on border.color {
-                            ColorAnimation { duration: 120 }
+                            ColorAnimation {
+                                duration: 120
+                            }
                         }
 
                         RowLayout {
@@ -287,7 +245,6 @@ Scope {
                                 selectByMouse: true
                                 verticalAlignment: TextInput.AlignVCenter
 
-                                // Placeholder text
                                 Text {
                                     anchors.fill: parent
                                     text: "Password"
@@ -308,7 +265,6 @@ Scope {
                                 }
                             }
 
-                            // Show/hide password toggle
                             Rectangle {
                                 id: pwShowBtn
                                 property bool showPw: false
@@ -316,7 +272,11 @@ Scope {
                                 implicitHeight: Math.round(24 * Config.scale)
                                 radius: Math.round(6 * Config.scale)
                                 color: pwShowMouse.containsMouse ? Config.colors.surfaceHover : "transparent"
-                                Behavior on color { ColorAnimation { duration: 80 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 80
+                                    }
+                                }
 
                                 Text {
                                     anchors.centerIn: parent
@@ -336,12 +296,10 @@ Scope {
                     }
                 }
 
-                // Buttons row
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: Math.round(8 * Config.scale)
 
-                    // Cancel
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: Math.round(32 * Config.scale)
@@ -349,7 +307,11 @@ Scope {
                         color: pwCancelMouse.containsMouse ? Config.colors.surfaceHover : Config.colors.surfaceAlt
                         border.color: Config.colors.border
                         border.width: 1
-                        Behavior on color { ColorAnimation { duration: 80 } }
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 80
+                            }
+                        }
 
                         Text {
                             anchors.centerIn: parent
@@ -371,20 +333,29 @@ Scope {
                         }
                     }
 
-                    // Connect
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: Math.round(32 * Config.scale)
                         radius: Math.round(8 * Config.scale)
                         gradient: Gradient {
                             orientation: Gradient.Horizontal
-                            GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, pwConnectMouse.containsMouse ? 0.45 : 0.28) }
-                            GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, pwConnectMouse.containsMouse ? 0.35 : 0.18) }
+                            GradientStop {
+                                position: 0.0
+                                color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, pwConnectMouse.containsMouse ? 0.45 : 0.28)
+                            }
+                            GradientStop {
+                                position: 1.0
+                                color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, pwConnectMouse.containsMouse ? 0.35 : 0.18)
+                            }
                         }
                         border.color: Config.colors.accent
                         border.width: 1
                         opacity: pwField.text.length > 0 ? 1.0 : 0.35
-                        Behavior on opacity { NumberAnimation { duration: 120 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 120
+                            }
+                        }
 
                         Text {
                             anchors.centerIn: parent
@@ -408,12 +379,12 @@ Scope {
                     }
                 }
 
-                // Bottom spacer
-                Item { implicitHeight: Math.round(4 * Config.scale) }
+                Item {
+                    implicitHeight: Math.round(4 * Config.scale)
+                }
             }
         }
 
-        // Clear the field and grab focus whenever the dialog appears
         Connections {
             target: root
             function onWifiPasswordDialogVisibleChanged() {
@@ -425,8 +396,6 @@ Scope {
             }
         }
     }
-
-    // ── Window ────────────────────────────────────────────────────────────────
 
     PanelWindow {
         id: win
@@ -487,13 +456,6 @@ Scope {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: root.visible_ ? Math.round(8 * Config.scale) : -(pill.implicitHeight + Math.round(8 * Config.scale))
 
-            Behavior on anchors.bottomMargin {
-                NumberAnimation {
-                    duration: Config.bar.animateSpeed
-                    easing.type: Easing.InOutCubic
-                }
-            }
-
             containmentMask: Item {
                 x: 0
                 y: -win.implicitHeight
@@ -503,13 +465,17 @@ Scope {
 
             radius: Config.bar.radius
             antialiasing: true
-            // Deep navy-purple — matches PopupCard surface color
             color: Config.colors.surface
-            // No hard border — glow layers below provide all the framing
             border.width: 0
+            opacity: root.visible_ ? 1 : 0
 
-            // ── Multi-layer floating island glow ─────────────────────────────
-            // Layer 1: wide diffuse shadow (darkest, outermost)
+            Behavior on anchors.bottomMargin {
+                NumberAnimation {
+                    duration: Config.bar.animateSpeed
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: -10
@@ -521,7 +487,7 @@ Scope {
                 z: -3
                 antialiasing: true
             }
-            // Layer 2: medium neon cyan halo
+
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: -4
@@ -533,7 +499,7 @@ Scope {
                 z: -2
                 antialiasing: true
             }
-            // Layer 3: tight neon glow rim (just outside border)
+
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: -2
@@ -546,7 +512,6 @@ Scope {
                 antialiasing: true
             }
 
-            opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
                 NumberAnimation {
                     duration: Config.bar.animateSpeed
@@ -573,22 +538,6 @@ Scope {
                     height: win.implicitHeight + content.height
                 }
 
-            // ── Tray ─────────────────────────────────────────────────────
-            // Inline component for the gradient separator used between sections
-            component BarSeparator: Rectangle {
-                implicitWidth: 1
-                implicitHeight: Config.bar.batteryIconSize
-                color: Config.colors.border
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-                    GradientStop { position: 0.0;  color: "transparent" }
-                    GradientStop { position: 0.25; color: Config.colors.borderBright }
-                    GradientStop { position: 0.75; color: Config.colors.borderBright }
-                    GradientStop { position: 1.0;  color: "transparent" }
-                }
-            }
-
-            // ── Tray ─────────────────────────────────────────────────────
                 Repeater {
                     id: trayRepeater
                     model: SystemTray.items
@@ -622,7 +571,6 @@ Scope {
                     visible: trayRepeater.count > 0
                 }
 
-                // ── Wifi ─────────────────────────────────────────────────────
                 BarWifiSection {
                     id: wifiSection
                     activePopup: root.activePopup
@@ -641,7 +589,6 @@ Scope {
                     }
                 }
 
-                // Wire root.wifiConnectWithPassword → wifiSection.connectWifiWithPassword
                 Connections {
                     target: root
                     function onWifiConnectWithPassword(ssid_, password) {
@@ -649,7 +596,6 @@ Scope {
                     }
                 }
 
-                // ── Bluetooth ─────────────────────────────────────────────────
                 BarBtSection {
                     id: btSection
                     activePopup: root.activePopup
@@ -659,7 +605,6 @@ Scope {
                     onExitPopupReq: root.exitPopup()
                 }
 
-                // ── Volume ────────────────────────────────────────────────────
                 BarVolumeSection {
                     id: volumeSection
                     activePopup: root.activePopup
@@ -670,7 +615,6 @@ Scope {
                     onKeepAliveReq: root.keepAlive()
                 }
 
-                // ── Brightness (screen + keyboard) ───────────────────────────
                 BrightnessComboSection {
                     id: brightnessSection
                     activePopup: root.activePopup
@@ -687,7 +631,6 @@ Scope {
                     onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
                 }
 
-                // ── Power profiles ────────────────────────────────────────────
                 BarPowerSection {
                     id: powerSection
                     activePopup: root.activePopup
@@ -697,7 +640,6 @@ Scope {
                     onClosePopupReq: root.closePopup()
                 }
 
-                // ── Battery ───────────────────────────────────────────────────
                 BarBatterySection {
                     id: batterySection
                     activePopup: root.activePopup
@@ -705,7 +647,6 @@ Scope {
                     onExitPopupReq: root.exitPopup()
                 }
 
-                // ── Notifications ─────────────────────────────────────────────
                 BarNotifSection {
                     id: notifSection
                     activePopup: root.activePopup
@@ -728,11 +669,35 @@ Scope {
 
                 BarSeparator {}
 
-                // ── Clock / Date ──────────────────────────────────────────────
                 BarClockSection {
                     id: clockSection
                     clockDate: clock.date
                 }
+            }
+        }
+    }
+
+    component BarSeparator: Rectangle {
+        implicitWidth: 1
+        implicitHeight: Config.bar.batteryIconSize
+        color: Config.colors.border
+        gradient: Gradient {
+            orientation: Gradient.Vertical
+            GradientStop {
+                position: 0.0
+                color: "transparent"
+            }
+            GradientStop {
+                position: 0.25
+                color: Config.colors.borderBright
+            }
+            GradientStop {
+                position: 0.75
+                color: Config.colors.borderBright
+            }
+            GradientStop {
+                position: 1.0
+                color: "transparent"
             }
         }
     }

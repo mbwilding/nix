@@ -9,10 +9,9 @@ QtObject {
     readonly property real fontSize: 1.4
     readonly property bool soundEnabled: true
 
-    // ── Panel outline — applied to every PopupCard ────────────────────────────
     readonly property QtObject panelBorder: QtObject {
-        readonly property int width: 1                        // px, 0 to disable
-        readonly property color color: "#80c0aaff"            // periwinkle, 50% alpha
+        readonly property int width: 1
+        readonly property color color: "#80c0aaff"
     }
 
     readonly property QtObject font: QtObject {
@@ -21,55 +20,46 @@ QtObject {
         readonly property int sizeXs: Math.round(11 * root.fontSize)
         readonly property int sizeMd: Math.round(12 * root.fontSize)
         readonly property int sizeLg: Math.round(13 * root.fontSize)
-        readonly property int sizeXl: Math.round(15 * root.fontSize)  // bumped for hierarchy
+        readonly property int sizeXl: Math.round(15 * root.fontSize)
     }
 
     readonly property QtObject colors: QtObject {
-        // ── Original navy/periwinkle palette — tweaked for richness ──────────
-        // Backgrounds: deep navy-purple, a touch richer/more saturated than before
-        readonly property color background: "#d0171728"       // 82% opaque deep navy (slightly more blue)
-        readonly property color backgroundAlt: "#b8101020"    // deeper card layer
-        readonly property color backgroundBar: "#30ffffff"     // OSD rail — frosted white
+        readonly property color background: "#d0171728"
+        readonly property color backgroundAlt: "#b8101020"
+        readonly property color backgroundBar: "#30ffffff"
 
-        // Card / pill surface — used by PopupCard and the bar pill
         readonly property color surface: Qt.rgba(0.09, 0.08, 0.17, 0.96)
-        readonly property color surfaceAlt: Qt.rgba(1, 1, 1, 0.06)   // subtle inset/well color
-        readonly property color surfaceHover: Qt.rgba(1, 1, 1, 0.10) // hovered inset
-        readonly property color rowHover: Qt.rgba(0, 0.96, 1, 0.09)  // cyan-tinted hover row
+        readonly property color surfaceAlt: Qt.rgba(1, 1, 1, 0.06)
+        readonly property color surfaceHover: Qt.rgba(1, 1, 1, 0.10)
+        readonly property color rowHover: Qt.rgba(0, 0.96, 1, 0.09)
 
-        // Accents: original periwinkle + pink, nudged ~10% more vivid
-        readonly property color accent: "#c0aaff"             // periwinkle-violet
-        readonly property color accentAlt: "#ff9ff3"          // pink — kept as-is
-        readonly property color accentGlow: "#7060ff"         // deep blue-violet glow core
+        readonly property color accent: "#c0aaff"
+        readonly property color accentAlt: "#ff9ff3"
+        readonly property color accentGlow: "#7060ff"
 
-        // Text
-        readonly property color textPrimary: "#f0f0ff"        // slightly tinted white
-        readonly property color textSecondary: "#bbbbd8"      // lavender-grey
-        readonly property color textMuted: "#7878aa"          // lifted from #6666aa
-        readonly property color badgeText: "#1a1a2e"          // dark navy — text on bright badge/chip
+        readonly property color textPrimary: "#f0f0ff"
+        readonly property color textSecondary: "#bbbbd8"
+        readonly property color textMuted: "#7878aa"
+        readonly property color badgeText: "#1a1a2e"
 
-        // Slider thumb / rail
-        readonly property color sliderThumb: "#e0e0ff"        // near-white periwinkle
-        readonly property color sliderRail: Qt.rgba(0, 0.96, 1, 0.07) // very faint cyan rail
+        readonly property color sliderThumb: "#e0e0ff"
+        readonly property color sliderRail: Qt.rgba(0, 0.96, 1, 0.07)
 
-        // Chrome
-        readonly property color border: "#44a8a8ff"           // subtle accent-tinted
-        readonly property color borderBright: "#80b8b8ff"     // brighter hover/focus
+        readonly property color border: "#44a8a8ff"
+        readonly property color borderBright: "#80b8b8ff"
 
-        // Status
         readonly property color danger: "#ff6878"
         readonly property color warning: "#ffb060"
         readonly property color success: "#80ffb0"
 
-        // Glow / shadow helpers
-        readonly property color glowAccent: "#48c0aaff"       // periwinkle glow
-        readonly property color glowAlt: "#48ff9ff3"          // pink glow
+        readonly property color glowAccent: "#48c0aaff"
+        readonly property color glowAlt: "#48ff9ff3"
         readonly property color glowDanger: "#48ff6878"
         readonly property color shadowDark: "#c8000018"
     }
 
     readonly property QtObject osd: QtObject {
-        readonly property int animateSpeed: 220              // snappier slide
+        readonly property int animateSpeed: 220
         readonly property int hideDelay: 1800
         readonly property int rowHeight: Math.round(52 * root.scale)
         readonly property int panelWidth: Math.round(420 * root.scale)
@@ -79,7 +69,7 @@ QtObject {
     }
 
     readonly property QtObject notifications: QtObject {
-        readonly property int animateSpeed: 200              // snappier spring entrance
+        readonly property int animateSpeed: 200
         readonly property int timeout: 10000
         readonly property int cardWidth: Math.round(400 * root.scale)
         readonly property int iconSize: Math.round(18 * root.scale)
@@ -94,7 +84,7 @@ QtObject {
     }
 
     readonly property QtObject bar: QtObject {
-        readonly property int animateSpeed: 200              // snappier pill slide
+        readonly property int animateSpeed: 200
         readonly property int hideDelay: 1500
         readonly property int radius: Math.round(24 * root.scale)
         readonly property int iconSize: Math.round(36 * root.scale)
@@ -109,7 +99,6 @@ QtObject {
         readonly property int popupOffset: Math.round(10 * root.scale)
         readonly property bool clock24h: true
         readonly property real disabledOpacity: 0.35
-        // Popup appearance
         readonly property int popupRadius: Math.round(14 * root.scale)
     }
 

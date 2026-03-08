@@ -10,25 +10,14 @@ import "components"
 Item {
     id: root
 
-    // In live mode: set this to the Notification object.
-    // In history mode: leave null; set historyMode = true and snapshot = {...}.
     property Notification notification: null
-
-    // History mode — display a static snapshot instead of a live notification.
-    property bool historyMode: false
-    property var snapshot: null   // { id, appName, appIcon, desktopEntry, summary, body, actions, receivedAt }
-
-    property int timeout: Config.notifications.timeout
-    property bool visible_: false
-    property real latchedHeight: 0
-
-    // Set to true by dismissTimer before animateOut() so we can suppress
-    // the dismissed() signal (timeout = stay in history).
     property bool _timedOut: false
+    property bool historyMode: false
+    property bool visible_: false
+    property int timeout: Config.notifications.timeout
+    property real latchedHeight: 0
+    property var snapshot: null
 
-    // Emitted after the card has fully animated out.
-    // In live mode: NOT emitted on timeout (so timed-out entries stay in history).
-    // In history mode: emitted when the user interacts to remove the entry.
     signal dismissed
     signal hovered
 
@@ -55,14 +44,6 @@ Item {
         }
     }
 
-    Connections {
-        target: card
-        function onImplicitHeightChanged() {
-            if (!exitAnim.running && !historyExitAnim.running)
-                root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
-        }
-    }
-
     function animateOut() {
         if (!root.visible_)
             return;
@@ -72,6 +53,14 @@ Item {
             historyExitAnim.start();
         else
             exitAnim.start();
+    }
+
+    Connections {
+        target: card
+        function onImplicitHeightChanged() {
+            if (!exitAnim.running && !historyExitAnim.running)
+                root.latchedHeight = card.implicitHeight + Math.round(8 * Config.scale);
+        }
     }
 
     Timer {
@@ -84,7 +73,6 @@ Item {
         }
     }
 
-    // Live exit: slide out + fade + height collapse
     SequentialAnimation {
         id: exitAnim
 
@@ -122,7 +110,6 @@ Item {
         }
     }
 
-    // History exit: height collapse only — cards above slide up, no slide/fade
     SequentialAnimation {
         id: historyExitAnim
 
@@ -182,7 +169,6 @@ Item {
             }
         }
 
-        // Card tap — dismiss (live) or collapse and remove from history
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -191,7 +177,6 @@ Item {
             onClicked: root.animateOut()
         }
 
-        // Left accent bar — gradient from accent to accentAlt
         Item {
             anchors {
                 left: parent.left
@@ -203,7 +188,6 @@ Item {
             width: Config.notifications.accentBar
             clip: true
 
-            // Glow layer — wider neon halo behind the stripe
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: -4
@@ -217,14 +201,21 @@ Item {
                 radius: Config.notifications.accentBar
                 gradient: Gradient {
                     orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: Config.colors.accent }
-                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                    GradientStop {
+                        position: 0.0
+                        color: Config.colors.accent
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Config.colors.accentAlt
+                    }
                 }
             }
         }
 
         ColumnLayout {
             id: cardContent
+            spacing: Math.round(5 * Config.scale)
 
             anchors {
                 left: parent.left
@@ -235,9 +226,6 @@ Item {
                 topMargin: Math.round(12 * Config.scale)
             }
 
-            spacing: Math.round(5 * Config.scale)
-
-            // Header: app icon + app name + timestamp
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(8 * Config.scale)
@@ -245,8 +233,8 @@ Item {
                 IconImage {
                     implicitSize: Config.notifications.iconSize
                     source: {
-                        const appIcon    = root.historyMode ? (root.snapshot?.appIcon    ?? "") : (root.notification?.appIcon    ?? "");
-                        const deskEntry  = root.historyMode ? (root.snapshot?.desktopEntry ?? "") : (root.notification?.desktopEntry ?? "");
+                        const appIcon = root.historyMode ? (root.snapshot?.appIcon ?? "") : (root.notification?.appIcon ?? "");
+                        const deskEntry = root.historyMode ? (root.snapshot?.desktopEntry ?? "") : (root.notification?.desktopEntry ?? "");
                         if (appIcon !== "") {
                             const path = Quickshell.iconPath(appIcon);
                             if (path !== "")
@@ -286,7 +274,6 @@ Item {
                 }
             }
 
-            // Summary
             Text {
                 text: root.historyMode ? (root.snapshot?.summary ?? "") : (root.notification?.summary ?? "")
                 color: Config.colors.textPrimary
@@ -298,7 +285,6 @@ Item {
                 visible: text !== ""
             }
 
-            // Body
             Text {
                 text: root.historyMode ? (root.snapshot?.body ?? "") : (root.notification?.body ?? "")
                 color: Config.colors.textSecondary
@@ -312,15 +298,12 @@ Item {
                 elide: Text.ElideRight
             }
 
-            // Actions
             RowLayout {
                 Layout.fillWidth: true
                 Layout.bottomMargin: Math.round(4 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
 
-                readonly property var _actions: root.historyMode
-                    ? (root.snapshot?.actions ?? [])
-                    : (root.notification?.actions ?? [])
+                readonly property var _actions: root.historyMode ? (root.snapshot?.actions ?? []) : (root.notification?.actions ?? [])
                 visible: _actions.length > 0
 
                 Repeater {
@@ -333,7 +316,6 @@ Item {
                         implicitHeight: Math.round(28 * Config.scale)
                         implicitWidth: actionBg.implicitWidth
 
-                        // Neon glow ring on hover
                         Rectangle {
                             anchors.fill: actionBg
                             anchors.margins: -3
@@ -342,7 +324,11 @@ Item {
                             border.color: Config.colors.accent
                             border.width: 2
                             opacity: actionArea.containsMouse ? 0.55 : 0
-                            Behavior on opacity { NumberAnimation { duration: 80 } }
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 80
+                                }
+                            }
                         }
 
                         Rectangle {
@@ -350,31 +336,33 @@ Item {
                             anchors.fill: parent
                             implicitWidth: actionLabel.implicitWidth + Math.round(18 * Config.scale)
                             radius: Math.round(8 * Config.scale)
-                            color: actionArea.containsMouse
-                                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
-                                : Config.colors.surfaceAlt
+                            color: actionArea.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28) : Config.colors.surfaceAlt
                             border.color: actionArea.containsMouse ? Config.colors.accent : Config.colors.border
                             border.width: 1
 
                             Behavior on color {
-                                ColorAnimation { duration: 120 }
+                                ColorAnimation {
+                                    duration: 120
+                                }
                             }
                             Behavior on border.color {
-                                ColorAnimation { duration: 120 }
+                                ColorAnimation {
+                                    duration: 120
+                                }
                             }
 
                             Text {
                                 id: actionLabel
                                 anchors.centerIn: parent
-                                // In live mode modelData is a NotificationAction object with .text
-                                // In history mode modelData is a plain JS object {identifier, text}
-                                text: actionDelegate.modelData.text ?? ""
                                 color: actionArea.containsMouse ? Config.colors.accent : Config.colors.textPrimary
                                 font.family: Config.font.family
                                 font.pixelSize: Config.notifications.fontSizeAction
+                                text: actionDelegate.modelData.text ?? ""
 
                                 Behavior on color {
-                                    ColorAnimation { duration: 120 }
+                                    ColorAnimation {
+                                        duration: 120
+                                    }
                                 }
                             }
                         }
@@ -382,8 +370,8 @@ Item {
                         MouseArea {
                             id: actionArea
                             anchors.fill: parent
-                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
                             onClicked: {
                                 actionDelegate.modelData.invoke();
                                 root.animateOut();

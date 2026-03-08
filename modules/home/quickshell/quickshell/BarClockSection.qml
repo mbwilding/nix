@@ -4,18 +4,12 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 
-// Clock/date bar section: time + date labels.
 Item {
     id: clockSection
-
-    property date clockDate   // bound to clock.date from Bar.qml
-
-    // ── Geometry ──────────────────────────────────────────────────────────────
-
     implicitWidth: clockCol.implicitWidth
     implicitHeight: clockCol.implicitHeight
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    property date clockDate
 
     function timeText(d) {
         if (!d)

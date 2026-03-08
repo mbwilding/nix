@@ -7,36 +7,22 @@ import Quickshell.Services.UPower
 import Quickshell.Widgets
 import "components"
 
-// Battery bar section: level icon trigger + small popup showing pct + charging status.
-//
-// Bar.qml binds activePopup and wires the popup-manager signals.
 BarSectionItem {
     id: batterySection
 
-    // ── Public API ────────────────────────────────────────────────────────────
-
-    property string activePopup: ""     // bound to root.activePopup
-
-    signal openPopupReq(string name)
-    signal exitPopupReq
-
-    // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: batteryPopup
-
-    // ── State ─────────────────────────────────────────────────────────────────
-
-    readonly property var b: UPower.displayDevice
-
-    // ── Geometry ──────────────────────────────────────────────────────────────
-
-    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    visible: b !== null && b.isLaptopBattery
+    property string activePopup: ""
 
     readonly property bool popupOpen: activePopup === "battery"
-    popupItem: batteryPopup
+    readonly property var b: UPower.displayDevice
 
-    // ── Trigger ───────────────────────────────────────────────────────────────
+    signal exitPopupReq
+    signal openPopupReq(string name)
+
+    implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    popupItem: batteryPopup
+    visible: b !== null && b.isLaptopBattery
 
     HoverHandler {
         id: triggerHover
@@ -73,8 +59,6 @@ BarSectionItem {
         }
     }
 
-    // ── Popup ─────────────────────────────────────────────────────────────────
-
     PopupContainer {
         id: batteryPopup
         popupOpen: batterySection.popupOpen
@@ -102,7 +86,6 @@ BarSectionItem {
             anchors.centerIn: parent
             spacing: Math.round(8 * Config.scale)
 
-            // Same battery level icon as the trigger
             IconImage {
                 implicitSize: Config.bar.batteryIconSize
                 source: batteryIcon.source
