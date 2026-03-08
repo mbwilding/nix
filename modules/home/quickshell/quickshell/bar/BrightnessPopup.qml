@@ -1,7 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import "components"
+import ".."
+import "../components"
 
 PopupContainer {
     id: root

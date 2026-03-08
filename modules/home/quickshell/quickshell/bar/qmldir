@@ -1,3 +1,11 @@
 module bar
-BrightnessComboSection 1.0 BrightnessComboSection.qml
+BatterySection 1.0 BatterySection.qml
+BrightnessPopup 1.0 BrightnessPopup.qml
 BrightnessSection 1.0 BrightnessSection.qml
+BtSection 1.0 BtSection.qml
+ClockSection 1.0 ClockSection.qml
+NotifSection 1.0 NotifSection.qml
+PowerSection 1.0 PowerSection.qml
+TrayItem 1.0 TrayItem.qml
+VolumeSection 1.0 VolumeSection.qml
+WifiSection 1.0 WifiSection.qml
