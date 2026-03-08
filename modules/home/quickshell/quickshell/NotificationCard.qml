@@ -30,6 +30,7 @@ Item {
     // In live mode: NOT emitted on timeout (so timed-out entries stay in history).
     // In history mode: emitted when the user interacts to remove the entry.
     signal dismissed
+    signal hovered
 
     clip: false
     implicitHeight: latchedHeight
@@ -184,7 +185,9 @@ Item {
         // Card tap — dismiss (live) or collapse and remove from history
         MouseArea {
             anchors.fill: parent
+            hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+            onEntered: root.hovered()
             onClicked: root.animateOut()
         }
 
