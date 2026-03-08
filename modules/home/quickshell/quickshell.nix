@@ -67,11 +67,12 @@ in
       ]
   );
 
-  home = {
-    packages = with pkgs; [
-      coreutils
-      libnotify
-    ];
+    home = {
+      packages = with pkgs; [
+        coreutils
+        libnotify
+        grim
+      ];
 
     file."nix/modules/home/quickshell/.qmlls.ini".source = qmllsIni;
   };
