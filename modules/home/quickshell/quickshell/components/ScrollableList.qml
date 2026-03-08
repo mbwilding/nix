@@ -46,14 +46,14 @@ Item {
         readonly property bool needed: flickable.contentHeight > flickable.height
         visible: needed
 
-        // Rail
+        // Rail — very subtle neon cyan tint
         Rectangle {
             anchors.fill: parent
             radius: width / 2
             color: Config.colors.border
         }
 
-        // Thumb
+        // Thumb — neon cyan
         Rectangle {
             readonly property real ratio: flickable.height / Math.max(flickable.contentHeight, 1)
             readonly property real thumbH: Math.max(Math.round(20 * Config.scale), scrollbar.height * ratio)
@@ -63,7 +63,8 @@ Item {
             height: thumbH
             y: travel * scrollRatio
             radius: width / 2
-            color: Config.colors.textMuted
+            color: Config.colors.accent
+            opacity: 0.6
             Behavior on y {
                 NumberAnimation {
                     duration: 60
