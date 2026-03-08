@@ -9,6 +9,12 @@ QtObject {
     readonly property real fontSize: 1.4
     readonly property bool soundEnabled: true
 
+    // ── Panel outline — applied to every PopupCard ────────────────────────────
+    readonly property QtObject panelBorder: QtObject {
+        readonly property int width: 1                        // px, 0 to disable
+        readonly property color color: "#80c0aaff"            // periwinkle, 50% alpha
+    }
+
     readonly property QtObject font: QtObject {
         readonly property string family: "NeoSpleen Nerd Font"
         readonly property int sizeSm: Math.round(10 * root.fontSize)
