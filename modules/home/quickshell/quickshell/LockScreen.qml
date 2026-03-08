@@ -2,11 +2,13 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
+import Quickshell.Services.Pam
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import "components"
@@ -35,10 +37,101 @@ Scope {
     readonly property var defaultSink: Pipewire.defaultAudioSink
     readonly property var audio: defaultSink?.audio ?? null
 
+    // ── Lock screen background ────────────────────────────────────────────────
+    property string bgImagePath: ""
+
+    // Takes a screenshot before locking so we can blur it as the background.
+    // grim writes to /tmp/qs-lock-bg.png; on exit we apply the lock.
+    Process {
+        id: grimProc
+        command: ["grim", "/tmp/qs-lock-bg.png"]
+        onExited: (code, status) => {
+            if (code === 0) {
+                // Force Image to reload the new file even if path is unchanged
+                root.bgImagePath = "";
+                root.bgImagePath = "file:///tmp/qs-lock-bg.png";
+            }
+            // Lock regardless (even if grim failed — safety first)
+            sessionLock.locked = true;
+            root.pamMessage = "";
+            root.pamIsError = false;
+            root.clearPasswordField();
+            pam.start();
+        }
+    }
+
+    // ── PAM authentication ────────────────────────────────────────────────────
+    property string pamMessage: ""
+    property bool pamIsError: false
+    property bool pamAuthenticating: false  // true while a PAM session is active
+
+    // Signal emitted to request focus on the password field inside the surface.
+    // (Direct id reference across ComponentBehavior: Bound boundary is not allowed.)
+    signal focusPasswordField()
+    signal shakePasswordField()
+    signal clearPasswordField()
+
+    PamContext {
+        id: pam
+        config: "login"
+
+        onPamMessage: {
+            root.pamMessage = pam.message;
+            root.pamIsError = pam.messageIsError;
+            // When PAM wants a response, focus the password field
+            if (pam.responseRequired) {
+                root.pamAuthenticating = true;
+                root.focusPasswordField();
+            }
+        }
+
+        onCompleted: result => {
+            root.pamAuthenticating = false;
+            if (result === PamResult.Success) {
+                sessionLock.locked = false;
+            } else {
+                // Wrong password — shake, clear, and restart PAM after a short delay
+                root.pamIsError = true;
+                if (result === PamResult.MaxTries) {
+                    root.pamMessage = "Too many attempts";
+                } else {
+                    root.pamMessage = pam.message !== "" ? pam.message : "Authentication failed";
+                }
+                root.clearPasswordField();
+                root.shakePasswordField();
+                pamRetryTimer.restart();
+            }
+        }
+
+        onError: error => {
+            root.pamAuthenticating = false;
+            root.pamIsError = true;
+            root.pamMessage = "PAM error: " + PamError.toString(error);
+            root.clearPasswordField();
+            root.shakePasswordField();
+            // Retry after delay (start failed, etc.)
+            pamRetryTimer.restart();
+        }
+    }
+
+    // Restart PAM after a failed attempt
+    Timer {
+        id: pamRetryTimer
+        interval: 1200
+        onTriggered: {
+            root.pamMessage = "";
+            root.pamIsError = false;
+            pam.start();
+        }
+    }
+
     // ── IPC ──────────────────────────────────────────────────────────────────
     IpcHandler {
         target: "lockscreen"
-        function lock()   { sessionLock.locked = true;  }
+        function lock() {
+            // Take screenshot first; grimProc.onExited applies the lock
+            grimProc.running = true;
+        }
         function unlock() { sessionLock.locked = false; }
     }
 
@@ -140,59 +233,45 @@ Scope {
             Item {
                 anchors.fill: parent
 
-                // ── Background ────────────────────────────────────────────
-                Rectangle {
-                    anchors.fill: parent
-                    color: "#e8101020"
+                // Forward signals from Scope into this surface's context
+                // (direct id references across ComponentBehavior: Bound boundaries are not allowed)
+                Connections {
+                    target: root
+                    function onFocusPasswordField() { passwordInput.forceActiveFocus(); }
+                    function onShakePasswordField()  { shakeAnim.restart(); }
+                    function onClearPasswordField()  { passwordInput.text = ""; }
                 }
 
-                // Subtle grid pattern for cyberpunk depth
-                Item {
+                // ── Background: blurred screenshot + dark tint ────────────
+                // Fallback solid fill shown if no screenshot is available yet
+                Rectangle {
                     anchors.fill: parent
-                    opacity: 0.025
+                    color: "#ff0d0d18"
+                    visible: root.bgImagePath === ""
+                }
 
-                    Repeater {
-                        model: Math.ceil(lockSurface.height / 48) + 1
-                        delegate: Rectangle {
-                            id: hLineD
-                            required property int index
-                            y: index * 48
-                            width: lockSurface.width
-                            height: 1
-                            color: "#c0aaff"
-                        }
-                    }
-
-                    Repeater {
-                        model: Math.ceil(lockSurface.width / 48) + 1
-                        delegate: Rectangle {
-                            id: vLineD
-                            required property int index
-                            x: index * 48
-                            width: 1
-                            height: lockSurface.height
-                            color: "#c0aaff"
-                        }
+                // Screenshot captured just before locking
+                Image {
+                    id: bgImage
+                    anchors.fill: parent
+                    source: root.bgImagePath
+                    fillMode: Image.PreserveAspectCrop
+                    visible: root.bgImagePath !== ""
+                    smooth: true
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        blurEnabled: true
+                        blur: 1.0
+                        blurMax: 64
+                        blurMultiplier: 1.0
                     }
                 }
 
-                // Ambient glow blobs
+                // Dark tint so widgets stay legible over the blur
                 Rectangle {
-                    x: lockSurface.width * 0.04
-                    y: -Math.round(100 * Config.scale)
-                    width: Math.round(520 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Qt.rgba(0.75, 0.67, 1.0, 0.055)
-                }
-
-                Rectangle {
-                    x: lockSurface.width * 0.65
-                    y: lockSurface.height * 0.48
-                    width: Math.round(400 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Qt.rgba(1.0, 0.62, 0.95, 0.045)
+                    anchors.fill: parent
+                    color: "#aa0d0d18"
+                    visible: root.bgImagePath !== ""
                 }
 
                 // ── Main layout ────────────────────────────────────────────
@@ -948,40 +1027,183 @@ Scope {
                         }
                     }
 
-                    // ── Bottom center: lock hint ────────────────────────────
+                    // ── Bottom center: password input ───────────────────────
                     Item {
+                        id: passwordArea
                         anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        width: lockHint.implicitWidth
-                        height: lockHint.implicitHeight
+                        width: Math.round(320 * Config.scale)
+                        height: passwordCol.implicitHeight
+
+                        // Horizontal shake animation on auth failure
+                        SequentialAnimation {
+                            id: shakeAnim
+                            property real restX: 0
+                            ScriptAction { script: { shakeAnim.restX = passwordArea.x; } }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(10 * Config.scale); duration: 50; easing.type: Easing.InOutQuad }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX + Math.round(18 * Config.scale); duration: 70; easing.type: Easing.InOutQuad }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(14 * Config.scale); duration: 60; easing.type: Easing.InOutQuad }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX + Math.round(10 * Config.scale); duration: 60; easing.type: Easing.InOutQuad }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX - Math.round(6 * Config.scale);  duration: 50; easing.type: Easing.InOutQuad }
+                            NumberAnimation { target: passwordArea; property: "x"; to: shakeAnim.restX;                                 duration: 40; easing.type: Easing.InOutQuad }
+                        }
 
                         Column {
-                            id: lockHint
-                            spacing: Math.round(6 * Config.scale)
-                            anchors.centerIn: parent
+                            id: passwordCol
+                            width: parent.width
+                            spacing: Math.round(10 * Config.scale)
+                            anchors.bottom: parent.bottom
 
+                            // PAM / error message
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: "\uF023"
-                                color: Config.colors.accent
+                                visible: root.pamMessage !== ""
+                                text: root.pamMessage
+                                color: root.pamIsError ? Config.colors.danger : Config.colors.textMuted
                                 font.family: Config.font.family
-                                font.pixelSize: Math.round(22 * Config.scale)
-                                opacity: 0.4
-
-                                SequentialAnimation on opacity {
-                                    loops: Animation.Infinite
-                                    NumberAnimation { to: 0.7; duration: 2400; easing.type: Easing.InOutSine }
-                                    NumberAnimation { to: 0.25; duration: 2400; easing.type: Easing.InOutSine }
-                                }
+                                font.pixelSize: Math.round(11 * Config.scale)
+                                opacity: 0.9
+                                Behavior on color { ColorAnimation { duration: 150 } }
                             }
 
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: "qs ipc call lockscreen unlock"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(10 * Config.scale)
-                                opacity: 0.35
+                            // Password field card
+                            Rectangle {
+                                width: parent.width
+                                height: Math.round(44 * Config.scale)
+                                radius: Math.round(12 * Config.scale)
+                                color: Config.colors.surface
+                                border.width: passwordInput.activeFocus
+                                    ? Math.round(1.5 * Config.scale)
+                                    : Config.panelBorder.width
+                                border.color: root.pamIsError
+                                    ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b,
+                                              passwordInput.activeFocus ? 0.9 : 0.5)
+                                    : passwordInput.activeFocus
+                                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.8)
+                                        : Config.panelBorder.color
+                                Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                                // Glow on focus
+                                Rectangle {
+                                    anchors.fill: parent
+                                    radius: parent.radius
+                                    color: "transparent"
+                                    border.width: Math.round(4 * Config.scale)
+                                    border.color: root.pamIsError
+                                        ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
+                                        : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                                    opacity: passwordInput.activeFocus ? 1.0 : 0.0
+                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                }
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: Math.round(14 * Config.scale)
+                                    anchors.rightMargin: Math.round(14 * Config.scale)
+                                    spacing: Math.round(10 * Config.scale)
+
+                                    // Lock icon
+                                    Text {
+                                        text: root.pamAuthenticating ? "\uF13E" : "\uF023"
+                                        color: root.pamIsError ? Config.colors.danger
+                                             : passwordInput.activeFocus ? Config.colors.accent
+                                             : Config.colors.textMuted
+                                        font.family: Config.font.family
+                                        font.pixelSize: Math.round(14 * Config.scale)
+                                        opacity: 0.8
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                    }
+
+                                    // Dot indicators while password has chars (dots, not plain text)
+                                    // We use a real TextInput hidden off-screen for key capture,
+                                    // and show dots manually.
+                                    Item {
+                                        Layout.fillWidth: true
+                                        height: Math.round(20 * Config.scale)
+
+                                        // Placeholder text
+                                        Text {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: passwordInput.text.length === 0
+                                            text: "Enter password…"
+                                            color: Config.colors.textMuted
+                                            font.family: Config.font.family
+                                            font.pixelSize: Math.round(13 * Config.scale)
+                                            opacity: 0.45
+                                        }
+
+                                        // Password dots
+                                        Row {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: passwordInput.text.length > 0
+                                            spacing: Math.round(5 * Config.scale)
+
+                                            Repeater {
+                                                model: Math.min(passwordInput.text.length, 32)
+                                                delegate: Rectangle {
+                                                    required property int index
+                                                    width: Math.round(7 * Config.scale)
+                                                    height: width
+                                                    radius: width / 2
+                                                    color: root.pamIsError ? Config.colors.danger : Config.colors.accent
+                                                    opacity: 0.85
+                                                }
+                                            }
+
+                                            // Overflow indicator
+                                            Text {
+                                                visible: passwordInput.text.length > 32
+                                                text: "+" + (passwordInput.text.length - 32)
+                                                color: Config.colors.textMuted
+                                                font.family: Config.font.family
+                                                font.pixelSize: Math.round(10 * Config.scale)
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        // The actual hidden TextInput that captures key events
+                                        TextInput {
+                                            id: passwordInput
+                                            anchors.fill: parent
+                                            opacity: 0
+                                            echoMode: TextInput.Password
+                                            focus: true
+
+                                            Keys.onReturnPressed: {
+                                                if (text.length > 0 && pam.responseRequired) {
+                                                    pam.respond(text);
+                                                    text = "";
+                                                }
+                                            }
+                                            Keys.onEnterPressed: {
+                                                if (text.length > 0 && pam.responseRequired) {
+                                                    pam.respond(text);
+                                                    text = "";
+                                                }
+                                            }
+                                            Keys.onEscapePressed: {
+                                                text = "";
+                                            }
+                                        }
+                                    }
+
+                                    // Spinner / submit indicator
+                                    Text {
+                                        visible: pam.active && !pam.responseRequired
+                                        text: "\uF110"
+                                        color: Config.colors.accent
+                                        font.family: Config.font.family
+                                        font.pixelSize: Math.round(14 * Config.scale)
+                                        opacity: 0.7
+
+                                        RotationAnimator on rotation {
+                                            from: 0; to: 360
+                                            duration: 900
+                                            loops: Animation.Infinite
+                                            running: pam.active && !pam.responseRequired
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
