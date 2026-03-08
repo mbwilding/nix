@@ -208,13 +208,11 @@ Scope {
                             dvdColor = dvdColors[dvdColorIdx];
                         }
 
-                        Timer {
+                        FrameAnimation {
                             id: dvdTimer
-                            interval: 16
-                            repeat: true
                             running: true
                             onTriggered: {
-                                const dt = interval / 1000.0;
+                                const dt = Math.min(frameTime, 0.05);
                                 const logoW = dvdLogo.width;
                                 const logoH = dvdLogo.height;
                                 const maxX = dvdBouncer.width - logoW;
