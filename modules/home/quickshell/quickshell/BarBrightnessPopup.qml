@@ -147,7 +147,7 @@ PopupContainer {
                     text: Math.round(root.screenFraction * 100) + "%"
                     color: Config.colors.textPrimary
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     horizontalAlignment: Text.AlignRight
                     Layout.preferredWidth: root.labelWidth
                     Layout.fillWidth: false
@@ -238,7 +238,7 @@ PopupContainer {
                     text: Math.round(root.kbdFraction * 100) + "%"
                     color: Config.colors.textPrimary
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     horizontalAlignment: Text.AlignRight
                     Layout.preferredWidth: root.labelWidth
                     Layout.fillWidth: false

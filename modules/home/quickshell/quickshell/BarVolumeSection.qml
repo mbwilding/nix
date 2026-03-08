@@ -181,7 +181,7 @@ Item {
     TextMetrics {
         id: nameTm
         font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
+        font.pixelSize: Config.bar.fontSizePopup
     }
 
     // Overhead = everything in a name row except the name text itself.
@@ -297,7 +297,7 @@ Item {
                     text: "Output"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                     width: parent.width
                     leftPadding: Math.round(4 * Config.scale)
                     topPadding: Math.round(4 * Config.scale)
@@ -324,7 +324,7 @@ Item {
                     text: "Input"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                     width: parent.width
                     leftPadding: Math.round(4 * Config.scale)
                     topPadding: volumeSection.sinkNodes.length > 0
@@ -353,7 +353,7 @@ Item {
                     text: "No audio devices"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     horizontalAlignment: Text.AlignHCenter
                     width: parent.width
                     topPadding: Math.round(8 * Config.scale)
@@ -483,7 +483,7 @@ Item {
 
                     IconImage {
                         anchors.centerIn: parent
-                        implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
+                        implicitSize: Math.round(Config.bar.fontSizePopup * 0.85)
                         source: {
                             if (!deviceRow.node) return "";
                             if (deviceRow.isSinkDevice)
@@ -518,7 +518,7 @@ Item {
                     text: deviceRow.volumeSection.nodeName(deviceRow.node)
                     color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     elide: Text.ElideRight
                     Behavior on color { ColorAnimation { duration: 120 } }
                 }
@@ -626,7 +626,7 @@ Item {
                     }
                     color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textSecondary
                     font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.85)
+                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.85)
                     horizontalAlignment: Text.AlignRight
                     width: parent._labelW
                     Behavior on color { ColorAnimation { duration: 120 } }
