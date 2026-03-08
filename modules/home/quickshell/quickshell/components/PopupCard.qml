@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+
 import ".."
 
 // Glassmorphic card base — deep navy background with themed outline.

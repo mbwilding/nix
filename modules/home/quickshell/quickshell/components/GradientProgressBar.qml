@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+
 import ".."
 
 // Neon gradient progress bar: cyan → hot-pink fill on a dark frosted rail.

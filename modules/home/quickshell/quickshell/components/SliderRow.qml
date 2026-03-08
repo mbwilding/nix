@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+
 import ".."
 
 // Icon + gradient slider track + percentage label row.
