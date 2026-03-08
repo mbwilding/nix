@@ -31,6 +31,8 @@ PopupContainer {
     property var rawSavedFn: null
     property var rawLabelFn: null
     property var rawIconFn: null
+    // Optional: return battery 0.0-1.0 or -1 if unavailable, for connected rows
+    property var rawBatteryFn: null
 
     // Internal counts for raw mode, derived from rawModel.values reactively.
     readonly property int _rawConnectedCount: {
@@ -384,10 +386,14 @@ PopupContainer {
                     readonly property bool _isConn: root.rawIsConnectedFn
                                                     ? root.rawIsConnectedFn(rawConnRow.modelData)
                                                     : false
+                    readonly property real _battery: (root.rawBatteryFn && rawConnRow._isConn)
+                                                     ? root.rawBatteryFn(rawConnRow.modelData)
+                                                     : -1
+                    readonly property bool _hasBattery: rawConnRow._battery >= 0
 
                     visible: _isConn
                     width: parent.width
-                    height: visible ? rawConnLayout.implicitHeight + Math.round(8 * Config.scale) : 0
+                    height: visible ? rawConnInner.implicitHeight + Math.round(8 * Config.scale) : 0
                     radius: Math.round(6 * Config.scale)
                     color: rawConnMouse.containsMouse
                            ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
@@ -399,23 +405,84 @@ PopupContainer {
                     Behavior on color { ColorAnimation { duration: 60 } }
                     Behavior on border.color { ColorAnimation { duration: 60 } }
 
-                    RowLayout {
-                        id: rawConnLayout
-                        anchors.verticalCenter: parent.verticalCenter
+                    Column {
+                        id: rawConnInner
+                        anchors.top: parent.top
+                        anchors.topMargin: Math.round(4 * Config.scale)
                         anchors.left: parent.left
+                        anchors.right: parent.right
                         anchors.leftMargin: Math.round(8 * Config.scale)
-                        spacing: Math.round(8 * Config.scale)
+                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        spacing: Math.round(3 * Config.scale)
 
-                        IconImage {
-                            implicitSize: root._iconSize
-                            source: Quickshell.iconPath(
-                                root.rawIconFn ? root.rawIconFn(rawConnRow.modelData) : "")
+                        RowLayout {
+                            id: rawConnLayout
+                            width: parent.width
+                            spacing: Math.round(8 * Config.scale)
+
+                            IconImage {
+                                implicitSize: root._iconSize
+                                source: Quickshell.iconPath(
+                                    root.rawIconFn ? root.rawIconFn(rawConnRow.modelData) : "")
+                            }
+                            Text {
+                                text: root.rawLabelFn ? root.rawLabelFn(rawConnRow.modelData) : ""
+                                color: Config.colors.accent
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
+                            Text {
+                                visible: rawConnRow._hasBattery
+                                text: rawConnRow._hasBattery ? Math.round(rawConnRow._battery * 100) + "%" : ""
+                                color: {
+                                    const pct = rawConnRow._battery * 100;
+                                    if (pct <= 15) return Config.colors.danger;
+                                    if (pct <= 30) return Config.colors.warning;
+                                    return Config.colors.success;
+                                }
+                                font.family: Config.font.family
+                                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.85)
+                                font.weight: Font.Medium
+                            }
                         }
-                        Text {
-                            text: root.rawLabelFn ? root.rawLabelFn(rawConnRow.modelData) : ""
-                            color: Config.colors.accent
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizePopup
+
+                        // Battery progress bar — only shown when battery data is available
+                        Item {
+                            visible: rawConnRow._hasBattery
+                            width: parent.width
+                            height: visible ? Math.round(4 * Config.scale) : 0
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: height / 2
+                                color: Config.colors.sliderRail
+                            }
+
+                            Rectangle {
+                                width: Math.max(height, parent.width * Math.max(0, Math.min(1, rawConnRow._battery)))
+                                height: parent.height
+                                radius: height / 2
+                                gradient: Gradient {
+                                    orientation: Gradient.Horizontal
+                                    GradientStop {
+                                        position: 0.0
+                                        color: rawConnRow._battery <= 0.15 ? Config.colors.danger
+                                             : rawConnRow._battery <= 0.30 ? Config.colors.warning
+                                             : Config.colors.success
+                                    }
+                                    GradientStop {
+                                        position: 1.0
+                                        color: rawConnRow._battery <= 0.15 ? Qt.rgba(1, 0.41, 0.47, 0.7)
+                                             : rawConnRow._battery <= 0.30 ? Qt.rgba(1, 0.69, 0.38, 0.7)
+                                             : Config.colors.accent
+                                    }
+                                }
+                                Behavior on width {
+                                    NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                                }
+                            }
                         }
                     }
 
