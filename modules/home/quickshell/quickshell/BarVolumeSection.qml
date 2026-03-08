@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
 import "components"
@@ -71,32 +70,6 @@ Item {
     }
 
     visible: volumeSection.defaultSink !== null
-
-    // ── Suspend/resume state ───────────────────────────────────────────────────
-    // PipeWire node state doesn't update live in node.properties, so we track
-    // suspended nodes locally as a JS object keyed by node.name.
-    property var suspendedNodes: ({})
-
-    // Shared pactl process — commands are fire-and-forget, so one instance is fine.
-    Process {
-        id: pactlProc
-    }
-
-    function toggleSuspend(node, isSink) {
-        if (!node) return;
-        const name = node.name;
-        const wasSuspended = !!volumeSection.suspendedNodes[name];
-        const newState = !wasSuspended;
-        // Update local tracking (must reassign for QML binding to fire)
-        const copy = Object.assign({}, volumeSection.suspendedNodes);
-        if (newState) copy[name] = true;
-        else delete copy[name];
-        volumeSection.suspendedNodes = copy;
-        // Fire pactl
-        const subcmd = isSink ? "suspend-sink" : "suspend-source";
-        pactlProc.command = ["pactl", subcmd, name, newState ? "1" : "0"];
-        pactlProc.running = true;
-    }
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
@@ -213,14 +186,12 @@ Item {
 
     // Overhead = everything in a name row except the name text itself.
     // RowLayout margins: left(8) + right(8) = 16 scaled
-    // RowLayout children (spacing=6 each gap, 3 gaps between 4 items):
-    //   muteBtn(22) + spacing + [name] + spacing + suspendBtn(22)
-    // = muteBtn + suspendBtn + 2*spacing + 2*margin
+    // RowLayout children (spacing=6 each gap, 1 gap between 2 items):
+    //   muteBtn(22) + spacing + [name]
+    // = muteBtn + 1*spacing + 2*margin
     readonly property real _nameRowOverhead: Math.round(
         Math.round(22 * Config.scale)                  // mute icon button
         + Math.round(6 * Config.scale)                 // muteBtn→name spacing
-        + Math.round(6 * Config.scale)                 // name→suspendBtn spacing
-        + Math.round(22 * Config.scale)                // suspend button
         + Math.round(8 * Config.scale)                 // left margin
         + Math.round(8 * Config.scale))                // right margin
 
@@ -441,12 +412,6 @@ Item {
 
         readonly property var nodeAudio: deviceRow.node?.audio ?? null
 
-        // Dim suspended devices so they're visually distinct,
-        // but only the content — the suspend button stays at full opacity.
-        readonly property bool isSuspended: deviceRow.volumeSection
-            ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
-            : false
-
         implicitHeight: rowContent.implicitHeight + Math.round(12 * Config.scale)
         radius: Math.round(6 * Config.scale)
 
@@ -457,7 +422,7 @@ Item {
                     ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28)
                     : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18);
             }
-            return (rowMouse.containsMouse && !deviceRow.isSuspended) ? Qt.rgba(1, 1, 1, 0.07) : "transparent";
+            return rowMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent";
         }
         Behavior on color { ColorAnimation { duration: 80 } }
 
@@ -466,15 +431,14 @@ Item {
             id: rowMouse
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: (!deviceRow.isDefault && !deviceRow.isSuspended)
-                         ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: !deviceRow.isDefault ? Qt.PointingHandCursor : Qt.ArrowCursor
             // Don't propagate to parent wheel handler (popup scroll)
             onEntered: {
                 if (deviceRow.volumeSection)
                     deviceRow.volumeSection.openPopupReq("volume");
             }
             onClicked: {
-                if (!deviceRow.isDefault && deviceRow.node && !deviceRow.isSuspended) {
+                if (!deviceRow.isDefault && deviceRow.node) {
                     if (deviceRow.isSinkDevice)
                         Pipewire.preferredDefaultAudioSink = deviceRow.node;
                     else
@@ -483,7 +447,7 @@ Item {
             }
         }
 
-        // Suspend button — always full opacity, anchored independently
+        // ── Row content ───────────────────────────────────────────────────────
         ColumnLayout {
             id: rowContent
             anchors.left: parent.left
@@ -493,7 +457,7 @@ Item {
             anchors.rightMargin: Math.round(8 * Config.scale)
             spacing: Math.round(4 * Config.scale)
 
-            // ── Top row: mute-icon button + name + suspend button ───────────
+            // ── Top row: mute-icon button + name ───────────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
@@ -504,12 +468,12 @@ Item {
                     implicitWidth: Math.round(22 * Config.scale)
                     implicitHeight: Math.round(22 * Config.scale)
                     radius: Math.round(5 * Config.scale)
-                    color: (muteBtnMouse.containsMouse && !deviceRow.isSuspended)
+                    color: muteBtnMouse.containsMouse
                         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
                             ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
                             : Qt.rgba(1, 1, 1, 0.06))
-                    border.color: (muteBtnMouse.containsMouse && !deviceRow.isSuspended)
+                    border.color: muteBtnMouse.containsMouse
                         ? Config.colors.accent
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
                             ? Config.colors.accent : Config.colors.border)
@@ -535,65 +499,6 @@ Item {
                         id: muteBtnMouse
                         anchors.fill: parent
                         hoverEnabled: true
-                        cursorShape: deviceRow.isSuspended ? Qt.ArrowCursor : Qt.PointingHandCursor
-                        onEntered: {
-                            if (deviceRow.volumeSection)
-                                deviceRow.volumeSection.openPopupReq("volume");
-                        }
-                        onClicked: {
-                            mouse.accepted = true;
-                            if (!deviceRow.isSuspended && deviceRow.nodeAudio)
-                                deviceRow.nodeAudio.muted = !deviceRow.nodeAudio.muted;
-                        }
-                    }
-                }
-
-                // Device name — dims when suspended
-                Text {
-                    Layout.fillWidth: true
-                    text: deviceRow.volumeSection.nodeName(deviceRow.node)
-                    color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
-                    elide: Text.ElideRight
-                    opacity: deviceRow.isSuspended ? 0.45 : 1.0
-                    Behavior on color { ColorAnimation { duration: 120 } }
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
-                }
-
-                // Suspend / resume toggle button — always full opacity
-                Rectangle {
-                    id: suspendBtn
-                    readonly property bool isSuspended: deviceRow.volumeSection
-                        ? !!deviceRow.volumeSection.suspendedNodes[deviceRow.node ? deviceRow.node.name : ""]
-                        : false
-
-                    implicitWidth: Math.round(22 * Config.scale)
-                    implicitHeight: Math.round(22 * Config.scale)
-                    radius: Math.round(5 * Config.scale)
-                    color: suspendBtnMouse.containsMouse
-                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
-                        : (suspendBtn.isSuspended ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
-                                                  : Qt.rgba(1, 1, 1, 0.06))
-                    border.color: suspendBtnMouse.containsMouse
-                        ? Config.colors.accent
-                        : (suspendBtn.isSuspended ? Config.colors.accent : Config.colors.border)
-                    border.width: 1
-                    Behavior on color { ColorAnimation { duration: 80 } }
-                    Behavior on border.color { ColorAnimation { duration: 80 } }
-
-                    IconImage {
-                        anchors.centerIn: parent
-                        implicitSize: Math.round(Config.bar.fontSizeStatus * 0.85)
-                        source: suspendBtn.isSuspended
-                            ? Quickshell.iconPath("media-playback-start-symbolic")
-                            : Quickshell.iconPath("media-playback-pause-symbolic")
-                    }
-
-                    MouseArea {
-                        id: suspendBtnMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: {
                             if (deviceRow.volumeSection)
@@ -601,19 +506,29 @@ Item {
                         }
                         onClicked: {
                             mouse.accepted = true;
-                            if (deviceRow.volumeSection && deviceRow.node)
-                                deviceRow.volumeSection.toggleSuspend(deviceRow.node, deviceRow.isSinkDevice);
+                            if (deviceRow.nodeAudio)
+                                deviceRow.nodeAudio.muted = !deviceRow.nodeAudio.muted;
                         }
                     }
                 }
+
+                // Device name
+                Text {
+                    Layout.fillWidth: true
+                    text: deviceRow.volumeSection.nodeName(deviceRow.node)
+                    color: deviceRow.isDefault ? Config.colors.accent : Config.colors.textPrimary
+                    font.family: Config.font.family
+                    font.pixelSize: Config.bar.fontSizeStatus
+                    elide: Text.ElideRight
+                    Behavior on color { ColorAnimation { duration: 120 } }
+                }
+
             }
 
-            // ── Slider row — dims when suspended ───────────────────────────
+            // ── Slider row ─────────────────────────────────────────────────
             Item {
                 Layout.fillWidth: true
                 implicitHeight: Math.round(18 * Config.scale)
-                opacity: deviceRow.isSuspended ? 0.45 : 1.0
-                Behavior on opacity { NumberAnimation { duration: 150 } }
 
                 readonly property real frac: {
                     if (!deviceRow.nodeAudio) return 0;
@@ -670,13 +585,13 @@ Item {
                     anchors.left: parent.left
                     width: parent._trackW
                     hoverEnabled: true
-                    cursorShape: deviceRow.isSuspended ? Qt.ArrowCursor : Qt.SizeHorCursor
+                    cursorShape: Qt.SizeHorCursor
                     onEntered: {
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
                     }
                     function setFromX(mx) {
-                        if (deviceRow.isSuspended || !deviceRow.nodeAudio) return;
+                        if (!deviceRow.nodeAudio) return;
                         const tw = parent._trackW;
                         if (tw <= 0) return;
                         const v = Math.max(0, Math.min(1.0, mx / tw));
@@ -688,7 +603,7 @@ Item {
                     onPressed: mouse => { mouse.accepted = true; setFromX(mouse.x); }
                     onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
                     onWheel: wheel => {
-                        if (deviceRow.isSuspended || !deviceRow.nodeAudio) return;
+                        if (!deviceRow.nodeAudio) return;
                         const cur = deviceRow.nodeAudio.volume;
                         if (isNaN(cur) || cur === undefined) return;
                         deviceRow.nodeAudio.volume = Math.max(0,
