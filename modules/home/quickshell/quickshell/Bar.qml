@@ -21,7 +21,7 @@ Scope {
     // Only one popup open at a time. Sections call root.openPopup("name") on
     // hover-enter and root.keepPopup() on hover-exit. Timers only run while
     // the mouse is outside pill+popup; hovering either keeps everything alive.
-    property string activePopup: ""   // "wifi"|"bt"|"volume"|"screen"|"kbd"|"battery"|"power"|"notif"|"clock"|""
+    property string activePopup: ""   // "wifi"|"bt"|"volume"|"brightness"|"battery"|"power"|"notif"|"clock"|""
 
     // ── Notification history (fed from shell.qml via Notifications scope) ─────
     property var notifHistory: []
@@ -101,7 +101,7 @@ Scope {
     // Closes popup shortly after mouse leaves trigger and/or popup
     Timer {
         id: quickCloseTimer
-        interval: 300
+        interval: 600
         onTriggered: root.closePopup()
     }
 
@@ -456,11 +456,7 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "screen" ? screenSection.popup : null
-                intersection: Intersection.Combine
-            }
-            Region {
-                item: root.activePopup === "kbd" ? kbdSection.popup : null
+                item: root.activePopup === "brightness" ? brightnessSection.popup : null
                 intersection: Intersection.Combine
             }
             Region {
@@ -642,38 +638,21 @@ Scope {
                     onKeepAliveReq: root.keepAlive()
                 }
 
-                // ── Screen brightness ─────────────────────────────────────────
-                BrightnessSection {
-                    id: screenSection
-                    popupName: "screen"
-                    iconName: "video-display-brightness-symbolic"
+                // ── Brightness (screen + keyboard) ───────────────────────────
+                BrightnessComboSection {
+                    id: brightnessSection
                     activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
-                    brightness: BrightnessService.screenBrightness
-                    available: BrightnessService.screenAvailable
-                    iconOffset: -3
-                    popupIconOffset: -3
+                    screenBrightness: BrightnessService.screenBrightness
+                    screenAvailable: BrightnessService.screenAvailable
+                    kbdBrightness: BrightnessService.kbdBrightness
+                    kbdAvailable: BrightnessService.kbdAvailable
                     onOpenPopupReq: name => root.openPopup(name)
                     onKeepPopupReq: root.keepPopup()
                     onExitPopupReq: root.exitPopup()
                     onKeepAliveReq: root.keepAlive()
-                    onSetBrightnessReq: v => BrightnessService.setScreenBrightness(v)
-                }
-
-                // ── Keyboard brightness ───────────────────────────────────────
-                BrightnessSection {
-                    id: kbdSection
-                    popupName: "kbd"
-                    iconName: "input-keyboard-brightness"
-                    activePopup: root.activePopup
-                    sliderLabelWidth: root.sliderLabelWidth
-                    brightness: BrightnessService.kbdBrightness
-                    available: BrightnessService.kbdAvailable
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onKeepAliveReq: root.keepAlive()
-                    onSetBrightnessReq: v => BrightnessService.setKbdBrightness(v)
+                    onSetScreenBrightnessReq: v => BrightnessService.setScreenBrightness(v)
+                    onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
                 }
 
                 // ── Power profiles ────────────────────────────────────────────
