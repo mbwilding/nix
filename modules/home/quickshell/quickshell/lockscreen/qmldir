@@ -1,0 +1,3 @@
+module lockscreen
+LockScreen 1.0 LockScreen.qml
+LockNotificationsCard 1.0 LockNotificationsCard.qml

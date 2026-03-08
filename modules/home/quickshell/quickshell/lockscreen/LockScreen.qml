@@ -7,7 +7,10 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
-import "components"
+
+import "."
+import ".."
+import "../components"
 
 Scope {
     id: root
@@ -134,7 +137,6 @@ Scope {
                             gy1 = Math.random();
                             gx2 = Math.random();
                             gy2 = Math.random();
-                            // Slow drift, random direction
                             const s1 = 0.018 + Math.random() * 0.012;
                             const a1 = Math.random() * Math.PI * 2;
                             vx1 = Math.cos(a1) * s1;
@@ -153,16 +155,38 @@ Scope {
                                 let y1 = bgCanvas.gy1 + bgCanvas.vy1 * dt;
                                 let x2 = bgCanvas.gx2 + bgCanvas.vx2 * dt;
                                 let y2 = bgCanvas.gy2 + bgCanvas.vy2 * dt;
-                                if (x1 < 0) { x1 = 0; bgCanvas.vx1 = Math.abs(bgCanvas.vx1); }
-                                else if (x1 > 1) { x1 = 1; bgCanvas.vx1 = -Math.abs(bgCanvas.vx1); }
-                                if (y1 < 0) { y1 = 0; bgCanvas.vy1 = Math.abs(bgCanvas.vy1); }
-                                else if (y1 > 1) { y1 = 1; bgCanvas.vy1 = -Math.abs(bgCanvas.vy1); }
-                                if (x2 < 0) { x2 = 0; bgCanvas.vx2 = Math.abs(bgCanvas.vx2); }
-                                else if (x2 > 1) { x2 = 1; bgCanvas.vx2 = -Math.abs(bgCanvas.vx2); }
-                                if (y2 < 0) { y2 = 0; bgCanvas.vy2 = Math.abs(bgCanvas.vy2); }
-                                else if (y2 > 1) { y2 = 1; bgCanvas.vy2 = -Math.abs(bgCanvas.vy2); }
-                                bgCanvas.gx1 = x1; bgCanvas.gy1 = y1;
-                                bgCanvas.gx2 = x2; bgCanvas.gy2 = y2;
+                                if (x1 < 0) {
+                                    x1 = 0;
+                                    bgCanvas.vx1 = Math.abs(bgCanvas.vx1);
+                                } else if (x1 > 1) {
+                                    x1 = 1;
+                                    bgCanvas.vx1 = -Math.abs(bgCanvas.vx1);
+                                }
+                                if (y1 < 0) {
+                                    y1 = 0;
+                                    bgCanvas.vy1 = Math.abs(bgCanvas.vy1);
+                                } else if (y1 > 1) {
+                                    y1 = 1;
+                                    bgCanvas.vy1 = -Math.abs(bgCanvas.vy1);
+                                }
+                                if (x2 < 0) {
+                                    x2 = 0;
+                                    bgCanvas.vx2 = Math.abs(bgCanvas.vx2);
+                                } else if (x2 > 1) {
+                                    x2 = 1;
+                                    bgCanvas.vx2 = -Math.abs(bgCanvas.vx2);
+                                }
+                                if (y2 < 0) {
+                                    y2 = 0;
+                                    bgCanvas.vy2 = Math.abs(bgCanvas.vy2);
+                                } else if (y2 > 1) {
+                                    y2 = 1;
+                                    bgCanvas.vy2 = -Math.abs(bgCanvas.vy2);
+                                }
+                                bgCanvas.gx1 = x1;
+                                bgCanvas.gy1 = y1;
+                                bgCanvas.gx2 = x2;
+                                bgCanvas.gy2 = y2;
                             }
                         }
 
@@ -178,11 +202,9 @@ Scope {
                             const w = width, h = height;
                             ctx.clearRect(0, 0, w, h);
 
-                            // Base
                             ctx.fillStyle = "#0d0d18";
                             ctx.fillRect(0, 0, w, h);
 
-                            // Blob 1 — accent (#c0aaff)
                             const r1 = Math.min(w, h) * 0.6;
                             const g1 = ctx.createRadialGradient(gx1 * w, gy1 * h, 0, gx1 * w, gy1 * h, r1);
                             g1.addColorStop(0, "rgba(192, 170, 255, 0.30)");
@@ -190,7 +212,6 @@ Scope {
                             ctx.fillStyle = g1;
                             ctx.fillRect(0, 0, w, h);
 
-                            // Blob 2 — accentAlt (#ff9ff3)
                             const r2 = Math.min(w, h) * 0.55;
                             const g2 = ctx.createRadialGradient(gx2 * w, gy2 * h, 0, gx2 * w, gy2 * h, r2);
                             g2.addColorStop(0, "rgba(255, 159, 243, 0.25)");
@@ -211,7 +232,6 @@ Scope {
                         property real dvdVY: 0
                         property color dvdColor: Config.colors.accent
 
-                        // Speed in px/s — real DVD moves at equal x/y (45°)
                         readonly property real dvdSpeed: 120
 
                         Component.onCompleted: {
@@ -229,15 +249,7 @@ Scope {
                             dvdColor = dvdColors[dvdColorIdx];
                         }
 
-                        readonly property var dvdColors: [
-                            Config.colors.accent,
-                            Config.colors.accentAlt,
-                            "#89dceb",
-                            "#a6e3a1",
-                            "#f38ba8",
-                            "#fab387",
-                            "#f9e2af"
-                        ]
+                        readonly property var dvdColors: [Config.colors.accent, Config.colors.accentAlt, "#89dceb", "#a6e3a1", "#f38ba8", "#fab387", "#f9e2af"]
                         property int dvdColorIdx: 0
 
                         function pickNextColor() {
@@ -278,7 +290,8 @@ Scope {
                                     bounced = true;
                                 }
 
-                                if (bounced) dvdBouncer.pickNextColor();
+                                if (bounced)
+                                    dvdBouncer.pickNextColor();
                                 dvdBouncer.dvdX = nx;
                                 dvdBouncer.dvdY = ny;
                             }
@@ -294,7 +307,6 @@ Scope {
 
                             Shape {
                                 anchors.fill: parent
-                                // Scale from SVG viewBox 1058.4 x 465.84
                                 transform: Scale {
                                     xScale: dvdLogo.width / 1058.4
                                     yScale: dvdLogo.height / 465.84
@@ -304,7 +316,11 @@ Scope {
                                     fillColor: dvdBouncer.dvdColor
                                     strokeColor: "transparent"
                                     strokeWidth: 0
-                                    Behavior on fillColor { ColorAnimation { duration: 200 } }
+                                    Behavior on fillColor {
+                                        ColorAnimation {
+                                            duration: 200
+                                        }
+                                    }
 
                                     PathSvg {
                                         path: "m91.053 0-13.719 57.707 102.28 0.039063h24c65.747 0 105.91 26.44 94.746 73.4-12.147 51.133-69.613 73.4-130.67 73.4h-22.947l29.787-125.45h-102.27l-43.521 183.2h145.05c109.07 0 212.76-57.573 231.01-131.15 3.3467-13.507 2.8806-47.253-5.3594-67.359-0.21299-0.787-0.42594-1.4-1.1855-3-0.293-0.653-0.56012-3.6412 1.1465-4.2812 0.947-0.36 2.7069 1.4944 2.9336 2.041 0.853 2.24 1.5059 3.9062 1.5059 3.9062l92.293 260.6 234.97-265.21 99.535-0.089844h24c65.76 0 106.25 26.44 95.092 73.4-12.147 51.133-69.947 73.4-131 73.4h-22.959l29.799-125.47h-102.27l-43.533 183.21h145.07c109.05 0 213.48-57.4 231-131.15 17.52-73.75-59.107-131.15-168.69-131.15h-216.4s-57.319 67.88-67.959 80.693c-57.12 68.787-67.241 87.226-68.961 91.986 0.24-4.8-1.8138-23.412-26.174-92.959-6.48-18.52-27.359-79.721-27.359-79.721h-389.25zm408.77 324.16c-276.04 0-499.83 31.72-499.83 70.84s223.79 70.84 499.83 70.84c276.04 0 499.83-31.72 499.83-70.84s-223.79-70.84-499.83-70.84zm-18.094 48.627c63.04 0 114.13 10.573 114.13 23.613s-51.095 23.613-114.13 23.613c-63.027 0-114.13-10.573-114.13-23.613s51.106-23.613 114.13-23.613z"
@@ -610,7 +626,7 @@ Scope {
 
                             Repeater {
                                 model: root.notifHistory
-                                delegate: LockNotificationCard {
+                                delegate: LockNotificationsCard {
                                     id: lockNotifD
                                     required property var modelData
                                     snapshot: lockNotifD.modelData

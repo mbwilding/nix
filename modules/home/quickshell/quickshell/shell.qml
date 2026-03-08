@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 
 import "bar"
+import "lockscreen"
 import "notifications"
 import "osd"
 
