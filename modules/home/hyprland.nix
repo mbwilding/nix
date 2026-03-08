@@ -702,6 +702,11 @@ in
         else
           [ ]
       );
+
+      layerrule = [
+        "noanim, ^(session_lock)$"
+        "noborder, ^(session_lock)$"
+      ];
     };
   };
 
