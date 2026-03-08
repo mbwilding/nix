@@ -163,6 +163,7 @@ BarSectionItem {
         rawSavedFn: d => d && d.paired
         rawLabelFn: d => btSection.deviceName(d)
         rawIconFn: d => btSection.deviceIcon(d)
+        rawBatteryFn: d => (d && d.batteryAvailable) ? d.battery : -1
         onHoverOpen: btSection.openPopupReq("bt")
         onHoverExit: btSection.exitPopupReq()
         onRawAvailableClicked: d => {

@@ -19,6 +19,11 @@ ShellRoot {
         onDismissAllNotifs: notifs.dismissAll()
     }
 
+    LockScreen {
+        id: lockScreen
+        notifHistory: notifs.notifHistory
+    }
+
     Connections {
         target: notifs
 
