@@ -122,43 +122,18 @@ PopupContainer {
         }
     }
 
-    // Scroll state
-    property real scrollY: 0
-    readonly property real maxScrollY: Math.max(0, col.implicitHeight - viewport.height)
-    onMaxScrollYChanged: {
-        if (root.scrollY > root.maxScrollY)
-            root.scrollY = root.maxScrollY;
-    }
-
-    WheelHandler {
-        target: null
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        onWheel: event => {
-            const step = Math.round(40 * Config.scale);
-            root.scrollY = Math.max(0,
-                Math.min(root.maxScrollY,
-                    root.scrollY - event.angleDelta.y / 120 * step));
-        }
-    }
-
-    // Viewport
-    Item {
-        id: viewport
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: scrollbarItem.left
-        anchors.topMargin: Math.round(8 * Config.scale)
-        anchors.bottomMargin: Math.round(8 * Config.scale)
-        anchors.leftMargin: Math.round(8 * Config.scale)
-        anchors.rightMargin: Math.round(4 * Config.scale)
-        clip: true
+    // ── Scrollable content ────────────────────────────────────────────────────
+    PopupScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentColumn: col
+        thumbColor: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.6)
 
         Column {
             id: col
-            width: viewport.width
+            width: scrollView.contentWidth
             spacing: Math.round(2 * Config.scale)
-            y: -root.scrollY
+            y: -scrollView.scrollY
 
             // ── Empty placeholder ─────────────────────────────────────────
             Text {
@@ -469,41 +444,6 @@ PopupContainer {
                 topPadding: Math.round(8 * Config.scale)
                 bottomPadding: Math.round(8 * Config.scale)
             }
-        }
-    }
-
-    // Scrollbar — always reserves space so viewport width is stable
-    Item {
-        id: scrollbarItem
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.topMargin: Math.round(8 * Config.scale)
-        anchors.bottomMargin: Math.round(8 * Config.scale)
-        anchors.rightMargin: Math.round(3 * Config.scale)
-        width: Math.round(3 * Config.scale)
-
-        Rectangle {
-            anchors.fill: parent
-            radius: width / 2
-            color: Config.colors.border
-            visible: root.maxScrollY > 0
-        }
-
-        Rectangle {
-            readonly property real ratio: viewport.height / Math.max(col.implicitHeight, 1)
-            readonly property real thumbH: Math.max(Math.round(20 * Config.scale), scrollbarItem.height * ratio)
-            readonly property real travel: scrollbarItem.height - thumbH
-            readonly property real scrollRatio: root.maxScrollY > 0 ? root.scrollY / root.maxScrollY : 0
-
-            width: parent.width
-            height: thumbH
-            y: travel * scrollRatio
-            radius: width / 2
-            color: Config.colors.accent
-            opacity: 0.6
-            visible: root.maxScrollY > 0
-            Behavior on y { NumberAnimation { duration: 60 } }
         }
     }
 }

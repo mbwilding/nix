@@ -43,6 +43,27 @@ Item {
     readonly property var defaultSource: Pipewire.defaultAudioSource
     readonly property var audio: volumeSection.defaultSink?.audio ?? null
 
+    // Tracks which nodes are "disabled" (grayed out and muted). Keyed by node.id.
+    property var disabledNodes: ({})
+
+    function isNodeDisabled(node) {
+        if (!node) return false;
+        return !!volumeSection.disabledNodes[node.id];
+    }
+
+    function setNodeDisabled(node, disabled) {
+        if (!node) return;
+        const map = Object.assign({}, volumeSection.disabledNodes);
+        if (disabled) {
+            map[node.id] = true;
+            if (node.audio) node.audio.muted = true;
+        } else {
+            delete map[node.id];
+            if (node.audio) node.audio.muted = false;
+        }
+        volumeSection.disabledNodes = map;
+    }
+
     // Filter nodes: real (non-stream) audio sinks and sources only
     readonly property var sinkNodes: {
         void Pipewire.nodes.valuesChanged;
@@ -185,15 +206,19 @@ Item {
     }
 
     // Overhead = everything in a name row except the name text itself.
-    // RowLayout margins: left(8) + right(8) = 16 scaled
-    // RowLayout children (spacing=6 each gap, 1 gap between 2 items):
-    //   muteBtn(22) + spacing + [name]
-    // = muteBtn + 1*spacing + 2*margin
+    // rowContent is anchored right to disableBtn.left with 6px gap.
+    // disableBtn is 22px wide + 8px right margin.
+    // rowContent left margin: 8px.
+    // muteBtn(22) + spacing(6) + [name] + rowContent rightMargin(6)
+    //   + disableBtn(22) + disableBtn rightMargin(8)
+    // = muteBtn + 1*spacing + leftMargin + rowContent.rightMargin + disableBtn + disableBtn.rightMargin
     readonly property real _nameRowOverhead: Math.round(
         Math.round(22 * Config.scale)                  // mute icon button
         + Math.round(6 * Config.scale)                 // muteBtn→name spacing
         + Math.round(8 * Config.scale)                 // left margin
-        + Math.round(8 * Config.scale))                // right margin
+        + Math.round(6 * Config.scale)                 // rowContent→disableBtn gap
+        + Math.round(22 * Config.scale)                // disable button
+        + Math.round(8 * Config.scale))                // disable button right margin
 
     // Slider row overhead: label(38) + gap(6) + thumbR(9) + scrollbar track(3) + scrollbar rightMargin(3)
     //                    + viewport leftMargin(8) + viewport rightMargin(4) + card border(1+1)
@@ -253,43 +278,17 @@ Item {
             }
         }
 
-        // ── Scroll to pan if content taller than popup ─────────────────────
-        property real scrollY: 0
-        readonly property real maxScrollY: Math.max(0, popupCol.implicitHeight - viewport.height)
-        onMaxScrollYChanged: {
-            if (volumePopup.scrollY > volumePopup.maxScrollY)
-                volumePopup.scrollY = volumePopup.maxScrollY;
-        }
-
-        WheelHandler {
-            target: null
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-            onWheel: event => {
-                const step = Math.round(40 * Config.scale);
-                volumePopup.scrollY = Math.max(0,
-                    Math.min(volumePopup.maxScrollY,
-                        volumePopup.scrollY - event.angleDelta.y / 120 * step));
-            }
-        }
-
-        // ── Viewport ───────────────────────────────────────────────────────
-        Item {
-            id: viewport
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: scrollbarItem.left
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(4 * Config.scale)
-            clip: true
+        // ── Scrollable content ─────────────────────────────────────────────
+        PopupScrollView {
+            id: scrollView
+            anchors.fill: parent
+            contentColumn: popupCol
 
             Column {
                 id: popupCol
-                width: viewport.width
+                width: scrollView.contentWidth
                 spacing: Math.round(2 * Config.scale)
-                y: -volumePopup.scrollY
+                y: -scrollView.scrollY
 
                 // ── Output section header ──────────────────────────────────
                 Text {
@@ -361,57 +360,28 @@ Item {
                 }
             }
         }
-
-        // ── Scrollbar ──────────────────────────────────────────────────────
-        Item {
-            id: scrollbarItem
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(3 * Config.scale)
-            width: Math.round(3 * Config.scale)
-
-            Rectangle {
-                anchors.fill: parent
-                radius: width / 2
-                color: Config.colors.border
-                visible: volumePopup.maxScrollY > 0
-            }
-
-            Rectangle {
-                readonly property real ratio: viewport.height / Math.max(popupCol.implicitHeight, 1)
-                readonly property real thumbH: Math.max(Math.round(20 * Config.scale), scrollbarItem.height * ratio)
-                readonly property real travel: scrollbarItem.height - thumbH
-                readonly property real scrollRatio: volumePopup.maxScrollY > 0
-                                                    ? volumePopup.scrollY / volumePopup.maxScrollY : 0
-
-                width: parent.width
-                height: thumbH
-                y: travel * scrollRatio
-                radius: width / 2
-                color: Config.colors.textMuted
-                visible: volumePopup.maxScrollY > 0
-                Behavior on y { NumberAnimation { duration: 60 } }
-            }
-        }
     }
 
     // ── Audio device row (inline component) ───────────────────────────────────
-    // Each row: device name + volume slider + mute button.
+    // Each row: device name + volume slider + mute button + disable button.
     // Clicking the row body on a non-default device sets it as preferred default.
+    // The disable button (power icon) greys out the row and mutes the device,
+    // matching pavucontrol's "disable" feature. Click again to re-enable.
     component AudioDeviceRow: Rectangle {
         id: deviceRow
 
         property var node: null
         property bool isDefault: false
         property bool isSinkDevice: true
-        // Reference back so we can call openPopupReq
+        // Reference back so we can call openPopupReq / isNodeDisabled / setNodeDisabled
         property var volumeSection: null
 
         readonly property var nodeAudio: deviceRow.node?.audio ?? null
+        readonly property bool disabled: deviceRow.volumeSection
+                                         ? deviceRow.volumeSection.isNodeDisabled(deviceRow.node)
+                                         : false
 
+        // Row height is driven by rowContent; disable button is overlaid on the right.
         implicitHeight: rowContent.implicitHeight + Math.round(12 * Config.scale)
         radius: Math.round(6 * Config.scale)
 
@@ -431,14 +401,13 @@ Item {
             id: rowMouse
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: !deviceRow.isDefault ? Qt.PointingHandCursor : Qt.ArrowCursor
-            // Don't propagate to parent wheel handler (popup scroll)
+            cursorShape: !deviceRow.isDefault && !deviceRow.disabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             onEntered: {
                 if (deviceRow.volumeSection)
                     deviceRow.volumeSection.openPopupReq("volume");
             }
             onClicked: {
-                if (!deviceRow.isDefault && deviceRow.node) {
+                if (!deviceRow.isDefault && !deviceRow.disabled && deviceRow.node) {
                     if (deviceRow.isSinkDevice)
                         Pipewire.preferredDefaultAudioSink = deviceRow.node;
                     else
@@ -447,15 +416,69 @@ Item {
             }
         }
 
-        // ── Row content ───────────────────────────────────────────────────────
+        // ── Disable / enable toggle button ────────────────────────────────
+        // Kept as a sibling (not inside rowContent) so it is never dimmed by
+        // rowContent's opacity, allowing the user to click it to re-enable.
+        Rectangle {
+            id: disableBtn
+            anchors.right: parent.right
+            anchors.rightMargin: Math.round(8 * Config.scale)
+            anchors.top: parent.top
+            anchors.topMargin: Math.round(6 * Config.scale)
+            implicitWidth: Math.round(22 * Config.scale)
+            implicitHeight: Math.round(22 * Config.scale)
+            radius: Math.round(5 * Config.scale)
+            color: disableBtnMouse.containsMouse
+                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
+                : (deviceRow.disabled
+                    ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
+                    : Config.colors.surfaceAlt)
+            border.color: disableBtnMouse.containsMouse
+                ? Config.colors.accent
+                : (deviceRow.disabled ? Config.colors.accent : Config.colors.border)
+            border.width: 1
+            z: 2   // above rowMouse
+            Behavior on color { ColorAnimation { duration: 80 } }
+            Behavior on border.color { ColorAnimation { duration: 80 } }
+
+            IconImage {
+                anchors.centerIn: parent
+                implicitSize: Math.round(Config.bar.fontSizePopup * 0.85)
+                source: Quickshell.iconPath("system-shutdown-symbolic")
+                opacity: deviceRow.disabled ? Config.bar.disabledOpacity : 1.0
+                Behavior on opacity { NumberAnimation { duration: 150 } }
+            }
+
+            MouseArea {
+                id: disableBtnMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onEntered: {
+                    if (deviceRow.volumeSection)
+                        deviceRow.volumeSection.openPopupReq("volume");
+                }
+                onClicked: {
+                    mouse.accepted = true;
+                    if (deviceRow.volumeSection)
+                        deviceRow.volumeSection.setNodeDisabled(
+                            deviceRow.node, !deviceRow.disabled);
+                }
+            }
+        }
+
+        // ── Row content (dimmed when device is disabled) ───────────────────
         ColumnLayout {
             id: rowContent
             anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.right: disableBtn.left
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(8 * Config.scale)
+            anchors.rightMargin: Math.round(6 * Config.scale)
             spacing: Math.round(4 * Config.scale)
+
+            opacity: deviceRow.disabled ? Config.bar.disabledOpacity : 1.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
 
             // ── Top row: mute-icon button + name ───────────────────────────
             RowLayout {
@@ -468,12 +491,12 @@ Item {
                     implicitWidth: Math.round(22 * Config.scale)
                     implicitHeight: Math.round(22 * Config.scale)
                     radius: Math.round(5 * Config.scale)
-                    color: muteBtnMouse.containsMouse
+                    color: muteBtnMouse.containsMouse && !deviceRow.disabled
                         ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.25)
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
                             ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
                             : Config.colors.surfaceAlt)
-                    border.color: muteBtnMouse.containsMouse
+                    border.color: muteBtnMouse.containsMouse && !deviceRow.disabled
                         ? Config.colors.accent
                         : (deviceRow.nodeAudio && deviceRow.nodeAudio.muted
                             ? Config.colors.accent : Config.colors.border)
@@ -506,6 +529,7 @@ Item {
                         }
                         onClicked: {
                             mouse.accepted = true;
+                            if (deviceRow.disabled) return;
                             if (deviceRow.nodeAudio)
                                 deviceRow.nodeAudio.muted = !deviceRow.nodeAudio.muted;
                         }
@@ -522,7 +546,6 @@ Item {
                     elide: Text.ElideRight
                     Behavior on color { ColorAnimation { duration: 120 } }
                 }
-
             }
 
             // ── Slider row ─────────────────────────────────────────────────
@@ -537,7 +560,6 @@ Item {
                 }
 
                 // Label is fixed-width and right-anchored; track fills everything to its left.
-                // Clamp to 1 so we never divide by zero or go negative during layout.
                 // _thumbR: half the glow diameter — the track stops here so the thumb
                 // never overlaps the label even at 100%.
                 readonly property real _labelW: Math.round(38 * Config.scale)
@@ -548,7 +570,6 @@ Item {
                 GradientProgressBar {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
-                    // Give the bar the same width as the usable track so fill matches thumb
                     width: parent._trackW
                     value: parent.frac
                     barHeight: Math.round(6 * Config.scale)
@@ -585,13 +606,13 @@ Item {
                     anchors.left: parent.left
                     width: parent._trackW
                     hoverEnabled: true
-                    cursorShape: Qt.SizeHorCursor
+                    cursorShape: deviceRow.disabled ? Qt.ArrowCursor : Qt.SizeHorCursor
                     onEntered: {
                         if (deviceRow.volumeSection)
                             deviceRow.volumeSection.openPopupReq("volume");
                     }
                     function setFromX(mx) {
-                        if (!deviceRow.nodeAudio) return;
+                        if (deviceRow.disabled || !deviceRow.nodeAudio) return;
                         const tw = parent._trackW;
                         if (tw <= 0) return;
                         const v = Math.max(0, Math.min(1.0, mx / tw));
@@ -603,7 +624,7 @@ Item {
                     onPressed: mouse => { mouse.accepted = true; setFromX(mouse.x); }
                     onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
                     onWheel: wheel => {
-                        if (!deviceRow.nodeAudio) return;
+                        if (deviceRow.disabled || !deviceRow.nodeAudio) return;
                         const cur = deviceRow.nodeAudio.volume;
                         if (isNaN(cur) || cur === undefined) return;
                         deviceRow.nodeAudio.volume = Math.max(0,
