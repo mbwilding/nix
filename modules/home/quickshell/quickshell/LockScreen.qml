@@ -241,20 +241,6 @@ Scope {
                                     }
                                 }
 
-                                Rectangle {
-                                    anchors.fill: parent
-                                    radius: parent.radius
-                                    color: "transparent"
-                                    border.width: Math.round(4 * Config.scale)
-                                    border.color: root.pamIsError ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
-                                    opacity: passwordInput.activeFocus ? 1.0 : 0.0
-                                    Behavior on opacity {
-                                        NumberAnimation {
-                                            duration: 150
-                                        }
-                                    }
-                                }
-
                                 RowLayout {
                                     anchors.fill: parent
                                     anchors.leftMargin: Math.round(14 * Config.scale)
