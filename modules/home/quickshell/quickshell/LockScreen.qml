@@ -274,765 +274,63 @@ Scope {
                     visible: root.bgImagePath !== ""
                 }
 
-                // ── Main layout ────────────────────────────────────────────
-                Item {
-                    anchors.fill: parent
-                    anchors.margins: Math.round(52 * Config.scale)
+                // ── Main layout: everything centered ──────────────────
+                Column {
+                    anchors.centerIn: parent
+                    spacing: Math.round(32 * Config.scale)
 
-                    // ── LEFT: Clock + Notifications ────────────────────────
+                    // ── Clock ──────────────────────────────────────────────
                     Column {
-                        id: leftCol
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: Math.round(450 * Config.scale)
-                        spacing: Math.round(30 * Config.scale)
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: Math.round(4 * Config.scale)
 
-                        // Clock block
-                        Column {
-                            width: parent.width
-                            spacing: Math.round(4 * Config.scale)
-
-                            Text {
-                                text: Qt.formatTime(wallClock.time,
-                                    Config.bar.clock24h ? "HH:mm" : "hh:mm AP")
-                                color: Config.colors.accent
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(88 * Config.scale)
-                                font.weight: Font.Light
-                            }
-
-                            Text {
-                                text: Qt.formatDate(wallClock.time, "dddd, MMMM d")
-                                color: Config.colors.textSecondary
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(20 * Config.scale)
-                            }
-
-                            Text {
-                                text: Qt.formatDate(wallClock.time, "yyyy")
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(13 * Config.scale)
-                                opacity: 0.55
-                            }
-
-                            // Accent underline
-                            Rectangle {
-                                width: Math.round(180 * Config.scale)
-                                height: Math.round(2 * Config.scale)
-                                radius: height / 2
-                                gradient: Gradient {
-                                    orientation: Gradient.Horizontal
-                                    GradientStop { position: 0.0; color: Config.colors.accent }
-                                    GradientStop { position: 0.55; color: Config.colors.accentAlt }
-                                    GradientStop { position: 1.0; color: "transparent" }
-                                }
-                            }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Qt.formatTime(wallClock.time,
+                                Config.bar.clock24h ? "HH:mm" : "hh:mm AP")
+                            color: Config.colors.accent
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(88 * Config.scale)
+                            font.weight: Font.Light
                         }
 
-                        // Notifications (view-only, scrollable)
-                        Column {
-                            width: parent.width
-                            spacing: Math.round(8 * Config.scale)
-                            visible: root.notifHistory.length > 0
-
-                            // Header row
-                            RowLayout {
-                                width: parent.width
-
-                                Text {
-                                    text: "\uF0F3  Notifications"
-                                    color: Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
-                                    font.weight: Font.Medium
-                                }
-                                Item { Layout.fillWidth: true }
-                                Text {
-                                    text: root.notifHistory.length > 99 ? "99+" : String(root.notifHistory.length)
-                                    color: Config.colors.accentAlt
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.8)
-                                    font.weight: Font.Bold
-                                }
-                            }
-
-                            Rectangle {
-                                width: parent.width
-                                height: 1
-                                color: Config.colors.border
-                                opacity: 0.4
-                            }
-
-                            // Scrollable list
-                            Item {
-                                id: notifScrollContainer
-                                width: parent.width
-                                height: Math.min(
-                                    notifInnerCol.implicitHeight,
-                                    Math.round(380 * Config.scale)
-                                )
-                                clip: true
-
-                                property real scrollY: 0
-                                readonly property real maxScrollY: Math.max(0, notifInnerCol.implicitHeight - notifScrollContainer.height)
-
-                                WheelHandler {
-                                    target: null
-                                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-                                    onWheel: event => {
-                                        const step = Math.round(36 * Config.scale);
-                                        notifScrollContainer.scrollY = Math.max(0,
-                                            Math.min(notifScrollContainer.maxScrollY,
-                                                notifScrollContainer.scrollY - event.angleDelta.y / 120 * step));
-                                    }
-                                }
-
-                                Column {
-                                    id: notifInnerCol
-                                    width: notifScrollContainer.width - Math.round(6 * Config.scale)
-                                    spacing: Math.round(6 * Config.scale)
-                                    y: -notifScrollContainer.scrollY
-
-                                    Repeater {
-                                        model: root.notifHistory
-                                        delegate: LockNotificationCard {
-                                            id: lockNotifD
-                                            required property var modelData
-                                            snapshot: lockNotifD.modelData
-                                            width: notifInnerCol.width
-                                        }
-                                    }
-                                }
-
-                                // Thin scrollbar
-                                Rectangle {
-                                    visible: notifScrollContainer.maxScrollY > 0
-                                    anchors.right: parent.right
-                                    anchors.top: parent.top
-                                    anchors.bottom: parent.bottom
-                                    width: Math.round(3 * Config.scale)
-                                    radius: width / 2
-                                    color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-
-                                    Rectangle {
-                                        readonly property real _thumbH: notifScrollContainer.maxScrollY <= 0 ? parent.height
-                                            : Math.max(Math.round(28 * Config.scale),
-                                                parent.height * (notifScrollContainer.height / notifInnerCol.implicitHeight))
-                                        readonly property real _thumbY: notifScrollContainer.maxScrollY <= 0 ? 0
-                                            : (parent.height - _thumbH) * (notifScrollContainer.scrollY / notifScrollContainer.maxScrollY)
-                                        y: _thumbY
-                                        width: parent.width
-                                        height: _thumbH
-                                        radius: width / 2
-                                        color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.55)
-                                    }
-                                }
-                            }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Qt.formatDate(wallClock.time, "dddd, MMMM d")
+                            color: Config.colors.textSecondary
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(20 * Config.scale)
                         }
 
-                        // Lock indicator (shown when no notifications)
-                        Item {
-                            visible: root.notifHistory.length === 0
-                            width: parent.width
-                            height: lockIndicatorCol.implicitHeight
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Qt.formatDate(wallClock.time, "yyyy")
+                            color: Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(13 * Config.scale)
+                            opacity: 0.55
+                        }
 
-                            Column {
-                                id: lockIndicatorCol
-                                spacing: Math.round(8 * Config.scale)
-
-                                Text {
-                                    text: "\uF023"
-                                    color: Config.colors.accent
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(32 * Config.scale)
-                                    opacity: 0.45
-
-                                    SequentialAnimation on opacity {
-                                        loops: Animation.Infinite
-                                        NumberAnimation { to: 0.75; duration: 2200; easing.type: Easing.InOutSine }
-                                        NumberAnimation { to: 0.3;  duration: 2200; easing.type: Easing.InOutSine }
-                                    }
-                                }
-
-                                Text {
-                                    text: "Screen locked"
-                                    color: Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(13 * Config.scale)
-                                    opacity: 0.5
-                                }
-
-                                Text {
-                                    text: "qs ipc call lockscreen unlock"
-                                    color: Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(10 * Config.scale)
-                                    opacity: 0.3
-                                }
+                        // Accent underline (centered)
+                        Rectangle {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: Math.round(180 * Config.scale)
+                            height: Math.round(2 * Config.scale)
+                            radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0.0; color: "transparent" }
+                                GradientStop { position: 0.5; color: Config.colors.accent }
+                                GradientStop { position: 1.0; color: "transparent" }
                             }
                         }
                     }
 
-                    // ── RIGHT: Status widgets ──────────────────────────────
-                    Column {
-                        id: rightCol
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        width: Math.round(310 * Config.scale)
-                        spacing: Math.round(14 * Config.scale)
-
-                        // ── WiFi widget ────────────────────────────────────
-                        Rectangle {
-                            width: parent.width
-                            height: wifiInner.implicitHeight + Math.round(24 * Config.scale)
-                            radius: Math.round(14 * Config.scale)
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            Column {
-                                id: wifiInner
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                anchors.margins: Math.round(16 * Config.scale)
-                                spacing: Math.round(10 * Config.scale)
-
-                                // Section header
-                                RowLayout {
-                                    width: parent.width
-                                    spacing: Math.round(8 * Config.scale)
-
-                                    IconImage {
-                                        implicitSize: Math.round(17 * Config.scale)
-                                        source: Quickshell.iconPath(root.wifiIcon(root.wifiStrength))
-                                        opacity: root.wifiEnabled ? 1.0 : 0.4
-                                        Behavior on opacity { NumberAnimation { duration: 200 } }
-                                    }
-
-                                    Text {
-                                        text: "Wi-Fi"
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(11 * Config.scale)
-                                        font.weight: Font.Medium
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Rectangle {
-                                        width: Math.round(7 * Config.scale)
-                                        height: width
-                                        radius: width / 2
-                                        color: root.wifiEnabled ? Config.colors.success : Config.colors.danger
-                                        Behavior on color { ColorAnimation { duration: 200 } }
-                                    }
-                                }
-
-                                // Connected SSID
-                                Text {
-                                    width: parent.width
-                                    text: {
-                                        if (!root.wifiEnabled) return "Wi-Fi is off";
-                                        if (root.wifiSsid !== "") return root.wifiSsid;
-                                        return "Not connected";
-                                    }
-                                    color: root.wifiSsid !== "" ? Config.colors.accent : Config.colors.textSecondary
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(15 * Config.scale)
-                                    font.weight: Font.SemiBold
-                                    elide: Text.ElideRight
-                                    Behavior on color { ColorAnimation { duration: 200 } }
-                                }
-
-                                // Signal strength bar
-                                Item {
-                                    visible: root.wifiEnabled && root.wifiStrength >= 0
-                                    width: parent.width
-                                    height: Math.round(5 * Config.scale)
-
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: height / 2
-                                        color: Config.colors.sliderRail
-                                    }
-
-                                    Rectangle {
-                                        width: parent.width * Math.max(0, Math.min(1, root.wifiStrength / 100))
-                                        height: parent.height
-                                        radius: height / 2
-                                        gradient: Gradient {
-                                            orientation: Gradient.Horizontal
-                                            GradientStop { position: 0.0; color: Config.colors.accent }
-                                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                                        }
-                                        Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
-                                    }
-                                }
-
-                                Text {
-                                    visible: root.wifiEnabled && root.wifiStrength >= 0
-                                    text: root.wifiStrength + "% signal"
-                                    color: Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(10 * Config.scale)
-                                    opacity: 0.7
-                                }
-
-                                // Nearby networks (top 3 inactive)
-                                Column {
-                                    visible: root.wifiEnabled && root.wifiNetworks.filter(n => !n.active).length > 0
-                                    width: parent.width
-                                    spacing: Math.round(3 * Config.scale)
-
-                                    Text {
-                                        text: "Nearby"
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(9 * Config.scale)
-                                        opacity: 0.6
-                                    }
-
-                                    Repeater {
-                                        model: {
-                                            const avail = root.wifiNetworks.filter(n => !n.active);
-                                            return avail.slice(0, 3);
-                                        }
-                                        delegate: RowLayout {
-                                            id: nearbyRow
-                                            required property var modelData
-                                            width: wifiInner.width
-                                            spacing: Math.round(5 * Config.scale)
-
-                                            IconImage {
-                                                implicitSize: Math.round(12 * Config.scale)
-                                                source: Quickshell.iconPath(root.wifiIcon(nearbyRow.modelData.signal))
-                                                opacity: 0.5
-                                            }
-                                            Text {
-                                                text: nearbyRow.modelData.ssid
-                                                color: Config.colors.textMuted
-                                                font.family: Config.font.family
-                                                font.pixelSize: Math.round(10 * Config.scale)
-                                                elide: Text.ElideRight
-                                                opacity: 0.7
-                                                Layout.fillWidth: true
-                                            }
-                                            Text {
-                                                text: nearbyRow.modelData.signal + "%"
-                                                color: Config.colors.textMuted
-                                                font.family: Config.font.family
-                                                font.pixelSize: Math.round(9 * Config.scale)
-                                                opacity: 0.5
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // ── Bluetooth widget ───────────────────────────────
-                        Rectangle {
-                            visible: root.btAdapter !== null
-                            width: parent.width
-                            height: btInner.implicitHeight + Math.round(24 * Config.scale)
-                            radius: Math.round(14 * Config.scale)
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            Column {
-                                id: btInner
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                anchors.margins: Math.round(16 * Config.scale)
-                                spacing: Math.round(10 * Config.scale)
-
-                                // Header
-                                RowLayout {
-                                    width: parent.width
-                                    spacing: Math.round(8 * Config.scale)
-
-                                    IconImage {
-                                        implicitSize: Math.round(17 * Config.scale)
-                                        source: {
-                                            const a = root.btAdapter;
-                                            if (!a || !a.enabled) return Quickshell.iconPath("network-bluetooth-inactive-symbolic");
-                                            const vals = a.devices ? a.devices.values : null;
-                                            if (vals) {
-                                                for (let i = 0; i < vals.length; i++) {
-                                                    if (vals[i] && vals[i].connected)
-                                                        return Quickshell.iconPath("network-bluetooth-activated-symbolic");
-                                                }
-                                            }
-                                            return Quickshell.iconPath("network-bluetooth-symbolic");
-                                        }
-                                        opacity: (root.btAdapter && root.btAdapter.enabled) ? 1.0 : 0.4
-                                        Behavior on opacity { NumberAnimation { duration: 200 } }
-                                    }
-
-                                    Text {
-                                        text: "Bluetooth"
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(11 * Config.scale)
-                                        font.weight: Font.Medium
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Rectangle {
-                                        width: Math.round(7 * Config.scale)
-                                        height: width
-                                        radius: width / 2
-                                        color: (root.btAdapter && root.btAdapter.enabled) ? Config.colors.accent : Config.colors.danger
-                                        Behavior on color { ColorAnimation { duration: 200 } }
-                                    }
-                                }
-
-                                // Connected devices
-                                Column {
-                                    id: btDevList
-                                    width: parent.width
-                                    spacing: Math.round(10 * Config.scale)
-
-                                    readonly property var connectedDevs: {
-                                        const a = root.btAdapter;
-                                        if (!a || !a.enabled || !a.devices) return [];
-                                        const vals = a.devices.values;
-                                        const result = [];
-                                        for (let i = 0; i < vals.length; i++) {
-                                            if (vals[i] && vals[i].connected) result.push(vals[i]);
-                                        }
-                                        return result;
-                                    }
-
-                                    Text {
-                                        visible: btDevList.connectedDevs.length === 0
-                                        text: {
-                                            const a = root.btAdapter;
-                                            if (!a || !a.enabled) return "Bluetooth is off";
-                                            return "No devices connected";
-                                        }
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(13 * Config.scale)
-                                        opacity: 0.6
-                                    }
-
-                                    Repeater {
-                                        model: btDevList.connectedDevs
-
-                                        delegate: Column {
-                                            id: btDevEntry
-                                            required property var modelData
-                                            width: btDevList.width
-                                            spacing: Math.round(5 * Config.scale)
-
-                                            readonly property real _batt: (btDevEntry.modelData && btDevEntry.modelData.batteryAvailable)
-                                                ? btDevEntry.modelData.battery : -1
-                                            readonly property bool _hasBatt: btDevEntry._batt >= 0
-
-                                            RowLayout {
-                                                width: parent.width
-                                                spacing: Math.round(8 * Config.scale)
-
-                                                IconImage {
-                                                    implicitSize: Math.round(17 * Config.scale)
-                                                    source: Quickshell.iconPath(root.btDeviceIcon(btDevEntry.modelData))
-                                                }
-
-                                                Text {
-                                                    text: root.btDeviceName(btDevEntry.modelData)
-                                                    color: Config.colors.accent
-                                                    font.family: Config.font.family
-                                                    font.pixelSize: Math.round(13 * Config.scale)
-                                                    font.weight: Font.SemiBold
-                                                    elide: Text.ElideRight
-                                                    Layout.fillWidth: true
-                                                }
-
-                                                Text {
-                                                    visible: btDevEntry._hasBatt
-                                                    text: btDevEntry._hasBatt ? Math.round(btDevEntry._batt * 100) + "%" : ""
-                                                    color: {
-                                                        const pct = btDevEntry._batt * 100;
-                                                        if (pct <= 15) return Config.colors.danger;
-                                                        if (pct <= 30) return Config.colors.warning;
-                                                        return Config.colors.success;
-                                                    }
-                                                    font.family: Config.font.family
-                                                    font.pixelSize: Math.round(11 * Config.scale)
-                                                    font.weight: Font.Bold
-                                                }
-                                            }
-
-                                            // Device battery bar
-                                            Item {
-                                                visible: btDevEntry._hasBatt
-                                                width: parent.width
-                                                height: visible ? Math.round(4 * Config.scale) : 0
-
-                                                Rectangle {
-                                                    anchors.fill: parent
-                                                    radius: height / 2
-                                                    color: Config.colors.sliderRail
-                                                }
-
-                                                Rectangle {
-                                                    width: Math.max(height, parent.width * Math.max(0, Math.min(1, btDevEntry._batt)))
-                                                    height: parent.height
-                                                    radius: height / 2
-                                                    gradient: Gradient {
-                                                        orientation: Gradient.Horizontal
-                                                        GradientStop {
-                                                            position: 0.0
-                                                            color: btDevEntry._batt <= 0.15 ? Config.colors.danger
-                                                                 : btDevEntry._batt <= 0.30 ? Config.colors.warning
-                                                                 : Config.colors.success
-                                                        }
-                                                        GradientStop {
-                                                            position: 1.0
-                                                            color: btDevEntry._batt <= 0.15 ? Qt.rgba(1, 0.41, 0.47, 0.7)
-                                                                 : btDevEntry._batt <= 0.30 ? Qt.rgba(1, 0.69, 0.38, 0.7)
-                                                                 : Config.colors.accent
-                                                        }
-                                                    }
-                                                    Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // ── System battery widget ──────────────────────────
-                        Rectangle {
-                            visible: root.sysBattery !== null && root.sysBattery.isLaptopBattery
-                            width: parent.width
-                            height: sysBattInner.implicitHeight + Math.round(24 * Config.scale)
-                            radius: Math.round(14 * Config.scale)
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            Column {
-                                id: sysBattInner
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                anchors.margins: Math.round(16 * Config.scale)
-                                spacing: Math.round(10 * Config.scale)
-
-                                RowLayout {
-                                    width: parent.width
-                                    spacing: Math.round(8 * Config.scale)
-
-                                    IconImage {
-                                        implicitSize: Math.round(17 * Config.scale)
-                                        source: {
-                                            const b = root.sysBattery;
-                                            if (!b || !b.isLaptopBattery) return "";
-                                            const pct = Math.round(b.percentage * 100);
-                                            const charging = b.state === UPowerDeviceState.Charging
-                                                          || b.state === UPowerDeviceState.FullyCharged;
-                                            const level = Math.min(100, Math.round(pct / 10) * 10);
-                                            return Quickshell.iconPath("battery-" + String(level).padStart(3, "0")
-                                                + (charging ? "-charging" : "") + "-symbolic");
-                                        }
-                                    }
-
-                                    Text {
-                                        text: "Battery"
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(11 * Config.scale)
-                                        font.weight: Font.Medium
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Text {
-                                        text: {
-                                            const b = root.sysBattery;
-                                            if (!b || !b.isLaptopBattery) return "";
-                                            return Math.round(b.percentage * 100) + "%";
-                                        }
-                                        color: {
-                                            const b = root.sysBattery;
-                                            if (!b) return Config.colors.textPrimary;
-                                            const pct = b.percentage * 100;
-                                            if (pct <= 10) return Config.colors.danger;
-                                            if (pct <= 20) return Config.colors.warning;
-                                            return Config.colors.success;
-                                        }
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(14 * Config.scale)
-                                        font.weight: Font.Bold
-                                        Behavior on color { ColorAnimation { duration: 200 } }
-                                    }
-                                }
-
-                                Item {
-                                    width: parent.width
-                                    height: Math.round(5 * Config.scale)
-
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: height / 2
-                                        color: Config.colors.sliderRail
-                                    }
-
-                                    Rectangle {
-                                        readonly property real _pct: root.sysBattery ? root.sysBattery.percentage : 0
-                                        width: Math.max(height, parent.width * Math.max(0, Math.min(1, _pct)))
-                                        height: parent.height
-                                        radius: height / 2
-                                        gradient: Gradient {
-                                            orientation: Gradient.Horizontal
-                                            GradientStop {
-                                                position: 0.0
-                                                color: {
-                                                    const b = root.sysBattery;
-                                                    if (!b) return Config.colors.accent;
-                                                    const pct = b.percentage * 100;
-                                                    if (pct <= 10) return Config.colors.danger;
-                                                    if (pct <= 20) return Config.colors.warning;
-                                                    return Config.colors.accent;
-                                                }
-                                            }
-                                            GradientStop {
-                                                position: 1.0
-                                                color: {
-                                                    const b = root.sysBattery;
-                                                    if (!b) return Config.colors.accentAlt;
-                                                    const pct = b.percentage * 100;
-                                                    if (pct <= 10) return Qt.rgba(1, 0.41, 0.47, 0.7);
-                                                    if (pct <= 20) return Qt.rgba(1, 0.69, 0.38, 0.7);
-                                                    return Config.colors.accentAlt;
-                                                }
-                                            }
-                                        }
-                                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                                    }
-                                }
-
-                                Text {
-                                    text: {
-                                        const b = root.sysBattery;
-                                        if (!b || !b.isLaptopBattery) return "";
-                                        if (b.state === UPowerDeviceState.Charging) return "Charging";
-                                        if (b.state === UPowerDeviceState.FullyCharged) return "Fully charged";
-                                        if (b.state === UPowerDeviceState.Discharging) return "Discharging";
-                                        return "";
-                                    }
-                                    color: Config.colors.textMuted
-                                    font.family: Config.font.family
-                                    font.pixelSize: Math.round(10 * Config.scale)
-                                    opacity: 0.7
-                                }
-                            }
-                        }
-
-                        // ── Volume widget ──────────────────────────────────
-                        Rectangle {
-                            visible: root.audio !== null
-                            width: parent.width
-                            height: volInner.implicitHeight + Math.round(24 * Config.scale)
-                            radius: Math.round(14 * Config.scale)
-                            color: Config.colors.surface
-                            border.width: Config.panelBorder.width
-                            border.color: Config.panelBorder.color
-
-                            Column {
-                                id: volInner
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                anchors.margins: Math.round(16 * Config.scale)
-                                spacing: Math.round(10 * Config.scale)
-
-                                RowLayout {
-                                    width: parent.width
-                                    spacing: Math.round(8 * Config.scale)
-
-                                    IconImage {
-                                        implicitSize: Math.round(17 * Config.scale)
-                                        source: {
-                                            const a = root.audio;
-                                            if (!a || a.muted) return Quickshell.iconPath("audio-volume-muted-symbolic");
-                                            if (a.volume < 0.33) return Quickshell.iconPath("audio-volume-low-symbolic");
-                                            if (a.volume < 0.66) return Quickshell.iconPath("audio-volume-medium-symbolic");
-                                            return Quickshell.iconPath("audio-volume-high-symbolic");
-                                        }
-                                        opacity: (root.audio && root.audio.muted) ? 0.4 : 1.0
-                                        Behavior on opacity { NumberAnimation { duration: 150 } }
-                                    }
-
-                                    Text {
-                                        text: "Volume"
-                                        color: Config.colors.textMuted
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(11 * Config.scale)
-                                        font.weight: Font.Medium
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Text {
-                                        text: {
-                                            const a = root.audio;
-                                            if (!a) return "–";
-                                            if (a.muted) return "Muted";
-                                            return Math.round(a.volume * 100) + "%";
-                                        }
-                                        color: (root.audio && root.audio.muted)
-                                            ? Config.colors.textMuted : Config.colors.textPrimary
-                                        font.family: Config.font.family
-                                        font.pixelSize: Math.round(13 * Config.scale)
-                                        font.weight: Font.Medium
-                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                    }
-                                }
-
-                                Item {
-                                    width: parent.width
-                                    height: Math.round(5 * Config.scale)
-
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: height / 2
-                                        color: Config.colors.sliderRail
-                                    }
-
-                                    Rectangle {
-                                        width: {
-                                            const a = root.audio;
-                                            if (!a || a.muted) return height;
-                                            return Math.max(height, parent.width * Math.max(0, Math.min(1, a.volume)));
-                                        }
-                                        height: parent.height
-                                        radius: height / 2
-                                        opacity: (root.audio && root.audio.muted) ? 0.25 : 1.0
-                                        gradient: Gradient {
-                                            orientation: Gradient.Horizontal
-                                            GradientStop { position: 0.0; color: Config.colors.accent }
-                                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                                        }
-                                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                                        Behavior on opacity { NumberAnimation { duration: 150 } }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // ── Bottom center: password input ───────────────────────
+                    // ── Password input ─────────────────────────────────────
                     Item {
                         id: passwordArea
-                        anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        width: Math.round(320 * Config.scale)
+                        width: Math.round(360 * Config.scale)
                         height: passwordCol.implicitHeight
 
                         // Horizontal shake animation on auth failure
@@ -1052,7 +350,6 @@ Scope {
                             id: passwordCol
                             width: parent.width
                             spacing: Math.round(10 * Config.scale)
-                            anchors.bottom: parent.bottom
 
                             // PAM / error message
                             Text {
@@ -1114,9 +411,6 @@ Scope {
                                         Behavior on color { ColorAnimation { duration: 150 } }
                                     }
 
-                                    // Dot indicators while password has chars (dots, not plain text)
-                                    // We use a real TextInput hidden off-screen for key capture,
-                                    // and show dots manually.
                                     Item {
                                         Layout.fillWidth: true
                                         height: Math.round(20 * Config.scale)
@@ -1161,7 +455,7 @@ Scope {
                                             }
                                         }
 
-                                        // The actual hidden TextInput that captures key events
+                                        // Hidden TextInput for key capture
                                         TextInput {
                                             id: passwordInput
                                             anchors.fill: parent
@@ -1187,7 +481,7 @@ Scope {
                                         }
                                     }
 
-                                    // Spinner / submit indicator
+                                    // Spinner while PAM is processing
                                     Text {
                                         visible: pam.active && !pam.responseRequired
                                         text: "\uF110"
@@ -1204,6 +498,316 @@ Scope {
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+
+                    // ── Status chips row ───────────────────────────────────
+                    Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: Math.round(10 * Config.scale)
+
+                        // WiFi chip
+                        Rectangle {
+                            width: wifiChipRow.implicitWidth + Math.round(24 * Config.scale)
+                            height: Math.round(36 * Config.scale)
+                            radius: height / 2
+                            color: Config.colors.surface
+                            border.width: Config.panelBorder.width
+                            border.color: Config.panelBorder.color
+
+                            RowLayout {
+                                id: wifiChipRow
+                                anchors.centerIn: parent
+                                spacing: Math.round(7 * Config.scale)
+
+                                IconImage {
+                                    implicitSize: Math.round(15 * Config.scale)
+                                    source: Quickshell.iconPath(root.wifiIcon(root.wifiStrength))
+                                    opacity: root.wifiEnabled ? 1.0 : 0.4
+                                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                                }
+
+                                Text {
+                                    text: {
+                                        if (!root.wifiEnabled) return "Off";
+                                        if (root.wifiSsid !== "") return root.wifiSsid;
+                                        return "No network";
+                                    }
+                                    color: root.wifiSsid !== "" ? Config.colors.accent : Config.colors.textMuted
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(12 * Config.scale)
+                                    font.weight: Font.Medium
+                                    elide: Text.ElideRight
+                                    maximumLineCount: 1
+                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                }
+
+                                // Signal strength dot
+                                Rectangle {
+                                    visible: root.wifiEnabled
+                                    width: Math.round(6 * Config.scale)
+                                    height: width
+                                    radius: width / 2
+                                    color: root.wifiSsid !== "" ? Config.colors.success : Config.colors.danger
+                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                }
+                            }
+                        }
+
+                        // Bluetooth chip (only when adapter present)
+                        Rectangle {
+                            visible: root.btAdapter !== null
+                            width: btChipRow.implicitWidth + Math.round(24 * Config.scale)
+                            height: Math.round(36 * Config.scale)
+                            radius: height / 2
+                            color: Config.colors.surface
+                            border.width: Config.panelBorder.width
+                            border.color: Config.panelBorder.color
+
+                            RowLayout {
+                                id: btChipRow
+                                anchors.centerIn: parent
+                                spacing: Math.round(7 * Config.scale)
+
+                                IconImage {
+                                    implicitSize: Math.round(15 * Config.scale)
+                                    source: {
+                                        const a = root.btAdapter;
+                                        if (!a || !a.enabled) return Quickshell.iconPath("network-bluetooth-inactive-symbolic");
+                                        const vals = a.devices ? a.devices.values : null;
+                                        if (vals) {
+                                            for (let i = 0; i < vals.length; i++) {
+                                                if (vals[i] && vals[i].connected)
+                                                    return Quickshell.iconPath("network-bluetooth-activated-symbolic");
+                                            }
+                                        }
+                                        return Quickshell.iconPath("network-bluetooth-symbolic");
+                                    }
+                                    opacity: (root.btAdapter && root.btAdapter.enabled) ? 1.0 : 0.4
+                                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                                }
+
+                                Text {
+                                    text: {
+                                        const a = root.btAdapter;
+                                        if (!a || !a.enabled) return "Off";
+                                        const vals = a.devices ? a.devices.values : null;
+                                        if (vals) {
+                                            for (let i = 0; i < vals.length; i++) {
+                                                if (vals[i] && vals[i].connected)
+                                                    return root.btDeviceName(vals[i]);
+                                            }
+                                        }
+                                        return "No devices";
+                                    }
+                                    color: {
+                                        const a = root.btAdapter;
+                                        if (!a || !a.enabled) return Config.colors.textMuted;
+                                        const vals = a.devices ? a.devices.values : null;
+                                        if (vals) {
+                                            for (let i = 0; i < vals.length; i++) {
+                                                if (vals[i] && vals[i].connected) return Config.colors.accent;
+                                            }
+                                        }
+                                        return Config.colors.textMuted;
+                                    }
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(12 * Config.scale)
+                                    font.weight: Font.Medium
+                                    elide: Text.ElideRight
+                                    maximumLineCount: 1
+                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                }
+                            }
+                        }
+
+                        // Battery chip (only when laptop battery present)
+                        Rectangle {
+                            visible: root.sysBattery !== null && root.sysBattery.isLaptopBattery
+                            width: battChipRow.implicitWidth + Math.round(24 * Config.scale)
+                            height: Math.round(36 * Config.scale)
+                            radius: height / 2
+                            color: Config.colors.surface
+                            border.width: Config.panelBorder.width
+                            border.color: Config.panelBorder.color
+
+                            RowLayout {
+                                id: battChipRow
+                                anchors.centerIn: parent
+                                spacing: Math.round(7 * Config.scale)
+
+                                IconImage {
+                                    implicitSize: Math.round(15 * Config.scale)
+                                    source: {
+                                        const b = root.sysBattery;
+                                        if (!b || !b.isLaptopBattery) return "";
+                                        const pct = Math.round(b.percentage * 100);
+                                        const charging = b.state === UPowerDeviceState.Charging
+                                                      || b.state === UPowerDeviceState.FullyCharged;
+                                        const level = Math.min(100, Math.round(pct / 10) * 10);
+                                        return Quickshell.iconPath("battery-" + String(level).padStart(3, "0")
+                                            + (charging ? "-charging" : "") + "-symbolic");
+                                    }
+                                }
+
+                                Text {
+                                    text: {
+                                        const b = root.sysBattery;
+                                        if (!b || !b.isLaptopBattery) return "";
+                                        return Math.round(b.percentage * 100) + "%";
+                                    }
+                                    color: {
+                                        const b = root.sysBattery;
+                                        if (!b) return Config.colors.textPrimary;
+                                        const pct = b.percentage * 100;
+                                        if (pct <= 10) return Config.colors.danger;
+                                        if (pct <= 20) return Config.colors.warning;
+                                        return Config.colors.success;
+                                    }
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(12 * Config.scale)
+                                    font.weight: Font.Medium
+                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                }
+                            }
+                        }
+
+                        // Volume chip (only when audio sink present)
+                        Rectangle {
+                            visible: root.audio !== null
+                            width: volChipRow.implicitWidth + Math.round(24 * Config.scale)
+                            height: Math.round(36 * Config.scale)
+                            radius: height / 2
+                            color: Config.colors.surface
+                            border.width: Config.panelBorder.width
+                            border.color: Config.panelBorder.color
+
+                            RowLayout {
+                                id: volChipRow
+                                anchors.centerIn: parent
+                                spacing: Math.round(7 * Config.scale)
+
+                                IconImage {
+                                    implicitSize: Math.round(15 * Config.scale)
+                                    source: {
+                                        const a = root.audio;
+                                        if (!a || a.muted) return Quickshell.iconPath("audio-volume-muted-symbolic");
+                                        if (a.volume < 0.33) return Quickshell.iconPath("audio-volume-low-symbolic");
+                                        if (a.volume < 0.66) return Quickshell.iconPath("audio-volume-medium-symbolic");
+                                        return Quickshell.iconPath("audio-volume-high-symbolic");
+                                    }
+                                    opacity: (root.audio && root.audio.muted) ? 0.4 : 1.0
+                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                }
+
+                                Text {
+                                    text: {
+                                        const a = root.audio;
+                                        if (!a) return "–";
+                                        if (a.muted) return "Muted";
+                                        return Math.round(a.volume * 100) + "%";
+                                    }
+                                    color: (root.audio && root.audio.muted)
+                                        ? Config.colors.textMuted : Config.colors.textPrimary
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(12 * Config.scale)
+                                    font.weight: Font.Medium
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                }
+                            }
+                        }
+                    }
+
+                    // ── Notifications (scrollable, below chips) ────────────
+                    Item {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        visible: root.notifHistory.length > 0
+                        width: Math.round(360 * Config.scale)
+                        height: Math.min(notifInnerCol.implicitHeight, Math.round(220 * Config.scale))
+                        clip: true
+
+                        property real scrollY: 0
+                        readonly property real maxScrollY: Math.max(0, notifInnerCol.implicitHeight - height)
+
+                        WheelHandler {
+                            target: null
+                            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                            onWheel: event => {
+                                const container = parent;
+                                const step = Math.round(36 * Config.scale);
+                                container.scrollY = Math.max(0,
+                                    Math.min(container.maxScrollY,
+                                        container.scrollY - event.angleDelta.y / 120 * step));
+                            }
+                        }
+
+                        Column {
+                            id: notifInnerCol
+                            width: parent.width - Math.round(6 * Config.scale)
+                            spacing: Math.round(6 * Config.scale)
+                            y: -parent.scrollY
+
+                            // Header
+                            RowLayout {
+                                width: parent.width
+
+                                Text {
+                                    text: "\uF0F3  Notifications"
+                                    color: Config.colors.textMuted
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                                    font.weight: Font.Medium
+                                }
+                                Item { Layout.fillWidth: true }
+                                Text {
+                                    text: root.notifHistory.length > 99 ? "99+" : String(root.notifHistory.length)
+                                    color: Config.colors.accentAlt
+                                    font.family: Config.font.family
+                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.8)
+                                    font.weight: Font.Bold
+                                }
+                            }
+
+                            Rectangle {
+                                width: parent.width
+                                height: 1
+                                color: Config.colors.border
+                                opacity: 0.4
+                            }
+
+                            Repeater {
+                                model: root.notifHistory
+                                delegate: LockNotificationCard {
+                                    id: lockNotifD
+                                    required property var modelData
+                                    snapshot: lockNotifD.modelData
+                                    width: notifInnerCol.width
+                                }
+                            }
+                        }
+
+                        // Thin scrollbar
+                        Rectangle {
+                            visible: parent.maxScrollY > 0
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: Math.round(3 * Config.scale)
+                            radius: width / 2
+                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+
+                            Rectangle {
+                                readonly property real _h: parent.parent.maxScrollY <= 0 ? parent.height
+                                    : Math.max(Math.round(28 * Config.scale),
+                                        parent.height * (parent.parent.height / notifInnerCol.implicitHeight))
+                                readonly property real _y: parent.parent.maxScrollY <= 0 ? 0
+                                    : (parent.height - _h) * (parent.parent.scrollY / parent.parent.maxScrollY)
+                                y: _y
+                                width: parent.width
+                                height: _h
+                                radius: width / 2
+                                color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.55)
                             }
                         }
                     }
