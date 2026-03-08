@@ -292,17 +292,6 @@ PopupContainer {
                         }
                     }
 
-                    Rectangle {
-                        visible: !!connRow.modelData.saved
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: Math.round(8 * Config.scale)
-                        width: Math.round(6 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.accent
-                    }
-
                     MouseArea {
                         id: connMouse
                         anchors.fill: parent
@@ -443,17 +432,6 @@ PopupContainer {
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizeStatus
                         }
-                    }
-
-                    Rectangle {
-                        visible: root.rawSavedFn ? root.rawSavedFn(rawConnRow.modelData) : false
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: Math.round(8 * Config.scale)
-                        width: Math.round(6 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.accent
                     }
 
                     MouseArea {
