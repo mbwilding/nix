@@ -122,43 +122,37 @@ Scope {
                         property real gx2: 0.75
                         property real gy2: 0.65
 
-                        NumberAnimation on gx1 {
-                            from: 0.15
-                            to: 0.75
-                            duration: 17000
+                        SequentialAnimation on gx1 {
                             loops: Animation.Infinite
                             running: true
-                            easing.type: Easing.InOutSine
+                            NumberAnimation { from: 0.15; to: 0.75; duration: 17000; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 0.75; to: 0.15; duration: 17000; easing.type: Easing.InOutSine }
                         }
-                        NumberAnimation on gy1 {
-                            from: 0.20
-                            to: 0.65
-                            duration: 23000
+                        SequentialAnimation on gy1 {
                             loops: Animation.Infinite
                             running: true
-                            easing.type: Easing.InOutSine
+                            NumberAnimation { from: 0.20; to: 0.65; duration: 23000; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 0.65; to: 0.20; duration: 23000; easing.type: Easing.InOutSine }
                         }
-                        NumberAnimation on gx2 {
-                            from: 0.80
-                            to: 0.25
-                            duration: 19000
+                        SequentialAnimation on gx2 {
                             loops: Animation.Infinite
                             running: true
-                            easing.type: Easing.InOutSine
+                            NumberAnimation { from: 0.80; to: 0.25; duration: 19000; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 0.25; to: 0.80; duration: 19000; easing.type: Easing.InOutSine }
                         }
-                        NumberAnimation on gy2 {
-                            from: 0.70
-                            to: 0.30
-                            duration: 21000
+                        SequentialAnimation on gy2 {
                             loops: Animation.Infinite
                             running: true
-                            easing.type: Easing.InOutSine
+                            NumberAnimation { from: 0.70; to: 0.30; duration: 21000; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 0.30; to: 0.70; duration: 21000; easing.type: Easing.InOutSine }
                         }
 
                         onGx1Changed: requestPaint()
                         onGy1Changed: requestPaint()
                         onGx2Changed: requestPaint()
                         onGy2Changed: requestPaint()
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
 
                         onPaint: {
                             const ctx = getContext("2d");
@@ -184,6 +178,104 @@ Scope {
                             g2.addColorStop(1, "rgba(255, 159, 243, 0.00)");
                             ctx.fillStyle = g2;
                             ctx.fillRect(0, 0, w, h);
+                        }
+                    }
+
+                    // DVD bouncer
+                    Item {
+                        id: dvdBouncer
+                        anchors.fill: parent
+
+                        property real dvdX: 80
+                        property real dvdY: 80
+                        property real dvdVX: 120   // px/s
+                        property real dvdVY: 90    // px/s
+                        property color dvdColor: Config.colors.accent
+
+                        readonly property var dvdColors: [
+                            Config.colors.accent,
+                            Config.colors.accentAlt,
+                            "#89dceb",
+                            "#a6e3a1",
+                            "#f38ba8",
+                            "#fab387",
+                            "#f9e2af"
+                        ]
+                        property int dvdColorIdx: 0
+
+                        function pickNextColor() {
+                            dvdColorIdx = (dvdColorIdx + 1) % dvdColors.length;
+                            dvdColor = dvdColors[dvdColorIdx];
+                        }
+
+                        Timer {
+                            id: dvdTimer
+                            interval: 16
+                            repeat: true
+                            running: true
+                            onTriggered: {
+                                const dt = interval / 1000.0;
+                                const logoW = dvdLogo.width;
+                                const logoH = dvdLogo.height;
+                                const maxX = dvdBouncer.width - logoW;
+                                const maxY = dvdBouncer.height - logoH;
+
+                                let nx = dvdBouncer.dvdX + dvdBouncer.dvdVX * dt;
+                                let ny = dvdBouncer.dvdY + dvdBouncer.dvdVY * dt;
+                                let bounced = false;
+
+                                if (nx <= 0) {
+                                    nx = 0;
+                                    dvdBouncer.dvdVX = Math.abs(dvdBouncer.dvdVX);
+                                    bounced = true;
+                                } else if (nx >= maxX) {
+                                    nx = maxX;
+                                    dvdBouncer.dvdVX = -Math.abs(dvdBouncer.dvdVX);
+                                    bounced = true;
+                                }
+                                if (ny <= 0) {
+                                    ny = 0;
+                                    dvdBouncer.dvdVY = Math.abs(dvdBouncer.dvdVY);
+                                    bounced = true;
+                                } else if (ny >= maxY) {
+                                    ny = maxY;
+                                    dvdBouncer.dvdVY = -Math.abs(dvdBouncer.dvdVY);
+                                    bounced = true;
+                                }
+
+                                if (bounced) dvdBouncer.pickNextColor();
+                                dvdBouncer.dvdX = nx;
+                                dvdBouncer.dvdY = ny;
+                            }
+                        }
+
+                        Column {
+                            id: dvdLogo
+                            x: dvdBouncer.dvdX
+                            y: dvdBouncer.dvdY
+                            spacing: 5
+
+                            Text {
+                                id: dvdText
+                                text: "DVD"
+                                color: dvdBouncer.dvdColor
+                                font.family: Config.font.family
+                                font.pixelSize: 72
+                                font.weight: Font.Bold
+                                font.letterSpacing: 6
+                                opacity: 0.55
+                                topPadding: -font.pixelSize * 0.18
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
+
+                            Rectangle {
+                                width: dvdText.implicitWidth
+                                height: 6
+                                radius: 3
+                                color: dvdBouncer.dvdColor
+                                opacity: 0.4
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
                         }
                     }
                 }
