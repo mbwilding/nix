@@ -3,15 +3,13 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import ".."
 
-// Glassmorphic card base — deep navy background, outer glow ring, optional top-shine.
+// Glassmorphic card base — deep navy background, outer glow ring.
 // No hard border.width — the glow ring provides all framing.
 // Set popupRadius to override the default bar popup radius.
-// Set showShine: false to suppress the top-shine (e.g. on the OSD panel).
 Rectangle {
     id: root
 
     property int popupRadius: Config.bar.popupRadius
-    property bool showShine: true
 
     radius: popupRadius
     antialiasing: true
@@ -30,19 +28,5 @@ Rectangle {
         opacity: 0.30
         z: -1
         antialiasing: true
-    }
-
-    // Top shine rim — subtle highlight along the top inner edge
-    Rectangle {
-        visible: root.showShine
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: 1
-        anchors.leftMargin: parent.radius
-        anchors.rightMargin: parent.radius
-        height: 1
-        color: Config.colors.separator
-        z: 2
     }
 }

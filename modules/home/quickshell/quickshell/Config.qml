@@ -49,7 +49,6 @@ QtObject {
         // Chrome
         readonly property color border: "#44a8a8ff"           // subtle accent-tinted
         readonly property color borderBright: "#80b8b8ff"     // brighter hover/focus
-        readonly property color separator: "#28ffffff"        // top-shine rim
 
         // Status
         readonly property color danger: "#ff6878"

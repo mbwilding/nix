@@ -546,18 +546,6 @@ Scope {
                 antialiasing: true
             }
 
-            // Inner highlight rim — neon cyan top-shine
-            Rectangle {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.topMargin: 1
-                anchors.leftMargin: parent.radius
-                anchors.rightMargin: parent.radius
-                height: 1
-                color: Config.colors.separator
-            }
-
             opacity: root.visible_ ? 1 : 0
             Behavior on opacity {
                 NumberAnimation {
