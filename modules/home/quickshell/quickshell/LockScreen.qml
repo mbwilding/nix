@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -136,13 +135,6 @@ Scope {
                     fillMode: Image.PreserveAspectCrop
                     visible: root.bgImagePath !== ""
                     smooth: true
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        blurEnabled: true
-                        blur: 1.0
-                        blurMax: 64
-                        blurMultiplier: 1.0
-                    }
                 }
 
                 Rectangle {
