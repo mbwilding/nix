@@ -457,10 +457,10 @@ in
         "$mod, grave, exit,"
 
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
-        "$mod, Z, exec, hyprshot -m window -m active"
+        # "$mod, Z, exec, hyprshot -m window -m active"
 
         # Quickshell
-        "$mod, L, exec, qs ipc call default lock"
+        "$mod, Z, exec, qs ipc call default lock"
         "$mod, A, exec, qs ipc call default toggleMixer"
         "$mod, N, exec, qs ipc call notifications dismiss"
         "$mod, W, exec, qs ipc call bar toggle"
