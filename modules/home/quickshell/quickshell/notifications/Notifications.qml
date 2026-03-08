@@ -262,7 +262,7 @@ Scope {
 
             Instantiator {
                 model: server.trackedNotifications
-                delegate: NotificationCard {
+                delegate: NotificationsCard {
                     id: notifCardDelegate
                     required property Notification modelData
 

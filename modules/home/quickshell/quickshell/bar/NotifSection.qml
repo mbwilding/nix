@@ -167,7 +167,7 @@ BarSectionItem {
                 Repeater {
                     model: notifSection.notifHistory
 
-                    delegate: NotificationCard {
+                    delegate: NotificationsCard {
                         id: histDelegate
                         required property var modelData
 
