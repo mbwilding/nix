@@ -10,7 +10,7 @@ import "components"
 //
 // Clicking the bar icon toggles Wi-Fi on/off.
 // Bar.qml binds activePopup and wires the three popup-manager signals.
-Item {
+BarSectionItem {
     id: wifiSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -99,14 +99,8 @@ Item {
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
-    containmentMask: Item {
-        x: wifiSection.popupOpen ? -Math.max(0, (wifiPopup.width - wifiSection.width) / 2) : 0
-        y: wifiSection.popupOpen ? -wifiPopup.height - Config.bar.popupOffset : 0
-        width: wifiSection.popupOpen ? Math.max(wifiSection.width, wifiPopup.width) : wifiSection.width
-        height: wifiSection.popupOpen ? wifiPopup.height + Config.bar.popupOffset + wifiSection.height : wifiSection.height
-    }
-
     readonly property bool popupOpen: activePopup === "wifi"
+    popupItem: wifiPopup
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
