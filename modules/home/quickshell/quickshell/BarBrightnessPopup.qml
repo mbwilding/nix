@@ -101,6 +101,7 @@ PopupContainer {
                         value: screenTrack.frac
                     }
 
+                    // Glow blob behind thumb
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         x: screenTrack.width * screenTrack.frac - width / 2
@@ -112,13 +113,14 @@ PopupContainer {
                         Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
                     }
 
+                    // Thumb
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         x: screenTrack.width * screenTrack.frac - width / 2
                         width: Math.round(14 * Config.scale)
                         height: width
                         radius: width / 2
-                        color: "#e0e0ff"
+                        color: Config.colors.sliderThumb
                         Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
                     }
 
@@ -192,6 +194,7 @@ PopupContainer {
                         value: kbdTrack.frac
                     }
 
+                    // Glow blob behind thumb
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         x: kbdTrack.width * kbdTrack.frac - width / 2
@@ -203,13 +206,14 @@ PopupContainer {
                         Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
                     }
 
+                    // Thumb
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         x: kbdTrack.width * kbdTrack.frac - width / 2
                         width: Math.round(14 * Config.scale)
                         height: width
                         radius: width / 2
-                        color: "#e0e0ff"
+                        color: Config.colors.sliderThumb
                         Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
                     }
 

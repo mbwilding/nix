@@ -1,13 +1,9 @@
 import QtQuick
 import ".."
 
-// Shared button-look wrapper for bar section trigger icons.
-//
-// Callers set `hovered` and `popupOpen` from their own interaction handlers.
-// Place icon content as direct children — they are reparented into this Rectangle.
-//
-// Sizing: defaults to batteryIconSize + 10px padding on each axis. Override
-// implicitWidth/implicitHeight if needed (e.g. text glyphs with different sizes).
+// Cyberpunk button-look wrapper for bar section trigger icons.
+// On hover/active: cyan tint fill + neon cyan border + outer glow ring.
+// Snappier ColorAnimation (80ms) for crisp response.
 Rectangle {
     id: root
 
@@ -23,18 +19,31 @@ Rectangle {
     radius: Math.round(8 * Config.scale)
 
     color: (clickable && (hovered || popupOpen))
-        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
         : "transparent"
 
     border.color: (clickable && (hovered || popupOpen))
-        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.35)
+        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
         : "transparent"
     border.width: 1
 
+    // Outer neon glow ring — only on hover/active
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: -3
+        radius: root.radius + 3
+        color: "transparent"
+        border.color: Config.colors.glowAccent
+        border.width: 2
+        opacity: (root.clickable && (root.hovered || root.popupOpen)) ? 0.4 : 0
+        antialiasing: true
+        Behavior on opacity { NumberAnimation { duration: 80 } }
+    }
+
     Behavior on color {
-        ColorAnimation { duration: 120 }
+        ColorAnimation { duration: 80 }
     }
     Behavior on border.color {
-        ColorAnimation { duration: 120 }
+        ColorAnimation { duration: 80 }
     }
 }
