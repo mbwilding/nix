@@ -7,8 +7,6 @@ import Quickshell.Widgets
 import Quickshell.Services.Notifications
 import "components"
 
-// View-only notification card for the lock screen.
-// No dismiss interaction, no action buttons, no auto-timeout.
 Item {
     id: root
 
@@ -31,7 +29,6 @@ Item {
         popupRadius: Config.notifications.radius
         implicitHeight: cardContent.implicitHeight + Math.round(20 * Config.scale)
 
-        // Left accent bar
         Item {
             anchors {
                 left: parent.left
@@ -56,13 +53,18 @@ Item {
                 radius: Config.notifications.accentBar
                 gradient: Gradient {
                     orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: Config.colors.accent }
-                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                    GradientStop {
+                        position: 0.0
+                        color: Config.colors.accent
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Config.colors.accentAlt
+                    }
                 }
             }
         }
 
-        // Lock icon overlay — signals this is view-only
         Text {
             anchors.right: parent.right
             anchors.top: parent.top
@@ -99,11 +101,13 @@ Item {
                         const deskEntry = root.snapshot?.desktopEntry ?? "";
                         if (appIcon !== "") {
                             const path = Quickshell.iconPath(appIcon);
-                            if (path !== "") return path;
+                            if (path !== "")
+                                return path;
                         }
                         if (deskEntry !== "" && deskEntry !== null) {
                             const entry = DesktopEntries.byId(deskEntry);
-                            if (entry && entry.icon !== "") return Quickshell.iconPath(entry.icon);
+                            if (entry && entry.icon !== "")
+                                return Quickshell.iconPath(entry.icon);
                         }
                         return Quickshell.iconPath("applications-other-symbolic");
                     }
