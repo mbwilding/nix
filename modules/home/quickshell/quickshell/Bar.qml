@@ -573,7 +573,22 @@ Scope {
                     height: win.implicitHeight + content.height
                 }
 
-                // ── Tray ─────────────────────────────────────────────────────
+            // ── Tray ─────────────────────────────────────────────────────
+            // Inline component for the gradient separator used between sections
+            component BarSeparator: Rectangle {
+                implicitWidth: 1
+                implicitHeight: Config.bar.batteryIconSize
+                color: Config.colors.border
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0;  color: "transparent" }
+                    GradientStop { position: 0.25; color: Config.colors.borderBright }
+                    GradientStop { position: 0.75; color: Config.colors.borderBright }
+                    GradientStop { position: 1.0;  color: "transparent" }
+                }
+            }
+
+            // ── Tray ─────────────────────────────────────────────────────
                 Repeater {
                     id: trayRepeater
                     model: SystemTray.items
@@ -603,19 +618,8 @@ Scope {
                     }
                 }
 
-                Rectangle {
-                    implicitWidth: 1
-                    implicitHeight: Config.bar.batteryIconSize
-                    color: Config.colors.border
+                BarSeparator {
                     visible: trayRepeater.count > 0
-                    // neon cyan gradient separator
-                    gradient: Gradient {
-                        orientation: Gradient.Vertical
-                        GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.25; color: Config.colors.borderBright }
-                        GradientStop { position: 0.75; color: Config.colors.borderBright }
-                        GradientStop { position: 1.0; color: "transparent" }
-                    }
                 }
 
                 // ── Wifi ─────────────────────────────────────────────────────
@@ -722,18 +726,7 @@ Scope {
                     }
                 }
 
-                Rectangle {
-                    implicitWidth: 1
-                    implicitHeight: Config.bar.batteryIconSize
-                    color: Config.colors.border
-                    gradient: Gradient {
-                        orientation: Gradient.Vertical
-                        GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.25; color: Config.colors.borderBright }
-                        GradientStop { position: 0.75; color: Config.colors.borderBright }
-                        GradientStop { position: 1.0; color: "transparent" }
-                    }
-                }
+                BarSeparator {}
 
                 // ── Clock / Date ──────────────────────────────────────────────
                 BarClockSection {

@@ -142,23 +142,17 @@ Item {
             }
         }
 
-        Flickable {
-            id: menuFlickable
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: menuScrollbar.left
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.leftMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(4 * Config.scale)
-            contentWidth: width
-            contentHeight: menuCol.implicitHeight
-            clip: true
+        ScrollableList {
+            id: menuScrollList
+            anchors.fill: parent
+            topPadding: Math.round(8 * Config.scale)
+            bottomPadding: Math.round(8 * Config.scale)
+            leftPadding: Math.round(8 * Config.scale)
+            thumbColor: Config.colors.textMuted
 
             Column {
                 id: menuCol
-                width: menuFlickable.width
+                width: parent.width
                 spacing: Math.round(2 * Config.scale)
 
                 Repeater {
@@ -245,45 +239,6 @@ Item {
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        // Scrollbar (only shown when content overflows)
-        Item {
-            id: menuScrollbar
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(6 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            width: Math.round(3 * Config.scale)
-
-            readonly property bool needed: menuFlickable.contentHeight > menuFlickable.height
-            visible: needed
-
-            Rectangle {
-                anchors.fill: parent
-                radius: width / 2
-                color: Config.colors.border
-            }
-
-            Rectangle {
-                readonly property real ratio: menuFlickable.height / Math.max(menuFlickable.contentHeight, 1)
-                readonly property real thumbH: Math.max(Math.round(20 * Config.scale), menuScrollbar.height * ratio)
-                readonly property real travel: menuScrollbar.height - thumbH
-                readonly property real scrollRatio: menuFlickable.contentHeight > menuFlickable.height ? menuFlickable.contentY / (menuFlickable.contentHeight - menuFlickable.height) : 0
-
-                width: parent.width
-                height: thumbH
-                y: travel * scrollRatio
-                radius: width / 2
-                color: Config.colors.textMuted
-                Behavior on y {
-                    NumberAnimation {
-                        duration: 60
                     }
                 }
             }
