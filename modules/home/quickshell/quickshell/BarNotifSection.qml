@@ -166,42 +166,14 @@ Item {
             }
         }
 
-        // Scroll state (wheel/touchpad, no Flickable)
-        property real scrollY: 0
-        readonly property real _viewportH: notifPopup.height - Math.round(16 * Config.scale)
-        readonly property real maxScrollY: Math.max(0, popupCol.implicitHeight - notifPopup._viewportH)
-        onMaxScrollYChanged: {
-            if (notifPopup.scrollY > notifPopup.maxScrollY)
-                notifPopup.scrollY = notifPopup.maxScrollY;
-        }
+        // Scrollable notification history
+        PopupScrollView {
+            id: scrollView
+            anchors.fill: parent
+            leftMargin: Math.round(12 * Config.scale)
+            contentColumn: popupCol
 
-        WheelHandler {
-            target: null
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-            onWheel: event => {
-                const step = Math.round(40 * Config.scale);
-                notifPopup.scrollY = Math.max(0,
-                    Math.min(notifPopup.maxScrollY,
-                        notifPopup.scrollY - event.angleDelta.y / 120 * step));
-            }
-        }
-
-        // Viewport
-        Item {
-            id: viewport
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: scrollbarItem.left
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.leftMargin: Math.round(12 * Config.scale)
-            anchors.rightMargin: Math.round(4 * Config.scale)
-            clip: true
-
-            // Keep popup open when hovering over cards — mirrors BarSectionPopup's
-            // per-row onEntered: root.hoverOpen() which prevents the popup-level
-            // HoverHandler from losing hovered=true when child MouseAreas take focus.
+            // Keep popup open when hovering over cards
             HoverHandler {
                 onHoveredChanged: {
                     if (hovered) notifSection.openPopupReq("notif")
@@ -210,9 +182,9 @@ Item {
 
             Column {
                 id: popupCol
-                width: viewport.width
+                width: scrollView.contentWidth
                 spacing: Math.round(6 * Config.scale)
-                y: -notifPopup.scrollY
+                y: -scrollView.scrollY
 
                 // ── History cards ─────────────────────────────────────────
                 Repeater {
@@ -239,41 +211,6 @@ Item {
                         }
                     }
                 }
-            }
-        }
-
-        // Scrollbar
-        Item {
-            id: scrollbarItem
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Math.round(8 * Config.scale)
-            anchors.bottomMargin: Math.round(8 * Config.scale)
-            anchors.rightMargin: Math.round(3 * Config.scale)
-            width: Math.round(3 * Config.scale)
-
-            Rectangle {
-                anchors.fill: parent
-                radius: width / 2
-                color: Config.colors.border
-                visible: notifPopup.maxScrollY > 0
-            }
-
-            Rectangle {
-                readonly property real ratio: notifPopup._viewportH / Math.max(popupCol.implicitHeight, 1)
-                readonly property real thumbH: Math.max(Math.round(20 * Config.scale), scrollbarItem.height * ratio)
-                readonly property real travel: scrollbarItem.height - thumbH
-                readonly property real scrollRatio: notifPopup.maxScrollY > 0
-                                                    ? notifPopup.scrollY / notifPopup.maxScrollY : 0
-
-                width: parent.width
-                height: thumbH
-                y: travel * scrollRatio
-                radius: width / 2
-                color: Config.colors.textMuted
-                visible: notifPopup.maxScrollY > 0
-                Behavior on y { NumberAnimation { duration: 60 } }
             }
         }
     }

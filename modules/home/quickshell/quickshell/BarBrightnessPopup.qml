@@ -9,6 +9,9 @@ import "components"
 // Combined brightness popup: stacked screen + keyboard slider rows inside
 // one PopupContainer card. Only rows whose device is available are shown.
 // Height adjusts automatically based on visible row count.
+//
+// Each row reuses BarSliderPopup for its icon + track + label layout,
+// avoiding the inline slider track duplication from the old implementation.
 PopupContainer {
     id: root
 
@@ -64,190 +67,50 @@ PopupContainer {
         anchors.fill: parent
 
         // ── Screen brightness row ─────────────────────────────────────────────
-        Item {
+        BarSliderPopup {
             width: parent.width
             height: root.rowH
             visible: root.screenAvailable
 
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Math.round(12 * Config.scale)
-                anchors.rightMargin: Math.round(12 * Config.scale)
-                spacing: Math.round(10 * Config.scale)
+            // Override PopupContainer geometry — we're embedded, not floating
+            popupOpen: true
+            opacity: 1
+            radius: 0
 
-                Item {
-                    implicitWidth: Config.bar.batteryIconSize
-                    implicitHeight: Config.bar.batteryIconSize
+            popupName:  root.popupName
+            activePopup: root.activePopup
+            iconName:   "video-display-brightness-symbolic"
+            iconOffset: -3
+            fraction:   root.screenFraction
+            labelWidth: root.labelWidth
 
-                    IconImage {
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: -3
-                        implicitSize: Config.bar.batteryIconSize
-                        source: Quickshell.iconPath("video-display-brightness-symbolic")
-                    }
-                }
-
-                Item {
-                    id: screenTrack
-                    Layout.fillWidth: true
-                    height: Math.round(20 * Config.scale)
-
-                    readonly property real frac: Math.max(0, Math.min(1, root.screenFraction))
-
-                    GradientProgressBar {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        width: screenTrack.width
-                        value: screenTrack.frac
-                    }
-
-                    // Glow blob behind thumb
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: screenTrack.width * screenTrack.frac - width / 2
-                        width: Math.round(18 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.glowAccent
-                        opacity: 0.55
-                        Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
-                    }
-
-                    // Thumb
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: screenTrack.width * screenTrack.frac - width / 2
-                        width: Math.round(14 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.sliderThumb
-                        Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.SizeHorCursor
-                        onEntered: root.openPopupReq(root.popupName)
-
-                        function setFromX(mx) {
-                            const v = Math.max(0, Math.min(1, mx / screenTrack.width));
-                            root.setScreenFraction(v);
-                            root.openPopupReq(root.popupName);
-                        }
-
-                        onPressed: mouse => setFromX(mouse.x)
-                        onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
-                        onWheel: wheel => {
-                            root.scrollScreenDelta(wheel.angleDelta.y / 120);
-                            root.openPopupReq(root.popupName);
-                        }
-                    }
-                }
-
-                Text {
-                    text: Math.round(root.screenFraction * 100) + "%"
-                    color: Config.colors.textPrimary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizePopup
-                    horizontalAlignment: Text.AlignRight
-                    Layout.preferredWidth: root.labelWidth
-                    Layout.fillWidth: false
-                }
-            }
+            onSetFraction:    v     => root.setScreenFraction(v)
+            onScrollDelta:    delta => root.scrollScreenDelta(delta)
+            onOpenPopupReq:   name  => root.openPopupReq(name)
+            onExitPopupReq:          root.exitPopupReq()
         }
 
         // ── Keyboard brightness row ───────────────────────────────────────────
-        Item {
+        BarSliderPopup {
             width: parent.width
             height: root.rowH
             visible: root.kbdAvailable
 
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Math.round(12 * Config.scale)
-                anchors.rightMargin: Math.round(12 * Config.scale)
-                spacing: Math.round(10 * Config.scale)
+            // Override PopupContainer geometry — we're embedded, not floating
+            popupOpen: true
+            opacity: 1
+            radius: 0
 
-                Item {
-                    implicitWidth: Config.bar.batteryIconSize
-                    implicitHeight: Config.bar.batteryIconSize
+            popupName:  root.popupName
+            activePopup: root.activePopup
+            iconName:   "input-keyboard-brightness"
+            fraction:   root.kbdFraction
+            labelWidth: root.labelWidth
 
-                    IconImage {
-                        anchors.centerIn: parent
-                        implicitSize: Config.bar.batteryIconSize
-                        source: Quickshell.iconPath("input-keyboard-brightness")
-                    }
-                }
-
-                Item {
-                    id: kbdTrack
-                    Layout.fillWidth: true
-                    height: Math.round(20 * Config.scale)
-
-                    readonly property real frac: Math.max(0, Math.min(1, root.kbdFraction))
-
-                    GradientProgressBar {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        width: kbdTrack.width
-                        value: kbdTrack.frac
-                    }
-
-                    // Glow blob behind thumb
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: kbdTrack.width * kbdTrack.frac - width / 2
-                        width: Math.round(18 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.glowAccent
-                        opacity: 0.55
-                        Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
-                    }
-
-                    // Thumb
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: kbdTrack.width * kbdTrack.frac - width / 2
-                        width: Math.round(14 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: Config.colors.sliderThumb
-                        Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.SizeHorCursor
-                        onEntered: root.openPopupReq(root.popupName)
-
-                        function setFromX(mx) {
-                            const v = Math.max(0, Math.min(1, mx / kbdTrack.width));
-                            root.setKbdFraction(v);
-                            root.openPopupReq(root.popupName);
-                        }
-
-                        onPressed: mouse => setFromX(mouse.x)
-                        onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
-                        onWheel: wheel => {
-                            root.scrollKbdDelta(wheel.angleDelta.y / 120);
-                            root.openPopupReq(root.popupName);
-                        }
-                    }
-                }
-
-                Text {
-                    text: Math.round(root.kbdFraction * 100) + "%"
-                    color: Config.colors.textPrimary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizePopup
-                    horizontalAlignment: Text.AlignRight
-                    Layout.preferredWidth: root.labelWidth
-                    Layout.fillWidth: false
-                }
-            }
+            onSetFraction:    v     => root.setKbdFraction(v)
+            onScrollDelta:    delta => root.scrollKbdDelta(delta)
+            onOpenPopupReq:   name  => root.openPopupReq(name)
+            onExitPopupReq:          root.exitPopupReq()
         }
     }
 }

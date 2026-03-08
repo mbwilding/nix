@@ -5,71 +5,51 @@ import ".."
 
 // Scrollable list with a custom thin scrollbar.
 // Place list content (e.g. a Column + Repeater) inside via the default property.
-// The content is measured via contentHeight / contentWidth for scroll math.
+// The content is measured via implicitHeight for scroll math.
 Item {
     id: root
 
-    // The inner content item — callers place a Column (or similar) here
-    default property alias content: flickable.contentItem
+    // Children are reparented into the content container inside the Flickable.
+    default property alias content: contentContainer.data
 
     // How much padding inside the flickable (excluding the scrollbar)
     property int topPadding: Math.round(8 * Config.scale)
     property int bottomPadding: Math.round(8 * Config.scale)
     property int leftPadding: Math.round(8 * Config.scale)
 
+    // Optional thumb color override (defaults to accent)
+    property color thumbColor: Config.colors.accent
+
     Flickable {
         id: flickable
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.right: scrollbar.left
+        anchors.right: scrollBar.left
         anchors.topMargin: root.topPadding
         anchors.bottomMargin: root.bottomPadding
         anchors.leftMargin: root.leftPadding
         anchors.rightMargin: Math.round(4 * Config.scale)
         contentWidth: width
-        contentHeight: contentItem ? contentItem.implicitHeight : 0
+        contentHeight: contentContainer.implicitHeight
         clip: true
+
+        Item {
+            id: contentContainer
+            width: flickable.width
+            implicitHeight: childrenRect.height
+        }
     }
 
-    // Thin scrollbar (only shown when content overflows)
-    Item {
-        id: scrollbar
+    ThinScrollBar {
+        id: scrollBar
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.topMargin: Math.round(8 * Config.scale)
-        anchors.bottomMargin: Math.round(8 * Config.scale)
-        anchors.rightMargin: Math.round(3 * Config.scale)
-        width: Math.round(3 * Config.scale)
-
-        readonly property bool needed: flickable.contentHeight > flickable.height
-        visible: needed
-
-        // Rail — very subtle neon cyan tint
-        Rectangle {
-            anchors.fill: parent
-            radius: width / 2
-            color: Config.colors.border
-        }
-
-        // Thumb — neon cyan
-        Rectangle {
-            readonly property real ratio: flickable.height / Math.max(flickable.contentHeight, 1)
-            readonly property real thumbH: Math.max(Math.round(20 * Config.scale), scrollbar.height * ratio)
-            readonly property real travel: scrollbar.height - thumbH
-            readonly property real scrollRatio: flickable.contentHeight > flickable.height ? flickable.contentY / (flickable.contentHeight - flickable.height) : 0
-            width: parent.width
-            height: thumbH
-            y: travel * scrollRatio
-            radius: width / 2
-            color: Config.colors.accent
-            opacity: 0.6
-            Behavior on y {
-                NumberAnimation {
-                    duration: 60
-                }
-            }
-        }
+        scrollY:   flickable.contentY
+        maxScrollY: Math.max(0, flickable.contentHeight - flickable.height)
+        contentH:  flickable.contentHeight
+        viewportH: flickable.height
+        thumbColor: root.thumbColor
     }
 }
