@@ -95,6 +95,11 @@ Scope {
         }
     }
 
+    SystemClock {
+        id: clock
+        precision: SystemClock.Minutes
+    }
+
     WlSessionLock {
         id: sessionLock
         locked: false
@@ -149,6 +154,31 @@ Scope {
                 Column {
                     anchors.centerIn: parent
                     spacing: Math.round(32 * Config.scale)
+
+                    Column {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: Math.round(4 * Config.scale)
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Config.bar.clock24h
+                                ? Qt.formatTime(clock.date, "HH:mm")
+                                : Qt.formatTime(clock.date, "hh:mm") + " " + Qt.formatTime(clock.date, "AP")
+                            color: Config.colors.accent
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizeClock * 2.2)
+                            font.weight: Font.Light
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: Qt.formatDate(clock.date, "dddd, MMMM d, yyyy")
+                            color: Config.colors.textSecondary
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.85)
+                            font.weight: Font.Normal
+                        }
+                    }
 
                     Item {
                         id: passwordArea
