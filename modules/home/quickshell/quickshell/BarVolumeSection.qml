@@ -18,7 +18,7 @@ import "components"
 //   device sets it as the preferred default.
 //
 // Bar.qml binds activePopup and wires popup-manager signals.
-Item {
+BarSectionItem {
     id: volumeSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -97,12 +97,7 @@ Item {
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
-    containmentMask: Item {
-        x: volumeSection.popupOpen ? -Math.max(0, (volumePopup.width - volumeSection.width) / 2) : 0
-        y: volumeSection.popupOpen ? -volumePopup.height - Config.bar.popupOffset : 0
-        width: volumeSection.popupOpen ? Math.max(volumeSection.width, volumePopup.width) : volumeSection.width
-        height: volumeSection.popupOpen ? volumePopup.height + Config.bar.popupOffset + volumeSection.height : volumeSection.height
-    }
+    popupItem: volumePopup
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

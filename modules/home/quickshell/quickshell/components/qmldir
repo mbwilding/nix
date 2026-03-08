@@ -1,9 +1,11 @@
 module components
 BarButton 1.0 BarButton.qml
+BarSectionItem 1.0 BarSectionItem.qml
 BarSectionPopup 1.0 BarSectionPopup.qml
 GradientProgressBar 1.0 GradientProgressBar.qml
 PopupCard 1.0 PopupCard.qml
 PopupContainer 1.0 PopupContainer.qml
 PopupScrollView 1.0 PopupScrollView.qml
 ScrollableList 1.0 ScrollableList.qml
+SliderRow 1.0 SliderRow.qml
 ThinScrollBar 1.0 ThinScrollBar.qml

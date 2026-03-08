@@ -14,7 +14,7 @@ import "../components"
 // and bind brightness/available/setBrightness to the relevant service properties.
 //
 // Bar.qml instantiates this twice — once for screen, once for keyboard.
-Item {
+BarSectionItem {
     id: brightnessSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -43,19 +43,13 @@ Item {
     property alias popup: brightnessPopup
 
     readonly property bool popupOpen: activePopup === popupName
+    popupItem: brightnessPopup
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: available
-
-    containmentMask: Item {
-        x: brightnessSection.popupOpen ? -Math.max(0, (brightnessPopup.width - brightnessSection.width) / 2) : 0
-        y: brightnessSection.popupOpen ? -brightnessPopup.height - Config.bar.popupOffset : 0
-        width: brightnessSection.popupOpen ? Math.max(brightnessSection.width, brightnessPopup.width) : brightnessSection.width
-        height: brightnessSection.popupOpen ? brightnessPopup.height + Config.bar.popupOffset + brightnessSection.height : brightnessSection.height
-    }
 
     // ── Trigger ───────────────────────────────────────────────────────────────
 
