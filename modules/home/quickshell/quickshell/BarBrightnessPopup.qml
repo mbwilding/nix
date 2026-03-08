@@ -3,48 +3,31 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import "components"
 
-// Combined brightness popup: stacked screen + keyboard slider rows inside
-// one PopupContainer card. Only rows whose device is available are shown.
-// Height adjusts automatically based on visible row count.
 PopupContainer {
     id: root
 
-    // ── Public API ────────────────────────────────────────────────────────────
-
-    property string popupName: "brightness"
-    property string activePopup: ""
-
-    // Screen brightness
-    property real screenFraction: 0
-    property bool screenAvailable: false
-
-    // Keyboard brightness
-    property real kbdFraction: 0
     property bool kbdAvailable: false
-
-    // Shared fixed width for percentage labels (bound to root.sliderLabelWidth)
+    property bool screenAvailable: false
     property int labelWidth: 0
-
-    signal openPopupReq(string name)
-    signal exitPopupReq
-    signal setScreenFraction(real v)
-    signal setKbdFraction(real v)
-    signal scrollScreenDelta(real delta)
-    signal scrollKbdDelta(real delta)
-
-    // ── Geometry ──────────────────────────────────────────────────────────────
-
-    popupOpen: root.activePopup === root.popupName
+    property real kbdFraction: 0
+    property real screenFraction: 0
+    property string activePopup: ""
+    property string popupName: "brightness"
 
     readonly property int rowH: Math.round(58 * Config.scale)
     readonly property int visibleRows: (root.screenAvailable ? 1 : 0) + (root.kbdAvailable ? 1 : 0)
 
-    width:  Math.round(250 * Config.scale)
+    signal exitPopupReq
+    signal openPopupReq(string name)
+    signal scrollKbdDelta(real delta)
+    signal scrollScreenDelta(real delta)
+    signal setKbdFraction(real v)
+    signal setScreenFraction(real v)
+
     height: root.visibleRows * root.rowH
-
+    popupOpen: root.activePopup === root.popupName
+    width: Math.round(250 * Config.scale)
     z: 20
-
-    // ── Hover ─────────────────────────────────────────────────────────────────
 
     HoverHandler {
         onHoveredChanged: {
@@ -55,38 +38,36 @@ PopupContainer {
         }
     }
 
-    // ── Rows ──────────────────────────────────────────────────────────────────
-
     Column {
         anchors.fill: parent
 
         SliderRow {
-            width:   parent.width
-            height:  root.rowH
+            width: parent.width
+            height: root.rowH
             visible: root.screenAvailable
 
-            iconName:   "video-display-brightness-symbolic"
+            iconName: "video-display-brightness-symbolic"
             iconOffset: -3
-            fraction:   root.screenFraction
+            fraction: root.screenFraction
             labelWidth: root.labelWidth
 
             onSetFraction: v => root.setScreenFraction(v)
             onScrollDelta: d => root.scrollScreenDelta(d)
-            onEntered:        root.openPopupReq(root.popupName)
+            onEntered: root.openPopupReq(root.popupName)
         }
 
         SliderRow {
-            width:   parent.width
-            height:  root.rowH
+            width: parent.width
+            height: root.rowH
             visible: root.kbdAvailable
 
-            iconName:   "input-keyboard-brightness"
-            fraction:   root.kbdFraction
+            iconName: "input-keyboard-brightness"
+            fraction: root.kbdFraction
             labelWidth: root.labelWidth
 
             onSetFraction: v => root.setKbdFraction(v)
             onScrollDelta: d => root.scrollKbdDelta(d)
-            onEntered:        root.openPopupReq(root.popupName)
+            onEntered: root.openPopupReq(root.popupName)
         }
     }
 }

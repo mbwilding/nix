@@ -12,77 +12,55 @@ import Quickshell.Services.UPower
 Scope {
     id: root
 
+    property UPowerDevice battery: UPower.displayDevice
+    property bool batteryReady: false
+    property bool initialPercentageHandled: false
+    property bool initialStateHandled: false
+    property int lastCheckedPct: -1
+    property var _notifSnapshotIds: ({})
+    property var _pendingDirectRemovals: []
+    property var _pendingRemoval: ({})
     property var activeCards: []
+    property var firedLevels: []
+    property var notifHistory: []
+
+    signal animateOutHistoryEntry(var snapId)
+
+    Component.onCompleted: {
+        Qt.callLater(() => {
+            root.batteryReady = true;
+        });
+    }
 
     function topCard() {
         return root.activeCards.find(c => c.visible_) ?? null;
     }
 
-    // ── Notification history ──────────────────────────────────────────────────
-
-    // Array of snapshot objects
-    property var notifHistory: []
-
-    // Maps live notification id → snapshot id
-    // so we can remove history when the live card is dismissed.
-    property var _notifSnapshotIds: ({})
-
-    // Snapshot IDs currently mid-chain (live card animating → history card animating).
-    // removeHistoryEntry defers the model update until the chain completes.
-    property var _pendingRemoval: ({})
-
-    // Snapshot IDs from live-dismissed cards waiting for history animation to finish.
-    property var _pendingDirectRemovals: []
-
-    // Emitted when a live toast is dismissed — tells the history popup to
-    // animate out the matching card, which then calls removeHistoryEntry itself.
-    signal animateOutHistoryEntry(var snapId)
-
-    // Fires after animateSpeed to flush direct removals (live card dismissed path).
-    Timer {
-        id: directRemovalTimer
-        interval: Config.notifications.animateSpeed + 50
-        repeat: false
-        onTriggered: {
-            const ids = root._pendingDirectRemovals;
-            root._pendingDirectRemovals = [];
-            root.notifHistory = root.notifHistory.filter(e => !ids.includes(e.id));
-        }
-    }
-
-    // Dismiss every live toast and every history entry simultaneously.
-    // Live cards slide out; history array is cleared after one animation cycle
-    // which also closes the popup via onNotifHistoryChanged.
     function dismissAll() {
         root.activeCards.filter(c => c.visible_).forEach(c => c.animateOut());
         dismissAllTimer.restart();
     }
 
-    Timer {
-        id: dismissAllTimer
-        interval: Config.notifications.animateSpeed + 50
-        repeat: false
-        onTriggered: {
-            root.notifHistory = [];
-            root._notifSnapshotIds = ({});
-            root._pendingRemoval = ({});
-            root._pendingDirectRemovals = [];
-            directRemovalTimer.stop();
-        }
+    function batteryIconName(pct, charging) {
+        const level = Math.min(100, Math.round(pct / 10) * 10);
+        const lvlStr = String(level).padStart(3, "0");
+        const chargeSuffix = charging ? "-charging" : "";
+        return "battery-" + lvlStr + chargeSuffix + "-symbolic";
+    }
+
+    function batteryNotify(level, pct, charging) {
+        const icon = batteryIconName(pct, charging);
+        batteryNotifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + icon, level.title, level.message];
+        batteryNotifyProc.running = true;
     }
 
     function removeHistoryEntry(entryId) {
-        // If this entry is already mid-chain (history card dismissed first,
-        // live card now done) — just clear the flag and remove.
         if (root._pendingRemoval[entryId]) {
             delete root._pendingRemoval[entryId];
             root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
             return;
         }
 
-        // Called from history card (user dismissed from history popup).
-        // If a visible live card exists, animate it out first and defer the
-        // model update until the chain completes.
         const entry = root.notifHistory.find(e => e.id === entryId);
         if (entry?.liveNotif) {
             const liveCard = root.activeCards.find(c => c.notification === entry.liveNotif && c.visible_);
@@ -97,32 +75,28 @@ Scope {
         root.notifHistory = root.notifHistory.filter(e => e.id !== entryId);
     }
 
-    // ── Battery ───────────────────────────────────────────────────────────────
-
-    property UPowerDevice battery: UPower.displayDevice
-    property var firedLevels: []
-    property bool batteryReady: false
-    property bool initialStateHandled: false
-    property bool initialPercentageHandled: false
-    property int lastCheckedPct: -1
-
-    Component.onCompleted: {
-        Qt.callLater(() => {
-            root.batteryReady = true;
-        });
+    Timer {
+        id: directRemovalTimer
+        interval: Config.notifications.animateSpeed + 50
+        repeat: false
+        onTriggered: {
+            const ids = root._pendingDirectRemovals;
+            root._pendingDirectRemovals = [];
+            root.notifHistory = root.notifHistory.filter(e => !ids.includes(e.id));
+        }
     }
 
-    function batteryIconName(pct, charging) {
-        const level = Math.min(100, Math.round(pct / 10) * 10);
-        const lvlStr = String(level).padStart(3, "0");
-        const chargeSuffix = charging ? "-charging" : "";
-        return "battery-" + lvlStr + chargeSuffix + "-symbolic";
-    }
-
-    function batteryNotify(level, pct, charging) {
-        const icon = batteryIconName(pct, charging);
-        batteryNotifyProc.command = ["notify-send", "--app-name=Battery", "--app-icon=" + icon, level.title, level.message];
-        batteryNotifyProc.running = true;
+    Timer {
+        id: dismissAllTimer
+        interval: Config.notifications.animateSpeed + 50
+        repeat: false
+        onTriggered: {
+            root.notifHistory = [];
+            root._notifSnapshotIds = ({});
+            root._pendingRemoval = ({});
+            root._pendingDirectRemovals = [];
+            directRemovalTimer.stop();
+        }
     }
 
     Process {
@@ -173,7 +147,6 @@ Scope {
 
             const pct = Math.round(root.battery.percentage * 100);
 
-            // Only act when the integer percent actually changes
             if (pct === root.lastCheckedPct)
                 return;
             root.lastCheckedPct = pct;
@@ -233,22 +206,20 @@ Scope {
         onNotification: notification => {
             notification.tracked = true;
 
-            // Snapshot into history — keep live notification + action objects so they can still be invoked
             const snapId = Date.now() + Math.random();
             const snapshot = {
                 id: snapId,
-                liveNotif: notification,              // live Notification object for dismiss/invoke
+                liveNotif: notification,
                 appName: notification.appName ?? "",
                 appIcon: notification.appIcon ?? "",
                 desktopEntry: notification.desktopEntry ?? "",
                 summary: notification.summary ?? "",
                 body: notification.body ?? "",
-                actions: notification.actions ?? [],   // live NotificationAction objects
+                actions: notification.actions ?? [],
                 receivedAt: new Date()
             };
             root.notifHistory = [snapshot].concat(root.notifHistory);
 
-            // Remember which snapshot this notification maps to
             root._notifSnapshotIds[notification.id] = snapId;
         }
     }
@@ -302,11 +273,11 @@ Scope {
                         const snapId = root._notifSnapshotIds[notifCardDelegate.modelData.id];
                         if (snapId !== undefined) {
                             delete root._notifSnapshotIds[notifCardDelegate.modelData.id];
+
                             if (root._pendingRemoval[snapId]) {
                                 delete root._pendingRemoval[snapId];
                             }
-                            // Tell the history card to animate out (if popup is open).
-                            // Delay the model update until the animation completes.
+
                             root.animateOutHistoryEntry(snapId);
                             root._pendingDirectRemovals.push(snapId);
                             directRemovalTimer.restart();

@@ -11,6 +11,8 @@ import "services"
 Scope {
     id: root
 
+    property bool _kbdFirstRead: true
+    property bool _screenFirstRead: true
     property bool anyVisible: false
     property bool kbdVisible: false
     property bool screenVisible: false
@@ -23,12 +25,6 @@ Scope {
     readonly property int panelHeight: root.rowCount * Config.osd.rowHeight + Math.round(16 * Config.scale)
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
 
-    Timer {
-        id: hideTimer
-        interval: Config.osd.hideDelay
-        onTriggered: root.anyVisible = false
-    }
-
     function show() {
         root.volumeVisible = root.volumeAvailable;
         root.screenVisible = root.screenAvailable;
@@ -38,13 +34,16 @@ Scope {
             hideTimer.restart();
     }
 
+    Timer {
+        id: hideTimer
+        interval: Config.osd.hideDelay
+        onTriggered: root.anyVisible = false
+    }
+
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
 
-    // Reset suppression counter whenever the default sink itself changes, so the
-    // first volume reading from the new device is silently swallowed (PW often
-    // fires volumeChanged with NaN or an uninitialized value during the switch).
     Connections {
         target: Pipewire
         function onDefaultAudioSinkChanged() {
@@ -57,11 +56,9 @@ Scope {
 
         function onVolumeChanged() {
             const v = Pipewire.defaultAudioSink.audio.volume;
-            // Discard NaN / undefined readings that PW emits transiently during
-            // device switches — they must never reach the OSD or be written back.
-            if (v === undefined || isNaN(v)) return;
+            if (v === undefined || isNaN(v))
+                return;
             if (root._volumeRaw < 0) {
-                // First valid reading after startup or a sink switch — baseline only.
                 root._volumeRaw = v;
                 return;
             }
@@ -77,8 +74,6 @@ Scope {
         }
     }
 
-    property bool _screenFirstRead: true
-    property bool _kbdFirstRead: true
     Connections {
         target: BrightnessService
 
@@ -103,7 +98,6 @@ Scope {
         }
     }
 
-    // Panel
     PanelWindow {
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
@@ -142,7 +136,6 @@ Scope {
                 }
             }
 
-            // Panel card
             PopupCard {
                 anchors.fill: parent
                 popupRadius: Config.osd.radius

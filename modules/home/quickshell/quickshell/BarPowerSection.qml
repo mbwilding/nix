@@ -6,26 +6,13 @@ import Quickshell
 import Quickshell.Services.UPower
 import "components"
 
-// Power-profiles bar section: active profile glyph trigger + popup with profile list.
-//
-// Bar.qml binds activePopup and wires the popup-manager signals.
 BarSectionItem {
     id: powerSection
 
-    // ── Public API ────────────────────────────────────────────────────────────
-
-    property string activePopup: ""     // bound to root.activePopup
-
-    signal openPopupReq(string name)
-    signal keepPopupReq
-    signal exitPopupReq
-    signal closePopupReq
-
-    // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: powerPopup
+    property string activePopup: ""
 
-    // ── State ─────────────────────────────────────────────────────────────────
-
+    readonly property bool popupOpen: activePopup === "power"
     readonly property var profiles: [
         {
             profile: PowerProfile.PowerSaver,
@@ -43,23 +30,21 @@ BarSectionItem {
             label: "Performance"
         }
     ]
-
     readonly property var activeProfile: {
         for (let i = 0; i < profiles.length; i++)
             if (PowerProfiles.profile === profiles[i].profile)
                 return profiles[i];
-        return profiles[1];  // fallback to Balanced
+        return profiles[1];
     }
 
-    // ── Geometry ──────────────────────────────────────────────────────────────
+    signal openPopupReq(string name)
+    signal keepPopupReq
+    signal exitPopupReq
+    signal closePopupReq
 
     implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
     implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
-
-    readonly property bool popupOpen: activePopup === "power"
     popupItem: powerPopup
-
-    // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
         id: triggerArea
@@ -78,8 +63,6 @@ BarSectionItem {
         font.pixelSize: Config.bar.powerIconSize
         color: Config.colors.textSecondary
     }
-
-    // ── Popup ─────────────────────────────────────────────────────────────────
 
     PopupContainer {
         id: powerPopup

@@ -14,16 +14,16 @@ Item {
     property string iconName: ""
     property string label: ""
 
+    implicitHeight: Config.osd.rowHeight
+    implicitWidth: Config.osd.panelWidth
     onValueChanged: displayValue = value
+
     Behavior on displayValue {
         NumberAnimation {
             duration: Config.osd.animateSpeed
             easing.type: Easing.OutCubic
         }
     }
-
-    implicitHeight: Config.osd.rowHeight
-    implicitWidth: Config.osd.panelWidth
 
     RowLayout {
         anchors {
