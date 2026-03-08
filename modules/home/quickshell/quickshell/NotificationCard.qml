@@ -91,13 +91,14 @@ Item {
                 duration: Config.notifications.animateSpeed
                 easing.type: Easing.InCubic
             }
-            NumberAnimation {
-                target: root
-                property: "latchedHeight"
-                to: 0
-                duration: Config.notifications.animateSpeed
-                easing.type: Easing.OutCubic
-            }
+        }
+
+        NumberAnimation {
+            target: root
+            property: "latchedHeight"
+            to: 0
+            duration: Math.round(Config.notifications.animateSpeed * 0.6)
+            easing.type: Easing.OutCubic
         }
 
         ScriptAction {
