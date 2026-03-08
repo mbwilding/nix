@@ -15,6 +15,7 @@ Item {
     // Popup manager integration — set by Bar.qml delegate
     property string popupName: ""
     property string activePopup: ""
+    property real availableHeight: 800
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
@@ -68,7 +69,10 @@ Item {
         menuPopupWidth = iconW + maxTextW + rowMargins + colPadding;
     }
 
-    readonly property int maxPopupHeight: Math.round(320 * Config.scale)
+    readonly property int maxPopupHeight: root.availableHeight
+                                          - root.height
+                                          - Config.bar.popupOffset
+                                          - Math.round(16 * Config.scale)
 
     // ─────────────────────────────────────────────────────────────────────────
 
