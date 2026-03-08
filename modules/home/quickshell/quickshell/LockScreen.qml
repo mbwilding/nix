@@ -43,8 +43,9 @@ Scope {
         config: "login"
 
         onPamMessage: {
-            root.pamMessage = pam.message;
             root.pamIsError = pam.messageIsError;
+            // Only show the message if it's an error — plain prompts like "Password: " are redundant
+            root.pamMessage = pam.messageIsError ? pam.message : "";
             if (pam.responseRequired) {
                 root.pamAuthenticating = true;
                 root.focusPasswordField();
@@ -365,7 +366,7 @@ Scope {
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: root.notifHistory.length > 0
                         width: Math.round(360 * Config.scale)
-                        height: Math.min(notifInnerCol.implicitHeight, Math.round(220 * Config.scale))
+                        height: Math.min(notifInnerCol.implicitHeight, lockSurface.height - passwordArea.height - Math.round(160 * Config.scale))
                         clip: true
 
                         property real scrollY: 0
@@ -393,7 +394,7 @@ Scope {
                                     text: "\uF0F3  Notifications"
                                     color: Config.colors.textMuted
                                     font.family: Config.font.family
-                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                                    font.pixelSize: Config.font.sizeLg
                                     font.weight: Font.Medium
                                 }
                                 Item {
@@ -403,7 +404,7 @@ Scope {
                                     text: root.notifHistory.length > 99 ? "99+" : String(root.notifHistory.length)
                                     color: Config.colors.accentAlt
                                     font.family: Config.font.family
-                                    font.pixelSize: Math.round(Config.font.sizeSm * 0.8)
+                                    font.pixelSize: Config.font.sizeLg
                                     font.weight: Font.Bold
                                 }
                             }
