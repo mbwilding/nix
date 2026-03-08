@@ -10,7 +10,7 @@ import "components"
 // Battery bar section: level icon trigger + small popup showing pct + charging status.
 //
 // Bar.qml binds activePopup and wires the popup-manager signals.
-Item {
+BarSectionItem {
     id: batterySection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -33,14 +33,8 @@ Item {
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: b !== null && b.isLaptopBattery
 
-    containmentMask: Item {
-        x: batterySection.popupOpen ? -Math.max(0, (batteryPopup.width - batterySection.width) / 2) : 0
-        y: batterySection.popupOpen ? -batteryPopup.height - Config.bar.popupOffset : 0
-        width: batterySection.popupOpen ? Math.max(batterySection.width, batteryPopup.width) : batterySection.width
-        height: batterySection.popupOpen ? batteryPopup.height + Config.bar.popupOffset + batterySection.height : batterySection.height
-    }
-
     readonly property bool popupOpen: activePopup === "battery"
+    popupItem: batteryPopup
 
     // ── Trigger ───────────────────────────────────────────────────────────────
 

@@ -8,7 +8,7 @@ import "components"
 
 // Notification history bar section.
 // Shows a bell icon with an unread badge. Clicking/hovering opens the history popup.
-Item {
+BarSectionItem {
     id: notifSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -52,6 +52,7 @@ Item {
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
     readonly property bool popupOpen: activePopup === "notif"
+    popupItem: notifPopup
 
     // HoverHandler does not synthesize a hover-enter when an item first becomes
     // visible under a stationary cursor — so the first time the popup appears the
@@ -62,13 +63,6 @@ Item {
     onPopupOpenChanged: {
         if (notifSection.popupOpen)
             Qt.callLater(() => { notifSection.openPopupReq("notif"); });
-    }
-
-    containmentMask: Item {
-        x: notifSection.popupOpen ? -Math.max(0, (notifPopup.width - notifSection.width) / 2) : 0
-        y: notifSection.popupOpen ? -notifPopup.height - Config.bar.popupOffset : 0
-        width: notifSection.popupOpen ? Math.max(notifSection.width, notifPopup.width) : notifSection.width
-        height: notifSection.popupOpen ? notifPopup.height + Config.bar.popupOffset + notifSection.height : notifSection.height
     }
 
     // ── Trigger ───────────────────────────────────────────────────────────────

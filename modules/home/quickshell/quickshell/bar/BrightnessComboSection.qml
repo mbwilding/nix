@@ -12,7 +12,7 @@ import "../components"
 //
 // Visible whenever at least one of screen/kbd backlight is available.
 // Bar.qml instantiates this once instead of two separate BrightnessSection items.
-Item {
+BarSectionItem {
     id: brightnessCombo
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -39,19 +39,13 @@ Item {
     property alias popup: brightnessPopup
 
     readonly property bool popupOpen: activePopup === "brightness"
+    popupItem: brightnessPopup
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: brightnessCombo.screenAvailable || brightnessCombo.kbdAvailable
-
-    containmentMask: Item {
-        x: brightnessCombo.popupOpen ? -Math.max(0, (brightnessPopup.width - brightnessCombo.width) / 2) : 0
-        y: brightnessCombo.popupOpen ? -brightnessPopup.height - Config.bar.popupOffset : 0
-        width: brightnessCombo.popupOpen ? Math.max(brightnessCombo.width, brightnessPopup.width) : brightnessCombo.width
-        height: brightnessCombo.popupOpen ? brightnessPopup.height + Config.bar.popupOffset + brightnessCombo.height : brightnessCombo.height
-    }
 
     // ── Trigger ───────────────────────────────────────────────────────────────
 

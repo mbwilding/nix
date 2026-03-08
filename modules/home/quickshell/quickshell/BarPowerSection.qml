@@ -9,7 +9,7 @@ import "components"
 // Power-profiles bar section: active profile glyph trigger + popup with profile list.
 //
 // Bar.qml binds activePopup and wires the popup-manager signals.
-Item {
+BarSectionItem {
     id: powerSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -56,14 +56,8 @@ Item {
     implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
     implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
 
-    containmentMask: Item {
-        x: powerSection.popupOpen ? -Math.max(0, (powerPopup.width - powerSection.width) / 2) : 0
-        y: powerSection.popupOpen ? -powerPopup.height - Config.bar.popupOffset : 0
-        width: powerSection.popupOpen ? Math.max(powerSection.width, powerPopup.width) : powerSection.width
-        height: powerSection.popupOpen ? powerPopup.height + Config.bar.popupOffset + powerSection.height : powerSection.height
-    }
-
     readonly property bool popupOpen: activePopup === "power"
+    popupItem: powerPopup
 
     // ── Trigger ───────────────────────────────────────────────────────────────
 

@@ -13,7 +13,7 @@ import "components"
 //
 // Clicking the bar icon toggles Bluetooth on/off.
 // Bar.qml binds activePopup and wires the three popup-manager signals.
-Item {
+BarSectionItem {
     id: btSection
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -73,14 +73,8 @@ Item {
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
 
-    containmentMask: Item {
-        x: btSection.popupOpen ? -Math.max(0, (btPopup.width - btSection.width) / 2) : 0
-        y: btSection.popupOpen ? -btPopup.height - Config.bar.popupOffset : 0
-        width: btSection.popupOpen ? Math.max(btSection.width, btPopup.width) : btSection.width
-        height: btSection.popupOpen ? btPopup.height + Config.bar.popupOffset + btSection.height : btSection.height
-    }
-
     readonly property bool popupOpen: activePopup === "bt"
+    popupItem: btPopup
 
     // Enable discovery while the popup is open so nearby devices appear.
     onPopupOpenChanged: {

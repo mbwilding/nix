@@ -7,7 +7,7 @@ import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import "components"
 
-Item {
+BarSectionItem {
     id: root
 
     required property SystemTrayItem trayItem
@@ -31,12 +31,7 @@ Item {
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
 
-    containmentMask: Item {
-        x: root.popupOpen ? -Math.max(0, (menuPopupRect.width - root.width) / 2) : 0
-        y: root.popupOpen ? -menuPopupRect.height - Config.bar.popupOffset : 0
-        width: root.popupOpen ? Math.max(root.width, menuPopupRect.width) : root.width
-        height: root.popupOpen ? menuPopupRect.height + Config.bar.popupOffset + root.height : root.height
-    }
+    popupItem: menuPopupRect
 
     // ── Popup width calculation ───────────────────────────────────────────────
     // Measures the widest menu entry text to size the popup correctly.
