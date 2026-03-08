@@ -8,9 +8,11 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import Quickshell.Services.Pipewire
-import "bar"
-import "services"
-import "components"
+
+import "."
+import ".."
+import "../components"
+import "../services"
 
 Scope {
     id: root

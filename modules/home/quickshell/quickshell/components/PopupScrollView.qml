@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+
 import ".."
 
 // Scrollable view for popup cards.

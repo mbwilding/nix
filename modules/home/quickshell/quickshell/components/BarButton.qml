@@ -1,4 +1,5 @@
 import QtQuick
+
 import ".."
 
 // Cyberpunk button-look wrapper for bar section trigger icons.
