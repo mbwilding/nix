@@ -148,7 +148,7 @@ PopupContainer {
             text: sliderPopup.label
             color: Config.colors.textPrimary
             font.family: Config.font.family
-            font.pixelSize: Config.bar.fontSizeStatus
+            font.pixelSize: Config.bar.fontSizePopup
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: sliderPopup.labelWidth
             Layout.fillWidth: false

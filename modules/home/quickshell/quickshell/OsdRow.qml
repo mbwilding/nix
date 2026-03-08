@@ -49,14 +49,14 @@ Item {
             color: Config.colors.textPrimary
             font.family: Config.font.family
             font.bold: true
-            font.pixelSize: Config.font.sizeOsd
+            font.pixelSize: Config.font.sizeXl
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: labelMetrics.boundingRect.width
 
             TextMetrics {
                 id: labelMetrics
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeOsd
+                font.pixelSize: Config.font.sizeXl
                 text: "100%"
             }
         }

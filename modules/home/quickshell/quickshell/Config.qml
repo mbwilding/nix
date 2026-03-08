@@ -16,7 +16,6 @@ QtObject {
         readonly property int sizeMd: Math.round(12 * root.fontSize)
         readonly property int sizeLg: Math.round(13 * root.fontSize)
         readonly property int sizeXl: Math.round(14 * root.fontSize)
-        readonly property int sizeOsd: Math.round(14 * root.fontSize)
     }
 
     readonly property QtObject colors: QtObject {
@@ -88,6 +87,7 @@ QtObject {
         readonly property int sectionSpacing: Math.round(22 * root.scale)
         readonly property int fontSizeClock: Math.round(root.font.sizeMd * 1.8)
         readonly property int fontSizeStatus: Math.round(root.font.sizeSm * 1.8)
+        readonly property int fontSizePopup: root.font.sizeXl
         readonly property int popupOffset: Math.round(8 * root.scale)
         readonly property bool clock24h: true
         readonly property real disabledOpacity: 0.45

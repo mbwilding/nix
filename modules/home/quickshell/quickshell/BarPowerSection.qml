@@ -156,7 +156,7 @@ Item {
                         Text {
                             text: profileDelegate.modelData.label
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                             color: profileDelegate.isActive ? Config.colors.accent : Config.colors.textPrimary
                             Behavior on color {
                                 ColorAnimation {

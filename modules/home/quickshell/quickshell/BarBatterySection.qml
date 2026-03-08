@@ -133,7 +133,7 @@ Item {
                     return Config.colors.textPrimary;
                 }
                 font.family: Config.font.family
-                font.pixelSize: Config.bar.fontSizeStatus
+                font.pixelSize: Config.bar.fontSizePopup
             }
         }
     }
