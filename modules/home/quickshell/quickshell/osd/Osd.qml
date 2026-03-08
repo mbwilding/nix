@@ -5,8 +5,11 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
-import "components"
-import "services"
+
+import "."
+import ".."
+import "../components"
+import "../services"
 
 Scope {
     id: root
