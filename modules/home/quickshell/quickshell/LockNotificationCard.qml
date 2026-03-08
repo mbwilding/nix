@@ -42,14 +42,6 @@ Item {
 
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: -4
-                radius: width / 2
-                color: Config.colors.glowAccent
-                opacity: 0.45
-            }
-
-            Rectangle {
-                anchors.fill: parent
                 radius: Config.notifications.accentBar
                 gradient: Gradient {
                     orientation: Gradient.Vertical
