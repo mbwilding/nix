@@ -8,8 +8,7 @@ import ".."
 
 // Icon + gradient slider track + percentage label row.
 // Pure layout — no card background, no border, no popup logic.
-// Used by BarSliderPopup (floated inside a PopupContainer) and
-// directly by BarBrightnessPopup (embedded rows inside a shared card).
+// Used by BrightnessPopup (embedded rows inside a shared card).
 Item {
     id: root
 

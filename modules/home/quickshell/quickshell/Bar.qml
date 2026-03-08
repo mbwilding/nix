@@ -541,7 +541,7 @@ Scope {
                 Repeater {
                     id: trayRepeater
                     model: SystemTray.items
-                    delegate: BarTrayItem {
+                    delegate: TrayItem {
                         id: trayDelegate
                         required property SystemTrayItem modelData
                         required property int index
@@ -571,7 +571,7 @@ Scope {
                     visible: trayRepeater.count > 0
                 }
 
-                BarWifiSection {
+                WifiSection {
                     id: wifiSection
                     activePopup: root.activePopup
                     availableHeight: win.screen ? win.screen.height : 800
@@ -596,7 +596,7 @@ Scope {
                     }
                 }
 
-                BarBtSection {
+                BtSection {
                     id: btSection
                     activePopup: root.activePopup
                     availableHeight: win.screen ? win.screen.height : 800
@@ -605,7 +605,7 @@ Scope {
                     onExitPopupReq: root.exitPopup()
                 }
 
-                BarVolumeSection {
+                VolumeSection {
                     id: volumeSection
                     activePopup: root.activePopup
                     availableHeight: win.screen ? win.screen.height : 800
@@ -615,7 +615,7 @@ Scope {
                     onKeepAliveReq: root.keepAlive()
                 }
 
-                BrightnessComboSection {
+                BrightnessSection {
                     id: brightnessSection
                     activePopup: root.activePopup
                     sliderLabelWidth: root.sliderLabelWidth
@@ -631,7 +631,7 @@ Scope {
                     onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
                 }
 
-                BarPowerSection {
+                PowerSection {
                     id: powerSection
                     activePopup: root.activePopup
                     onOpenPopupReq: name => root.openPopup(name)
@@ -640,14 +640,14 @@ Scope {
                     onClosePopupReq: root.closePopup()
                 }
 
-                BarBatterySection {
+                BatterySection {
                     id: batterySection
                     activePopup: root.activePopup
                     onOpenPopupReq: name => root.openPopup(name)
                     onExitPopupReq: root.exitPopup()
                 }
 
-                BarNotifSection {
+                NotifSection {
                     id: notifSection
                     activePopup: root.activePopup
                     availableHeight: win.screen ? win.screen.height : 800
@@ -669,7 +669,7 @@ Scope {
 
                 BarSeparator {}
 
-                BarClockSection {
+                ClockSection {
                     id: clockSection
                     clockDate: clock.date
                 }

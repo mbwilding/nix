@@ -5,7 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
-import "components"
+import ".."
+import "../components"
 
 BarSectionItem {
     id: root

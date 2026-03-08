@@ -4,7 +4,7 @@ import QtQuick
 import ".."
 
 // Neon gradient progress bar: cyan → hot-pink fill on a dark frosted rail.
-// Used by BarSliderPopup and OsdRow.
+// Used by BrightnessPopup, SliderRow, and OsdRow.
 Item {
     id: root
 

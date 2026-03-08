@@ -5,7 +5,8 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
 import Quickshell.Widgets
-import "components"
+import ".."
+import "../components"
 
 BarSectionItem {
     id: btSection

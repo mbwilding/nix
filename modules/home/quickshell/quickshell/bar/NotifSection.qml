@@ -4,7 +4,8 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import "components"
+import ".."
+import "../components"
 
 BarSectionItem {
     id: notifSection

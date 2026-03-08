@@ -5,7 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
-import "components"
+import ".."
+import "../components"
 
 BarSectionItem {
     id: volumeSection

@@ -7,62 +7,57 @@ import Quickshell.Widgets
 import ".."
 import "../components"
 
-// Generic brightness bar section: trigger icon + horizontal slider popup.
-// Reads state from BrightnessService singleton; no internal polling.
+// Brightness bar section: a single sun-icon trigger that opens one
+// popup containing stacked screen + keyboard brightness slider rows.
 //
-// Set popupName to "screen" or "kbd", iconName to the appropriate icon,
-// and bind brightness/available/setBrightness to the relevant service properties.
-//
-// Bar.qml instantiates this twice — once for screen, once for keyboard.
+// Visible whenever at least one of screen/kbd backlight is available.
 BarSectionItem {
     id: brightnessSection
 
     // ── Public API ────────────────────────────────────────────────────────────
 
-    property string popupName: ""           // "screen" | "kbd"
-    property string iconName: ""            // icon shown in trigger + popup
     property string activePopup: ""         // bound to root.activePopup
     property int sliderLabelWidth: 0        // bound to root.sliderLabelWidth
 
-    // Brightness state — callers bind to BrightnessService.*
-    property real brightness: 0            // 0..1
-    property bool available: false
+    // Screen state — bind to BrightnessService.*
+    property real screenBrightness: 0
+    property bool screenAvailable: false
 
-    // Optional vertical offset for the trigger icon (positive = down, negative = up)
-    property real iconOffset: 0
-    // Optional vertical offset for the icon inside the popup
-    property real popupIconOffset: 0
+    // Keyboard state — bind to BrightnessService.*
+    property real kbdBrightness: 0
+    property bool kbdAvailable: false
 
     signal openPopupReq(string name)
     signal keepPopupReq
     signal exitPopupReq
     signal keepAliveReq
-    signal setBrightnessReq(real frac)      // emitted when user moves slider
+    signal setScreenBrightnessReq(real frac)
+    signal setKbdBrightnessReq(real frac)
 
     // Expose the popup rectangle so Bar.qml can include it in the input mask
     property alias popup: brightnessPopup
 
-    readonly property bool popupOpen: activePopup === popupName
+    readonly property bool popupOpen: activePopup === "brightness"
     popupItem: brightnessPopup
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    visible: available
+    visible: brightnessSection.screenAvailable || brightnessSection.kbdAvailable
 
     // ── Trigger ───────────────────────────────────────────────────────────────
 
     MouseArea {
-        id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: brightnessSection.openPopupReq(brightnessSection.popupName)
+        onEntered: brightnessSection.openPopupReq("brightness")
         onExited: brightnessSection.keepPopupReq()
         onWheel: wheel => {
-            brightnessSection.setBrightnessReq(
-                Math.max(0, Math.min(1, brightnessSection.brightness + (wheel.angleDelta.y / 120) * 0.05))
+            // Scroll on the icon adjusts screen brightness (primary)
+            brightnessSection.setScreenBrightnessReq(
+                Math.max(0, Math.min(1, brightnessSection.screenBrightness + (wheel.angleDelta.y / 120) * 0.05))
             );
             brightnessSection.keepAliveReq();
         }
@@ -70,21 +65,21 @@ BarSectionItem {
 
     IconImage {
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: brightnessSection.iconOffset
         implicitSize: Config.bar.batteryIconSize
-        source: Quickshell.iconPath(brightnessSection.iconName)
+        source: Quickshell.iconPath("high-brightness-symbolic")
     }
 
     // ── Popup ─────────────────────────────────────────────────────────────────
 
-    BarSliderPopup {
+    BrightnessPopup {
         id: brightnessPopup
-        popupName: brightnessSection.popupName
-        iconName: brightnessSection.iconName
-        fraction: brightnessSection.brightness
         activePopup: brightnessSection.activePopup
         labelWidth: brightnessSection.sliderLabelWidth
-        iconOffset: brightnessSection.popupIconOffset
+
+        screenFraction: brightnessSection.screenBrightness
+        screenAvailable: brightnessSection.screenAvailable
+        kbdFraction: brightnessSection.kbdBrightness
+        kbdAvailable: brightnessSection.kbdAvailable
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
@@ -93,9 +88,13 @@ BarSectionItem {
         onOpenPopupReq: name => brightnessSection.openPopupReq(name)
         onExitPopupReq: brightnessSection.exitPopupReq()
 
-        onSetFraction: v => brightnessSection.setBrightnessReq(v)
-        onScrollDelta: delta => brightnessSection.setBrightnessReq(
-            Math.max(0, Math.min(1, brightnessSection.brightness + delta * 0.05))
+        onSetScreenFraction: v => brightnessSection.setScreenBrightnessReq(v)
+        onSetKbdFraction: v => brightnessSection.setKbdBrightnessReq(v)
+        onScrollScreenDelta: delta => brightnessSection.setScreenBrightnessReq(
+            Math.max(0, Math.min(1, brightnessSection.screenBrightness + delta * 0.05))
+        )
+        onScrollKbdDelta: delta => brightnessSection.setKbdBrightnessReq(
+            Math.max(0, Math.min(1, brightnessSection.kbdBrightness + delta * 0.05))
         )
     }
 }
