@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+
 import ".."
 
 // Base Item for bar sections that show a floating popup above the pill.

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+
 import ".."
 
 // Animated popup wrapper — wraps PopupCard with snappy show/hide animation.
