@@ -59,7 +59,7 @@ PopupContainer {
 
     // ── Width — TextMetrics over all labels, one shot, no circular dep ────────
 
-    readonly property real _iconSize: Config.bar.fontSizeStatus + Math.round(4 * Config.scale)
+    readonly property real _iconSize: Config.bar.fontSizePopup + Math.round(4 * Config.scale)
     // overhead for item rows: viewportLeft(8) + rowLeftMargin(8) + iconSpacing(8)
     //   + viewportRight(4) + scrollbarWidth(3) + scrollbarRightMargin(3) + breathing(8) = 42
     readonly property real _rowOverhead: Math.round(42 * Config.scale)
@@ -112,7 +112,7 @@ PopupContainer {
     TextMetrics {
         id: tm
         font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
+        font.pixelSize: Config.bar.fontSizePopup
     }
 
     HoverHandler {
@@ -167,7 +167,7 @@ PopupContainer {
                 text: root.emptyText
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Config.bar.fontSizeStatus
+                font.pixelSize: Config.bar.fontSizePopup
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 topPadding: Math.round(8 * Config.scale)
@@ -182,7 +182,7 @@ PopupContainer {
                 text: "Available"
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
                 topPadding: Math.round(4 * Config.scale)
@@ -218,7 +218,7 @@ PopupContainer {
                             text: availRow.modelData.label
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                         }
                     }
 
@@ -250,7 +250,7 @@ PopupContainer {
                 text: "Connected"
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
                 topPadding: root.availableItems.length > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
@@ -288,7 +288,7 @@ PopupContainer {
                             text: connRow.modelData.label
                             color: Config.colors.accent
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                         }
                     }
 
@@ -314,7 +314,7 @@ PopupContainer {
                 text: "Available"
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
                 topPadding: Math.round(4 * Config.scale)
@@ -355,7 +355,7 @@ PopupContainer {
                             text: root.rawLabelFn ? root.rawLabelFn(rawAvailRow.modelData) : ""
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                         }
                     }
 
@@ -387,7 +387,7 @@ PopupContainer {
                 text: "Connected"
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.78)
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
                 leftPadding: Math.round(4 * Config.scale)
                 topPadding: root._rawAvailableCount > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
@@ -430,7 +430,7 @@ PopupContainer {
                             text: root.rawLabelFn ? root.rawLabelFn(rawConnRow.modelData) : ""
                             color: Config.colors.accent
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                         }
                     }
 
@@ -453,7 +453,7 @@ PopupContainer {
                 text: root.emptyText
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Config.bar.fontSizeStatus
+                font.pixelSize: Config.bar.fontSizePopup
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 topPadding: Math.round(8 * Config.scale)

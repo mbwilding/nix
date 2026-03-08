@@ -168,7 +168,7 @@ Scope {
     TextMetrics {
         id: statusTextMetrics
         font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
+        font.pixelSize: Config.bar.fontSizePopup
         text: "100%"
     }
 
@@ -226,7 +226,7 @@ Scope {
                     text: "Connect to"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     horizontalAlignment: Text.AlignHCenter
                 }
 
@@ -235,7 +235,7 @@ Scope {
                     text: root.wifiPasswordPendingSsid
                     color: Config.colors.accent
                     font.family: Config.font.family
-                    font.pixelSize: Config.bar.fontSizeStatus
+                    font.pixelSize: Config.bar.fontSizePopup
                     font.weight: Font.DemiBold
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideMiddle
@@ -280,7 +280,7 @@ Scope {
                                 Layout.fillWidth: true
                                 color: Config.colors.textPrimary
                                 font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizeStatus
+                                font.pixelSize: Config.bar.fontSizePopup
                                 echoMode: pwShowBtn.showPw ? TextInput.Normal : TextInput.Password
                                 passwordCharacter: "\u2022"
                                 clip: true
@@ -293,7 +293,7 @@ Scope {
                                     text: "Password"
                                     color: Config.colors.textMuted
                                     font.family: Config.font.family
-                                    font.pixelSize: Config.bar.fontSizeStatus
+                                    font.pixelSize: Config.bar.fontSizePopup
                                     verticalAlignment: Text.AlignVCenter
                                     visible: pwField.text === "" && !pwField.activeFocus
                                 }
@@ -356,7 +356,7 @@ Scope {
                             text: "Cancel"
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                         }
 
                         MouseArea {
@@ -391,7 +391,7 @@ Scope {
                             text: "Connect"
                             color: Config.colors.accent
                             font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizeStatus
+                            font.pixelSize: Config.bar.fontSizePopup
                             font.weight: Font.Medium
                         }
 

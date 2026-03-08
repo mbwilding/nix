@@ -45,7 +45,7 @@ Item {
     TextMetrics {
         id: entryTextMetrics
         font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizeStatus
+        font.pixelSize: Config.bar.fontSizePopup
     }
 
     // Computed imperatively to avoid a binding loop from mutating entryTextMetrics.text
@@ -53,7 +53,7 @@ Item {
 
     function recomputePopupWidth() {
         const entries = menuOpener.children ? menuOpener.children.values : [];
-        const iconW = Config.bar.fontSizeStatus + Math.round(8 * Config.scale);
+        const iconW = Config.bar.fontSizePopup + Math.round(8 * Config.scale);
         const rowMargins = Math.round(8 * Config.scale) * 2;
         const colPadding = Math.round(16 * Config.scale);
         let maxTextW = Math.round(100 * Config.scale);
@@ -216,7 +216,7 @@ Item {
                                         return p === "image://icon/" ? "" : p;
                                     }
                                     visible: resolved !== "" && status !== Image.Error
-                                    implicitSize: Config.bar.fontSizeStatus
+                                    implicitSize: Config.bar.fontSizePopup
                                     source: resolved
                                     Layout.alignment: Qt.AlignVCenter
                                 }
@@ -226,7 +226,7 @@ Item {
                                     text: entryDelegate.modelData.text
                                     color: entryDelegate.modelData.enabled ? Config.colors.textPrimary : Config.colors.textMuted
                                     font.family: Config.font.family
-                                    font.pixelSize: Config.bar.fontSizeStatus
+                                    font.pixelSize: Config.bar.fontSizePopup
                                 }
                             }
 
