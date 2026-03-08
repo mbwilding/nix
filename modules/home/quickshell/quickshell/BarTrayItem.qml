@@ -12,39 +12,24 @@ BarSectionItem {
 
     required property SystemTrayItem trayItem
 
-    // Popup manager integration — set by Bar.qml delegate
-    property string popupName: ""
-    property string activePopup: ""
+    property int menuPopupWidth: Math.round(200 * Config.scale)
     property real availableHeight: 800
-    signal openPopupReq(string name)
-    signal keepPopupReq
-    signal exitPopupReq
-    signal closePopupReq
-
-    signal hovered
+    property string activePopup: ""
+    property string popupName: ""
 
     readonly property bool popupOpen: activePopup === popupName && popupName !== ""
-
-    // Expose the popup item so Bar.qml can include it in the input mask
     readonly property Item menuPopup: menuPopupRect
+    readonly property int maxPopupHeight: root.availableHeight - root.height - Config.bar.popupOffset - Math.round(16 * Config.scale)
+
+    signal closePopupReq
+    signal exitPopupReq
+    signal hovered
+    signal keepPopupReq
+    signal openPopupReq(string name)
 
     implicitWidth: iconContainer.implicitWidth
     implicitHeight: iconContainer.implicitHeight
-
     popupItem: menuPopupRect
-
-    // ── Popup width calculation ───────────────────────────────────────────────
-    // Measures the widest menu entry text to size the popup correctly.
-
-    // Used for per-entry text width measurement
-    TextMetrics {
-        id: entryTextMetrics
-        font.family: Config.font.family
-        font.pixelSize: Config.bar.fontSizePopup
-    }
-
-    // Computed imperatively to avoid a binding loop from mutating entryTextMetrics.text
-    property int menuPopupWidth: Math.round(200 * Config.scale)
 
     function recomputePopupWidth() {
         const entries = menuOpener.children ? menuOpener.children.values : [];
@@ -64,12 +49,11 @@ BarSectionItem {
         menuPopupWidth = iconW + maxTextW + rowMargins + colPadding;
     }
 
-    readonly property int maxPopupHeight: root.availableHeight
-                                          - root.height
-                                          - Config.bar.popupOffset
-                                          - Math.round(16 * Config.scale)
-
-    // ─────────────────────────────────────────────────────────────────────────
+    TextMetrics {
+        id: entryTextMetrics
+        font.family: Config.font.family
+        font.pixelSize: Config.bar.fontSizePopup
+    }
 
     BarButton {
         id: iconContainer
@@ -105,8 +89,6 @@ BarSectionItem {
             }
         }
     }
-
-    // ── Menu popup ────────────────────────────────────────────────────────────
 
     QsMenuOpener {
         id: menuOpener
@@ -160,7 +142,6 @@ BarSectionItem {
 
                         implicitHeight: modelData.isSeparator ? Math.round(9 * Config.scale) : entryRow.implicitHeight + Math.round(10 * Config.scale)
 
-                        // Separator
                         Rectangle {
                             visible: entryDelegate.modelData.isSeparator
                             anchors.verticalCenter: parent.verticalCenter
@@ -170,7 +151,6 @@ BarSectionItem {
                             color: Config.colors.border
                         }
 
-                        // Menu row (non-separator)
                         Rectangle {
                             visible: !entryDelegate.modelData.isSeparator
                             anchors.fill: parent
@@ -197,10 +177,8 @@ BarSectionItem {
                                     readonly property string resolved: {
                                         if (iconStr === "")
                                             return "";
-                                        // Already a URL (qsimage raw data or file path) — use directly
                                         if (iconStr.startsWith("image://") || iconStr.startsWith("/") || iconStr.startsWith("file://"))
                                             return iconStr;
-                                        // Theme icon name — look up, but treat bare "image://icon/" as empty
                                         const p = Quickshell.iconPath(iconStr);
                                         return p === "image://icon/" ? "" : p;
                                     }

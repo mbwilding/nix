@@ -21,7 +21,9 @@ ShellRoot {
 
     Connections {
         target: notifs
-        function onAnimateOutHistoryEntry(snapId) { bar.animateOutHistoryEntry(snapId) }
+
+        function onAnimateOutHistoryEntry(snapId) {
+            bar.animateOutHistoryEntry(snapId);
+        }
     }
 }
-
