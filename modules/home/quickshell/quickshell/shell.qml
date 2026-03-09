@@ -7,6 +7,7 @@ import "bar"
 import "lockscreen"
 import "notifications"
 import "osd"
+import "stats"
 
 ShellRoot {
     id: root
@@ -17,6 +18,8 @@ ShellRoot {
         onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
         onDismissAllNotifs: notifs.dismissAll()
     }
+
+    Stats {}
 
     Osd {}
 

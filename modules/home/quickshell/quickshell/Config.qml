@@ -110,6 +110,19 @@ QtObject {
         readonly property var systemLayout: [SystemItems.wifi, SystemItems.bluetooth, SystemItems.volume, SystemItems.brightness, SystemItems.power, SystemItems.ethernet, SystemItems.notifications]
     }
 
+    readonly property QtObject stats: QtObject {
+        readonly property int animateSpeed: 220
+        readonly property int hideDelay: 2000
+        readonly property int radius: 18
+        readonly property int height: 220             // drawer height in px (pre-scale)
+        readonly property int maxWidth: 1200          // max drawer width in px (pre-scale)
+        readonly property int musicWidth: 260
+        readonly property int clockWidth: 200
+        readonly property int rightWidth: 260
+        readonly property int fontSizeTime: Math.round(root.font.sizeMd * 2.6)
+        readonly property int fontSizeDate: Math.round(root.font.sizeMd * 1.2)
+    }
+
     readonly property QtObject battery: QtObject {
         readonly property var chargeLevels: ({
                 charging: {
