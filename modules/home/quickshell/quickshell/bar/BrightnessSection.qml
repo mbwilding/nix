@@ -69,6 +69,7 @@ BarSectionItem {
         anchors.fill: parent
         hovered: brightnessTrigger.containsMouse
         popupOpen: brightnessSection.popupOpen
+        clickable: false
 
         Row {
             anchors.centerIn: parent
