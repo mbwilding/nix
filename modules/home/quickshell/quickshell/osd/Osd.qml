@@ -102,6 +102,7 @@ Scope {
     }
 
     PanelWindow {
+        screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
         exclusiveZone: 0

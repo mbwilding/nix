@@ -145,6 +145,7 @@ Scope {
 
     PanelWindow {
         id: passwordWin
+        screen: Quickshell.screens[Config.monitor]
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
@@ -402,6 +403,7 @@ Scope {
     PanelWindow {
         id: win
 
+        screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
         exclusiveZone: 0
