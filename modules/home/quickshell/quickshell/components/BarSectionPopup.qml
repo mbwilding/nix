@@ -65,28 +65,66 @@ PopupContainer {
     // ── Width — TextMetrics over all labels, one shot, no circular dep ────────
 
     readonly property real _iconSize: Config.bar.fontSizePopup + Math.round(4 * Config.scale)
-    // overhead for item rows: viewportLeft(8) + rowLeftMargin(8) + iconSpacing(8)
-    //   + viewportRight(4) + scrollbarWidth(3) + scrollbarRightMargin(3) + breathing(8) = 42
-    readonly property real _rowOverhead: Math.round(42 * Config.scale)
+    // overhead for item rows: viewportLeft(8) + rowLeftMargin(8) + iconSpacing(8) * 5 cols
+    //   + viewportRight(4) + scrollbarWidth(3) + scrollbarRightMargin(3) + breathing(8) = 66
+    readonly property real _rowOverhead: Math.round(66 * Config.scale)
     // overhead for the empty-text placeholder: viewportLeft(8) + viewportRight(4)
     //   + scrollbarWidth(3) + scrollbarRightMargin(3) + breathing(8) = 26
     readonly property real _emptyOverhead: Math.round(26 * Config.scale)
+    // gap between metadata columns
+    readonly property real _colGap: Math.round(8 * Config.scale)
 
     property real _maxLabelWidth: 0
+    property real _maxSignalWidth: 0
+    property real _maxBandWidth: 0
+    property real _maxGenWidth: 0
+    property real _maxSecWidth: 0
     property real _emptyTextWidth: 0
 
+    // Whether any item has wifi metadata columns (signal/band/gen/sec)
+    readonly property bool _hasWifiMeta: {
+        const lists = [root.availableItems, root.connectedItems];
+        for (let l = 0; l < lists.length; l++) {
+            if (lists[l].length > 0 && lists[l][0].band !== undefined) return true;
+        }
+        return false;
+    }
+
     function _recomputeMaxLabelWidth() {
-        let maxW = 0;
+        let maxLabel = 0, maxSig = 0, maxBand = 0, maxGen = 0, maxSec = 0;
         const lists = [root.availableItems, root.connectedItems];
         for (let l = 0; l < lists.length; l++) {
             const items = lists[l];
             for (let i = 0; i < items.length; i++) {
-                tm.text = items[i].label;
-                const w = tm.advanceWidth;
-                if (w > maxW) maxW = w;
+                const it = items[i];
+                tm.text = it.label || "";
+                const lw = tm.advanceWidth;
+                if (lw > maxLabel) maxLabel = lw;
+
+                if (it.band !== undefined) {
+                    tm.text = (it.signal !== undefined) ? it.signal + "%" : "";
+                    const sw = tm.advanceWidth;
+                    if (sw > maxSig) maxSig = sw;
+
+                    tm.text = it.band ? it.band + " GHz" : "";
+                    const bw = tm.advanceWidth;
+                    if (bw > maxBand) maxBand = bw;
+
+                    tm.text = it.gen || "";
+                    const gw = tm.advanceWidth;
+                    if (gw > maxGen) maxGen = gw;
+
+                    tm.text = it.security || "";
+                    const secw = tm.advanceWidth;
+                    if (secw > maxSec) maxSec = secw;
+                }
             }
         }
-        root._maxLabelWidth = maxW;
+        root._maxLabelWidth  = maxLabel;
+        root._maxSignalWidth = maxSig;
+        root._maxBandWidth   = maxBand;
+        root._maxGenWidth    = maxGen;
+        root._maxSecWidth    = maxSec;
         tm.text = root.emptyText;
         root._emptyTextWidth = tm.advanceWidth;
     }
@@ -96,9 +134,13 @@ PopupContainer {
     onEmptyTextChanged: root._recomputeMaxLabelWidth()
     Component.onCompleted: root._recomputeMaxLabelWidth()
 
+    readonly property real _metaCols: _hasWifiMeta
+        ? _maxSignalWidth + _maxBandWidth + _maxGenWidth + _maxSecWidth + _colGap * 4
+        : 0
+
     width: Math.max(
         root._emptyTextWidth + root._emptyOverhead,
-        root._maxLabelWidth + root._iconSize + root._rowOverhead
+        root._maxLabelWidth + root._iconSize + root._metaCols + root._rowOverhead
     )
     Behavior on width {
         NumberAnimation { duration: 100; easing.type: Easing.InOutQuart }
@@ -178,6 +220,7 @@ PopupContainer {
                     required property int index
 
                     readonly property bool _saved: !!availRow.modelData.saved
+                    readonly property bool _hasMeta: availRow.modelData.band !== undefined
                     readonly property real _btnWidth: availRow.height
 
                     width: parent.width
@@ -191,6 +234,8 @@ PopupContainer {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: Math.round(8 * Config.scale)
+                        anchors.right: availRow._saved ? forgetBtnArea.left : parent.right
+                        anchors.rightMargin: Math.round(4 * Config.scale)
                         spacing: Math.round(8 * Config.scale)
 
                         IconImage {
@@ -202,6 +247,50 @@ PopupContainer {
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizePopup
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                        }
+                        // Signal %
+                        Text {
+                            visible: availRow._hasMeta
+                            text: availRow._hasMeta && availRow.modelData.signal !== undefined
+                                  ? availRow.modelData.signal + "%" : ""
+                            color: Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxSignalWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Band (2.4 GHz / 5 GHz / 6 GHz)
+                        Text {
+                            visible: availRow._hasMeta
+                            text: availRow._hasMeta && availRow.modelData.band
+                                  ? availRow.modelData.band + " GHz" : ""
+                            color: Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxBandWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Wi-Fi generation (Wi-Fi 5/6/6E/7)
+                        Text {
+                            visible: availRow._hasMeta
+                            text: availRow._hasMeta ? (availRow.modelData.gen || "") : ""
+                            color: Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxGenWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Security (WPA2/WPA3/Open…)
+                        Text {
+                            visible: availRow._hasMeta
+                            text: availRow._hasMeta ? (availRow.modelData.security || "") : ""
+                            color: Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxSecWidth
+                            horizontalAlignment: Text.AlignRight
                         }
                     }
 
@@ -218,38 +307,15 @@ PopupContainer {
                         onClicked: root.availableClicked(availRow.index)
                     }
 
-                    // Forget button — only for saved networks
-                    Rectangle {
+                    // Forget — only for saved networks
+                    Item {
                         id: forgetBtnArea
                         visible: availRow._saved
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
                         width: availRow._btnWidth
-                        radius: Math.round(8 * Config.scale)
                         z: 1
-
-                        color: forgetMouse.containsMouse
-                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
-                            : "transparent"
-                        border.color: forgetMouse.containsMouse
-                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.70)
-                            : "transparent"
-                        border.width: 1
-                        Behavior on color { ColorAnimation { duration: 80 } }
-                        Behavior on border.color { ColorAnimation { duration: 80 } }
-
-                        // Outer glow ring
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: -3
-                            radius: parent.radius + 3
-                            color: "transparent"
-                            border.color: Config.colors.danger
-                            border.width: 2
-                            opacity: forgetMouse.containsMouse ? 0.35 : 0
-                            Behavior on opacity { NumberAnimation { duration: 80 } }
-                        }
 
                         Text {
                             anchors.centerIn: parent
@@ -293,6 +359,8 @@ PopupContainer {
                     required property var modelData
                     required property int index
 
+                    readonly property bool _hasMeta: connRow.modelData.band !== undefined
+
                     width: parent.width
                     height: connRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
@@ -311,6 +379,8 @@ PopupContainer {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: Math.round(8 * Config.scale)
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(4 * Config.scale)
                         spacing: Math.round(8 * Config.scale)
 
                         IconImage {
@@ -322,6 +392,50 @@ PopupContainer {
                             color: Config.colors.accent
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizePopup
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                        }
+                        // Signal %
+                        Text {
+                            visible: connRow._hasMeta
+                            text: connRow._hasMeta && connRow.modelData.signal !== undefined
+                                  ? connRow.modelData.signal + "%" : ""
+                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxSignalWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Band
+                        Text {
+                            visible: connRow._hasMeta
+                            text: connRow._hasMeta && connRow.modelData.band
+                                  ? connRow.modelData.band + " GHz" : ""
+                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxBandWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Wi-Fi generation
+                        Text {
+                            visible: connRow._hasMeta
+                            text: connRow._hasMeta ? (connRow.modelData.gen || "") : ""
+                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxGenWidth
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        // Security
+                        Text {
+                            visible: connRow._hasMeta
+                            text: connRow._hasMeta ? (connRow.modelData.security || "") : ""
+                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
+                            Layout.preferredWidth: root._maxSecWidth
+                            horizontalAlignment: Text.AlignRight
                         }
                     }
 
@@ -409,38 +523,15 @@ PopupContainer {
                         onClicked: root.rawAvailableClicked(rawAvailRow.modelData)
                     }
 
-                    // Forget button — only for saved networks
-                    Rectangle {
+                    // Forget — only for saved networks
+                    Item {
                         id: rawForgetBtnArea
                         visible: rawAvailRow._saved
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
                         width: rawAvailRow._btnWidth
-                        radius: Math.round(8 * Config.scale)
                         z: 1
-
-                        color: rawForgetMouse.containsMouse
-                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
-                            : "transparent"
-                        border.color: rawForgetMouse.containsMouse
-                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.70)
-                            : "transparent"
-                        border.width: 1
-                        Behavior on color { ColorAnimation { duration: 80 } }
-                        Behavior on border.color { ColorAnimation { duration: 80 } }
-
-                        // Outer glow ring
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: -3
-                            radius: parent.radius + 3
-                            color: "transparent"
-                            border.color: Config.colors.danger
-                            border.width: 2
-                            opacity: rawForgetMouse.containsMouse ? 0.35 : 0
-                            Behavior on opacity { NumberAnimation { duration: 80 } }
-                        }
 
                         Text {
                             anchors.centerIn: parent
