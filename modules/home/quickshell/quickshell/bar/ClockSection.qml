@@ -12,19 +12,9 @@ Item {
 
     property date clockDate
 
-    function timeText(d) {
-        if (!d)
-            return "--:--";
-        if (Config.bar.clock24h)
-            return Qt.formatTime(d, "HH:mm");
-        return Qt.formatTime(d, "h:mm") + " " + Qt.formatTime(d, "AP");
-    }
-
-    function dateText(d) {
-        if (!d)
-            return "";
-        return Qt.formatDate(d, "ddd dd MMM");
-    }
+    readonly property bool showDate: Config.bar.clockShowDate
+    readonly property bool showTime: Config.bar.clockShowTime
+    readonly property bool showSeparator: showDate && showTime
 
     Row {
         id: clockRow
@@ -32,7 +22,8 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text: clockSection.dateText(clockSection.clockDate)
+            visible: clockSection.showDate
+            text: clockSection.clockDate ? Qt.formatDate(clockSection.clockDate, Config.bar.clockDateFormat) : ""
             color: Config.colors.textSecondary
             font.family: Config.font.family
             font.pixelSize: Math.round(Config.bar.fontSizeClock * 0.62)
@@ -40,6 +31,7 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
+            visible: clockSection.showSeparator
             text: "·"
             color: Config.colors.textMuted
             font.family: Config.font.family
@@ -48,7 +40,8 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text: clockSection.timeText(clockSection.clockDate)
+            visible: clockSection.showTime
+            text: clockSection.clockDate ? Qt.formatTime(clockSection.clockDate, Config.bar.clockTimeFormat) : "--:--"
             color: Config.colors.accent
             font.family: Config.font.family
             font.pixelSize: Config.bar.fontSizeClock

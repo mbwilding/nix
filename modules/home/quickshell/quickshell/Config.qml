@@ -102,6 +102,10 @@ QtObject {
         readonly property int fontSizePopup: root.font.sizeXl
         readonly property int popupOffset: Math.round(10 * root.scale)
         readonly property bool clock24h: true
+        readonly property bool clockShowTime: true
+        readonly property bool clockShowDate: true
+        readonly property string clockTimeFormat: clock24h ? "HH:mm" : "h:mm AP"
+        readonly property string clockDateFormat: "ddd dd MMM"
         readonly property real disabledOpacity: 0.35
         readonly property int popupRadius: Math.round(14 * root.scale)
         readonly property var layout: [BarItems.tray, BarItems.separator, BarItems.system, BarItems.separator, BarItems.clock]
