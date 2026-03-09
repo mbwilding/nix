@@ -90,6 +90,7 @@
                   inputs
                   hostname
                   secrets
+                  pkgsStable
                   ;
               };
               home-manager.users.anon = {
