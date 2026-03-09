@@ -228,22 +228,6 @@ BarSectionItem {
         return "6";
     }
 
-    // Derive Wi-Fi generation label from the mode string reported by nmcli
-    // nmcli reports: "Infra", "802.11ax", "802.11be", etc. in the MODE column,
-    // but on many distros MODE is just "Infra". We derive generation from freq+security
-    // as a fallback, but prefer the mode field when available.
-    function wifiGen(mode, band) {
-        const m = (mode || "").toLowerCase();
-        if (m.includes("be"))                   return "Wi-Fi 7";
-        if (m.includes("ax") || m.includes("he")) return band === "6" ? "Wi-Fi 6E" : "Wi-Fi 6";
-        if (m.includes("ac") || m.includes("vht")) return "Wi-Fi 5";
-        if (m.includes("n")  || m.includes("ht"))  return "Wi-Fi 4";
-        if (m.includes("g")  || m.includes("a"))   return "Wi-Fi 4";
-        // Fallback: infer from band alone
-        if (band === "6") return "Wi-Fi 6E";
-        if (band === "5") return "Wi-Fi 5";
-        return "";
-    }
 
     // Normalise the security string from nmcli into a short human label
     function secLabel(sec) {
@@ -260,10 +244,10 @@ BarSectionItem {
 
     Process {
         id: wifiProc
-        // Fields: ssid, signal, active, freq, security, mode
+        // Fields: ssid, signal, active, freq, security, rate, bandwidth
         // nmcli -t separates fields with ':' and rows with '\n'.
         // ssid may contain colons so we parse from the right.
-        command: ["nmcli", "-t", "-f", "ssid,signal,active,freq,security,mode", "dev", "wifi"]
+        command: ["nmcli", "-t", "-f", "ssid,signal,active,freq,security", "dev", "wifi"]
 
         property bool scanForReal: false
 
@@ -290,15 +274,14 @@ BarSectionItem {
                     if (!line)
                         continue;
 
-                    // Parse from the right: mode:security:freq:active:signal:ssid
-                    // We need 5 rightmost colon-separated tokens; ssid is the rest.
+                    // Parse from the right: security:freq:active:signal:ssid
+                    // We need 4 rightmost colon-separated tokens; ssid is the rest.
                     let rest = line;
-                    let mode_, security_, freqStr_, activeStr_, signalStr_, ssid_;
-                    [mode_,     rest] = popRight(rest);
-                    [security_, rest] = popRight(rest);
-                    [freqStr_,  rest] = popRight(rest);
-                    [activeStr_,rest] = popRight(rest);
-                    [signalStr_,rest] = popRight(rest);
+                    let security_, freqStr_, activeStr_, signalStr_, ssid_;
+                    [security_,  rest] = popRight(rest);
+                    [freqStr_,   rest] = popRight(rest);
+                    [activeStr_, rest] = popRight(rest);
+                    [signalStr_, rest] = popRight(rest);
                     ssid_ = rest;
 
                     if (!ssid_)
@@ -306,21 +289,19 @@ BarSectionItem {
 
                     const active   = activeStr_ === "yes";
                     const signal   = parseInt(signalStr_) || 0;
-                    // nmcli reports freq as "2412 MHz" — extract number
                     const freqMhz  = parseInt(freqStr_) || 0;
                     const band     = wifiSection.freqBand(freqMhz);
                     const security = wifiSection.secLabel(security_);
-                    const gen      = wifiSection.wifiGen(mode_, band);
 
                     const existing = nets.findIndex(n => n.ssid === ssid_);
                     if (existing >= 0) {
                         const prev = nets[existing];
                         if (active && !prev.active)
-                            nets[existing] = { ssid: ssid_, signal, active, band, security, gen };
+                            nets[existing] = { ssid: ssid_, signal, active, band, security };
                         else if (!active && !prev.active && signal > prev.signal)
-                            nets[existing] = { ssid: ssid_, signal, active, band, security, gen };
+                            nets[existing] = { ssid: ssid_, signal, active, band, security };
                     } else {
-                        nets.push({ ssid: ssid_, signal, active, band, security, gen });
+                        nets.push({ ssid: ssid_, signal, active, band, security });
                     }
                 }
                 nets.sort((a, b) => b.signal - a.signal);
@@ -493,7 +474,6 @@ BarSectionItem {
                     signal: n.signal,
                     band: n.band,
                     security: n.security,
-                    gen: n.gen,
                     saved: !!wifiSection.savedSsids[n.ssid]
                 }))
 
@@ -503,7 +483,6 @@ BarSectionItem {
                     signal: n.signal,
                     band: n.band,
                     security: n.security,
-                    gen: n.gen,
                     saved: true
                 }))
 
