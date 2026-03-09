@@ -219,6 +219,7 @@ BarSectionItem {
         anchors.fill: parent
         hovered: triggerArea.containsMouse
         popupOpen: ethSection.popupOpen
+        clickable: false
 
         IconImage {
             anchors.centerIn: parent
