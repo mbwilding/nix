@@ -60,7 +60,7 @@
         ];
       };
 
-      pkgsStable = import inputs.nixpkgs {
+      pkgsStable = import inputs.nixpkgsStable {
         inherit system;
         config = {
           allowUnfree = true;
