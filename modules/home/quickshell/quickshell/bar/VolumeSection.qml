@@ -274,16 +274,10 @@ BarSectionItem {
                 spacing: Math.round(2 * Config.scale)
                 y: -scrollView.scrollY
 
-                Text {
+                PopupSectionHeader {
                     visible: volumeSection.sinkNodes.length > 0
                     text: "Output"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                     width: parent.width
-                    leftPadding: Math.round(4 * Config.scale)
-                    topPadding: Math.round(4 * Config.scale)
-                    bottomPadding: Math.round(2 * Config.scale)
                 }
 
                 Repeater {
@@ -299,16 +293,11 @@ BarSectionItem {
                     }
                 }
 
-                Text {
+                PopupSectionHeader {
                     visible: volumeSection.sourceNodes.length > 0
                     text: "Input"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                     width: parent.width
-                    leftPadding: Math.round(4 * Config.scale)
                     topPadding: volumeSection.sinkNodes.length > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
-                    bottomPadding: Math.round(2 * Config.scale)
                 }
 
                 Repeater {
