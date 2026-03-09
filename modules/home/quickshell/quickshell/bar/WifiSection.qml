@@ -278,10 +278,10 @@ BarSectionItem {
                     wifiSection.ssid = cur.ssid;
                     wifiSection.strength = cur.signal;
                 } else {
+                    wifiSection.strength = -1;
                     wifiSection.noActiveCount++;
                     if (wifiSection.noActiveCount >= 2) {
                         wifiSection.ssid = "";
-                        wifiSection.strength = -1;
                     }
                 }
 
