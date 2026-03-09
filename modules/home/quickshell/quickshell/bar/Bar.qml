@@ -470,7 +470,8 @@ Scope {
             radius: Config.bar.radius
             antialiasing: true
             color: Config.colors.surface
-            border.width: 0
+            border.width: Config.panelBorder.width
+            border.color: Config.panelBorder.color
             opacity: root.visible_ ? 1 : 0
 
             Behavior on anchors.bottomMargin {
@@ -478,42 +479,6 @@ Scope {
                     duration: Config.bar.animateSpeed
                     easing.type: Easing.InOutCubic
                 }
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: -10
-                radius: parent.radius + 10
-                color: "transparent"
-                border.color: Config.colors.shadowDark
-                border.width: 10
-                opacity: 0.8
-                z: -3
-                antialiasing: true
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: -4
-                radius: parent.radius + 4
-                color: "transparent"
-                border.color: Config.colors.glowAccent
-                border.width: 3
-                opacity: 0.25
-                z: -2
-                antialiasing: true
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: -2
-                radius: parent.radius + 2
-                color: "transparent"
-                border.color: Config.colors.accent
-                border.width: 1
-                opacity: 0.18
-                z: -1
-                antialiasing: true
             }
 
             Behavior on opacity {
