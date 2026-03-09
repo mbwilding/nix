@@ -306,7 +306,34 @@ Item {
                 Layout.bottomMargin: Math.round(4 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
 
-                readonly property var _actions: root.historyMode ? (root.snapshot?.actions ?? []) : (root.notification?.actions ?? [])
+                readonly property var _actions: {
+                    if (root.historyMode) {
+                        // Snapshot actions are plain JS objects; try to invoke via liveNotif.
+                        const snap = root.snapshot;
+                        const live = snap?.liveNotif;
+                        const snapActions = snap?.actions ?? [];
+                        if (!live || snapActions.length === 0)
+                            return [];
+                        const liveActions = live.actions ?? [];
+                        const result = [];
+                        for (let i = 0; i < snapActions.length; i++) {
+                            const sa = snapActions[i];
+                            const la = liveActions[i];
+                            result.push({ identifier: sa.identifier, text: sa.text, invoke: la ? (() => la.invoke()) : null });
+                        }
+                        return result;
+                    } else {
+                        // Live card: snapshot C++ Action objects into plain JS with a bound invoke.
+                        const notif = root.notification;
+                        const rawActions = notif?.actions ?? [];
+                        const result = [];
+                        for (let i = 0; i < rawActions.length; i++) {
+                            const a = rawActions[i];
+                            result.push({ identifier: a.identifier ?? "", text: a.text ?? "", invoke: (() => a.invoke()) });
+                        }
+                        return result;
+                    }
+                }
                 visible: _actions.length > 0
 
                 Repeater {
@@ -376,7 +403,8 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true
                             onClicked: {
-                                actionDelegate.modelData.invoke();
+                                if (actionDelegate.modelData.invoke)
+                                    actionDelegate.modelData.invoke();
                                 root.animateOut();
                             }
                         }

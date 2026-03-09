@@ -185,7 +185,15 @@ Scope {
             const n = card.notification;
             if (!n)
                 return;
-            const def = (n.actions ?? []).find(a => a.identifier === "default");
+            // Iterate via index to avoid QV4 sequence-wrapping the C++ QList.
+            const rawActions = n.actions;
+            let def = null;
+            for (let i = 0; i < rawActions.length; i++) {
+                if (rawActions[i].identifier === "default") {
+                    def = rawActions[i];
+                    break;
+                }
+            }
             if (def) {
                 def.invoke();
             } else if (n.desktopEntry && n.desktopEntry !== "") {
@@ -208,6 +216,16 @@ Scope {
         onNotification: notification => {
             notification.tracked = true;
 
+            // Snapshot actions as plain JS objects immediately — holding a live
+            // C++ QList<Action*> reference in a var property crashes Qt's QV4
+            // sequence wrapper when the list is later iterated by a Repeater.
+            const rawActions = notification.actions ?? [];
+            const actions = [];
+            for (let i = 0; i < rawActions.length; i++) {
+                const a = rawActions[i];
+                actions.push({ identifier: a.identifier ?? "", text: a.text ?? "" });
+            }
+
             const snapId = Date.now() + Math.random();
             const snapshot = {
                 id: snapId,
@@ -217,7 +235,7 @@ Scope {
                 desktopEntry: notification.desktopEntry ?? "",
                 summary: notification.summary ?? "",
                 body: notification.body ?? "",
-                actions: notification.actions ?? [],
+                actions: actions,
                 receivedAt: new Date()
             };
             root.notifHistory = [snapshot].concat(root.notifHistory);
