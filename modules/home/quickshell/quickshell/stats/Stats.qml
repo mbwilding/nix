@@ -84,6 +84,8 @@ Scope {
         screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
+        anchors.left: true
+        anchors.right: true
         exclusiveZone: 0
         color: "transparent"
 
@@ -92,12 +94,12 @@ Scope {
 
         // Only intercept mouse input where the drawer or trigger strip is.
         mask: Region {
-            // 1-px trigger strip along the full top edge (always active)
+            // hotspot strip along the middle third of the top edge (always active)
             Region {
-                x: 0
+                x: Math.round(win.implicitWidth * Config.stats.triggerStart)
                 y: 0
-                width: win.implicitWidth
-                height: 1
+                width: Math.round(win.implicitWidth * (Config.stats.triggerEnd - Config.stats.triggerStart))
+                height: Config.stats.edgeHotspotSize
                 intersection: Intersection.Combine
             }
             // Drawer card itself
@@ -111,14 +113,15 @@ Scope {
         Item {
             id: triggerStrip
             anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
+            x: Math.round(win.implicitWidth * Config.stats.triggerStart)
+            width: Math.round(win.implicitWidth * (Config.stats.triggerEnd - Config.stats.triggerStart))
+            height: Config.stats.edgeHotspotSize
 
             HoverHandler {
                 onHoveredChanged: {
                     if (hovered)
                         root.showMouse();
+                    // no else: leaving the strip is handled by the drawer's HoverHandler
                 }
             }
         }
@@ -161,12 +164,14 @@ Scope {
                 }
             }
 
-            // Keep alive while the mouse is over the drawer
+            // Keep alive while the mouse is over the drawer.
+            // Stop the timer while hovered; restart it on leave so hide
+            // happens hideDelay ms after the mouse exits, not after entry.
             HoverHandler {
                 onHoveredChanged: {
                     if (hovered)
-                        root.keepAlive();
-                    else
+                        hideTimer.stop();
+                    else if (!root.pinned)
                         hideTimer.restart();
                 }
             }
