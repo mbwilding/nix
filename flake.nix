@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgsStable.url = "github:NixOS/nixpkgs/nixos-25.11";
+
     ucodenix.url = "github:e-tho/ucodenix";
 
     plasma-manager = {
@@ -58,12 +60,19 @@
         ];
       };
 
+      pkgsStable = import inputs.nixpkgs {
+        inherit system;
+        config = {
+          allowUnfree = true;
+        };
+      };
+
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit inputs secrets; };
+          specialArgs = { inherit inputs secrets pkgsStable; };
 
           modules = [
             { nixpkgs.pkgs = pkgs; }
@@ -107,6 +116,7 @@
               inputs
               hostname
               secrets
+              pkgsStable
               ;
           };
 
