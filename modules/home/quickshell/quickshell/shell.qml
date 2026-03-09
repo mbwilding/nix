@@ -11,17 +11,17 @@ import "osd"
 ShellRoot {
     id: root
 
-    Osd {}
-
-    Notifications {
-        id: notifs
-    }
-
     Bar {
         id: bar
         notifHistory: notifs.notifHistory
         onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
         onDismissAllNotifs: notifs.dismissAll()
+    }
+
+    Osd {}
+
+    Notifications {
+        id: notifs
     }
 
     LockScreen {
