@@ -113,20 +113,6 @@
             nmcli device wifi connect $ssid password $password
           '';
         };
-        cleanlocks = {
-          description = "Cleans known lock files";
-          body = ''
-            find . -type f \
-              \( -name bun.lock \
-              -o -name bun.lockb \
-              -o -name package-lock.json \
-              -o -name Cargo.lock \
-              -o -name packages.lock.json \
-              \) \
-              -exec rm {} \; \
-              -exec echo 'Removed: {}' \;
-          '';
-        };
       };
     };
   };
