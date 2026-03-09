@@ -221,7 +221,6 @@ PopupContainer {
 
                     readonly property bool _saved: !!availRow.modelData.saved
                     readonly property bool _hasMeta: availRow.modelData.band !== undefined
-                    readonly property real _btnWidth: availRow.height
 
                     width: parent.width
                     height: availRowLayout.implicitHeight + Math.round(8 * Config.scale)
@@ -229,12 +228,22 @@ PopupContainer {
                     color: availMouse.containsMouse ? Config.colors.rowHover : "transparent"
                     Behavior on color { ColorAnimation { duration: 60 } }
 
+                    // Row mouse — declared first so RowLayout children sit on top and receive events first
+                    MouseArea {
+                        id: availMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: root.hoverOpen()
+                        onClicked: root.availableClicked(availRow.index)
+                    }
+
                     RowLayout {
                         id: availRowLayout
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: Math.round(8 * Config.scale)
-                        anchors.right: availRow._saved ? forgetBtnArea.left : parent.right
+                        anchors.right: parent.right
                         anchors.rightMargin: Math.round(4 * Config.scale)
                         spacing: Math.round(8 * Config.scale)
 
@@ -242,6 +251,47 @@ PopupContainer {
                             implicitSize: root._iconSize
                             source: Quickshell.iconPath(availRow.modelData.icon)
                         }
+
+                        // Saved-network indicator: always reserves space for column alignment;
+                        // shows dot normally, × on hover — click forgets the network
+                        Item {
+                            implicitWidth: savedIndicatorRef.implicitWidth
+                            implicitHeight: savedIndicatorRef.implicitHeight
+                            Layout.preferredWidth: implicitWidth
+
+                            // Reference text for sizing (always "•" so width is stable)
+                            Text {
+                                id: savedIndicatorRef
+                                visible: false
+                                text: "\u2022"
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                            }
+
+                            Text {
+                                id: savedIndicatorText
+                                anchors.centerIn: parent
+                                visible: availRow._saved
+                                text: savedIndicatorMouse.containsMouse ? "\u00d7" : "\u2022"
+                                color: savedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                                Behavior on color { ColorAnimation { duration: 80 } }
+                            }
+
+                            MouseArea {
+                                id: savedIndicatorMouse
+                                anchors.fill: parent
+                                enabled: availRow._saved
+                                hoverEnabled: availRow._saved
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    mouse.accepted = true
+                                    root.availableForgetClicked(availRow.index)
+                                }
+                            }
+                        }
+
                         Text {
                             text: availRow.modelData.label
                             color: Config.colors.textPrimary
@@ -294,47 +344,6 @@ PopupContainer {
                         }
                     }
 
-                    // Row mouse — stops before the forget button when saved
-                    MouseArea {
-                        id: availMouse
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: availRow._saved ? forgetBtnArea.left : parent.right
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: root.hoverOpen()
-                        onClicked: root.availableClicked(availRow.index)
-                    }
-
-                    // Forget — only for saved networks
-                    Item {
-                        id: forgetBtnArea
-                        visible: availRow._saved
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        width: availRow._btnWidth
-                        z: 1
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\u00d7"
-                            color: forgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizePopup
-                            Behavior on color { ColorAnimation { duration: 80 } }
-                        }
-
-                        MouseArea {
-                            id: forgetMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.hoverOpen()
-                            onClicked: root.availableForgetClicked(availRow.index)
-                        }
-                    }
                 }
             }
 
@@ -481,7 +490,6 @@ PopupContainer {
                     readonly property bool _saved: root.rawSavedFn
                                                     ? root.rawSavedFn(rawAvailRow.modelData)
                                                     : false
-                    readonly property real _btnWidth: rawAvailRow.height
 
                     visible: !_isConn
                     width: parent.width
@@ -490,11 +498,23 @@ PopupContainer {
                     color: rawAvailMouse.containsMouse ? Config.colors.rowHover : "transparent"
                     Behavior on color { ColorAnimation { duration: 60 } }
 
+                    // Row mouse — declared first so RowLayout children sit on top and receive events first
+                    MouseArea {
+                        id: rawAvailMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: root.hoverOpen()
+                        onClicked: root.rawAvailableClicked(rawAvailRow.modelData)
+                    }
+
                     RowLayout {
                         id: rawAvailLayout
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: Math.round(8 * Config.scale)
+                        anchors.right: parent.right
+                        anchors.rightMargin: Math.round(4 * Config.scale)
                         spacing: Math.round(8 * Config.scale)
 
                         IconImage {
@@ -502,53 +522,53 @@ PopupContainer {
                             source: Quickshell.iconPath(
                                 root.rawIconFn ? root.rawIconFn(rawAvailRow.modelData) : "")
                         }
+
+                        // Saved-network indicator: always reserves space for column alignment;
+                        // shows dot normally, × on hover — click forgets the network
+                        Item {
+                            implicitWidth: rawSavedIndicatorRef.implicitWidth
+                            implicitHeight: rawSavedIndicatorRef.implicitHeight
+                            Layout.preferredWidth: implicitWidth
+
+                            // Reference text for sizing (always "•" so width is stable)
+                            Text {
+                                id: rawSavedIndicatorRef
+                                visible: false
+                                text: "\u2022"
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                visible: rawAvailRow._saved
+                                text: rawSavedIndicatorMouse.containsMouse ? "\u00d7" : "\u2022"
+                                color: rawSavedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                                Behavior on color { ColorAnimation { duration: 80 } }
+                            }
+
+                            MouseArea {
+                                id: rawSavedIndicatorMouse
+                                anchors.fill: parent
+                                enabled: rawAvailRow._saved
+                                hoverEnabled: rawAvailRow._saved
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    mouse.accepted = true
+                                    root.rawAvailableForgetClicked(rawAvailRow.modelData)
+                                }
+                            }
+                        }
+
                         Text {
                             text: root.rawLabelFn ? root.rawLabelFn(rawAvailRow.modelData) : ""
                             color: Config.colors.textPrimary
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.fontSizePopup
-                        }
-                    }
-
-                    // Row mouse — stops before the forget button when saved
-                    MouseArea {
-                        id: rawAvailMouse
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: rawAvailRow._saved ? rawForgetBtnArea.left : parent.right
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: root.hoverOpen()
-                        onClicked: root.rawAvailableClicked(rawAvailRow.modelData)
-                    }
-
-                    // Forget — only for saved networks
-                    Item {
-                        id: rawForgetBtnArea
-                        visible: rawAvailRow._saved
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        width: rawAvailRow._btnWidth
-                        z: 1
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\u00d7"
-                            color: rawForgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizePopup
-                            Behavior on color { ColorAnimation { duration: 80 } }
-                        }
-
-                        MouseArea {
-                            id: rawForgetMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.hoverOpen()
-                            onClicked: root.rawAvailableForgetClicked(rawAvailRow.modelData)
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
                         }
                     }
                 }
