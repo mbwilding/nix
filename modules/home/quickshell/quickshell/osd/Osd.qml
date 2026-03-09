@@ -104,7 +104,8 @@ Scope {
     PanelWindow {
         screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
-        anchors.top: true
+        anchors.bottom: true
+        margins.bottom: Math.round(screen.height / 8)
         exclusiveZone: 0
         color: "transparent"
         mask: Region {}
@@ -117,26 +118,26 @@ Scope {
             width: parent.width
             height: root.panelHeight
 
-            transform: Translate {
-                y: root.anyVisible ? 0 : -panelWrapper.height - Math.round(12 * Config.scale)
-                Behavior on y {
-                    NumberAnimation {
-                        duration: Config.osd.animateSpeed
-                        easing.type: Easing.InOutCubic
-                        onFinished: if (!root.anyVisible) {
-                            root.volumeVisible = false;
-                            root.screenVisible = false;
-                            root.kbdVisible = false;
-                        }
-                    }
-                }
-            }
-
             opacity: root.anyVisible ? 1 : 0
+            scale: root.anyVisible ? 1 : 0.85
+            transformOrigin: Item.Center
+
             Behavior on opacity {
                 NumberAnimation {
                     duration: Config.osd.animateSpeed
                     easing.type: Easing.InOutCubic
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Config.osd.animateSpeed
+                    easing.type: Easing.OutCubic
+                    onFinished: if (!root.anyVisible) {
+                        root.volumeVisible = false;
+                        root.screenVisible = false;
+                        root.kbdVisible = false;
+                    }
                 }
             }
 
