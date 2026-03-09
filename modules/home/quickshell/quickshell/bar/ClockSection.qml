@@ -1,15 +1,14 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 
 import ".."
 
 Item {
     id: clockSection
-    implicitWidth: clockCol.implicitWidth
-    implicitHeight: clockCol.implicitHeight
+    implicitWidth: clockRow.implicitWidth
+    implicitHeight: clockRow.implicitHeight
 
     property date clockDate
 
@@ -18,40 +17,42 @@ Item {
             return "--:--";
         if (Config.bar.clock24h)
             return Qt.formatTime(d, "HH:mm");
-        return Qt.formatTime(d, "hh") + ":" + Qt.formatTime(d, "mm") + " " + Qt.formatTime(d, "AP");
+        return Qt.formatTime(d, "h:mm") + " " + Qt.formatTime(d, "AP");
     }
 
     function dateText(d) {
         if (!d)
             return "";
-        return Qt.formatDate(d, "dddd, dd-MM-yy");
+        return Qt.formatDate(d, "ddd dd MMM");
     }
 
-    Column {
-        id: clockCol
-        spacing: Math.round(1 * Config.scale)
-
-        Item {
-            anchors.horizontalCenter: parent.horizontalCenter
-            implicitWidth: timeBaseTxt.implicitWidth
-            implicitHeight: timeBaseTxt.implicitHeight
-
-            Text {
-                id: timeBaseTxt
-                text: clockSection.timeText(clockSection.clockDate)
-                color: Config.colors.accent
-                font.family: Config.font.family
-                font.pixelSize: Config.bar.fontSizeClock
-                font.weight: Font.Medium
-            }
-        }
+    Row {
+        id: clockRow
+        spacing: Math.round(8 * Config.scale)
 
         Text {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             text: clockSection.dateText(clockSection.clockDate)
             color: Config.colors.textSecondary
             font.family: Config.font.family
-            font.pixelSize: Math.round(Config.bar.fontSizeStatus * 0.8)
+            font.pixelSize: Math.round(Config.bar.fontSizeClock * 0.62)
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "·"
+            color: Config.colors.textMuted
+            font.family: Config.font.family
+            font.pixelSize: Config.bar.fontSizeClock
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: clockSection.timeText(clockSection.clockDate)
+            color: Config.colors.accent
+            font.family: Config.font.family
+            font.pixelSize: Config.bar.fontSizeClock
+            font.weight: Font.Medium
         }
     }
 }
