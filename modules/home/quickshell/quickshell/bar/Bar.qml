@@ -591,11 +591,6 @@ Scope {
                 onClosePopupReq: root.closePopup()
             }
 
-            BatterySection {
-                id: batterySection
-                visible: false
-            }
-
             NotifSection {
                 id: notifSection
                 visible: false
@@ -724,7 +719,6 @@ Scope {
                                 case SystemItems.volume:        return sysVolumeComponent
                                 case SystemItems.brightness:    return sysBrightnessComponent
                                 case SystemItems.power:         return sysPowerComponent
-                                case SystemItems.battery:       return sysBatteryComponent
                                 case SystemItems.notifications: return sysNotifComponent
                                 case SystemItems.separator:     return barSeparatorComponent
                                 default:                        return null
@@ -831,22 +825,6 @@ Scope {
                     Component.onDestruction: {
                         powerSection.visible = false;
                         powerSection.parent = pill;
-                    }
-                }
-            }
-            Component {
-                id: sysBatteryComponent
-                Item {
-                    id: batteryProxy
-                    implicitWidth: batterySection.implicitWidth
-                    implicitHeight: batterySection.implicitHeight
-                    Component.onCompleted: {
-                        batterySection.parent = batteryProxy;
-                        batterySection.visible = true;
-                    }
-                    Component.onDestruction: {
-                        batterySection.visible = false;
-                        batterySection.parent = pill;
                     }
                 }
             }

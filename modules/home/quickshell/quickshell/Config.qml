@@ -105,7 +105,7 @@ QtObject {
         readonly property real disabledOpacity: 0.35
         readonly property int popupRadius: Math.round(14 * root.scale)
         readonly property var layout: [BarItems.tray, BarItems.separator, BarItems.system, BarItems.separator, BarItems.clock]
-        readonly property var systemLayout: [SystemItems.battery, SystemItems.wifi, SystemItems.bluetooth, SystemItems.ethernet, SystemItems.volume, SystemItems.brightness, SystemItems.power, SystemItems.notifications]
+        readonly property var systemLayout: [SystemItems.wifi, SystemItems.bluetooth, SystemItems.volume, SystemItems.brightness, SystemItems.power, SystemItems.ethernet, SystemItems.notifications]
     }
 
     readonly property QtObject battery: QtObject {

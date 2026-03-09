@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.UPower
+import Quickshell.Widgets
 
 import ".."
 import "../components"
@@ -15,6 +16,8 @@ BarSectionItem {
     property string activePopup: ""
 
     readonly property bool popupOpen: activePopup === "power"
+    readonly property var b: UPower.displayDevice
+    readonly property bool hasBattery: b !== null && b.isLaptopBattery
     readonly property var profiles: [
         {
             profile: PowerProfile.PowerSaver,
@@ -44,8 +47,12 @@ BarSectionItem {
     signal exitPopupReq
     signal closePopupReq
 
-    implicitWidth: powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
-    implicitHeight: powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
+    implicitWidth: hasBattery
+        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        : powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
+    implicitHeight: hasBattery
+        ? Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+        : powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
     popupItem: powerPopup
 
     MouseArea {
@@ -57,9 +64,60 @@ BarSectionItem {
         onExited: powerSection.keepPopupReq()
     }
 
+    // Battery mode: icon + percentage
+    BarButton {
+        anchors.fill: parent
+        visible: powerSection.hasBattery
+        hovered: triggerArea.containsMouse
+        popupOpen: powerSection.popupOpen
+        clickable: false
+
+        Row {
+            anchors.centerIn: parent
+            spacing: Math.round(3 * Config.scale)
+
+            IconImage {
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: Config.bar.batteryIconSize
+                source: {
+                    const b = powerSection.b;
+                    if (!b || !b.isLaptopBattery)
+                        return "";
+                    const pct = Math.round(b.percentage * 100);
+                    const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
+                    const level = Math.min(100, Math.round(pct / 10) * 10);
+                    const lvlStr = String(level).padStart(3, "0");
+                    const chargeSuffix = charging ? "-charging" : "";
+                    return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
+                }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: {
+                    const b = powerSection.b;
+                    if (!b || !b.isLaptopBattery) return "";
+                    return Math.round(b.percentage * 100) + "%";
+                }
+                color: {
+                    const b = powerSection.b;
+                    if (!b) return Config.colors.textPrimary;
+                    const pct = b.percentage * 100;
+                    if (pct <= 10) return Config.colors.danger;
+                    if (pct <= 20) return Config.colors.warning;
+                    return Config.colors.textPrimary;
+                }
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
+            }
+        }
+    }
+
+    // No-battery mode: active power profile glyph
     Text {
         id: powerGlyphText
         anchors.centerIn: parent
+        visible: !powerSection.hasBattery
         text: powerSection.activeProfile.glyph
         font.family: Config.font.family
         font.pixelSize: Config.bar.powerIconSize

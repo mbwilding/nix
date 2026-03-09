@@ -1,7 +1,6 @@
 module bar
 Bar 1.0 Bar.qml
 singleton BarItems 1.0 BarItems.qml
-BatterySection 1.0 BatterySection.qml
 BrightnessPopup 1.0 BrightnessPopup.qml
 BrightnessSection 1.0 BrightnessSection.qml
 BtSection 1.0 BtSection.qml
