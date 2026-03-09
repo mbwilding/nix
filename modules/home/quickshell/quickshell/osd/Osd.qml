@@ -4,9 +4,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 
-import "."
 import ".."
 import "../components"
 import "../services"
@@ -16,52 +16,59 @@ Scope {
 
     property bool _kbdFirstRead: true
     property bool _screenFirstRead: true
-    property bool kbdVisible: false
-    property bool screenVisible: false
-    property bool volumeVisible: false
+    property string activeRow: ""   // "volume" | "screen" | "kbd" | ""
+    property string frozenRow: ""   // last non-empty activeRow — holds content during fade-out
     property real _volumeRaw: -1
 
-    readonly property bool anyVisible: root.volumeVisible || root.screenVisible || root.kbdVisible
+    readonly property bool anyVisible: root.activeRow !== ""
     readonly property bool kbdAvailable: BrightnessService.kbdAvailable
     readonly property bool screenAvailable: BrightnessService.screenAvailable
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
-    readonly property int panelHeight: root.rowCount * Config.osd.rowHeight + Math.round(16 * Config.scale)
-    readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
+
+    onActiveRowChanged: if (root.activeRow !== "") root.frozenRow = root.activeRow
+
+    // Animated display value — smoothly follows the active row's real value
+    property real displayValue: 0
+    readonly property real targetValue: {
+        if (root.frozenRow === "volume") {
+            const v = Pipewire.defaultAudioSink?.audio?.volume ?? 0;
+            return (isNaN(v) || v === undefined) ? 0 : v;
+        }
+        if (root.frozenRow === "screen") return BrightnessService.screenBrightness;
+        if (root.frozenRow === "kbd")    return BrightnessService.kbdBrightness;
+        return 0;
+    }
+    onTargetValueChanged: displayValue = targetValue
+
+    Behavior on displayValue {
+        NumberAnimation {
+            duration: Config.osd.animateSpeed
+            easing.type: Easing.OutCubic
+        }
+    }
 
     function showVolume() {
-        root.volumeVisible = true;
+        root.activeRow = "volume";
         if (Config.osd.hideDelay > 0)
-            hideVolumeTimer.restart();
+            hideTimer.restart();
     }
 
     function showScreen() {
-        root.screenVisible = true;
+        root.activeRow = "screen";
         if (Config.osd.hideDelay > 0)
-            hideScreenTimer.restart();
+            hideTimer.restart();
     }
 
     function showKbd() {
-        root.kbdVisible = true;
+        root.activeRow = "kbd";
         if (Config.osd.hideDelay > 0)
-            hideKbdTimer.restart();
+            hideTimer.restart();
     }
 
     Timer {
-        id: hideVolumeTimer
+        id: hideTimer
         interval: Config.osd.hideDelay
-        onTriggered: root.volumeVisible = false
-    }
-
-    Timer {
-        id: hideScreenTimer
-        interval: Config.osd.hideDelay
-        onTriggered: root.screenVisible = false
-    }
-
-    Timer {
-        id: hideKbdTimer
-        interval: Config.osd.hideDelay
-        onTriggered: root.kbdVisible = false
+        onTriggered: root.activeRow = ""
     }
 
     PwObjectTracker {
@@ -106,7 +113,6 @@ Scope {
                 root._screenFirstRead = false;
                 return;
             }
-
             if (root.screenAvailable)
                 root.showScreen();
         }
@@ -116,7 +122,6 @@ Scope {
                 root._kbdFirstRead = false;
                 return;
             }
-
             if (root.kbdAvailable)
                 root.showKbd();
         }
@@ -132,12 +137,12 @@ Scope {
         mask: Region {}
 
         implicitWidth: Config.osd.panelWidth
-        implicitHeight: root.panelHeight
+        implicitHeight: Config.osd.rowHeight + Math.round(16 * Config.scale)
 
         Item {
             id: panelWrapper
             width: parent.width
-            height: root.panelHeight
+            height: Config.osd.rowHeight + Math.round(16 * Config.scale)
 
             opacity: root.anyVisible ? 1 : 0
             scale: root.anyVisible ? 1 : 0.85
@@ -161,51 +166,62 @@ Scope {
                 anchors.fill: parent
                 popupRadius: Config.osd.radius
 
-                Column {
+                RowLayout {
                     anchors {
                         fill: parent
-                        topMargin: Math.round(8 * Config.scale)
-                        bottomMargin: Math.round(8 * Config.scale)
+                        leftMargin: Math.round(14 * Config.scale)
+                        rightMargin: Math.round(16 * Config.scale)
+                    }
+                    spacing: Math.round(10 * Config.scale)
+
+                    // Icon
+                    Item {
+                        implicitWidth: Config.osd.iconSize
+                        implicitHeight: Config.osd.iconSize
+
+                        IconImage {
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: root.frozenRow === "screen" ? -3 : 0
+                            implicitSize: Config.osd.iconSize
+                            source: Quickshell.iconPath({
+                                "kbd": "input-keyboard-brightness",
+                                "screen": "video-display-brightness-symbolic",
+                                "volume": (() => {
+                                    const audio = Pipewire.defaultAudioSink?.audio;
+                                    if (!audio || audio.muted) return "audio-volume-muted-symbolic";
+                                    const vol = audio.volume;
+                                    if (isNaN(vol) || vol === undefined) return "audio-volume-muted-symbolic";
+                                    if (vol <= 0.33) return "audio-volume-low-symbolic";
+                                    if (vol <= 0.66) return "audio-volume-medium-symbolic";
+                                    return "audio-volume-high-symbolic";
+                                })()
+                            }[root.frozenRow] ?? "")
+                        }
                     }
 
-                    OsdRow {
-                        visible: root.volumeVisible
-                        iconName: {
-                            const audio = Pipewire.defaultAudioSink?.audio;
-                            if (!audio || audio.muted)
-                                return "audio-volume-muted-symbolic";
-                            const vol = audio.volume;
-                            if (isNaN(vol) || vol === undefined)
-                                return "audio-volume-muted-symbolic";
-                            if (vol <= 0.33)
-                                return "audio-volume-low-symbolic";
-                            if (vol <= 0.66)
-                                return "audio-volume-medium-symbolic";
-                            return "audio-volume-high-symbolic";
-                        }
-                        value: {
-                            const v = Pipewire.defaultAudioSink?.audio?.volume ?? 0;
-                            return (isNaN(v) || v === undefined) ? 0 : v;
-                        }
-                        label: {
-                            const v = Pipewire.defaultAudioSink?.audio?.volume;
-                            return (v === undefined || v === null || isNaN(v)) ? "0%" : Math.round(v * 100) + "%";
-                        }
+                    // Progress bar
+                    GradientProgressBar {
+                        Layout.fillWidth: true
+                        barHeight: Config.osd.barHeight
+                        value: root.displayValue
                     }
 
-                    OsdRow {
-                        visible: root.screenVisible
-                        iconName: "video-display-brightness-symbolic"
-                        iconOffset: -3
-                        value: BrightnessService.screenBrightness
-                        label: Math.round(BrightnessService.screenBrightness * 100) + "%"
-                    }
+                    // Label
+                    Text {
+                        text: Math.round(root.displayValue * 100) + "%"
+                        color: Config.colors.textPrimary
+                        font.family: Config.font.family
+                        font.bold: true
+                        font.pixelSize: Config.font.sizeXl
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: labelMetrics.boundingRect.width
 
-                    OsdRow {
-                        visible: root.kbdVisible
-                        iconName: "input-keyboard-brightness"
-                        value: BrightnessService.kbdBrightness
-                        label: Math.round(BrightnessService.kbdBrightness * 100) + "%"
+                        TextMetrics {
+                            id: labelMetrics
+                            font.family: Config.font.family
+                            font.pixelSize: Config.font.sizeXl
+                            text: "100%"
+                        }
                     }
                 }
             }
