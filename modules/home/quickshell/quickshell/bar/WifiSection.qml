@@ -347,6 +347,14 @@ BarSectionItem {
     }
 
     Process {
+        id: wifiForgetProc
+        onExited: {
+            wifiSavedProc.running = true;
+            wifiProc.running = true;
+        }
+    }
+
+    Process {
         id: wifiDisconnectProc
         onExited: wifiProc.running = true
     }
@@ -425,6 +433,16 @@ BarSectionItem {
 
         onHoverOpen: wifiSection.openPopupReq("wifi")
         onHoverExit: wifiSection.exitPopupReq()
+
+        onAvailableForgetClicked: index => {
+            const nets = wifiSection.networks.filter(n => !n.active);
+            const net = nets[index];
+            if (net) {
+                wifiForgetProc.command = ["nmcli", "connection", "delete", "id", net.ssid];
+                wifiForgetProc.running = true;
+            }
+            wifiSection.openPopupReq("wifi");
+        }
 
         onAvailableClicked: index => {
             const nets = wifiSection.networks.filter(n => !n.active);

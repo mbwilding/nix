@@ -14,6 +14,7 @@ BarSectionItem {
 
     // List of { device, connection, state, ip4, ip6, speed }
     property var devices: []
+    property var toggling: ({})   // device name → true while connect/disconnect is running
     property bool hasEthernetDevice: false
     property string activePopup: ""
     property real availableHeight: 800
@@ -204,6 +205,35 @@ BarSectionItem {
         onTriggered: ethDeviceProc.running = true
     }
 
+    // ── Connect / Disconnect toggle ─────────────────────────────────────────
+
+    Process {
+        id: ethToggleProc
+        property string targetDevice: ""
+        onExited: {
+            const dev = ethToggleProc.targetDevice;
+            const t = Object.assign({}, ethSection.toggling);
+            delete t[dev];
+            ethSection.toggling = t;
+            ethDeviceProc.running = true;
+            ethSection.keepAliveReq();
+        }
+    }
+
+    function toggleDevice(device, state) {
+        if (ethSection.toggling[device])
+            return;
+        const t = Object.assign({}, ethSection.toggling);
+        t[device] = true;
+        ethSection.toggling = t;
+        ethToggleProc.targetDevice = device;
+        if (state === "connected")
+            ethToggleProc.command = ["nmcli", "dev", "disconnect", device];
+        else
+            ethToggleProc.command = ["nmcli", "dev", "connect", device];
+        ethToggleProc.running = true;
+    }
+
     // ── Bar button ─────────────────────────────────────────────────────────
 
     MouseArea {
@@ -291,7 +321,9 @@ BarSectionItem {
                         required property var modelData
                         width: parent.width
                         deviceInfo: devRow.modelData
+                        toggling: !!ethSection.toggling[devRow.modelData?.device ?? ""]
                         onHovered: ethSection.openPopupReq("ethernet")
+                        onToggleRequested: ethSection.toggleDevice(devRow.modelData.device, devRow.modelData.state)
                     }
                 }
 
@@ -316,15 +348,18 @@ BarSectionItem {
         id: row
 
         property var deviceInfo: null
+        property bool toggling: false
 
         signal hovered
+        signal toggleRequested
 
         readonly property bool connected: row.deviceInfo?.state === "connected" ?? false
         readonly property bool available: row.deviceInfo?.state !== "unavailable" ?? false
+        readonly property bool clickable: row.available && !row.toggling
 
         implicitHeight: rowContent.implicitHeight + Math.round(12 * Config.scale)
         radius: Math.round(6 * Config.scale)
-        color: rowMouse.containsMouse
+        color: (row.clickable && rowMouse.containsMouse)
             ? (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28) : Config.colors.surfaceAlt)
             : (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent")
 
@@ -336,8 +371,9 @@ BarSectionItem {
             id: rowMouse
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: Qt.ArrowCursor
+            cursorShape: row.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
             onEntered: row.hovered()
+            onClicked: if (row.clickable) row.toggleRequested()
         }
 
         ColumnLayout {
@@ -349,7 +385,7 @@ BarSectionItem {
             anchors.rightMargin: Math.round(8 * Config.scale)
             spacing: Math.round(3 * Config.scale)
 
-            opacity: row.available ? 1.0 : Config.bar.disabledOpacity
+            opacity: (!row.available || row.toggling) ? Config.bar.disabledOpacity : 1.0
             Behavior on opacity {
                 NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
             }
