@@ -133,7 +133,7 @@ BarSectionItem {
         anchors.bottomMargin: Config.bar.popupOffset
 
         width: Math.round(250 * Config.scale)
-        height: popupHeader.implicitHeight + Math.round(6 * Config.scale) + Math.round(58 * Config.scale)
+        height: Math.round(6 * Config.scale) + popupHeader.implicitHeight + Math.round(58 * Config.scale)
 
         z: 20
 
@@ -148,15 +148,17 @@ BarSectionItem {
 
         Column {
             width: parent.width
+            y: Math.round(6 * Config.scale)
 
             PopupSectionHeader {
                 id: popupHeader
                 text: "Power Mode"
                 width: parent.width
                 leftPadding: Math.round(12 * Config.scale)
+                rightPadding: Math.round(12 * Config.scale)
             }
 
-            // Discrete power profile slider
+            // Discrete power profile slider — mirrors SliderRow layout exactly
             Item {
                 id: profileSlider
                 width: parent.width
@@ -177,19 +179,23 @@ BarSectionItem {
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: Math.round(12 * Config.scale)
+                    anchors.leftMargin:  Math.round(12 * Config.scale)
                     anchors.rightMargin: Math.round(12 * Config.scale)
                     spacing: Math.round(10 * Config.scale)
 
-                    // Left icon (first profile — Power Saver)
-                    Text {
-                        text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[0].glyph : ""
-                        font.family: Config.font.family
-                        font.pixelSize: Config.bar.powerIconSize
-                        color: profileSlider.activeIndex === 0 ? Config.colors.accent : Config.colors.textSecondary
-                        Layout.preferredWidth: Config.bar.batteryIconSize
-                        horizontalAlignment: Text.AlignHCenter
-                        Behavior on color { ColorAnimation { duration: 100 } }
+                    // Left icon — first profile (Power Saver)
+                    Item {
+                        implicitWidth:  Config.bar.batteryIconSize
+                        implicitHeight: Config.bar.batteryIconSize
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[0].glyph : ""
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.powerIconSize
+                            color: profileSlider.activeIndex === 0 ? Config.colors.accent : Config.colors.textSecondary
+                            Behavior on color { ColorAnimation { duration: 100 } }
+                        }
                     }
 
                     // Track
@@ -198,10 +204,11 @@ BarSectionItem {
                         Layout.fillWidth: true
                         height: Math.round(20 * Config.scale)
 
+                        readonly property real frac: profileSlider.fraction
+
                         // Rail
                         Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
                             width: parent.width
                             height: Math.round(6 * Config.scale)
                             radius: height / 2
@@ -211,8 +218,7 @@ BarSectionItem {
                         // Glow fill
                         Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            width: parent.width * profileSlider.fraction
+                            width: parent.width * sliderTrack.frac
                             height: Math.round(10 * Config.scale)
                             radius: height / 2
                             opacity: 0.35
@@ -227,8 +233,7 @@ BarSectionItem {
                         // Fill
                         Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            width: parent.width * profileSlider.fraction
+                            width: parent.width * sliderTrack.frac
                             height: Math.round(6 * Config.scale)
                             radius: height / 2
                             gradient: Gradient {
@@ -239,7 +244,7 @@ BarSectionItem {
                             Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
                         }
 
-                        // Snap point dots
+                        // Snap dots
                         Repeater {
                             model: profileSlider.count
                             delegate: Rectangle {
@@ -257,7 +262,7 @@ BarSectionItem {
                         // Thumb glow
                         Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
-                            x: sliderTrack.width * profileSlider.fraction - width / 2
+                            x: parent.width * sliderTrack.frac - width / 2
                             width: Math.round(18 * Config.scale)
                             height: width
                             radius: width / 2
@@ -269,7 +274,7 @@ BarSectionItem {
                         // Thumb
                         Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
-                            x: sliderTrack.width * profileSlider.fraction - width / 2
+                            x: parent.width * sliderTrack.frac - width / 2
                             width: Math.round(14 * Config.scale)
                             height: width
                             radius: width / 2
@@ -301,15 +306,19 @@ BarSectionItem {
                         }
                     }
 
-                    // Right icon (last profile — Performance / Balanced)
-                    Text {
-                        text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[profileSlider.count - 1].glyph : ""
-                        font.family: Config.font.family
-                        font.pixelSize: Config.bar.powerIconSize
-                        color: profileSlider.activeIndex === profileSlider.count - 1 ? Config.colors.accent : Config.colors.textSecondary
-                        Layout.preferredWidth: Config.bar.batteryIconSize
-                        horizontalAlignment: Text.AlignHCenter
-                        Behavior on color { ColorAnimation { duration: 100 } }
+                    // Right icon — last profile (Performance or Balanced)
+                    Item {
+                        implicitWidth:  Config.bar.batteryIconSize
+                        implicitHeight: Config.bar.batteryIconSize
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[profileSlider.count - 1].glyph : ""
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.powerIconSize
+                            color: profileSlider.activeIndex === profileSlider.count - 1 ? Config.colors.accent : Config.colors.textSecondary
+                            Behavior on color { ColorAnimation { duration: 100 } }
+                        }
                     }
                 }
             }
