@@ -18,6 +18,7 @@ PopupContainer {
 
     readonly property int rowH: Math.round(58 * Config.scale)
     readonly property int visibleRows: (root.screenAvailable ? 1 : 0) + (root.kbdAvailable ? 1 : 0)
+    readonly property int topPad: Math.round(6 * Config.scale)
 
     signal exitPopupReq
     signal openPopupReq(string name)
@@ -26,7 +27,7 @@ PopupContainer {
     signal setKbdFraction(real v)
     signal setScreenFraction(real v)
 
-    height: header.implicitHeight + root.visibleRows * root.rowH
+    height: root.topPad + header.implicitHeight + root.visibleRows * root.rowH
     popupOpen: root.activePopup === root.popupName
     width: Math.round(250 * Config.scale)
     z: 20
@@ -42,6 +43,7 @@ PopupContainer {
 
     Column {
         width: parent.width
+        y: root.topPad
 
         PopupSectionHeader {
             id: header
