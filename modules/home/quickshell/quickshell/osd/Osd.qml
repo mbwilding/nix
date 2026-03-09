@@ -16,31 +16,52 @@ Scope {
 
     property bool _kbdFirstRead: true
     property bool _screenFirstRead: true
-    property bool anyVisible: false
     property bool kbdVisible: false
     property bool screenVisible: false
     property bool volumeVisible: false
     property real _volumeRaw: -1
 
+    readonly property bool anyVisible: root.volumeVisible || root.screenVisible || root.kbdVisible
     readonly property bool kbdAvailable: BrightnessService.kbdAvailable
     readonly property bool screenAvailable: BrightnessService.screenAvailable
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
     readonly property int panelHeight: root.rowCount * Config.osd.rowHeight + Math.round(16 * Config.scale)
     readonly property int rowCount: (root.volumeVisible ? 1 : 0) + (root.screenVisible ? 1 : 0) + (root.kbdVisible ? 1 : 0)
 
-    function show() {
-        root.volumeVisible = root.volumeAvailable;
-        root.screenVisible = root.screenAvailable;
-        root.kbdVisible = root.kbdAvailable;
-        root.anyVisible = true;
+    function showVolume() {
+        root.volumeVisible = true;
         if (Config.osd.hideDelay > 0)
-            hideTimer.restart();
+            hideVolumeTimer.restart();
+    }
+
+    function showScreen() {
+        root.screenVisible = true;
+        if (Config.osd.hideDelay > 0)
+            hideScreenTimer.restart();
+    }
+
+    function showKbd() {
+        root.kbdVisible = true;
+        if (Config.osd.hideDelay > 0)
+            hideKbdTimer.restart();
     }
 
     Timer {
-        id: hideTimer
+        id: hideVolumeTimer
         interval: Config.osd.hideDelay
-        onTriggered: root.anyVisible = false
+        onTriggered: root.volumeVisible = false
+    }
+
+    Timer {
+        id: hideScreenTimer
+        interval: Config.osd.hideDelay
+        onTriggered: root.screenVisible = false
+    }
+
+    Timer {
+        id: hideKbdTimer
+        interval: Config.osd.hideDelay
+        onTriggered: root.kbdVisible = false
     }
 
     PwObjectTracker {
@@ -66,14 +87,14 @@ Scope {
                 return;
             }
             root._volumeRaw = v;
-            root.show();
+            root.showVolume();
             Sounds.playVolume();
         }
 
         function onMutedChanged() {
             if (root._volumeRaw < 0)
                 return;
-            root.show();
+            root.showVolume();
         }
     }
 
@@ -87,7 +108,7 @@ Scope {
             }
 
             if (root.screenAvailable)
-                root.show();
+                root.showScreen();
         }
 
         function onKbdBrightnessChanged() {
@@ -97,7 +118,7 @@ Scope {
             }
 
             if (root.kbdAvailable)
-                root.show();
+                root.showKbd();
         }
     }
 
@@ -133,11 +154,6 @@ Scope {
                 NumberAnimation {
                     duration: Config.osd.animateSpeed
                     easing.type: Easing.OutCubic
-                    onFinished: if (!root.anyVisible) {
-                        root.volumeVisible = false;
-                        root.screenVisible = false;
-                        root.kbdVisible = false;
-                    }
                 }
             }
 
