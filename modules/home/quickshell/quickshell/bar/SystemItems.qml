@@ -16,10 +16,8 @@ QtObject {
     readonly property int volume: 3
     // Screen & keyboard brightness + popup
     readonly property int brightness: 4
-    // Power / session menu
+    // Power / session menu (shows battery level when on laptop)
     readonly property int power: 5
-    // Battery level indicator
-    readonly property int battery: 6
     // Notification history
     readonly property int notifications: 7
     // A vertical separator line — can be placed multiple times
