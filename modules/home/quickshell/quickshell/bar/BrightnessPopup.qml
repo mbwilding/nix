@@ -49,6 +49,7 @@ PopupContainer {
             id: header
             text: "Brightness"
             width: parent.width
+            leftPadding: Math.round(12 * Config.scale)
         }
 
         SliderRow {
