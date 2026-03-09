@@ -177,6 +177,9 @@ PopupContainer {
                     required property var modelData
                     required property int index
 
+                    readonly property bool _saved: !!availRow.modelData.saved
+                    readonly property real _btnWidth: availRow.height
+
                     width: parent.width
                     height: availRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
@@ -202,66 +205,69 @@ PopupContainer {
                         }
                     }
 
-                    // Saved dot / forget button
-                    Item {
-                        visible: !!availRow.modelData.saved
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: Math.round(8 * Config.scale)
-                        width: Math.round(16 * Config.scale)
-                        height: Math.round(16 * Config.scale)
-
-                        // Dot — shown when not hovering
-                        Rectangle {
-                            anchors.centerIn: parent
-                            visible: !availMouse.containsMouse
-                            width: Math.round(6 * Config.scale)
-                            height: width
-                            radius: width / 2
-                            color: Config.colors.textMuted
-                        }
-
-                        // Forget button — shown on hover
-                        Rectangle {
-                            id: forgetBtn
-                            anchors.fill: parent
-                            visible: availMouse.containsMouse
-                            radius: Math.round(4 * Config.scale)
-                            color: forgetMouse.containsMouse
-                                ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.25)
-                                : "transparent"
-                            Behavior on color { ColorAnimation { duration: 60 } }
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\u00d7"
-                                color: forgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizePopup
-                                Behavior on color { ColorAnimation { duration: 60 } }
-                            }
-
-                            MouseArea {
-                                id: forgetMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onEntered: root.hoverOpen()
-                                onClicked: mouse => {
-                                    mouse.accepted = true;
-                                    root.availableForgetClicked(availRow.index);
-                                }
-                            }
-                        }
-                    }
-
+                    // Row mouse — stops before the forget button when saved
                     MouseArea {
                         id: availMouse
-                        anchors.fill: parent
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: availRow._saved ? forgetBtnArea.left : parent.right
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: root.hoverOpen()
                         onClicked: root.availableClicked(availRow.index)
+                    }
+
+                    // Forget button — only for saved networks
+                    Rectangle {
+                        id: forgetBtnArea
+                        visible: availRow._saved
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        width: availRow._btnWidth
+                        radius: Math.round(8 * Config.scale)
+                        z: 1
+
+                        color: forgetMouse.containsMouse
+                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
+                            : "transparent"
+                        border.color: forgetMouse.containsMouse
+                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.70)
+                            : "transparent"
+                        border.width: 1
+                        Behavior on color { ColorAnimation { duration: 80 } }
+                        Behavior on border.color { ColorAnimation { duration: 80 } }
+
+                        // Outer glow ring
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -3
+                            radius: parent.radius + 3
+                            color: "transparent"
+                            border.color: Config.colors.danger
+                            border.width: 2
+                            opacity: forgetMouse.containsMouse ? 0.35 : 0
+                            Behavior on opacity { NumberAnimation { duration: 80 } }
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u00d7"
+                            color: forgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizePopup
+                            Behavior on color { ColorAnimation { duration: 80 } }
+                        }
+
+                        MouseArea {
+                            id: forgetMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.hoverOpen()
+                            onClicked: root.availableForgetClicked(availRow.index)
+                        }
                     }
                 }
             }
@@ -358,6 +364,10 @@ PopupContainer {
                     readonly property bool _isConn: root.rawIsConnectedFn
                                                     ? root.rawIsConnectedFn(rawAvailRow.modelData)
                                                     : false
+                    readonly property bool _saved: root.rawSavedFn
+                                                    ? root.rawSavedFn(rawAvailRow.modelData)
+                                                    : false
+                    readonly property real _btnWidth: rawAvailRow.height
 
                     visible: !_isConn
                     width: parent.width
@@ -386,65 +396,69 @@ PopupContainer {
                         }
                     }
 
-                    // Saved dot / forget button
-                    Item {
-                        visible: root.rawSavedFn ? root.rawSavedFn(rawAvailRow.modelData) : false
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: Math.round(8 * Config.scale)
-                        width: Math.round(16 * Config.scale)
-                        height: Math.round(16 * Config.scale)
-
-                        // Dot — shown when not hovering
-                        Rectangle {
-                            anchors.centerIn: parent
-                            visible: !rawAvailMouse.containsMouse
-                            width: Math.round(6 * Config.scale)
-                            height: width
-                            radius: width / 2
-                            color: Config.colors.textMuted
-                        }
-
-                        // Forget button — shown on hover
-                        Rectangle {
-                            anchors.fill: parent
-                            visible: rawAvailMouse.containsMouse
-                            radius: Math.round(4 * Config.scale)
-                            color: rawForgetMouse.containsMouse
-                                ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.25)
-                                : "transparent"
-                            Behavior on color { ColorAnimation { duration: 60 } }
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\u00d7"
-                                color: rawForgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizePopup
-                                Behavior on color { ColorAnimation { duration: 60 } }
-                            }
-
-                            MouseArea {
-                                id: rawForgetMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onEntered: root.hoverOpen()
-                                onClicked: mouse => {
-                                    mouse.accepted = true;
-                                    root.rawAvailableForgetClicked(rawAvailRow.modelData);
-                                }
-                            }
-                        }
-                    }
-
+                    // Row mouse — stops before the forget button when saved
                     MouseArea {
                         id: rawAvailMouse
-                        anchors.fill: parent
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: rawAvailRow._saved ? rawForgetBtnArea.left : parent.right
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: root.hoverOpen()
                         onClicked: root.rawAvailableClicked(rawAvailRow.modelData)
+                    }
+
+                    // Forget button — only for saved networks
+                    Rectangle {
+                        id: rawForgetBtnArea
+                        visible: rawAvailRow._saved
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        width: rawAvailRow._btnWidth
+                        radius: Math.round(8 * Config.scale)
+                        z: 1
+
+                        color: rawForgetMouse.containsMouse
+                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.12)
+                            : "transparent"
+                        border.color: rawForgetMouse.containsMouse
+                            ? Qt.rgba(Config.colors.danger.r, Config.colors.danger.g, Config.colors.danger.b, 0.70)
+                            : "transparent"
+                        border.width: 1
+                        Behavior on color { ColorAnimation { duration: 80 } }
+                        Behavior on border.color { ColorAnimation { duration: 80 } }
+
+                        // Outer glow ring
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -3
+                            radius: parent.radius + 3
+                            color: "transparent"
+                            border.color: Config.colors.danger
+                            border.width: 2
+                            opacity: rawForgetMouse.containsMouse ? 0.35 : 0
+                            Behavior on opacity { NumberAnimation { duration: 80 } }
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u00d7"
+                            color: rawForgetMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizePopup
+                            Behavior on color { ColorAnimation { duration: 80 } }
+                        }
+
+                        MouseArea {
+                            id: rawForgetMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onEntered: root.hoverOpen()
+                            onClicked: root.rawAvailableForgetClicked(rawAvailRow.modelData)
+                        }
                     }
                 }
             }

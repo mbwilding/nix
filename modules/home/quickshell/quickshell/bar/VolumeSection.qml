@@ -187,9 +187,9 @@ BarSectionItem {
 
     readonly property real _popupOverhead: Math.max(_nameRowOverhead, _sliderRowOverhead)
 
-    readonly property real _maxNodeNameWidth: {
-        void volumeSection.sinkNodes;
-        void volumeSection.sourceNodes;
+    property real _maxNodeNameWidth: 0
+
+    function _computeMaxNodeNameWidth() {
         const all = volumeSection.sinkNodes.concat(volumeSection.sourceNodes);
         let maxW = 0;
         for (let i = 0; i < all.length; i++) {
@@ -198,8 +198,11 @@ BarSectionItem {
             if (w > maxW)
                 maxW = w;
         }
-        return maxW;
+        volumeSection._maxNodeNameWidth = maxW;
     }
+
+    onSinkNodesChanged: Qt.callLater(volumeSection._computeMaxNodeNameWidth)
+    onSourceNodesChanged: Qt.callLater(volumeSection._computeMaxNodeNameWidth)
 
     PopupContainer {
         id: volumePopup
