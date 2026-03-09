@@ -114,8 +114,15 @@ BarSectionItem {
                 });
                 wifiSection.hasWifiDevice = hasWifi;
                 if (hasWifi) {
-                    wifiProc.running = true;
                     wifiSavedProc.running = true;
+                    if (!wifiSection.wifiReady) {
+                        // On startup, check radio state first so enabled/disabled
+                        // is correct before deciding whether to scan.
+                        wifiRadioProc.running = true;
+                    } else {
+                        // Subsequent calls (from monitor/poll): normal immediate refresh.
+                        wifiProc.running = true;
+                    }
                 }
             }
         }
@@ -167,8 +174,8 @@ BarSectionItem {
         stdout: SplitParser {
             onRead: line => {
                 if (line.trim() !== "" && !wifiSection.wifiScanning) {
+                    // wifiDeviceProc will fire wifiProc itself in the post-ready path
                     wifiDeviceProc.running = true;
-                    wifiProc.running = true;
                     wifiSavedProc.running = true;
                 }
             }
