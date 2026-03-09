@@ -60,7 +60,9 @@ BarSectionItem {
     signal keepPopupReq
     signal exitPopupReq
 
-    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitWidth: lowestBattery >= 0
+        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        : Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     popupItem: btPopup
     onPopupOpenChanged: {
@@ -98,13 +100,29 @@ BarSectionItem {
         return ico !== "" ? ico : "network-bluetooth-symbolic";
     }
 
-    Process {
-        id: btNotifyProc
+    // Lowest battery % among connected devices that report battery, or -1 if none
+    readonly property int lowestBattery: {
+        const a = btSection.adapter;
+        const vals = (a && a.enabled && a.devices) ? a.devices.values : null;
+        if (!vals) return -1;
+        let lowest = -1;
+        for (let i = 0; i < vals.length; i++) {
+            const d = vals[i];
+            if (d && d.connected && d.batteryAvailable) {
+                const pct = Math.round(d.battery * 100);
+                if (lowest < 0 || pct < lowest) lowest = pct;
+            }
+        }
+        return lowest;
     }
 
     function btNotify(title, message, icon) {
         btNotifyProc.command = ["notify-send", "--app-name=Bluetooth", "--app-icon=" + icon, title, message];
         btNotifyProc.running = true;
+    }
+
+    Process {
+        id: btNotifyProc
     }
 
     MouseArea {
@@ -125,16 +143,35 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: btSection.popupOpen
 
-        IconImage {
+        Row {
             anchors.centerIn: parent
-            implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(btSection.btIcon())
-            opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : Config.bar.disabledOpacity
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.InOutQuad
+            spacing: Math.round(3 * Config.scale)
+
+            IconImage {
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: Config.bar.batteryIconSize
+                source: Quickshell.iconPath(btSection.btIcon())
+                opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : Config.bar.disabledOpacity
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 200
+                        easing.type: Easing.InOutQuad
+                    }
                 }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                visible: btSection.lowestBattery >= 0
+                text: btSection.lowestBattery + "%"
+                color: {
+                    const pct = btSection.lowestBattery;
+                    if (pct <= 15) return Config.colors.danger;
+                    if (pct <= 30) return Config.colors.warning;
+                    return Config.colors.textPrimary;
+                }
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
             }
         }
     }
