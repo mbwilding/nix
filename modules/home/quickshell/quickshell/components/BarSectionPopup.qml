@@ -212,16 +212,10 @@ PopupContainer {
             // ══ JS-array mode (wifi) ══════════════════════════════════════
 
             // ── Available header ──────────────────────────────────────────
-            Text {
+            PopupSectionHeader {
                 visible: root.rawModel === null && root.availableItems.length > 0
                 text: "Available"
-                color: Config.colors.textMuted
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
-                leftPadding: Math.round(4 * Config.scale)
-                topPadding: Math.round(4 * Config.scale)
-                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Available rows ────────────────────────────────────────────
@@ -350,16 +344,11 @@ PopupContainer {
             }
 
             // ── Connected header ──────────────────────────────────────────
-            Text {
+            PopupSectionHeader {
                 visible: root.rawModel === null && root.connectedItems.length > 0
                 text: "Connected"
-                color: Config.colors.textMuted
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
-                leftPadding: Math.round(4 * Config.scale)
                 topPadding: root.availableItems.length > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
-                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Connected rows ────────────────────────────────────────────
@@ -457,16 +446,10 @@ PopupContainer {
             // from available rows; a separator is shown between them.
 
             // ── Raw available header ──────────────────────────────────────
-            Text {
+            PopupSectionHeader {
                 visible: root.rawModel !== null && root._rawAvailableCount > 0
                 text: "Available"
-                color: Config.colors.textMuted
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
-                leftPadding: Math.round(4 * Config.scale)
-                topPadding: Math.round(4 * Config.scale)
-                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Raw available rows ────────────────────────────────────────
@@ -566,16 +549,11 @@ PopupContainer {
             }
 
             // ── Raw connected header ──────────────────────────────────────
-            Text {
+            PopupSectionHeader {
                 visible: root.rawModel !== null && root._rawConnectedCount > 0
                 text: "Connected"
-                color: Config.colors.textMuted
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                 width: parent.width
-                leftPadding: Math.round(4 * Config.scale)
                 topPadding: root._rawAvailableCount > 0 ? Math.round(12 * Config.scale) : Math.round(4 * Config.scale)
-                bottomPadding: Math.round(2 * Config.scale)
             }
 
             // ── Raw connected rows ────────────────────────────────────────

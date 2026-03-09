@@ -151,6 +151,10 @@ BarSectionItem {
             anchors.centerIn: parent
             spacing: Math.round(2 * Config.scale)
 
+            PopupSectionHeader {
+                text: "Power Mode"
+            }
+
             Repeater {
                 model: powerSection.profiles
                 delegate: Rectangle {

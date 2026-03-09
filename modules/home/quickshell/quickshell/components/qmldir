@@ -6,6 +6,7 @@ GradientProgressBar 1.0 GradientProgressBar.qml
 PopupCard 1.0 PopupCard.qml
 PopupContainer 1.0 PopupContainer.qml
 PopupScrollView 1.0 PopupScrollView.qml
+PopupSectionHeader 1.0 PopupSectionHeader.qml
 ScrollableList 1.0 ScrollableList.qml
 SliderRow 1.0 SliderRow.qml
 ThinScrollBar 1.0 ThinScrollBar.qml
