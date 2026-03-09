@@ -107,11 +107,6 @@ Scope {
         }
     }
 
-    function show() {
-        root.visible_ = true;
-        hideTimer.restart();
-    }
-
     function keepAlive() {
         if (!root.pinned)
             hideTimer.restart();
@@ -147,7 +142,7 @@ Scope {
     Timer {
         id: hideTimer
         interval: Config.bar.hideDelay
-        onTriggered: if (root.activePopup === "" && !root.pillHovered)
+        onTriggered: if (!root.pinned && root.activePopup === "" && !root.pillHovered)
             root.visible_ = false
     }
 
@@ -436,7 +431,10 @@ Scope {
 
         screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
+        anchors.top: true
         anchors.bottom: true
+        anchors.left: true
+        anchors.right: true
         exclusiveZone: 0
         color: "transparent"
 
@@ -444,12 +442,12 @@ Scope {
         implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
-            // 1-px trigger strip along the full bottom edge (always active)
+            // hotspot strip along the middle third of the bottom edge (always active)
             Region {
-                x: 0
-                y: win.implicitHeight - 1
-                width: win.implicitWidth
-                height: 1
+                x: Math.round(win.implicitWidth * Config.bar.triggerStart)
+                y: win.implicitHeight - Config.bar.edgeHotspotSize
+                width: Math.round(win.implicitWidth * (Config.bar.triggerEnd - Config.bar.triggerStart))
+                height: Config.bar.edgeHotspotSize
                 intersection: Intersection.Combine
             }
             Region {
@@ -486,19 +484,19 @@ Scope {
             }
         }
 
-        // 1-px trigger strip at the very bottom edge — always in the mask,
-        // hovering it calls show() to slide the bar up.
+        // Hotspot strip at the middle third of the bottom edge — always in the mask,
+        // hovering it calls showMouse() to slide the bar up.
         Item {
             id: triggerStrip
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
+            y: win.implicitHeight - Config.bar.edgeHotspotSize
+            x: Math.round(win.implicitWidth * Config.bar.triggerStart)
+            width: Math.round(win.implicitWidth * (Config.bar.triggerEnd - Config.bar.triggerStart))
+            height: Config.bar.edgeHotspotSize
 
             HoverHandler {
                 onHoveredChanged: {
                     if (hovered)
-                        root.show();
+                        root.showMouse();
                 }
             }
         }
@@ -541,10 +539,17 @@ Scope {
                 }
             }
 
-            HoverHandler {
-                onHoveredChanged: {
-                    root.pillHovered = hovered;
-                    root.keepAlive();
+            // Dedicated hover item — bounds match only the visible pill face,
+            // not the extended containmentMask region used by popup hit-testing.
+            Item {
+                id: pillHoverArea
+                anchors.fill: parent
+
+                HoverHandler {
+                    onHoveredChanged: {
+                        root.pillHovered = hovered;
+                        root.keepAlive();
+                    }
                 }
             }
 
