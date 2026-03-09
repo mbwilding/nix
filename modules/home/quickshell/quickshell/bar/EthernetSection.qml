@@ -303,15 +303,9 @@ BarSectionItem {
                 spacing: Math.round(2 * Config.scale)
                 y: -scrollView.scrollY
 
-                Text {
+                PopupSectionHeader {
                     text: "Ethernet"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
                     width: parent.width
-                    leftPadding: Math.round(4 * Config.scale)
-                    topPadding: Math.round(4 * Config.scale)
-                    bottomPadding: Math.round(2 * Config.scale)
                 }
 
                 Repeater {

@@ -26,7 +26,7 @@ PopupContainer {
     signal setKbdFraction(real v)
     signal setScreenFraction(real v)
 
-    height: root.visibleRows * root.rowH
+    height: header.implicitHeight + root.visibleRows * root.rowH
     popupOpen: root.activePopup === root.popupName
     width: Math.round(250 * Config.scale)
     z: 20
@@ -41,7 +41,13 @@ PopupContainer {
     }
 
     Column {
-        anchors.fill: parent
+        width: parent.width
+
+        PopupSectionHeader {
+            id: header
+            text: "Brightness"
+            width: parent.width
+        }
 
         SliderRow {
             width: parent.width
