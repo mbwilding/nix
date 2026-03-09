@@ -90,6 +90,25 @@ PopupContainer {
         return false;
     }
 
+    // Whether any available item is saved — controls whether the indicator column is rendered at all
+    readonly property bool _hasSaved: {
+        // JS-array mode (wifi)
+        for (let i = 0; i < root.availableItems.length; i++) {
+            if (root.availableItems[i].saved) return true;
+        }
+        // Raw-model mode (bluetooth)
+        if (root.rawModel && root.rawSavedFn) {
+            void root.rawModel.valuesChanged;
+            const vals = root.rawModel.values;
+            for (let j = 0; j < vals.length; j++) {
+                if (!root.rawIsConnectedFn || !root.rawIsConnectedFn(vals[j])) {
+                    if (root.rawSavedFn(vals[j])) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     function _recomputeMaxLabelWidth() {
         let maxLabel = 0, maxSig = 0, maxBand = 0, maxGen = 0, maxSec = 0;
         const lists = [root.availableItems, root.connectedItems];
@@ -252,46 +271,6 @@ PopupContainer {
                             source: Quickshell.iconPath(availRow.modelData.icon)
                         }
 
-                        // Saved-network indicator: always reserves space for column alignment;
-                        // shows dot normally, × on hover — click forgets the network
-                        Item {
-                            implicitWidth: savedIndicatorRef.implicitWidth
-                            implicitHeight: savedIndicatorRef.implicitHeight
-                            Layout.preferredWidth: implicitWidth
-
-                            // Reference text for sizing (always "•" so width is stable)
-                            Text {
-                                id: savedIndicatorRef
-                                visible: false
-                                text: "\u2022"
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizePopup
-                            }
-
-                            Text {
-                                id: savedIndicatorText
-                                anchors.centerIn: parent
-                                visible: availRow._saved
-                                text: savedIndicatorMouse.containsMouse ? "\u00d7" : "\u2022"
-                                color: savedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.bar.fontSizePopup
-                                Behavior on color { ColorAnimation { duration: 80 } }
-                            }
-
-                            MouseArea {
-                                id: savedIndicatorMouse
-                                anchors.fill: parent
-                                enabled: availRow._saved
-                                hoverEnabled: availRow._saved
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    mouse.accepted = true
-                                    root.availableForgetClicked(availRow.index)
-                                }
-                            }
-                        }
-
                         Text {
                             text: availRow.modelData.label
                             color: Config.colors.textPrimary
@@ -341,6 +320,45 @@ PopupContainer {
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
                             Layout.preferredWidth: root._maxSecWidth
                             horizontalAlignment: Text.AlignRight
+                        }
+
+                        // Saved-network indicator — only rendered when at least one row is saved
+                        Item {
+                            visible: root._hasSaved
+                            implicitWidth: savedIndicatorRef.implicitWidth
+                            implicitHeight: savedIndicatorRef.implicitHeight
+                            Layout.preferredWidth: implicitWidth
+
+                            Text {
+                                id: savedIndicatorRef
+                                visible: false
+                                text: "\u2022"
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                            }
+
+                            Text {
+                                id: savedIndicatorText
+                                anchors.centerIn: parent
+                                visible: availRow._saved
+                                text: savedIndicatorMouse.containsMouse ? "\u00d7" : "\u2022"
+                                color: savedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
+                                font.family: Config.font.family
+                                font.pixelSize: Config.bar.fontSizePopup
+                                Behavior on color { ColorAnimation { duration: 80 } }
+                            }
+
+                            MouseArea {
+                                id: savedIndicatorMouse
+                                anchors.fill: parent
+                                enabled: availRow._saved
+                                hoverEnabled: availRow._saved
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    mouse.accepted = true
+                                    root.availableForgetClicked(availRow.index)
+                                }
+                            }
                         }
                     }
 
@@ -523,14 +541,22 @@ PopupContainer {
                                 root.rawIconFn ? root.rawIconFn(rawAvailRow.modelData) : "")
                         }
 
-                        // Saved-network indicator: always reserves space for column alignment;
-                        // shows dot normally, × on hover — click forgets the network
+                        Text {
+                            text: root.rawLabelFn ? root.rawLabelFn(rawAvailRow.modelData) : ""
+                            color: Config.colors.textPrimary
+                            font.family: Config.font.family
+                            font.pixelSize: Config.bar.fontSizePopup
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                        }
+
+                        // Saved indicator — only rendered when at least one row is saved
                         Item {
+                            visible: root._hasSaved
                             implicitWidth: rawSavedIndicatorRef.implicitWidth
                             implicitHeight: rawSavedIndicatorRef.implicitHeight
                             Layout.preferredWidth: implicitWidth
 
-                            // Reference text for sizing (always "•" so width is stable)
                             Text {
                                 id: rawSavedIndicatorRef
                                 visible: false
@@ -560,15 +586,6 @@ PopupContainer {
                                     root.rawAvailableForgetClicked(rawAvailRow.modelData)
                                 }
                             }
-                        }
-
-                        Text {
-                            text: root.rawLabelFn ? root.rawLabelFn(rawAvailRow.modelData) : ""
-                            color: Config.colors.textPrimary
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizePopup
-                            Layout.fillWidth: true
-                            elide: Text.ElideRight
                         }
                     }
                 }
