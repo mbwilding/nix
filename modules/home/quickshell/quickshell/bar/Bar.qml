@@ -88,6 +88,14 @@ Scope {
         hideTimer.restart();
     }
 
+    // Helper: returns true if `value` appears in `arr`
+    function inList(arr, value) {
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === value) return true;
+        }
+        return false;
+    }
+
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
@@ -491,6 +499,127 @@ Scope {
                 }
             }
 
+            // ----------------------------------------------------------------
+            // All named section instances live here, outside the layout, so
+            // that popup masking + Connections always work regardless of
+            // whether a section appears in Config.bar.layout / systemLayout.
+            // They are positioned by the layout Repeater below via visible.
+            // ----------------------------------------------------------------
+
+            WifiSection {
+                id: wifiSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onKeepAliveReq: root.keepAlive()
+                onShowPasswordDialogReq: ssid_ => {
+                    root.wifiPasswordPendingSsid = ssid_;
+                    root.wifiPasswordDialogVisible = true;
+                }
+                onHidePasswordDialogReq: {
+                    root.wifiPasswordDialogVisible = false;
+                    root.wifiPasswordPendingSsid = "";
+                }
+            }
+
+            Connections {
+                target: root
+                function onWifiConnectWithPassword(ssid_, password) {
+                    wifiSection.connectWifiWithPassword(ssid_, password);
+                }
+            }
+
+            EthernetSection {
+                id: ethernetSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onKeepAliveReq: root.keepAlive()
+            }
+
+            BtSection {
+                id: btSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+            }
+
+            VolumeSection {
+                id: volumeSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onKeepAliveReq: root.keepAlive()
+            }
+
+            BrightnessSection {
+                id: brightnessSection
+                visible: false
+                activePopup: root.activePopup
+                sliderLabelWidth: root.sliderLabelWidth
+                screenBrightness: BrightnessService.screenBrightness
+                screenAvailable: BrightnessService.screenAvailable
+                kbdBrightness: BrightnessService.kbdBrightness
+                kbdAvailable: BrightnessService.kbdAvailable
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onKeepAliveReq: root.keepAlive()
+                onSetScreenBrightnessReq: v => BrightnessService.setScreenBrightness(v)
+                onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
+            }
+
+            PowerSection {
+                id: powerSection
+                visible: false
+                activePopup: root.activePopup
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onClosePopupReq: root.closePopup()
+            }
+
+            BatterySection {
+                id: batterySection
+                visible: false
+            }
+
+            NotifSection {
+                id: notifSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                notifHistory: root.notifHistory
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onClosePopupReq: root.closePopup()
+                onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
+                onDismissAll: root.dismissAllNotifs()
+
+                Connections {
+                    target: root
+                    function onAnimateOutHistoryEntry(snapId) {
+                        notifSection.animateOutEntry(snapId);
+                    }
+                }
+            }
+
+            // ----------------------------------------------------------------
+            // Top-level bar layout — driven by Config.bar.layout
+            // ----------------------------------------------------------------
             RowLayout {
                 id: content
                 anchors.centerIn: parent
@@ -504,146 +633,237 @@ Scope {
                 }
 
                 Repeater {
-                    id: trayRepeater
-                    model: SystemTray.items
-                    delegate: TrayItem {
-                        id: trayDelegate
-                        required property SystemTrayItem modelData
-                        required property int index
-                        trayItem: modelData
-                        popupName: "tray-" + trayDelegate.index
-                        availableHeight: win.screen ? win.screen.height : 800
-                        activePopup: root.activePopup
-                        onHovered: root.keepAlive()
-                        onOpenPopupReq: name => {
-                            root.openPopup(name);
-                            root.registerTrayPopup(trayDelegate.menuPopup);
+                    model: Config.bar.layout
+                    delegate: Loader {
+                        id: barSlotLoader
+                        required property int modelData
+                        // Loader itself participates in the RowLayout
+                        Layout.alignment: Qt.AlignVCenter
+
+                        sourceComponent: {
+                            switch (barSlotLoader.modelData) {
+                            case BarItems.tray:      return trayComponent
+                            case BarItems.system:    return systemComponent
+                            case BarItems.clock:     return clockComponent
+                            case BarItems.separator: return barSeparatorComponent
+                            default:                 return null
+                            }
                         }
-                        onKeepPopupReq: root.keepPopup()
-                        onExitPopupReq: root.exitPopup()
-                        onClosePopupReq: {
-                            root.closePopup();
-                            root.unregisterTrayPopup();
-                        }
-                        onPopupOpenChanged: {
-                            if (!trayDelegate.popupOpen)
+                    }
+                }
+            }
+
+            // ---- top-level slot components ----
+
+            Component {
+                id: trayComponent
+                Row {
+                    spacing: Config.bar.sectionSpacing
+                    Repeater {
+                        model: SystemTray.items
+                        delegate: TrayItem {
+                            id: trayDelegate
+                            required property SystemTrayItem modelData
+                            required property int index
+                            trayItem: modelData
+                            popupName: "tray-" + trayDelegate.index
+                            availableHeight: win.screen ? win.screen.height : 800
+                            activePopup: root.activePopup
+                            onHovered: root.keepAlive()
+                            onOpenPopupReq: name => {
+                                root.openPopup(name);
+                                root.registerTrayPopup(trayDelegate.menuPopup);
+                            }
+                            onKeepPopupReq: root.keepPopup()
+                            onExitPopupReq: root.exitPopup()
+                            onClosePopupReq: {
+                                root.closePopup();
                                 root.unregisterTrayPopup();
+                            }
+                            onPopupOpenChanged: {
+                                if (!trayDelegate.popupOpen)
+                                    root.unregisterTrayPopup();
+                            }
                         }
                     }
                 }
+            }
 
-                BarSeparator {
-                    visible: trayRepeater.count > 0
-                }
-
-                WifiSection {
-                    id: wifiSection
-                    activePopup: root.activePopup
-                    availableHeight: win.screen ? win.screen.height : 800
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onKeepAliveReq: root.keepAlive()
-                    onShowPasswordDialogReq: ssid_ => {
-                        root.wifiPasswordPendingSsid = ssid_;
-                        root.wifiPasswordDialogVisible = true;
-                    }
-                    onHidePasswordDialogReq: {
-                        root.wifiPasswordDialogVisible = false;
-                        root.wifiPasswordPendingSsid = "";
-                    }
-                }
-
-                Connections {
-                    target: root
-                    function onWifiConnectWithPassword(ssid_, password) {
-                        wifiSection.connectWifiWithPassword(ssid_, password);
-                    }
-                }
-
-                EthernetSection {
-                    id: ethernetSection
-                    activePopup: root.activePopup
-                    availableHeight: win.screen ? win.screen.height : 800
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onKeepAliveReq: root.keepAlive()
-                }
-
-                BtSection {
-                    id: btSection
-                    activePopup: root.activePopup
-                    availableHeight: win.screen ? win.screen.height : 800
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                }
-
-                VolumeSection {
-                    id: volumeSection
-                    activePopup: root.activePopup
-                    availableHeight: win.screen ? win.screen.height : 800
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onKeepAliveReq: root.keepAlive()
-                }
-
-                BrightnessSection {
-                    id: brightnessSection
-                    activePopup: root.activePopup
-                    sliderLabelWidth: root.sliderLabelWidth
-                    screenBrightness: BrightnessService.screenBrightness
-                    screenAvailable: BrightnessService.screenAvailable
-                    kbdBrightness: BrightnessService.kbdBrightness
-                    kbdAvailable: BrightnessService.kbdAvailable
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onKeepAliveReq: root.keepAlive()
-                    onSetScreenBrightnessReq: v => BrightnessService.setScreenBrightness(v)
-                    onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
-                }
-
-                PowerSection {
-                    id: powerSection
-                    activePopup: root.activePopup
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onClosePopupReq: root.closePopup()
-                }
-
-                BatterySection {
-                    id: batterySection
-                }
-
-                NotifSection {
-                    id: notifSection
-                    activePopup: root.activePopup
-                    availableHeight: win.screen ? win.screen.height : 800
-                    notifHistory: root.notifHistory
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onKeepPopupReq: root.keepPopup()
-                    onExitPopupReq: root.exitPopup()
-                    onClosePopupReq: root.closePopup()
-                    onRemoveHistoryEntry: entryId => root.removeHistoryEntry(entryId)
-                    onDismissAll: root.dismissAllNotifs()
-
-                    Connections {
-                        target: root
-                        function onAnimateOutHistoryEntry(snapId) {
-                            notifSection.animateOutEntry(snapId);
-                        }
-                    }
-                }
-
-                BarSeparator {}
-
+            Component {
+                id: clockComponent
                 ClockSection {
-                    id: clockSection
                     clockDate: clock.date
+                }
+            }
+
+            Component {
+                id: barSeparatorComponent
+                BarSeparator {}
+            }
+
+            // ---- System section: inner Repeater over Config.bar.systemLayout ----
+            // Each entry in systemLayout maps to a named section instance above,
+            // which gets reparented into this Row for layout purposes.
+            Component {
+                id: systemComponent
+                Row {
+                    id: systemRow
+                    spacing: Config.bar.sectionSpacing
+
+                    Repeater {
+                        model: Config.bar.systemLayout
+                        delegate: Loader {
+                            id: sysSlotLoader
+                            required property int modelData
+
+                            sourceComponent: {
+                                switch (sysSlotLoader.modelData) {
+                                case SystemItems.wifi:          return sysWifiComponent
+                                case SystemItems.ethernet:      return sysEthernetComponent
+                                case SystemItems.bluetooth:     return sysBtComponent
+                                case SystemItems.volume:        return sysVolumeComponent
+                                case SystemItems.brightness:    return sysBrightnessComponent
+                                case SystemItems.power:         return sysPowerComponent
+                                case SystemItems.battery:       return sysBatteryComponent
+                                case SystemItems.notifications: return sysNotifComponent
+                                case SystemItems.separator:     return barSeparatorComponent
+                                default:                        return null
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Proxy components: reparent each named section into the system Row.
+            // onCompleted  → move the section here and show it
+            // onDestruction → hide it again (parent reverts when item is destroyed)
+            Component {
+                id: sysWifiComponent
+                Item {
+                    id: wifiProxy
+                    implicitWidth: wifiSection.implicitWidth
+                    implicitHeight: wifiSection.implicitHeight
+                    Component.onCompleted: {
+                        wifiSection.parent = wifiProxy;
+                        wifiSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        wifiSection.visible = false;
+                        wifiSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysEthernetComponent
+                Item {
+                    id: ethernetProxy
+                    implicitWidth: ethernetSection.implicitWidth
+                    implicitHeight: ethernetSection.implicitHeight
+                    Component.onCompleted: {
+                        ethernetSection.parent = ethernetProxy;
+                        ethernetSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        ethernetSection.visible = false;
+                        ethernetSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysBtComponent
+                Item {
+                    id: btProxy
+                    implicitWidth: btSection.implicitWidth
+                    implicitHeight: btSection.implicitHeight
+                    Component.onCompleted: {
+                        btSection.parent = btProxy;
+                        btSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        btSection.visible = false;
+                        btSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysVolumeComponent
+                Item {
+                    id: volumeProxy
+                    implicitWidth: volumeSection.implicitWidth
+                    implicitHeight: volumeSection.implicitHeight
+                    Component.onCompleted: {
+                        volumeSection.parent = volumeProxy;
+                        volumeSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        volumeSection.visible = false;
+                        volumeSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysBrightnessComponent
+                Item {
+                    id: brightnessProxy
+                    implicitWidth: brightnessSection.implicitWidth
+                    implicitHeight: brightnessSection.implicitHeight
+                    Component.onCompleted: {
+                        brightnessSection.parent = brightnessProxy;
+                        brightnessSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        brightnessSection.visible = false;
+                        brightnessSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysPowerComponent
+                Item {
+                    id: powerProxy
+                    implicitWidth: powerSection.implicitWidth
+                    implicitHeight: powerSection.implicitHeight
+                    Component.onCompleted: {
+                        powerSection.parent = powerProxy;
+                        powerSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        powerSection.visible = false;
+                        powerSection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysBatteryComponent
+                Item {
+                    id: batteryProxy
+                    implicitWidth: batterySection.implicitWidth
+                    implicitHeight: batterySection.implicitHeight
+                    Component.onCompleted: {
+                        batterySection.parent = batteryProxy;
+                        batterySection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        batterySection.visible = false;
+                        batterySection.parent = pill;
+                    }
+                }
+            }
+            Component {
+                id: sysNotifComponent
+                Item {
+                    id: notifProxy
+                    implicitWidth: notifSection.implicitWidth
+                    implicitHeight: notifSection.implicitHeight
+                    Component.onCompleted: {
+                        notifSection.parent = notifProxy;
+                        notifSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        notifSection.visible = false;
+                        notifSection.parent = pill;
+                    }
                 }
             }
         }
