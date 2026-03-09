@@ -15,6 +15,7 @@ Item {
     property real value: 0
     property string iconName: ""
     property string label: ""
+    property real iconOffset: 0     // vertical nudge for the icon
 
     implicitHeight: Config.osd.rowHeight
     implicitWidth: Config.osd.panelWidth
@@ -35,10 +36,17 @@ Item {
         }
         spacing: Math.round(10 * Config.scale)
 
-        IconImage {
-            implicitSize: Config.osd.iconSize
-            source: Quickshell.iconPath(root.iconName)
-        }
+        Item {
+                implicitWidth: Config.osd.iconSize
+                implicitHeight: Config.osd.iconSize
+
+                IconImage {
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: root.iconOffset
+                    implicitSize: Config.osd.iconSize
+                    source: Quickshell.iconPath(root.iconName)
+                }
+            }
 
         GradientProgressBar {
             Layout.fillWidth: true
