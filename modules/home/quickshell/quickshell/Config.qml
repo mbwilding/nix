@@ -12,7 +12,7 @@ QtObject {
     readonly property int monitor: 0
 
     readonly property QtObject panelBorder: QtObject {
-        readonly property int width: 1
+        readonly property int width: 2
         readonly property color color: "#80c0aaff"
     }
 
