@@ -40,7 +40,9 @@ BarSectionItem {
     signal hidePasswordDialogReq
 
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitWidth: hasWifiDevice ? Config.bar.batteryIconSize + Math.round(10 * Config.scale) : 0
+    implicitWidth: hasWifiDevice ? (strength >= 0
+        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        : Config.bar.batteryIconSize + Math.round(10 * Config.scale)) : 0
     visible: hasWifiDevice
     popupItem: wifiPopup
 
@@ -218,9 +220,50 @@ BarSectionItem {
         }
     }
 
+    // Derive the frequency band label from MHz value
+    function freqBand(mhz) {
+        if (mhz <= 0)   return "";
+        if (mhz < 3000) return "2.4";
+        if (mhz < 5925) return "5";
+        return "6";
+    }
+
+    // Derive Wi-Fi generation label from the mode string reported by nmcli
+    // nmcli reports: "Infra", "802.11ax", "802.11be", etc. in the MODE column,
+    // but on many distros MODE is just "Infra". We derive generation from freq+security
+    // as a fallback, but prefer the mode field when available.
+    function wifiGen(mode, band) {
+        const m = (mode || "").toLowerCase();
+        if (m.includes("be"))                   return "Wi-Fi 7";
+        if (m.includes("ax") || m.includes("he")) return band === "6" ? "Wi-Fi 6E" : "Wi-Fi 6";
+        if (m.includes("ac") || m.includes("vht")) return "Wi-Fi 5";
+        if (m.includes("n")  || m.includes("ht"))  return "Wi-Fi 4";
+        if (m.includes("g")  || m.includes("a"))   return "Wi-Fi 4";
+        // Fallback: infer from band alone
+        if (band === "6") return "Wi-Fi 6E";
+        if (band === "5") return "Wi-Fi 5";
+        return "";
+    }
+
+    // Normalise the security string from nmcli into a short human label
+    function secLabel(sec) {
+        const s = (sec || "").toUpperCase();
+        if (s.includes("WPA3") && s.includes("WPA2")) return "WPA2/3";
+        if (s.includes("WPA3"))  return "WPA3";
+        if (s.includes("WPA2"))  return "WPA2";
+        if (s.includes("WPA1") || (s.includes("WPA") && !s.includes("WPA2") && !s.includes("WPA3"))) return "WPA";
+        if (s.includes("OWE"))   return "OWE";
+        if (s.includes("SAE"))   return "WPA3";
+        if (s === "" || s === "--") return "Open";
+        return sec;
+    }
+
     Process {
         id: wifiProc
-        command: ["nmcli", "-t", "-f", "ssid,signal,active", "dev", "wifi"]
+        // Fields: ssid, signal, active, freq, security, mode
+        // nmcli -t separates fields with ':' and rows with '\n'.
+        // ssid may contain colons so we parse from the right.
+        command: ["nmcli", "-t", "-f", "ssid,signal,active,freq,security,mode", "dev", "wifi"]
 
         property bool scanForReal: false
 
@@ -233,42 +276,52 @@ BarSectionItem {
                 wifiProc.scanForReal = false;
                 wifiSection.wifiScanning = false;
 
-                const seen = {};
                 const nets = [];
+
+                // Pop the rightmost colon-delimited token from s.
+                // Returns [token, remainder].
+                function popRight(s) {
+                    const i = s.lastIndexOf(":");
+                    if (i < 0) return ["", s];
+                    return [s.slice(i + 1), s.slice(0, i)];
+                }
 
                 for (const line of this.text.trim().split("\n")) {
                     if (!line)
                         continue;
-                    const lastColon = line.lastIndexOf(":");
-                    const secondLastColon = line.lastIndexOf(":", lastColon - 1);
-                    const active = line.slice(lastColon + 1) === "yes";
-                    const signal = parseInt(line.slice(secondLastColon + 1, lastColon));
-                    const ssid_ = line.slice(0, secondLastColon);
+
+                    // Parse from the right: mode:security:freq:active:signal:ssid
+                    // We need 5 rightmost colon-separated tokens; ssid is the rest.
+                    let rest = line;
+                    let mode_, security_, freqStr_, activeStr_, signalStr_, ssid_;
+                    [mode_,     rest] = popRight(rest);
+                    [security_, rest] = popRight(rest);
+                    [freqStr_,  rest] = popRight(rest);
+                    [activeStr_,rest] = popRight(rest);
+                    [signalStr_,rest] = popRight(rest);
+                    ssid_ = rest;
+
                     if (!ssid_)
                         continue;
+
+                    const active   = activeStr_ === "yes";
+                    const signal   = parseInt(signalStr_) || 0;
+                    // nmcli reports freq as "2412 MHz" — extract number
+                    const freqMhz  = parseInt(freqStr_) || 0;
+                    const band     = wifiSection.freqBand(freqMhz);
+                    const security = wifiSection.secLabel(security_);
+                    const gen      = wifiSection.wifiGen(mode_, band);
+
                     const existing = nets.findIndex(n => n.ssid === ssid_);
                     if (existing >= 0) {
                         const prev = nets[existing];
                         if (active && !prev.active)
-                            nets[existing] = {
-                                ssid: ssid_,
-                                signal,
-                                active
-                            };
+                            nets[existing] = { ssid: ssid_, signal, active, band, security, gen };
                         else if (!active && !prev.active && signal > prev.signal)
-                            nets[existing] = {
-                                ssid: ssid_,
-                                signal,
-                                active
-                            };
+                            nets[existing] = { ssid: ssid_, signal, active, band, security, gen };
                     } else {
-                        nets.push({
-                            ssid: ssid_,
-                            signal,
-                            active
-                        });
+                        nets.push({ ssid: ssid_, signal, active, band, security, gen });
                     }
-                    seen[ssid_] = true;
                 }
                 nets.sort((a, b) => b.signal - a.signal);
                 wifiSection.networks = nets;
@@ -393,16 +446,31 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: wifiSection.popupOpen
 
-        IconImage {
+        Row {
             anchors.centerIn: parent
-            implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(wifiSection.barIcon)
-            opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.InOutQuad
+            spacing: Math.round(3 * Config.scale)
+
+            IconImage {
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: Config.bar.batteryIconSize
+                source: Quickshell.iconPath(wifiSection.barIcon)
+                opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 200
+                        easing.type: Easing.InOutQuad
+                    }
                 }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                visible: wifiSection.strength >= 0
+                text: wifiSection.strength + "%"
+                color: Config.colors.textPrimary
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
+                opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
             }
         }
     }
@@ -422,12 +490,20 @@ BarSectionItem {
         availableItems: wifiSection.networks.filter(n => !n.active).map(n => ({
                     label: n.ssid,
                     icon: wifiSection.icon(n.signal),
+                    signal: n.signal,
+                    band: n.band,
+                    security: n.security,
+                    gen: n.gen,
                     saved: !!wifiSection.savedSsids[n.ssid]
                 }))
 
         connectedItems: wifiSection.networks.filter(n => n.active).map(n => ({
                     label: n.ssid,
                     icon: wifiSection.icon(n.signal),
+                    signal: n.signal,
+                    band: n.band,
+                    security: n.security,
+                    gen: n.gen,
                     saved: true
                 }))
 
