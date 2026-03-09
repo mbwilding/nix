@@ -132,8 +132,8 @@ BarSectionItem {
         anchors.bottom: parent.top
         anchors.bottomMargin: Config.bar.popupOffset
 
-        width: powerPopupCol.implicitWidth + Math.round(20 * Config.scale)
-        height: powerPopupCol.implicitHeight + Math.round(20 * Config.scale)
+        width: Math.round(250 * Config.scale)
+        height: popupHeader.implicitHeight + Math.round(6 * Config.scale) + Math.round(58 * Config.scale)
 
         z: 20
 
@@ -147,76 +147,169 @@ BarSectionItem {
         }
 
         Column {
-            id: powerPopupCol
-            anchors.centerIn: parent
-            spacing: Math.round(2 * Config.scale)
+            width: parent.width
 
             PopupSectionHeader {
+                id: popupHeader
                 text: "Power Mode"
+                width: parent.width
+                leftPadding: Math.round(12 * Config.scale)
             }
 
-            Repeater {
-                model: powerSection.profiles
-                delegate: Rectangle {
-                    id: profileDelegate
-                    required property var modelData
-                    readonly property bool isActive: PowerProfiles.profile === modelData.profile
-                    readonly property bool isPerf: modelData.profile === PowerProfile.Performance
-                    visible: !isPerf || PowerProfiles.hasPerformanceProfile
+            // Discrete power profile slider
+            Item {
+                id: profileSlider
+                width: parent.width
+                height: Math.round(58 * Config.scale)
 
-                    implicitWidth: profileRow.implicitWidth + Math.round(16 * Config.scale)
-                    implicitHeight: profileRow.implicitHeight + Math.round(10 * Config.scale)
-                    radius: Math.round(6 * Config.scale)
+                readonly property var visibleProfiles: {
+                    const p = powerSection.profiles;
+                    return PowerProfiles.hasPerformanceProfile ? p : p.filter(x => x.profile !== PowerProfile.Performance);
+                }
+                readonly property int count: visibleProfiles.length
+                readonly property int activeIndex: {
+                    for (let i = 0; i < visibleProfiles.length; i++)
+                        if (PowerProfiles.profile === visibleProfiles[i].profile)
+                            return i;
+                    return 0;
+                }
+                readonly property real fraction: count > 1 ? activeIndex / (count - 1) : 0
 
-                    color: isActive ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : (profileMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10) : "transparent")
-                    border.color: isActive ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.45) : "transparent"
-                    border.width: 1
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 80
-                        }
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: Math.round(12 * Config.scale)
+                    anchors.rightMargin: Math.round(12 * Config.scale)
+                    spacing: Math.round(10 * Config.scale)
+
+                    // Left icon (first profile — Power Saver)
+                    Text {
+                        text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[0].glyph : ""
+                        font.family: Config.font.family
+                        font.pixelSize: Config.bar.powerIconSize
+                        color: profileSlider.activeIndex === 0 ? Config.colors.accent : Config.colors.textSecondary
+                        Layout.preferredWidth: Config.bar.batteryIconSize
+                        horizontalAlignment: Text.AlignHCenter
+                        Behavior on color { ColorAnimation { duration: 100 } }
                     }
 
-                    RowLayout {
-                        id: profileRow
-                        anchors.centerIn: parent
-                        spacing: Math.round(8 * Config.scale)
+                    // Track
+                    Item {
+                        id: sliderTrack
+                        Layout.fillWidth: true
+                        height: Math.round(20 * Config.scale)
 
-                        Text {
-                            text: profileDelegate.modelData.glyph
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.powerIconSize
-                            color: profileDelegate.isActive ? Config.colors.accent : Config.colors.textSecondary
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 100
-                                }
+                        // Rail
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            width: parent.width
+                            height: Math.round(6 * Config.scale)
+                            radius: height / 2
+                            color: Config.colors.sliderRail
+                        }
+
+                        // Glow fill
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            width: parent.width * profileSlider.fraction
+                            height: Math.round(10 * Config.scale)
+                            radius: height / 2
+                            opacity: 0.35
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0.0; color: Config.colors.accent }
+                                GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                            }
+                            Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                        }
+
+                        // Fill
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            width: parent.width * profileSlider.fraction
+                            height: Math.round(6 * Config.scale)
+                            radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0.0; color: Config.colors.accent }
+                                GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                            }
+                            Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                        }
+
+                        // Snap point dots
+                        Repeater {
+                            model: profileSlider.count
+                            delegate: Rectangle {
+                                required property int index
+                                readonly property real pos: profileSlider.count > 1 ? index / (profileSlider.count - 1) : 0.5
+                                anchors.verticalCenter: sliderTrack.verticalCenter
+                                x: sliderTrack.width * pos - width / 2
+                                width: Math.round(6 * Config.scale)
+                                height: width
+                                radius: width / 2
+                                color: index <= profileSlider.activeIndex ? "transparent" : Config.colors.sliderRail
                             }
                         }
 
-                        Text {
-                            text: profileDelegate.modelData.label
-                            font.family: Config.font.family
-                            font.pixelSize: Config.bar.fontSizePopup
-                            color: profileDelegate.isActive ? Config.colors.accent : Config.colors.textPrimary
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 100
-                                }
+                        // Thumb glow
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: sliderTrack.width * profileSlider.fraction - width / 2
+                            width: Math.round(18 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: Config.colors.glowAccent
+                            opacity: 0.55
+                            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                        }
+
+                        // Thumb
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: sliderTrack.width * profileSlider.fraction - width / 2
+                            width: Math.round(14 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: Config.colors.sliderThumb
+                            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+                            onEntered: powerSection.openPopupReq("power")
+
+                            function pickProfile(mx) {
+                                const n = profileSlider.count;
+                                if (n < 2) return;
+                                const idx = Math.max(0, Math.min(n - 1, Math.round(mx / sliderTrack.width * (n - 1))));
+                                PowerProfiles.profile = profileSlider.visibleProfiles[idx].profile;
+                            }
+
+                            onPressed:         mouse => pickProfile(mouse.x)
+                            onPositionChanged: mouse => { if (pressed) pickProfile(mouse.x); }
+                            onWheel: wheel => {
+                                const dir = wheel.angleDelta.y > 0 ? -1 : 1;
+                                const next = Math.max(0, Math.min(profileSlider.count - 1, profileSlider.activeIndex + dir));
+                                PowerProfiles.profile = profileSlider.visibleProfiles[next].profile;
+                                powerSection.openPopupReq("power");
                             }
                         }
                     }
 
-                    MouseArea {
-                        id: profileMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: powerSection.openPopupReq("power")
-                        onClicked: {
-                            PowerProfiles.profile = profileDelegate.modelData.profile;
-                            powerSection.closePopupReq();
-                        }
+                    // Right icon (last profile — Performance / Balanced)
+                    Text {
+                        text: profileSlider.visibleProfiles.length > 0 ? profileSlider.visibleProfiles[profileSlider.count - 1].glyph : ""
+                        font.family: Config.font.family
+                        font.pixelSize: Config.bar.powerIconSize
+                        color: profileSlider.activeIndex === profileSlider.count - 1 ? Config.colors.accent : Config.colors.textSecondary
+                        Layout.preferredWidth: Config.bar.batteryIconSize
+                        horizontalAlignment: Text.AlignHCenter
+                        Behavior on color { ColorAnimation { duration: 100 } }
                     }
                 }
             }
