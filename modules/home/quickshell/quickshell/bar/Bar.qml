@@ -21,6 +21,7 @@ Scope {
     property bool pillHovered: false
     property bool popupHovered: false
     property bool visible_: false
+    property bool pinned: false   // true when shown via IPC toggle — no auto-hide
     property bool wifiPasswordDialogVisible: false
     property string activePopup: ""
     property string wifiPasswordPendingSsid: ""
@@ -79,13 +80,41 @@ Scope {
         root.keepAlive();
     }
 
+    // Called by mouse hover — shows with timeout
+    function showMouse() {
+        root.visible_ = true;
+        if (!root.pinned)
+            hideTimer.restart();
+    }
+
+    // Called by IPC toggle
+    function toggle() {
+        if (root.visible_ && root.pinned) {
+            // Pinned and visible → hide and unpin
+            root.pinned = false;
+            root.visible_ = false;
+            hideTimer.stop();
+            root.closePopup();
+        } else if (root.visible_) {
+            // Visible via mouse → pin it (cancel the timeout)
+            root.pinned = true;
+            hideTimer.stop();
+        } else {
+            // Hidden → show and pin
+            root.pinned = true;
+            root.visible_ = true;
+            hideTimer.stop();
+        }
+    }
+
     function show() {
         root.visible_ = true;
         hideTimer.restart();
     }
 
     function keepAlive() {
-        hideTimer.restart();
+        if (!root.pinned)
+            hideTimer.restart();
     }
 
     // Helper: returns true if `value` appears in `arr`
@@ -111,13 +140,7 @@ Scope {
     IpcHandler {
         target: "bar"
         function toggle() {
-            if (root.visible_) {
-                root.visible_ = false;
-                hideTimer.stop();
-                root.closePopup();
-            } else {
-                root.show();
-            }
+            root.toggle();
         }
     }
 
@@ -421,8 +444,17 @@ Scope {
         implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
+            // 1-px trigger strip along the full bottom edge (always active)
+            Region {
+                x: 0
+                y: win.implicitHeight - 1
+                width: win.implicitWidth
+                height: 1
+                intersection: Intersection.Combine
+            }
             Region {
                 item: pill
+                intersection: Intersection.Combine
             }
             Region {
                 item: root.activePopup === "wifi" ? wifiSection.popup : null
@@ -454,6 +486,23 @@ Scope {
             }
         }
 
+        // 1-px trigger strip at the very bottom edge — always in the mask,
+        // hovering it calls show() to slide the bar up.
+        Item {
+            id: triggerStrip
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered)
+                        root.show();
+                }
+            }
+        }
+
         Rectangle {
             id: pill
 
@@ -462,7 +511,7 @@ Scope {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.visible_ ? Math.round(8 * Config.scale) : -(pill.implicitHeight + Math.round(8 * Config.scale))
+            anchors.bottomMargin: root.visible_ ? 0 : -(pill.implicitHeight + Math.round(8 * Config.scale))
 
             containmentMask: Item {
                 x: 0
