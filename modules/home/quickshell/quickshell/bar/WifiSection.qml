@@ -15,6 +15,7 @@ BarSectionItem {
     property bool enabled: true
     property bool wifiReady: false
     property bool wifiScanning: false
+    property bool hasWifiDevice: true
     property int noActiveCount: 0
     property int strength: -1
     property real availableHeight: 800
@@ -39,12 +40,12 @@ BarSectionItem {
     signal hidePasswordDialogReq
 
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitWidth: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
+    implicitWidth: hasWifiDevice ? Config.bar.batteryIconSize + Math.round(10 * Config.scale) : 0
+    visible: hasWifiDevice
     popupItem: wifiPopup
 
     Component.onCompleted: {
-        wifiProc.running = true;
-        wifiSavedProc.running = true;
+        wifiDeviceProc.running = true;
     }
 
     onSsidChanged: {
@@ -103,6 +104,24 @@ BarSectionItem {
     }
 
     Process {
+        id: wifiDeviceProc
+        command: ["nmcli", "-t", "-f", "device,type", "dev"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const hasWifi = this.text.trim().split("\n").some(line => {
+                    const colon = line.lastIndexOf(":");
+                    return colon >= 0 && line.slice(colon + 1).trim() === "wifi";
+                });
+                wifiSection.hasWifiDevice = hasWifi;
+                if (hasWifi) {
+                    wifiProc.running = true;
+                    wifiSavedProc.running = true;
+                }
+            }
+        }
+    }
+
+    Process {
         id: wifiToggleProc
         onExited: {
             wifiRadioProc.running = true;
@@ -148,6 +167,7 @@ BarSectionItem {
         stdout: SplitParser {
             onRead: line => {
                 if (line.trim() !== "" && !wifiSection.wifiScanning) {
+                    wifiDeviceProc.running = true;
                     wifiProc.running = true;
                     wifiSavedProc.running = true;
                 }
