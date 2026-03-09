@@ -204,31 +204,13 @@ BarSectionItem {
         onTriggered: ethDeviceProc.running = true
     }
 
-    // ── Connect / Disconnect ────────────────────────────────────────────────
-
-    Process {
-        id: ethConnectProc
-        onExited: {
-            ethDeviceProc.running = true;
-            ethSection.keepAliveReq();
-        }
-    }
-
-    Process {
-        id: ethDisconnectProc
-        onExited: {
-            ethDeviceProc.running = true;
-            ethSection.keepAliveReq();
-        }
-    }
-
     // ── Bar button ─────────────────────────────────────────────────────────
 
     MouseArea {
         id: triggerArea
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: Qt.ArrowCursor
         onEntered: ethSection.openPopupReq("ethernet")
         onExited: ethSection.keepPopupReq()
     }
@@ -308,16 +290,6 @@ BarSectionItem {
                         required property var modelData
                         width: parent.width
                         deviceInfo: devRow.modelData
-                        onClicked: {
-                            if (devRow.modelData.state === "connected") {
-                                ethDisconnectProc.command = ["nmcli", "dev", "disconnect", devRow.modelData.device];
-                                ethDisconnectProc.running = true;
-                            } else {
-                                ethConnectProc.command = ["nmcli", "dev", "connect", devRow.modelData.device];
-                                ethConnectProc.running = true;
-                            }
-                            ethSection.openPopupReq("ethernet");
-                        }
                         onHovered: ethSection.openPopupReq("ethernet")
                     }
                 }
@@ -344,7 +316,6 @@ BarSectionItem {
 
         property var deviceInfo: null
 
-        signal clicked
         signal hovered
 
         readonly property bool connected: row.deviceInfo?.state === "connected" ?? false
@@ -364,9 +335,8 @@ BarSectionItem {
             id: rowMouse
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: row.available ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: Qt.ArrowCursor
             onEntered: row.hovered()
-            onClicked: if (row.available) row.clicked()
         }
 
         ColumnLayout {
