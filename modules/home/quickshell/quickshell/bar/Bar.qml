@@ -433,10 +433,6 @@ Scope {
                 intersection: Intersection.Combine
             }
             Region {
-                item: root.activePopup === "battery" ? batterySection.popup : null
-                intersection: Intersection.Combine
-            }
-            Region {
                 item: root.activePopup === "power" ? powerSection.popup : null
                 intersection: Intersection.Combine
             }
@@ -621,9 +617,6 @@ Scope {
 
                 BatterySection {
                     id: batterySection
-                    activePopup: root.activePopup
-                    onOpenPopupReq: name => root.openPopup(name)
-                    onExitPopupReq: root.exitPopup()
                 }
 
                 NotifSection {

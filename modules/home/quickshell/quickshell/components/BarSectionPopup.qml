@@ -77,7 +77,6 @@ PopupContainer {
     property real _maxLabelWidth: 0
     property real _maxSignalWidth: 0
     property real _maxBandWidth: 0
-    property real _maxGenWidth: 0
     property real _maxSecWidth: 0
     property real _emptyTextWidth: 0
 
@@ -110,7 +109,7 @@ PopupContainer {
     }
 
     function _recomputeMaxLabelWidth() {
-        let maxLabel = 0, maxSig = 0, maxBand = 0, maxGen = 0, maxSec = 0;
+        let maxLabel = 0, maxSig = 0, maxBand = 0, maxSec = 0;
         const lists = [root.availableItems, root.connectedItems];
         for (let l = 0; l < lists.length; l++) {
             const items = lists[l];
@@ -129,10 +128,6 @@ PopupContainer {
                     const bw = tm.advanceWidth;
                     if (bw > maxBand) maxBand = bw;
 
-                    tm.text = it.gen || "";
-                    const gw = tm.advanceWidth;
-                    if (gw > maxGen) maxGen = gw;
-
                     tm.text = it.security || "";
                     const secw = tm.advanceWidth;
                     if (secw > maxSec) maxSec = secw;
@@ -142,7 +137,6 @@ PopupContainer {
         root._maxLabelWidth  = maxLabel;
         root._maxSignalWidth = maxSig;
         root._maxBandWidth   = maxBand;
-        root._maxGenWidth    = maxGen;
         root._maxSecWidth    = maxSec;
         tm.text = root.emptyText;
         root._emptyTextWidth = tm.advanceWidth;
@@ -154,7 +148,7 @@ PopupContainer {
     Component.onCompleted: root._recomputeMaxLabelWidth()
 
     readonly property real _metaCols: _hasWifiMeta
-        ? _maxSignalWidth + _maxBandWidth + _maxGenWidth + _maxSecWidth + _colGap * 4
+        ? _maxSignalWidth + _maxBandWidth + _maxSecWidth + _colGap * 3
         : 0
 
     width: Math.max(
@@ -301,16 +295,6 @@ PopupContainer {
                             Layout.preferredWidth: root._maxBandWidth
                             horizontalAlignment: Text.AlignRight
                         }
-                        // Wi-Fi generation (Wi-Fi 5/6/6E/7)
-                        Text {
-                            visible: availRow._hasMeta
-                            text: availRow._hasMeta ? (availRow.modelData.gen || "") : ""
-                            color: Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
-                            Layout.preferredWidth: root._maxGenWidth
-                            horizontalAlignment: Text.AlignRight
-                        }
                         // Security (WPA2/WPA3/Open…)
                         Text {
                             visible: availRow._hasMeta
@@ -442,16 +426,6 @@ PopupContainer {
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
                             Layout.preferredWidth: root._maxBandWidth
-                            horizontalAlignment: Text.AlignRight
-                        }
-                        // Wi-Fi generation
-                        Text {
-                            visible: connRow._hasMeta
-                            text: connRow._hasMeta ? (connRow.modelData.gen || "") : ""
-                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
-                            Layout.preferredWidth: root._maxGenWidth
                             horizontalAlignment: Text.AlignRight
                         }
                         // Security
