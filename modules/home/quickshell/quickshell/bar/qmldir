@@ -4,6 +4,7 @@ BatterySection 1.0 BatterySection.qml
 BrightnessPopup 1.0 BrightnessPopup.qml
 BrightnessSection 1.0 BrightnessSection.qml
 BtSection 1.0 BtSection.qml
+EthernetSection 1.0 EthernetSection.qml
 ClockSection 1.0 ClockSection.qml
 NotifSection 1.0 NotifSection.qml
 PowerSection 1.0 PowerSection.qml

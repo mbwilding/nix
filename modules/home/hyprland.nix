@@ -450,6 +450,7 @@ in
         "$mod, S, exec, spotify"
         "$mod, M, exec, teams-for-linux"
         "$mod, D, exec, discord"
+        "$mod, minus, exec, ecc toggle"
 
         "$mod, F, togglefloating,"
         "$mod, O, fullscreen,"

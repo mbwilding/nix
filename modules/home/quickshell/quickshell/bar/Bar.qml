@@ -600,6 +600,16 @@ Scope {
                     }
                 }
 
+                EthernetSection {
+                    id: ethernetSection
+                    activePopup: root.activePopup
+                    availableHeight: win.screen ? win.screen.height : 800
+                    onOpenPopupReq: name => root.openPopup(name)
+                    onKeepPopupReq: root.keepPopup()
+                    onExitPopupReq: root.exitPopup()
+                    onKeepAliveReq: root.keepAlive()
+                }
+
                 BtSection {
                     id: btSection
                     activePopup: root.activePopup
