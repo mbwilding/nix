@@ -131,7 +131,7 @@ Scope {
         screen: Quickshell.screens[Config.monitor]
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
-        margins.bottom: Math.round(screen.height / 8)
+        margins.bottom: Math.round(screen.height / 7)
         exclusiveZone: 0
         color: "transparent"
         mask: Region {}
