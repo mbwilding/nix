@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgsStable, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
@@ -32,7 +32,7 @@ in
       bashdb
       bat
       brightnessctl
-      bun
+      pkgsStable.bun
       cameractrls-gtk4
       cargo
       cfn-nag
