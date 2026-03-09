@@ -164,6 +164,11 @@ BarSectionItem {
                 spacing: Math.round(6 * Config.scale)
                 y: -scrollView.scrollY
 
+                PopupSectionHeader {
+                    text: "Notifications"
+                    width: parent.width
+                }
+
                 Repeater {
                     model: notifSection.notifHistory
 
