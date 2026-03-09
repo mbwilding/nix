@@ -179,6 +179,7 @@ Scope {
                     OsdRow {
                         visible: root.screenVisible
                         iconName: "video-display-brightness-symbolic"
+                        iconOffset: -3
                         value: BrightnessService.screenBrightness
                         label: Math.round(BrightnessService.screenBrightness * 100) + "%"
                     }
