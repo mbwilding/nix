@@ -11,17 +11,17 @@
     default = pkgs.symlinkJoin {
       name = "dotnet-combined";
       paths = [
-        pkgs.dotnet-sdk_11
-        pkgs.dotnet-sdk_10
-        pkgs.dotnet-sdk_8
+        # pkgs.dotnet-sdk_11
+        # pkgs.dotnet-sdk_10
+        # pkgs.dotnet-sdk_8
         pkgs.dotnet-sdk_9
-        pkgs.dotnet-aspnetcore_11
-        pkgs.dotnet-aspnetcore_10
-        pkgs.dotnet-aspnetcore_8
+        # pkgs.dotnet-aspnetcore_11
+        # pkgs.dotnet-aspnetcore_10
+        # pkgs.dotnet-aspnetcore_8
         pkgs.dotnet-aspnetcore_9
-        pkgs.dotnet-runtime_11
-        pkgs.dotnet-runtime_10
-        pkgs.dotnet-runtime_8
+        # pkgs.dotnet-runtime_11
+        # pkgs.dotnet-runtime_10
+        # pkgs.dotnet-runtime_8
         pkgs.dotnet-runtime_9
       ];
     };
