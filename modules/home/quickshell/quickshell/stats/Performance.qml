@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell.Io
 
 import ".."
@@ -418,9 +419,17 @@ Item {
                             anchors.topMargin: Math.round(4 * Config.scale)
                             anchors.leftMargin: Math.round(5 * Config.scale)
                             text: "C" + coreCell.index
-                            color: Qt.rgba(1, 1, 1, 0.30)
+                            color: Qt.rgba(1, 1, 1, 0.55)
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                shadowEnabled: true
+                                shadowColor: "#cc000000"
+                                shadowBlur: 0.8
+                                shadowHorizontalOffset: 0
+                                shadowVerticalOffset: 1
+                            }
                         }
 
                         // ── Percentage — top-right, coloured ─────────────────
@@ -434,6 +443,14 @@ Item {
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
                             font.weight: Font.SemiBold
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                shadowEnabled: true
+                                shadowColor: "#cc000000"
+                                shadowBlur: 0.8
+                                shadowHorizontalOffset: 0
+                                shadowVerticalOffset: 1
+                            }
                             Behavior on color {
                                 ColorAnimation { duration: 500 }
                             }
@@ -446,10 +463,18 @@ Item {
                             anchors.topMargin: Math.round(4 * Config.scale) + Config.font.sizeSm + Math.round(2 * Config.scale)
                             anchors.leftMargin: Math.round(5 * Config.scale)
                             text: coreCell.freqText
-                            color: Qt.rgba(1, 1, 1, 0.65)
+                            color: Qt.rgba(1, 1, 1, 0.75)
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
                             visible: coreCell.freqText !== ""
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                shadowEnabled: true
+                                shadowColor: "#cc000000"
+                                shadowBlur: 0.8
+                                shadowHorizontalOffset: 0
+                                shadowVerticalOffset: 1
+                            }
                         }
                     }
                 }
