@@ -143,7 +143,7 @@ Item {
                     text: root.ramUsedGb.toFixed(1) + " / " + root.ramTotalGb.toFixed(0) + " GB"
                     color: Config.colors.textSecondary
                     font.family:    Config.font.family
-                    font.pixelSize: Config.font.sizeMd
+                    font.pixelSize: Config.font.sizeLg
                 }
 
                 Text {
@@ -151,7 +151,7 @@ Item {
                     text: "RAM"
                     color: Config.colors.textMuted
                     font.family:    Config.font.family
-                    font.pixelSize: Config.font.sizeSm
+                    font.pixelSize: Config.font.sizeMd
                     font.weight:    Font.Medium
                     opacity: 0.7
                 }
@@ -174,14 +174,14 @@ Item {
                         text: "Used"
                         color: Config.colors.textMuted
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeMd
+                        font.pixelSize: Config.font.sizeLg
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: root.ramUsedGb.toFixed(2) + " GB"
                         color: root.usageColor
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeMd
+                        font.pixelSize: Config.font.sizeLg
                         font.weight:    Font.Medium
                         Behavior on color { ColorAnimation { duration: 400 } }
                     }
@@ -204,14 +204,14 @@ Item {
                         text: "Cached"
                         color: Config.colors.textMuted
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeMd
+                        font.pixelSize: Config.font.sizeLg
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: root.ramCachedGb.toFixed(2) + " GB"
                         color: Config.colors.textSecondary
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeMd
+                        font.pixelSize: Config.font.sizeLg
                     }
                 }
                 Item {

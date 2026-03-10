@@ -119,8 +119,6 @@ Scope {
             radius: Math.round(Config.stats.radius * Config.scale)
             antialiasing: true
             color: Config.colors.surface
-            border.width: Config.panelBorder.width
-            border.color: Config.panelBorder.color
             opacity: root.visible_ ? 1 : 0
             layer.enabled: true   // clips album art + all children to radius
 
@@ -235,12 +233,25 @@ Scope {
                     }
                 }
             }
-            Rectangle {
-                anchors.fill: parent
-                radius: parent.radius
-                color: "transparent"
-                border.color: Config.panelBorder.color
-                border.width: Config.panelBorder.width
+        }
+
+        // ── Border overlay — sibling of drawer, so it renders above layer.enabled ──
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
+            width:  drawer.drawerWidth
+            height: root.drawerHeight
+            radius: Math.round(Config.stats.radius * Config.scale)
+            color: "transparent"
+            border.color: Config.panelBorder.color
+            border.width: Config.panelBorder.width
+            opacity: root.visible_ ? 1 : 0
+            Behavior on anchors.topMargin {
+                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
+            }
+            Behavior on opacity {
+                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutQuad }
             }
         }
     }
