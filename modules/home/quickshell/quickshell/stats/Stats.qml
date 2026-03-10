@@ -195,10 +195,10 @@ Scope {
                     Layout.preferredWidth: Math.round(Config.stats.musicWidth * Config.scale)
                     radius: Math.round(10 * Config.scale)
                     color: Config.colors.surfaceAlt
-                    border.color: Config.colors.border
-                    border.width: 1
-                    // layer.enabled renders the rectangle (including its radius) as a
-                    // texture, so children are clipped to the rounded shape correctly.
+                    // layer.enabled composites children into an offscreen texture so
+                    // the rounded radius actually clips the album art image.
+                    // The border is drawn inside Music.qml as a top-layer overlay so
+                    // it isn't hidden behind the art.
                     layer.enabled: true
 
                     Music {
