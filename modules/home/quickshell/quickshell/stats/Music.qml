@@ -63,7 +63,7 @@ Item {
         return playing ?? first ?? null;
     }
 
-    readonly property string trackTitle: player ? (player.trackTitle || "Nothing playing") : "Nothing playing"
+    readonly property string trackTitle: player ? (player.trackTitle || "") : ""
     readonly property string trackArtist: player ? (player.trackArtist || "") : ""
     readonly property string trackAlbum: player ? (player.trackAlbum || "") : ""
     readonly property string artUrl: player ? (player.trackArtUrl || "") : ""
@@ -113,13 +113,26 @@ Item {
         id: fallbackBg
         anchors.fill: parent
         color: "#0d0d18"
-        visible: root.artUrl === "" || artImage.status !== Image.Ready
+        // Fade out when real art is available
+        opacity: (root.artUrl === "" || artImage.status !== Image.Ready) ? 1.0 : 0.0
+        visible: opacity > 0
+        Behavior on opacity {
+            NumberAnimation { duration: 350; easing.type: Easing.InOutCubic }
+        }
 
         Canvas {
             id: idleOrbCanvas
             anchors.fill: parent
 
-            // Only animate when visible (no player / no art)
+            // Spring in when the fallback becomes visible
+            opacity: fallbackBg.opacity
+            scale: fallbackBg.opacity > 0.01 ? 1.0 : 1.08
+            transformOrigin: Item.Center
+            Behavior on scale {
+                NumberAnimation { duration: 500; easing.type: Easing.OutCubic }
+            }
+
+            // Only run the frame loop when actually visible
             readonly property bool active: fallbackBg.visible
 
             property var orbPos: []
@@ -195,13 +208,22 @@ Item {
             }
         }
 
-        // Centered idle label — only shown when no player at all
+        // Centered idle label — music note + text, fades/scales out when a player appears
         Column {
             anchors.centerIn: parent
             spacing: Math.round(8 * Config.scale)
-            visible: root.player === null
+            opacity: root.player === null ? 1.0 : 0.0
+            scale: root.player === null ? 1.0 : 0.85
+            transformOrigin: Item.Center
+            Behavior on opacity {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on scale {
+                NumberAnimation { duration: 350; easing.type: Easing.OutCubic }
+            }
 
             Text {
+                id: idleNote
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "\u266b"
                 color: Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.55)
@@ -223,34 +245,16 @@ Item {
         id: cardHover
     }
 
-    // ── Persistent bottom scrim + song info ───────────────────────────────────
+    // ── Persistent bottom song info ───────────────────────────────────────────
     Item {
         id: infoStrip
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         height: Math.round(130 * Config.scale)
-
-        // Scrim — tall, starts dark early, fully opaque at bottom
-        // Hidden when nothing is playing (idle orb state shows instead)
-        Rectangle {
-            anchors.fill: parent
-            visible: root.player !== null
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop {
-                    position: 0.0
-                    color: "transparent"
-                }
-                GradientStop {
-                    position: 0.30
-                    color: Qt.rgba(0, 0, 0, 0.55)
-                }
-                GradientStop {
-                    position: 1.0
-                    color: Qt.rgba(0, 0, 0, 0.92)
-                }
-            }
+        opacity: root.player !== null ? 1.0 : 0.0
+        Behavior on opacity {
+            NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
         }
 
         // Song info pinned to the very bottom-left
