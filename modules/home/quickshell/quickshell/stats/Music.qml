@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell.Services.Mpris
 
 import ".."
@@ -34,7 +35,7 @@ Item {
     readonly property string trackArtist: player ? (player.trackArtist || "") : ""
     readonly property string trackAlbum: player ? (player.trackAlbum || "") : ""
     readonly property string artUrl: player ? (player.trackArtUrl || "") : ""
-    // Bind directly on the player object so the icon updates instantly on play/pause
+    // Optional-chain so this re-evaluates when the player's own isPlaying changes
     readonly property bool isPlaying: player?.isPlaying ?? false
     readonly property real progress: (player && player.length > 0) ? Math.max(0, Math.min(1, player.position / player.length)) : 0
     readonly property real volume: player ? Math.max(0, Math.min(1, player.volume)) : 0
@@ -70,17 +71,18 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
-        height: parent.height * 0.80
+        height: parent.height * 0.82
         gradient: Gradient {
             orientation: Gradient.Vertical
             GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 0.55; color: Qt.rgba(0, 0, 0, 0.55) }
-            GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.88) }
+            GradientStop { position: 0.45; color: Qt.rgba(0, 0, 0, 0.50) }
+            GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.90) }
         }
     }
 
-    // ── Content over the overlay ─────────────────────────────────────────────
+    // ── Text + controls column ───────────────────────────────────────────────
     ColumnLayout {
+        id: contentCol
         anchors {
             left: parent.left
             right: parent.right
@@ -92,42 +94,87 @@ Item {
         spacing: Math.round(5 * Config.scale)
 
         // Track title
-        Text {
+        Item {
             Layout.fillWidth: true
-            text: root.trackTitle
-            color: "white"
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeMd
-            font.weight: Font.SemiBold
-            elide: Text.ElideRight
-            style: Text.Raised
-            styleColor: Qt.rgba(0, 0, 0, 0.7)
+            implicitHeight: titleText.implicitHeight
+
+            Text {
+                id: titleText
+                width: parent.width
+                text: root.trackTitle
+                color: "white"
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeMd
+                font.weight: Font.SemiBold
+                elide: Text.ElideRight
+            }
+
+            MultiEffect {
+                source: titleText
+                anchors.fill: titleText
+                shadowEnabled: true
+                shadowColor: "black"
+                shadowBlur: 0.8
+                shadowOpacity: 0.9
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 1
+            }
         }
 
         // Artist
-        Text {
+        Item {
             Layout.fillWidth: true
-            text: root.trackArtist
-            color: Qt.rgba(1, 1, 1, 0.78)
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeSm
-            elide: Text.ElideRight
+            implicitHeight: artistText.implicitHeight
             visible: root.trackArtist !== ""
-            style: Text.Raised
-            styleColor: Qt.rgba(0, 0, 0, 0.5)
+
+            Text {
+                id: artistText
+                width: parent.width
+                text: root.trackArtist
+                color: Qt.rgba(1, 1, 1, 0.85)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                elide: Text.ElideRight
+            }
+
+            MultiEffect {
+                source: artistText
+                anchors.fill: artistText
+                shadowEnabled: true
+                shadowColor: "black"
+                shadowBlur: 0.8
+                shadowOpacity: 0.85
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 1
+            }
         }
 
         // Album
-        Text {
+        Item {
             Layout.fillWidth: true
-            text: root.trackAlbum
-            color: Qt.rgba(1, 1, 1, 0.55)
-            font.family: Config.font.family
-            font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
-            elide: Text.ElideRight
+            implicitHeight: albumText.implicitHeight
             visible: root.trackAlbum !== ""
-            style: Text.Raised
-            styleColor: Qt.rgba(0, 0, 0, 0.4)
+
+            Text {
+                id: albumText
+                width: parent.width
+                text: root.trackAlbum
+                color: Qt.rgba(1, 1, 1, 0.62)
+                font.family: Config.font.family
+                font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
+                elide: Text.ElideRight
+            }
+
+            MultiEffect {
+                source: albumText
+                anchors.fill: albumText
+                shadowEnabled: true
+                shadowColor: "black"
+                shadowBlur: 0.8
+                shadowOpacity: 0.80
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 1
+            }
         }
 
         // Progress bar
@@ -138,10 +185,10 @@ Item {
             visible: root.player !== null
         }
 
-        // Playback controls row
+        // Playback controls (centred)
         RowLayout {
-            Layout.fillWidth: true
-            spacing: Math.round(8 * Config.scale)
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Math.round(12 * Config.scale)
 
             // Previous
             Rectangle {
@@ -172,18 +219,18 @@ Item {
 
             // Play/Pause
             Rectangle {
-                implicitWidth: Math.round(32 * Config.scale)
-                implicitHeight: Math.round(32 * Config.scale)
+                implicitWidth: Math.round(34 * Config.scale)
+                implicitHeight: Math.round(34 * Config.scale)
                 radius: implicitWidth / 2
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
                     GradientStop {
                         position: 0.0
-                        color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 0.55 : 0.35)
+                        color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 0.60 : 0.40)
                     }
                     GradientStop {
                         position: 1.0
-                        color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.45 : 0.25)
+                        color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.50 : 0.30)
                     }
                 }
                 border.color: Config.colors.accent
@@ -192,6 +239,7 @@ Item {
 
                 Text {
                     anchors.fill: parent
+                    // ⏸ U+23F8 when playing, ▶ U+25B6 when paused/stopped
                     text: root.isPlaying ? "\u23f8" : "\u25b6"
                     color: "white"
                     font.pixelSize: Config.font.sizeSm
@@ -205,7 +253,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: if (root.player) root.player.playPause()
+                    onClicked: if (root.player) root.player.togglePlaying()
                 }
             }
 
@@ -235,89 +283,80 @@ Item {
                     onClicked: if (root.player) root.player.next()
                 }
             }
+        }
 
-            // Volume slider (fills remaining space)
-            Item {
-                Layout.fillWidth: true
-                height: Math.round(20 * Config.scale)
-                opacity: root.player ? 1 : Config.bar.disabledOpacity
+        // Volume slider — full width across the bottom
+        Item {
+            Layout.fillWidth: true
+            implicitHeight: Math.round(20 * Config.scale)
+            opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-                readonly property real frac: root.volume
+            readonly property real frac: root.volume
 
-                // Rail
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    height: Math.round(3 * Config.scale)
-                    radius: height / 2
-                    color: Qt.rgba(1, 1, 1, 0.22)
+            // Rail
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: Math.round(3 * Config.scale)
+                radius: height / 2
+                color: Qt.rgba(1, 1, 1, 0.25)
+            }
+
+            // Fill
+            Rectangle {
+                id: volFill
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * parent.frac
+                height: Math.round(3 * Config.scale)
+                radius: height / 2
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                }
+                Behavior on width { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
+            }
+
+            // Thumb glow
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                x: parent.width * parent.frac - width / 2
+                width: Math.round(14 * Config.scale)
+                height: width
+                radius: width / 2
+                color: Config.colors.glowAccent
+                opacity: 0.5
+                Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
+            }
+
+            // Thumb
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                x: parent.width * parent.frac - width / 2
+                width: Math.round(10 * Config.scale)
+                height: width
+                radius: width / 2
+                color: "white"
+                Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.SizeHorCursor
+
+                function applyX(mx) {
+                    if (!root.player || !root.player.volumeSupported) return
+                    root.player.volume = Math.max(0, Math.min(1, mx / width))
                 }
 
-                // Fill
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width * parent.frac
-                    height: Math.round(3 * Config.scale)
-                    radius: height / 2
-                    gradient: Gradient {
-                        orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: Config.colors.accent }
-                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                    }
-                    Behavior on width { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
-                }
-
-                // Thumb glow
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: parent.width * parent.frac - width / 2
-                    width: Math.round(14 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Config.colors.glowAccent
-                    opacity: 0.5
-                    Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
-                }
-
-                // Thumb
-                Rectangle {
-                    id: volThumb
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: parent.width * parent.frac - width / 2
-                    width: Math.round(10 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: "white"
-                    Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.SizeHorCursor
-
-                    function applyX(mx) {
-                        if (!root.player || !root.player.volumeSupported) return
-                        root.player.volume = Math.max(0, Math.min(1, mx / width))
-                    }
-
-                    onPressed:         mouse => applyX(mouse.x)
-                    onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
-                    onWheel:           wheel => {
-                        if (!root.player || !root.player.volumeSupported) return
-                        root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200))
-                    }
+                onPressed:         mouse => applyX(mouse.x)
+                onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
+                onWheel:           wheel => {
+                    if (!root.player || !root.player.volumeSupported) return
+                    root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200))
                 }
             }
         }
-    }
-
-    // ── Rounded corner border overlay (drawn on top so corners show over art) ─
-    Rectangle {
-        anchors.fill: parent
-        radius: Math.round(10 * Config.scale)
-        color: "transparent"
-        border.color: Config.colors.border
-        border.width: 1
     }
 }
