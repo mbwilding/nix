@@ -222,6 +222,7 @@ Scope {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    clip: true
 
                     // Tab 0 — Media (full-bleed art)
                     Music {
