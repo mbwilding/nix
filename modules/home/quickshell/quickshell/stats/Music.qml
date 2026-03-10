@@ -124,24 +124,48 @@ Item {
                 font.pixelSize: Config.font.sizeMd
                 font.weight: Font.SemiBold
                 elide: Text.ElideRight
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: "#cc000000"
+                    shadowBlur: 0.6
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 1
+                }
             }
             Text {
                 Layout.fillWidth: true
                 text: root.trackArtist
-                color: Qt.rgba(1, 1, 1, 0.75)
+                color: Qt.rgba(1, 1, 1, 0.85)
                 font.family: Config.font.family
                 font.pixelSize: Config.font.sizeSm
                 elide: Text.ElideRight
                 visible: root.trackArtist !== ""
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: "#cc000000"
+                    shadowBlur: 0.6
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 1
+                }
             }
             Text {
                 Layout.fillWidth: true
                 text: root.trackAlbum
-                color: Qt.rgba(1, 1, 1, 0.50)
+                color: Qt.rgba(1, 1, 1, 0.55)
                 font.family: Config.font.family
                 font.pixelSize: Config.font.sizeSm
                 elide: Text.ElideRight
                 visible: root.trackAlbum !== ""
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: "#cc000000"
+                    shadowBlur: 0.6
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 1
+                }
             }
         }
     }
@@ -171,6 +195,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter:   parent.verticalCenter
             anchors.verticalCenterOffset: -Math.round(30 * Config.scale)
+            width: parent.width - Math.round(24 * Config.scale)
 
             transformOrigin: Item.Center
             scale:   cardHover.hovered ? 1.0 : 0.72
@@ -178,74 +203,80 @@ Item {
             Behavior on scale   { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
             Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
-            spacing: Math.round(10 * Config.scale)
+            spacing: Math.round(14 * Config.scale)
+            // Stretch children to fill the available width
+            Layout.fillWidth: true
 
-            // Prev / Play / Next
-            RowLayout {
+            // ── Seek bar — full width, times inline below ─────────────────
+            Item {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
-                spacing: Math.round(18 * Config.scale)
-
-                Rectangle {
-                    implicitWidth: Math.round(30 * Config.scale); implicitHeight: implicitWidth
-                    radius: implicitWidth / 2
-                    color: prevMouse.containsMouse ? Qt.rgba(1,1,1,0.22) : Qt.rgba(1,1,1,0.10)
-                    opacity: root.player ? 1 : Config.bar.disabledOpacity
-                    Behavior on color { ColorAnimation { duration: 80 } }
-                    Text { anchors.centerIn: parent; text: "\u23ee"; color: "white"; font.pixelSize: Config.font.sizeSm }
-                    MouseArea { id: prevMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.previous() }
-                }
-
-                Rectangle {
-                    implicitWidth: Math.round(42 * Config.scale); implicitHeight: implicitWidth
-                    radius: implicitWidth / 2
-                    gradient: Gradient {
-                        orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 0.85 : 0.65) }
-                        GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.75 : 0.55) }
-                    }
-                    border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.85)
-                    border.width: 1
-                    opacity: root.player ? 1 : Config.bar.disabledOpacity
-                    Text {
-                        anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
-                        text: root.isPlaying ? "\u23f8" : "\u25b6"
-                        color: "white"; font.pixelSize: Config.font.sizeLg; font.weight: Font.Medium
-                    }
-                    MouseArea { id: playMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.togglePlaying() }
-                }
-
-                Rectangle {
-                    implicitWidth: Math.round(30 * Config.scale); implicitHeight: implicitWidth
-                    radius: implicitWidth / 2
-                    color: nextMouse.containsMouse ? Qt.rgba(1,1,1,0.22) : Qt.rgba(1,1,1,0.10)
-                    opacity: root.player ? 1 : Config.bar.disabledOpacity
-                    Behavior on color { ColorAnimation { duration: 80 } }
-                    Text { anchors.centerIn: parent; text: "\u23ed"; color: "white"; font.pixelSize: Config.font.sizeSm }
-                    MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.next() }
-                }
-            }
-
-            // Seek bar
-            RowLayout {
-                spacing: Math.round(6 * Config.scale)
+                implicitHeight: Math.round(32 * Config.scale)
                 opacity: root.player ? 1 : Config.bar.disabledOpacity
 
+                // Time labels — positioned at each end, baseline-aligned below bar
+                Text {
+                    id: timeElapsed
+                    anchors.left:   parent.left
+                    anchors.bottom: parent.bottom
+                    text: root.formatTime(root.livePosition)
+                    color: Qt.rgba(1, 1, 1, 0.60)
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeXxs
+                }
+                Text {
+                    id: timeTotal
+                    anchors.right:  parent.right
+                    anchors.bottom: parent.bottom
+                    text: root.formatTime(root.trackLength)
+                    color: Qt.rgba(1, 1, 1, 0.60)
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeXxs
+                }
+
+                // Track — sits above the time labels
                 Item {
                     id: seekTrack
-                    width: Math.round(220 * Config.scale)
-                    height: Math.round(20 * Config.scale)
+                    anchors.left:  parent.left
+                    anchors.right: parent.right
+                    anchors.top:   parent.top
+                    height: Math.round(18 * Config.scale)
                     readonly property real frac: root.progress
 
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Qt.rgba(1,1,1,0.28) }
+                    // Rail
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * seekTrack.frac; height: Math.round(3 * Config.scale); radius: height/2
-                        gradient: Gradient { orientation: Gradient.Horizontal; GradientStop { position: 0.0; color: Config.colors.accent } GradientStop { position: 1.0; color: Config.colors.accentAlt } }
+                        width: parent.width; height: Math.round(3 * Config.scale)
+                        radius: height / 2; color: Qt.rgba(1, 1, 1, 0.22)
+                    }
+                    // Fill
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width * seekTrack.frac
+                        height: Math.round(3 * Config.scale); radius: height / 2
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: Config.colors.accent }
+                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        }
                         Behavior on width { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
                     }
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; x: seekTrack.width * seekTrack.frac - width/2; width: Math.round(14 * Config.scale); height: width; radius: width/2; color: Config.colors.accentGlow; opacity: 0.5; Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } } }
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; x: seekTrack.width * seekTrack.frac - width/2; width: Math.round(10 * Config.scale); height: width; radius: width/2; color: "white"; Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } } }
+                    // Thumb glow
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: seekTrack.width * seekTrack.frac - width / 2
+                        width: Math.round(14 * Config.scale); height: width; radius: width / 2
+                        color: Config.colors.accentGlow; opacity: 0.5
+                        Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
+                    }
+                    // Thumb
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: seekTrack.width * seekTrack.frac - width / 2
+                        width: Math.round(10 * Config.scale); height: width; radius: width / 2
+                        color: "white"
+                        Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
+                    }
 
                     MouseArea {
                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.SizeHorCursor
@@ -254,7 +285,7 @@ Item {
                             const t = Math.max(0, Math.min(1, mx / seekTrack.width)) * root.trackLength
                             root.player.position = t; root.livePosition = t
                         }
-                        onPressed: mouse => applyX(mouse.x)
+                        onPressed:        mouse => applyX(mouse.x)
                         onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
                         onWheel: wheel => {
                             if (!root.player || !root.player.positionSupported || root.trackLength <= 0) return
@@ -263,22 +294,112 @@ Item {
                         }
                     }
                 }
+            }
 
-                Text {
-                    text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
-                    color: Qt.rgba(1,1,1,0.70)
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeXxs
+            // ── Transport — frosted-glass pill: prev · play · next ────────
+            Item {
+                Layout.alignment: Qt.AlignHCenter
+                implicitWidth:  transportRow.implicitWidth  + Math.round(28 * Config.scale)
+                implicitHeight: transportRow.implicitHeight + Math.round(16 * Config.scale)
+                opacity: root.player ? 1 : Config.bar.disabledOpacity
+
+                // Frosted pill background
+                Rectangle {
+                    anchors.fill: parent
+                    radius: height / 2
+                    color: Qt.rgba(1, 1, 1, 0.10)
+                    border.color: Qt.rgba(1, 1, 1, 0.18)
+                    border.width: 1
+                }
+
+                RowLayout {
+                    id: transportRow
+                    anchors.centerIn: parent
+                    spacing: Math.round(6 * Config.scale)
+
+                    // Prev
+                    Item {
+                        implicitWidth:  Math.round(34 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent; radius: height / 2
+                            color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                            Behavior on color { ColorAnimation { duration: 80 } }
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u23ee"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeSm
+                        }
+                        MouseArea {
+                            id: prevMouse; anchors.fill: parent
+                            hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player) root.player.previous()
+                        }
+                    }
+
+                    // Play / Pause — larger accent circle
+                    Item {
+                        implicitWidth:  Math.round(48 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent; radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 1.0 : 0.80) }
+                                GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.90 : 0.65) }
+                            }
+                            border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
+                            border.width: 1
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
+                            text: root.isPlaying ? "\u23f8" : "\u25b6"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeLg
+                            font.weight: Font.SemiBold
+                        }
+                        MouseArea {
+                            id: playMouse; anchors.fill: parent
+                            hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player) root.player.togglePlaying()
+                        }
+                    }
+
+                    // Next
+                    Item {
+                        implicitWidth:  Math.round(34 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent; radius: height / 2
+                            color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                            Behavior on color { ColorAnimation { duration: 80 } }
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u23ed"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeSm
+                        }
+                        MouseArea {
+                            id: nextMouse; anchors.fill: parent
+                            hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player) root.player.next()
+                        }
+                    }
                 }
             }
 
-            // Volume bar
+            // ── Volume — icon + slim full-width bar ───────────────────────
             RowLayout {
-                spacing: Math.round(6 * Config.scale)
+                Layout.fillWidth: true
+                spacing: Math.round(8 * Config.scale)
                 opacity: root.player ? 1 : Config.bar.disabledOpacity
 
                 IconImage {
-                    implicitSize: Math.round(Config.font.sizeSm * 1.1)
+                    implicitSize: Math.round(Config.font.sizeSm * 1.05)
                     source: {
                         const v = root.volume
                         if (v <= 0)   return Quickshell.iconPath("audio-volume-muted-symbolic")
@@ -287,24 +408,45 @@ Item {
                         return Quickshell.iconPath("audio-volume-high-symbolic")
                     }
                     layer.enabled: true
-                    layer.effect: MultiEffect { colorization: 1.0; colorizationColor: "white" }
+                    layer.effect: MultiEffect { colorization: 1.0; colorizationColor: Qt.rgba(1, 1, 1, 0.70) }
                 }
 
                 Item {
                     id: volTrack
-                    width: Math.round(206 * Config.scale)
-                    height: Math.round(20 * Config.scale)
+                    Layout.fillWidth: true
+                    height: Math.round(18 * Config.scale)
                     readonly property real frac: root.volume
 
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Qt.rgba(1,1,1,0.28) }
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * volTrack.frac; height: Math.round(3 * Config.scale); radius: height/2
-                        gradient: Gradient { orientation: Gradient.Horizontal; GradientStop { position: 0.0; color: Config.colors.accent } GradientStop { position: 1.0; color: Config.colors.accentAlt } }
+                        width: parent.width; height: Math.round(3 * Config.scale)
+                        radius: height / 2; color: Qt.rgba(1, 1, 1, 0.22)
+                    }
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width * volTrack.frac
+                        height: Math.round(3 * Config.scale); radius: height / 2
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: Config.colors.accent }
+                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        }
                         Behavior on width { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                     }
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; x: volTrack.width * volTrack.frac - width/2; width: Math.round(14 * Config.scale); height: width; radius: width/2; color: Config.colors.accentGlow; opacity: 0.5; Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } } }
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; x: volTrack.width * volTrack.frac - width/2; width: Math.round(10 * Config.scale); height: width; radius: width/2; color: "white"; Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } } }
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: volTrack.width * volTrack.frac - width / 2
+                        width: Math.round(14 * Config.scale); height: width; radius: width / 2
+                        color: Config.colors.accentGlow; opacity: 0.5
+                        Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
+                    }
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: volTrack.width * volTrack.frac - width / 2
+                        width: Math.round(10 * Config.scale); height: width; radius: width / 2
+                        color: "white"
+                        Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
+                    }
 
                     MouseArea {
                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.SizeHorCursor
@@ -312,7 +454,7 @@ Item {
                             if (!root.player || !root.player.volumeSupported) return
                             root.player.volume = Math.max(0, Math.min(1, mx / volTrack.width))
                         }
-                        onPressed: mouse => applyX(mouse.x)
+                        onPressed:        mouse => applyX(mouse.x)
                         onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
                         onWheel: wheel => {
                             if (!root.player || !root.player.volumeSupported) return
