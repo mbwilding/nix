@@ -120,7 +120,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
-                    Layout.maximumWidth: Math.round(220 * Config.scale)
+                    Layout.fillWidth: true
                 }
 
                 Item { Layout.fillWidth: true }
