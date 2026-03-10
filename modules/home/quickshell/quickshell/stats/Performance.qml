@@ -324,6 +324,11 @@ Item {
                     width: _cellW
                     height: _cellH
 
+                    // Hover state for historical readout
+                    property bool cellHovered: false
+                    property int hoverIndex: -1
+                    readonly property int hoverPct: (hoverIndex >= 0 && hoverIndex < history.length) ? history[hoverIndex] : pct
+
                     readonly property color barColor: pct > 80 ? Config.colors.danger : pct > 50 ? Config.colors.warning : Config.colors.accent
 
                     // Card background
@@ -366,49 +371,103 @@ Item {
                             }
                         }
 
-                        // ── Sparkline history overlay (Canvas) ────────────────
-                        // Drawn on top of the fill bar as a subtle line + thin
-                        // filled area so you can see the trend without hiding the bar.
+                        // ── Sparkline + crosshair (Canvas) ────────────────────
                         Canvas {
                             id: sparkCanvas
                             anchors.fill: parent
                             anchors.margins: 2
 
                             readonly property var hist: coreCell.history
+                            readonly property bool hov: coreCell.cellHovered
+                            readonly property int hovIdx: coreCell.hoverIndex
+                            readonly property color lc: coreCell.barColor
 
                             onHistChanged: requestPaint()
+                            onHovChanged: requestPaint()
+                            onHovIdxChanged: requestPaint()
+                            onLcChanged: requestPaint()
 
                             onPaint: {
                                 const ctx = getContext("2d");
                                 ctx.clearRect(0, 0, width, height);
 
                                 const buf = hist;
-                                if (!buf || buf.length < 2) return;
+                                const n = buf ? buf.length : 0;
+                                if (n < 2) return;
 
                                 const w = width;
                                 const h = height;
-                                const n = buf.length;
-                                const step = w / (n - 1);
+                                const step = w / (root.historyLen - 1);
+                                const xOffset = (root.historyLen - n) * step;
 
+                                // Grid lines at 25 / 50 / 75%
+                                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.06).toString();
+                                ctx.lineWidth = 1;
+                                ctx.setLineDash([]);
+                                for (let g = 1; g <= 3; g++) {
+                                    const gy = h * (1 - g / 4);
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, gy);
+                                    ctx.lineTo(w, gy);
+                                    ctx.stroke();
+                                }
+
+                                // Build points
                                 const pts = [];
                                 for (let i = 0; i < n; i++) {
                                     pts.push({
-                                        x: i * step,
+                                        x: xOffset + i * step,
                                         y: h - (buf[i] / 100) * h
                                     });
                                 }
 
-                                // Subtle white history line — translucent so the fill
-                                // bar shows through and the curve reads as a ghost trail
+                                // Filled area
+                                ctx.beginPath();
+                                ctx.moveTo(pts[0].x, h);
+                                ctx.lineTo(pts[0].x, pts[0].y);
+                                for (let i = 1; i < n; i++) {
+                                    const cpx = (pts[i-1].x + pts[i].x) / 2;
+                                    ctx.bezierCurveTo(cpx, pts[i-1].y, cpx, pts[i].y, pts[i].x, pts[i].y);
+                                }
+                                ctx.lineTo(pts[n-1].x, h);
+                                ctx.closePath();
+                                ctx.fillStyle = Qt.rgba(lc.r, lc.g, lc.b, 0.15).toString();
+                                ctx.fill();
+
+                                // Line
                                 ctx.beginPath();
                                 ctx.moveTo(pts[0].x, pts[0].y);
                                 for (let i = 1; i < n; i++) {
-                                    const cpx = (pts[i - 1].x + pts[i].x) / 2;
-                                    ctx.bezierCurveTo(cpx, pts[i - 1].y, cpx, pts[i].y, pts[i].x, pts[i].y);
+                                    const cpx = (pts[i-1].x + pts[i].x) / 2;
+                                    ctx.bezierCurveTo(cpx, pts[i-1].y, cpx, pts[i].y, pts[i].x, pts[i].y);
                                 }
-                                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.22);
+                                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.22).toString();
                                 ctx.lineWidth = Math.round(1.5 * Config.scale);
+                                ctx.lineJoin = "round";
                                 ctx.stroke();
+
+                                // Crosshair + dot on hover
+                                if (hov && hovIdx >= 0 && hovIdx < n) {
+                                    const hx = pts[hovIdx].x;
+                                    const hy = pts[hovIdx].y;
+
+                                    ctx.beginPath();
+                                    ctx.moveTo(hx, 0);
+                                    ctx.lineTo(hx, h);
+                                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.25).toString();
+                                    ctx.lineWidth = 1;
+                                    ctx.setLineDash([Math.round(3 * Config.scale), Math.round(3 * Config.scale)]);
+                                    ctx.stroke();
+                                    ctx.setLineDash([]);
+
+                                    ctx.beginPath();
+                                    ctx.arc(hx, hy, Math.round(3 * Config.scale), 0, Math.PI * 2);
+                                    ctx.fillStyle = lc.toString();
+                                    ctx.fill();
+                                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.80).toString();
+                                    ctx.lineWidth = Math.round(1.5 * Config.scale);
+                                    ctx.stroke();
+                                }
                             }
                         }
 
@@ -432,14 +491,16 @@ Item {
                             }
                         }
 
-                        // ── Percentage — top-right, coloured ─────────────────
+                        // ── Percentage — top-right, live or hover historical ───
                         Text {
                             anchors.top: parent.top
                             anchors.right: parent.right
                             anchors.topMargin: Math.round(4 * Config.scale)
                             anchors.rightMargin: Math.round(5 * Config.scale)
-                            text: coreCell.pct + "%"
-                            color: coreCell.barColor
+                            text: coreCell.hoverPct + "%"
+                            color: coreCell.cellHovered && coreCell.hoverIndex >= 0
+                                   ? Qt.rgba(1, 1, 1, 0.55)
+                                   : coreCell.barColor
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
                             font.weight: Font.SemiBold
@@ -452,7 +513,7 @@ Item {
                                 shadowVerticalOffset: 1
                             }
                             Behavior on color {
-                                ColorAnimation { duration: 500 }
+                                ColorAnimation { duration: 200 }
                             }
                         }
 
@@ -474,6 +535,29 @@ Item {
                                 shadowBlur: 0.8
                                 shadowHorizontalOffset: 0
                                 shadowVerticalOffset: 1
+                            }
+                        }
+
+                        // ── Mouse overlay for hover/crosshair ─────────────────
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            acceptedButtons: Qt.NoButton
+
+                            onPositionChanged: mouse => {
+                                const n = coreCell.history.length;
+                                if (n === 0) return;
+                                const step = width / (root.historyLen - 1);
+                                const xOffset = (root.historyLen - n) * step;
+                                const relX = Math.max(0, Math.min(width, mouse.x - xOffset));
+                                const idx = Math.max(0, Math.min(n - 1, Math.round(relX / step)));
+                                coreCell.cellHovered = true;
+                                coreCell.hoverIndex = idx;
+                            }
+
+                            onExited: {
+                                coreCell.cellHovered = false;
+                                coreCell.hoverIndex = -1;
                             }
                         }
                     }
