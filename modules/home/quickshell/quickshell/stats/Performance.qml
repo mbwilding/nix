@@ -13,6 +13,15 @@ Item {
 
     property var corePercents: []
     property var _prevCores: []
+    property string cpuName: ""
+
+    property Process _cpuInfoProc: Process {
+        command: ["sh", "-c", "grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.cpuName = this.text.trim()
+        }
+    }
 
     property Process _cpuProc: Process {
         command: ["cat", "/proc/stat"]
@@ -99,6 +108,19 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
+                }
+
+                Item { Layout.fillWidth: true }
+
+                Text {
+                    text: root.cpuName
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideRight
+                    Layout.maximumWidth: Math.round(220 * Config.scale)
                 }
 
                 Item { Layout.fillWidth: true }
