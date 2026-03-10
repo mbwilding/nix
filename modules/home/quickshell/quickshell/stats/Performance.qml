@@ -204,7 +204,7 @@ Item {
                             text: pct + "%"
                             color: "white"
                             font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeSm
+                            font.pixelSize: Config.font.sizeMd
                             font.weight: Font.Medium
                         }
                     }
