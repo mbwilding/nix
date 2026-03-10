@@ -13,46 +13,39 @@ import ".."
 import "../components"
 
 // Stats drawer — slides down from the top edge of the screen.
-// Full-screen transparent window with exclusiveZone: 0 so nothing is displaced.
-// A 1-px invisible strip at the very top acts as the hover trigger.
-// IPC target "stats": toggle() pins/unpins. Mouse hover still times out normally.
 Scope {
     id: root
 
     property bool visible_: false
-    property bool pinned: false   // true when shown via IPC toggle — no auto-hide
+    property bool pinned: false
 
-    // Convenience sizes (all scaled)
     readonly property int drawerHeight: Math.round(Config.stats.height * Config.scale)
     readonly property int drawerPad:    Math.round(16 * Config.scale)
 
-    // Called by mouse hover — shows with timeout
     function showMouse() {
-        root.visible_ = true;
-        if (!root.pinned)
-            hideTimer.restart();
+        root.visible_ = true
+        if (!root.pinned) hideTimer.restart()
     }
 
-    // Called by IPC toggle
     function toggle() {
         if (root.visible_ && root.pinned) {
-            root.pinned = false;
-            root.visible_ = false;
-            hideTimer.stop();
+            root.pinned = false
+            root.visible_ = false
+            hideTimer.stop()
         } else if (root.visible_) {
-            root.pinned = true;
-            hideTimer.stop();
+            root.pinned = true
+            hideTimer.stop()
         } else {
-            root.pinned = true;
-            root.visible_ = true;
-            hideTimer.stop();
+            root.pinned = true
+            root.visible_ = true
+            hideTimer.stop()
         }
     }
 
     function hide() {
-        root.visible_ = false;
-        root.pinned = false;
-        hideTimer.stop();
+        root.visible_ = false
+        root.pinned = false
+        hideTimer.stop()
     }
 
     Timer {
@@ -77,7 +70,7 @@ Scope {
         exclusiveZone: 0
         color: "transparent"
 
-        implicitWidth: win.screen ? win.screen.width : 1920
+        implicitWidth:  win.screen ? win.screen.width  : 1920
         implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
@@ -100,30 +93,28 @@ Scope {
             x: Math.round(win.implicitWidth * Config.stats.triggerStart)
             width: Math.round(win.implicitWidth * (Config.stats.triggerEnd - Config.stats.triggerStart))
             height: Config.stats.edgeHotspotSize
-
             HoverHandler {
                 onHoveredChanged: { if (hovered) root.showMouse() }
             }
         }
 
-        // ── Drawer card ──────────────────────────────────────────────────────
+        // ── Drawer ───────────────────────────────────────────────────────────
         Rectangle {
             id: drawer
 
-            // Content area is square: height = drawerHeight - 2*drawerPad.
-            // Total width  = tabStripWidth + drawerPad + squareSize + drawerPad
+            // Tab strip is 44px. Content area is square = drawerHeight.
+            // No extra padding — content fills flush to the right edge.
             readonly property int tabStripWidth: Math.round(44 * Config.scale)
-            readonly property int squareSize: root.drawerHeight - 2 * root.drawerPad
-            readonly property int drawerWidth: tabStripWidth + root.drawerPad + squareSize + root.drawerPad
+            readonly property int drawerWidth:   tabStripWidth + root.drawerHeight
 
-            // Active tab index: 0 = Media, 1 = Performance
+            // 0=Media  1=CPU  2=RAM  3=Network
             property int activeTab: 0
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
 
-            width: drawer.drawerWidth
+            width:  drawer.drawerWidth
             height: root.drawerHeight
 
             radius: Math.round(Config.stats.radius * Config.scale)
@@ -132,8 +123,7 @@ Scope {
             border.width: Config.panelBorder.width
             border.color: Config.panelBorder.color
             opacity: root.visible_ ? 1 : 0
-            // layer.enabled for proper radius clipping of children (album art etc.)
-            layer.enabled: true
+            layer.enabled: true   // clips album art + all children to radius
 
             Behavior on anchors.topMargin {
                 NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
@@ -144,104 +134,105 @@ Scope {
 
             HoverHandler {
                 onHoveredChanged: {
-                    if (hovered)      hideTimer.stop()
+                    if (hovered)           hideTimer.stop()
                     else if (!root.pinned) hideTimer.restart()
                 }
             }
 
-            // ── Layout: tab strip | content ──────────────────────────────────
+            // ── Layout: tab strip | square content ───────────────────────────
             RowLayout {
                 anchors.fill: parent
                 spacing: 0
 
-                // ── Tab strip (left edge) ─────────────────────────────────────
-                // Narrow column of icon-only tabs; hover switches the active tab.
+                // ── Tab strip ─────────────────────────────────────────────────
                 Rectangle {
-                    id: tabStrip
                     Layout.fillHeight: true
-                    Layout.preferredWidth: Math.round(44 * Config.scale)
-                    color: Qt.rgba(0, 0, 0, 0.18)
+                    Layout.preferredWidth: drawer.tabStripWidth
+                    color: Qt.rgba(0, 0, 0, 0.20)
 
-                    // Left-side rounded corners follow the drawer radius; right side is flat.
-                    // We achieve this with a clipping trick: extend slightly into the content
-                    // area and let the drawer's own layer clip it.
+                    // Icons centred vertically
                     ColumnLayout {
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            top: parent.top
-                            topMargin: Math.round(18 * Config.scale)
-                        }
-                        spacing: Math.round(6 * Config.scale)
+                        anchors.centerIn: parent
+                        spacing: Math.round(8 * Config.scale)
 
-                        // Tab 0 — Media (music note)
                         TabIcon {
                             iconName: "audio-x-generic-symbolic"
                             active: drawer.activeTab === 0
                             onHovered: drawer.activeTab = 0
                         }
-
-                        // Tab 1 — Performance (CPU/chip)
                         TabIcon {
                             iconName: "computer-symbolic"
                             active: drawer.activeTab === 1
                             onHovered: drawer.activeTab = 1
                         }
+                        TabIcon {
+                            iconName: "drive-harddisk-symbolic"
+                            active: drawer.activeTab === 2
+                            onHovered: drawer.activeTab = 2
+                        }
+                        TabIcon {
+                            iconName: "network-wired-symbolic"
+                            active: drawer.activeTab === 3
+                            onHovered: drawer.activeTab = 3
+                        }
                     }
 
-                    // Right-edge separator line
+                    // Right separator
                     Rectangle {
-                        anchors.right: parent.right
-                        anchors.top: parent.top
+                        anchors.right:  parent.right
+                        anchors.top:    parent.top
                         anchors.bottom: parent.bottom
                         width: 1
                         color: Config.colors.border
-                        opacity: 0.6
+                        opacity: 0.5
                     }
                 }
 
-                // ── Content area — fills flush, no padding ────────────────────
+                // ── Content area (square, flush) ──────────────────────────────
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    // Media tab — edge-to-edge, drawer layer clips the corners
+                    // Tab 0 — Media (full-bleed art)
                     Music {
                         anchors.fill: parent
                         visible: drawer.activeTab === 0
                         opacity: drawer.activeTab === 0 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 120 } }
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
                     }
 
-                    // Performance tab — padded inside since it's text/bars not art
+                    // Tab 1 — CPU boxes (full-bleed, self-padded)
+                    Performance {
+                        anchors.fill: parent
+                        visible: drawer.activeTab === 1
+                        opacity: drawer.activeTab === 1 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                    }
+
+                    // Tab 2 — RAM
+                    Ram {
+                        anchors.fill: parent
+                        visible: drawer.activeTab === 2
+                        opacity: drawer.activeTab === 2 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                    }
+
+                    // Tab 3 — Network
                     Item {
                         anchors.fill: parent
                         anchors.margins: root.drawerPad
-                        visible: drawer.activeTab === 1
-                        opacity: drawer.activeTab === 1 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 120 } }
+                        visible: drawer.activeTab === 3
+                        opacity: drawer.activeTab === 3 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
 
-                        ColumnLayout {
+                        Network {
                             anchors.fill: parent
-                            spacing: Math.round(8 * Config.scale)
-
-                            Text {
-                                text: "System"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Config.font.sizeSm
-                            }
-
-                            Performance {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
                         }
                     }
                 }
             }
 
-            // Border overlay — layer.enabled hides the Rectangle's own border,
-            // so we redraw it as a topmost transparent child.
+            // Border overlay (layer.enabled hides the rect's own border)
             Rectangle {
                 anchors.fill: parent
                 radius: parent.radius
@@ -252,35 +243,33 @@ Scope {
         }
     }
 
-    // ── Tab icon component (inline) ───────────────────────────────────────────
+    // ── Inline tab icon component ─────────────────────────────────────────────
     component TabIcon: Item {
         id: tabIcon
         property string iconName: ""
         property bool active: false
         signal hovered
 
-        implicitWidth: Math.round(32 * Config.scale)
-        implicitHeight: Math.round(32 * Config.scale)
+        implicitWidth:  Math.round(30 * Config.scale)
+        implicitHeight: Math.round(30 * Config.scale)
 
         Rectangle {
             anchors.fill: parent
-            radius: Math.round(8 * Config.scale)
+            radius: Math.round(7 * Config.scale)
             color: tabIcon.active
                 ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
-                : tabHover.containsMouse
-                    ? Qt.rgba(1, 1, 1, 0.08)
-                    : "transparent"
+                : tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
             Behavior on color { ColorAnimation { duration: 100 } }
         }
 
         IconImage {
             anchors.centerIn: parent
-            implicitSize: Math.round(16 * Config.scale)
+            implicitSize: Math.round(15 * Config.scale)
             source: Quickshell.iconPath(tabIcon.iconName)
             layer.enabled: true
             layer.effect: MultiEffect {
                 colorization: 1.0
-                colorizationColor: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
+                colorizationColor: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.50)
             }
         }
 
