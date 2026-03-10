@@ -146,33 +146,38 @@ Item {
         }
     }
 
-    // ── Controls overlay — slides up into centre on hover ─────────────────────
+    // ── Controls overlay — depth-push effect on hover ────────────────────────
     Item {
+        id: controlsOverlay
         anchors.fill: parent
-        opacity: cardHover.hovered ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
-        // Mid-card scrim so controls are legible without touching the bottom info
+        // Scrim fades in alongside controls
         Rectangle {
             anchors.fill: parent
+            opacity: cardHover.hovered ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
             gradient: Gradient {
                 orientation: Gradient.Vertical
                 GradientStop { position: 0.0;  color: "transparent" }
-                GradientStop { position: 0.25; color: Qt.rgba(0, 0, 0, 0.35) }
-                GradientStop { position: 0.75; color: Qt.rgba(0, 0, 0, 0.35) }
+                GradientStop { position: 0.25; color: Qt.rgba(0, 0, 0, 0.40) }
+                GradientStop { position: 0.75; color: Qt.rgba(0, 0, 0, 0.40) }
                 GradientStop { position: 1.0;  color: "transparent" }
             }
         }
 
-        // Controls column — slides up from below centre on hover.
+        // Controls column — scales up from 0.72 with OutBack overshoot (depth push).
         ColumnLayout {
             id: controlsColumn
             anchors.horizontalCenter: parent.horizontalCenter
-            // Vertical position driven by y so we can animate it.
-            // Resting: 24 px below the centred target; hovered: at target.
-            readonly property real targetY: (parent.height - implicitHeight) / 2 - Math.round(30 * Config.scale)
-            y: cardHover.hovered ? targetY : targetY + Math.round(24 * Config.scale)
-            Behavior on y { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+            anchors.verticalCenter:   parent.verticalCenter
+            anchors.verticalCenterOffset: -Math.round(30 * Config.scale)
+
+            transformOrigin: Item.Center
+            scale:   cardHover.hovered ? 1.0 : 0.72
+            opacity: cardHover.hovered ? 1.0 : 0.0
+            Behavior on scale   { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
+            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+
             spacing: Math.round(10 * Config.scale)
 
             // Prev / Play / Next
