@@ -194,24 +194,24 @@ Item {
             anchors.bottom: parent.bottom
             anchors.rightMargin: Math.round(14 * Config.scale)
             anchors.bottomMargin: Math.round(12 * Config.scale)
-        width: timeHover.hovered ? Math.round(160 * Config.scale) : timeLabel.implicitWidth
-        height: timeLabel.implicitHeight
+            width: timeHover.hovered ? Math.round(200 * Config.scale) : timeLabelCollapsed.implicitWidth
+            height: Math.max(timeLabelCollapsed.implicitHeight, Math.round(28 * Config.scale))
 
-        HoverHandler {
-            id: timeHover
-        }
-
-        Behavior on width {
-            enabled: !timeHover.hovered
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
+            HoverHandler {
+                id: timeHover
             }
-        }
 
-            // "00:00 / 00:00" label — fades out when slider is shown
+            Behavior on width {
+                enabled: !timeHover.hovered
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            // Collapsed state: plain "0:00 / 3:45" label
             Text {
-                id: timeLabel
+                id: timeLabelCollapsed
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
@@ -220,10 +220,7 @@ Item {
                 font.pixelSize: Config.font.sizeLg
                 opacity: timeHover.hovered ? 0.0 : 1.0
                 Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.OutCubic
-                    }
+                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
                 }
                 layer.enabled: true
                 layer.effect: MultiEffect {
@@ -235,17 +232,14 @@ Item {
                 }
             }
 
-            // Inline seek slider — fades in on hover
+            // Expanded state: frosted pill with current time + seek bar side by side
             Item {
                 id: inlineSeek
                 anchors.fill: parent
                 visible: timeHover.hovered
                 opacity: timeHover.hovered ? 1.0 : 0.0
                 Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.OutCubic
-                    }
+                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
                 }
 
                 // Frosted pill background
@@ -257,12 +251,25 @@ Item {
                     border.width: 1
                 }
 
+                // Current time label — left side inside pill
+                Text {
+                    id: timeLabelInline
+                    anchors.left: parent.left
+                    anchors.leftMargin: Math.round(12 * Config.scale)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.formatTime(root.livePosition)
+                    color: Qt.rgba(1, 1, 1, 0.85)
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                }
+
+                // Seek track — fills remaining space to the right of the time label
                 Item {
                     id: inlineSeekTrack
-                    anchors.left: parent.left
+                    anchors.left: timeLabelInline.right
                     anchors.right: parent.right
-                    anchors.leftMargin: Math.round(10 * Config.scale)
-                    anchors.rightMargin: Math.round(10 * Config.scale)
+                    anchors.leftMargin: Math.round(8 * Config.scale)
+                    anchors.rightMargin: Math.round(12 * Config.scale)
                     anchors.verticalCenter: parent.verticalCenter
                     height: Math.round(16 * Config.scale)
                     readonly property real frac: root.progress
@@ -283,21 +290,12 @@ Item {
                         radius: height / 2
                         gradient: Gradient {
                             orientation: Gradient.Horizontal
-                            GradientStop {
-                                position: 0.0
-                                color: Config.colors.accent
-                            }
-                            GradientStop {
-                                position: 1.0
-                                color: Config.colors.accentAlt
-                            }
+                            GradientStop { position: 0.0; color: Config.colors.accent }
+                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
                         }
                         Behavior on width {
                             enabled: timeHover.hovered
-                            NumberAnimation {
-                                duration: 80
-                                easing.type: Easing.OutQuart
-                            }
+                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
                         }
                     }
                     // Thumb
@@ -310,10 +308,7 @@ Item {
                         color: "white"
                         Behavior on x {
                             enabled: timeHover.hovered
-                            NumberAnimation {
-                                duration: 80
-                                easing.type: Easing.OutQuart
-                            }
+                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
                         }
                     }
 
