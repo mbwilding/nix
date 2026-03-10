@@ -106,7 +106,7 @@ Scope {
             readonly property int tabBarHeight:  Math.round(44 * Config.scale)
             readonly property int drawerWidth:   Math.round(400 * Config.scale)
 
-            // 0=Media  1=CPU  2=RAM  3=Network
+            // 0=Media  1=CPU  2=RAM  3=GPU  4=Network
             property int activeTab: 0
 
             anchors.horizontalCenter: parent.horizontalCenter
@@ -177,10 +177,17 @@ Scope {
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "network-wired-symbolic"
-                            label: "Network"
+                            iconName: "video-display-symbolic"
+                            label: "GPU"
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
+                        }
+                        TabIcon {
+                            Layout.fillWidth: true
+                            iconName: "network-wired-symbolic"
+                            label: "Network"
+                            active: drawer.activeTab === 4
+                            onHovered: drawer.activeTab = 4
                         }
 
                         // Vertical divider before pin button
@@ -240,11 +247,19 @@ Scope {
                         Behavior on opacity { NumberAnimation { duration: 150 } }
                     }
 
-                    // Tab 3 — Network
-                    Network {
+                    // Tab 3 — GPU
+                    Gpu {
                         anchors.fill: parent
                         visible: drawer.activeTab === 3
                         opacity: drawer.activeTab === 3 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                    }
+
+                    // Tab 4 — Network
+                    Network {
+                        anchors.fill: parent
+                        visible: drawer.activeTab === 4
+                        opacity: drawer.activeTab === 4 ? 1 : 0
                         Behavior on opacity { NumberAnimation { duration: 150 } }
                     }
                 }
