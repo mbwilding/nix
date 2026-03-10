@@ -194,19 +194,20 @@ Item {
             anchors.bottom: parent.bottom
             anchors.rightMargin: Math.round(14 * Config.scale)
             anchors.bottomMargin: Math.round(12 * Config.scale)
-            width: timeHover.hovered ? Math.round(160 * Config.scale) : timeLabel.implicitWidth
-            height: timeLabel.implicitHeight
+        width: timeHover.hovered ? Math.round(160 * Config.scale) : timeLabel.implicitWidth
+        height: timeLabel.implicitHeight
 
-            HoverHandler {
-                id: timeHover
-            }
+        HoverHandler {
+            id: timeHover
+        }
 
-            Behavior on width {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.OutCubic
-                }
+        Behavior on width {
+            enabled: !timeHover.hovered
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
             }
+        }
 
             // "00:00 / 00:00" label — fades out when slider is shown
             Text {
@@ -238,6 +239,7 @@ Item {
             Item {
                 id: inlineSeek
                 anchors.fill: parent
+                visible: timeHover.hovered
                 opacity: timeHover.hovered ? 1.0 : 0.0
                 Behavior on opacity {
                     NumberAnimation {
@@ -291,6 +293,7 @@ Item {
                             }
                         }
                         Behavior on width {
+                            enabled: timeHover.hovered
                             NumberAnimation {
                                 duration: 80
                                 easing.type: Easing.OutQuart
@@ -306,6 +309,7 @@ Item {
                         radius: width / 2
                         color: "white"
                         Behavior on x {
+                            enabled: timeHover.hovered
                             NumberAnimation {
                                 duration: 80
                                 easing.type: Easing.OutQuart
@@ -521,6 +525,7 @@ Item {
         }
 
         Behavior on width {
+            enabled: !volHover.hovered
             NumberAnimation {
                 duration: 200
                 easing.type: Easing.OutCubic
@@ -556,6 +561,7 @@ Item {
         Item {
             id: inlineVol
             anchors.fill: parent
+            visible: volHover.hovered
             opacity: volHover.hovered ? 1.0 : 0.0
             Behavior on opacity {
                 NumberAnimation {
@@ -609,6 +615,7 @@ Item {
                         }
                     }
                     Behavior on width {
+                        enabled: volHover.hovered
                         NumberAnimation {
                             duration: 60
                             easing.type: Easing.OutQuart
@@ -624,6 +631,7 @@ Item {
                     radius: width / 2
                     color: "white"
                     Behavior on x {
+                        enabled: volHover.hovered
                         NumberAnimation {
                             duration: 60
                             easing.type: Easing.OutQuart
