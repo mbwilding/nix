@@ -257,149 +257,142 @@ Item {
             NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
         }
 
-        // Song info pill — bottom-left, shrink-wraps content
-        Item {
-            id: infoPill
-            anchors {
-                left: parent.left
-                bottom: parent.bottom
-                leftMargin: Math.round(14 * Config.scale)
-                bottomMargin: Math.round(12 * Config.scale)
-            }
+        // Hidden sizers — measure natural text widths without layout constraints
+        Text { id: sizeTitle;  visible: false; text: root.trackTitle;  font.family: Config.font.family; font.pixelSize: Config.font.sizeXl;  font.weight: Font.Bold }
+        Text { id: sizeArtist; visible: false; text: root.trackArtist; font.family: Config.font.family; font.pixelSize: Config.font.sizeMd }
+        Text { id: sizeAlbum;  visible: false; text: root.trackAlbum;  font.family: Config.font.family; font.pixelSize: Config.font.sizeSm }
 
-            // Pill sizes to inner content; animates smoothly on track change
-            width: infoPillBg.implicitWidth
-            height: infoPillBg.implicitHeight
+        readonly property real _padH: Math.round(20 * Config.scale)
+        readonly property real _maxW: root.width - Math.round(28 * Config.scale)
+        readonly property real _naturalW: Math.max(sizeTitle.implicitWidth, sizeArtist.implicitWidth, sizeAlbum.implicitWidth) + _padH
+        readonly property real _pillW: Math.min(_naturalW, _maxW)
+
+        // Song info pill — bottom-left
+        Rectangle {
+            id: infoPillBg
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: Math.round(14 * Config.scale)
+            anchors.bottomMargin: Math.round(12 * Config.scale)
+            width: infoStrip._pillW
+            height: infoColInner.implicitHeight + Math.round(12 * Config.scale)
             Behavior on width {
                 NumberAnimation { duration: 380; easing.type: Easing.InOutCubic }
             }
             Behavior on height {
                 NumberAnimation { duration: 320; easing.type: Easing.InOutCubic }
             }
+            radius: Math.round(10 * Config.scale)
+            color: Qt.rgba(0.05, 0.04, 0.12, 0.72)
+            border.color: Qt.rgba(1, 1, 1, 0.10)
+            border.width: 1
 
-            Rectangle {
-                id: infoPillBg
-                anchors.fill: parent
-                implicitWidth: infoColInner.implicitWidth + Math.round(20 * Config.scale)
-                implicitHeight: infoColInner.implicitHeight + Math.round(12 * Config.scale)
-                radius: Math.round(10 * Config.scale)
-                color: Qt.rgba(0.05, 0.04, 0.12, 0.72)
-                border.color: Qt.rgba(1, 1, 1, 0.10)
-                border.width: 1
+            property string watchKey: root.trackTitle + root.trackArtist
+            onWatchKeyChanged: pulseAnim.restart()
+            SequentialAnimation {
+                id: pulseAnim
+                NumberAnimation { target: infoPillBg; property: "scale"; to: 1.03; duration: 120; easing.type: Easing.OutCubic }
+                NumberAnimation { target: infoPillBg; property: "scale"; to: 1.0;  duration: 260; easing.type: Easing.OutElastic; easing.overshoot: 1.5 }
+            }
 
-                // Subtle scale pulse on track change
-                property string watchKey: root.trackTitle + root.trackArtist
-                onWatchKeyChanged: pulseAnim.restart()
+            // Inline blur-swap component
+            component BlurText: Item {
+                id: bt
+                property string text: ""
+                property color textColor: "white"
+                property int pixelSize: Config.font.sizeMd
+                property int fontWeight: Font.Normal
+                property bool visible_: true
+                property real _blur: 0
+
+                height: visible_ ? tx.implicitHeight : 0
+                opacity: visible_ ? 1 : 0
+                clip: true
+                Behavior on height  { NumberAnimation { duration: 200; easing.type: Easing.InOutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.InOutCubic } }
+
+                onTextChanged: blurSwap.restart()
+
                 SequentialAnimation {
-                    id: pulseAnim
-                    NumberAnimation { target: infoPillBg; property: "scale"; to: 1.03; duration: 120; easing.type: Easing.OutCubic }
-                    NumberAnimation { target: infoPillBg; property: "scale"; to: 1.0;  duration: 200; easing.type: Easing.OutElastic; easing.overshoot: 1.5 }
+                    id: blurSwap
+                    ParallelAnimation {
+                        NumberAnimation { target: bt; property: "_blur"; to: 14; duration: 120; easing.type: Easing.InCubic }
+                        NumberAnimation { target: tx; property: "opacity"; to: 0;  duration: 120; easing.type: Easing.InCubic }
+                    }
+                    ScriptAction { script: tx.text = bt.text }
+                    ParallelAnimation {
+                        NumberAnimation { target: bt; property: "_blur"; to: 0;  duration: 220; easing.type: Easing.OutCubic }
+                        NumberAnimation { target: tx; property: "opacity"; to: 1;  duration: 220; easing.type: Easing.OutCubic }
+                    }
                 }
 
-                ColumnLayout {
-                    id: infoColInner
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        leftMargin: Math.round(10 * Config.scale)
-                        rightMargin: Math.round(10 * Config.scale)
-                        topMargin: Math.round(6 * Config.scale)
+                Text {
+                    id: tx
+                    width: parent.width
+                    text: bt.text
+                    elide: Text.ElideRight
+                    color: bt.textColor
+                    font.family: Config.font.family
+                    font.pixelSize: bt.pixelSize
+                    font.weight: bt.fontWeight
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowColor: "#e6000000"
+                        shadowBlur: 1.0
+                        shadowScale: 1.04
+                        blurEnabled: bt._blur > 0
+                        blurMax: 16
+                        blur: bt._blur / 16
                     }
-                    // Width drives pill width — max out at card width minus margins
-                    width: Math.min(implicitWidth, root.width - Math.round(28 * Config.scale))
-                    spacing: Math.round(3 * Config.scale)
+                }
+            }
 
-                    Text {
-                        id: titleText
-                        Layout.fillWidth: true
-                        text: root.trackTitle
-                        color: "white"
-                        font.family: Config.font.family
-                        font.pixelSize: Config.font.sizeXl
-                        font.weight: Font.Bold
-                        elide: Text.ElideRight
-                        // Cross-fade on track change
-                        Behavior on text {
-                            SequentialAnimation {
-                                NumberAnimation { target: titleText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
-                                PropertyAction  { target: titleText; property: "text" }
-                                NumberAnimation { target: titleText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
-                            }
-                        }
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            shadowEnabled: true
-                            shadowColor: "#e6000000"
-                            shadowBlur: 1.0
-                            shadowHorizontalOffset: 0
-                            shadowVerticalOffset: 1
-                            shadowScale: 1.04
-                        }
-                    }
-                    Text {
-                        id: artistText
-                        Layout.fillWidth: true
-                        text: root.trackArtist
-                        color: Qt.rgba(1, 1, 1, 0.90)
-                        font.family: Config.font.family
-                        font.pixelSize: Config.font.sizeMd
-                        elide: Text.ElideRight
-                        visible: root.trackArtist !== ""
-                        Behavior on text {
-                            SequentialAnimation {
-                                NumberAnimation { target: artistText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
-                                PropertyAction  { target: artistText; property: "text" }
-                                NumberAnimation { target: artistText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
-                            }
-                        }
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            shadowEnabled: true
-                            shadowColor: "#e6000000"
-                            shadowBlur: 1.0
-                            shadowHorizontalOffset: 0
-                            shadowVerticalOffset: 1
-                            shadowScale: 1.04
-                        }
-                    }
-                    Text {
-                        id: albumText
-                        Layout.fillWidth: true
-                        text: root.trackAlbum
-                        color: Qt.rgba(1, 1, 1, 0.60)
-                        font.family: Config.font.family
-                        font.pixelSize: Config.font.sizeSm
-                        elide: Text.ElideRight
-                        visible: root.trackAlbum !== ""
-                        Behavior on text {
-                            SequentialAnimation {
-                                NumberAnimation { target: albumText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
-                                PropertyAction  { target: albumText; property: "text" }
-                                NumberAnimation { target: albumText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
-                            }
-                        }
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            shadowEnabled: true
-                            shadowColor: "#e6000000"
-                            shadowBlur: 1.0
-                            shadowHorizontalOffset: 0
-                            shadowVerticalOffset: 1
-                            shadowScale: 1.04
-                        }
-                    }
+            Column {
+                id: infoColInner
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                    leftMargin: Math.round(10 * Config.scale)
+                    rightMargin: Math.round(10 * Config.scale)
+                    topMargin: Math.round(6 * Config.scale)
+                }
+                spacing: Math.round(3 * Config.scale)
+
+                BlurText {
+                    width: parent.width
+                    text: root.trackTitle
+                    textColor: "white"
+                    pixelSize: Config.font.sizeXl
+                    fontWeight: Font.Bold
+                    visible_: true
+                }
+                BlurText {
+                    width: parent.width
+                    text: root.trackArtist
+                    textColor: Qt.rgba(1, 1, 1, 0.90)
+                    pixelSize: Config.font.sizeMd
+                    visible_: root.trackArtist !== ""
+                }
+                BlurText {
+                    width: parent.width
+                    text: root.trackAlbum
+                    textColor: Qt.rgba(1, 1, 1, 0.60)
+                    pixelSize: Config.font.sizeSm
+                    visible_: root.trackAlbum !== ""
                 }
             }
         }
     }
 
-    // ── Time display + inline seek — bottom-right corner ─────────────────────
+    // ── Time display + inline seek — top-right corner ────────────────────────
     Item {
         id: timeArea
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.rightMargin: Math.round(14 * Config.scale)
-        anchors.bottomMargin: Math.round(8 * Config.scale)
+        anchors.top: parent.top
+        anchors.rightMargin: Math.round(22 * Config.scale)
+        anchors.topMargin: Math.round(22 * Config.scale)
         readonly property real pillPad: Math.round(12 * Config.scale)
         width: timeHover.hovered ? Math.round(200 * Config.scale) : timeLabelCollapsed.implicitWidth + pillPad * 2
         height: Math.round(28 * Config.scale)
@@ -417,9 +410,9 @@ Item {
             }
         }
 
-        // Always visible when a player exists; expands on hover
-        scale: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : (root.player ? 0.95 : 0.72)
-        opacity: root.player ? 1.0 : 0.0
+        // Spring-in on card hover; hidden entirely when nothing is playing
+        scale: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.72
+        opacity: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.0
         transformOrigin: Item.Right
         Behavior on scale {
             NumberAnimation {
