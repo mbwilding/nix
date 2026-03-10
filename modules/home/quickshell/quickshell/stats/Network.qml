@@ -326,19 +326,10 @@ Item {
 
         // Rate value — rests below the tag when idle,
         // floats beside the crosshair dot when hovered.
-        Text {
+        Item {
             id: rateLabel
 
-            text: graph.formatFn
-                  ? graph.formatFn(graph.hovered && graph.hoverIndex >= 0
-                                   ? graph.hoverRate
-                                   : graph.currentRate)
-                  : ""
-
-            color: graph.lineColor
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeLg
-            font.weight: Font.SemiBold
+            readonly property bool floating: graph.hovered && graph.dotX >= 0
 
             readonly property real _margin: Math.round(6 * Config.scale)
             readonly property real _restX: dirTag.x
@@ -346,27 +337,62 @@ Item {
             readonly property real dotGap: Math.round(6 * Config.scale)
             readonly property bool flipLeft: graph.dotX > graph.width / 2
 
-            x: (graph.hovered && graph.dotX >= 0)
+            readonly property real _hPad: Math.round(6 * Config.scale)
+            readonly property real _vPad: Math.round(3 * Config.scale)
+
+            width: rateLabelText.implicitWidth + (floating ? _hPad * 2 : 0)
+            height: rateLabelText.implicitHeight + (floating ? _vPad * 2 : 0)
+
+            x: floating
                ? (flipLeft
-                  ? graph.dotX - dotGap - implicitWidth
+                  ? graph.dotX - dotGap - width
                   : graph.dotX + dotGap)
                : _restX
 
-            y: (graph.hovered && graph.dotY >= 0)
-               ? Math.max(0, Math.min(graph.height - implicitHeight,
-                     graph.dotY - implicitHeight / 2))
+            y: floating
+               ? Math.max(0, Math.min(graph.height - height,
+                     graph.dotY - height / 2))
                : _restY
 
             Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
             Behavior on y { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
 
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: "#cc000000"
-                shadowBlur: 0.8
-                shadowHorizontalOffset: 0
-                shadowVerticalOffset: 1
+            // Pill background — only visible when floating
+            Rectangle {
+                anchors.fill: parent
+                radius: Math.round(5 * Config.scale)
+                color: Qt.rgba(0.05, 0.04, 0.12, 0.88)
+                border.color: Qt.rgba(graph.lineColor.r, graph.lineColor.g, graph.lineColor.b, 0.35)
+                border.width: 1
+                opacity: rateLabel.floating ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 120 } }
+            }
+
+            Text {
+                id: rateLabelText
+                anchors.centerIn: parent
+
+                text: graph.formatFn
+                      ? graph.formatFn(graph.hovered && graph.hoverIndex >= 0
+                                       ? graph.hoverRate
+                                       : graph.currentRate)
+                      : ""
+
+                color: graph.lineColor
+                font.family: Config.font.family
+                font.pixelSize: rateLabel.floating ? Config.font.sizeXl : Config.font.sizeLg
+                font.weight: Font.Bold
+
+                Behavior on font.pixelSize { NumberAnimation { duration: 80 } }
+
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: "#ee000000"
+                    shadowBlur: 1.0
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 2
+                }
             }
         }
     }
