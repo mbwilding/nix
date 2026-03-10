@@ -28,6 +28,7 @@ let
   qmlImportPaths = [
     "${pkgs.quickshell}/lib/qt-6/qml"
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
+    "${pkgs.qt6.qt5compat}/lib/qt-6/qml"
   ];
 
   qmllsIni = pkgs.writeText "qmlls.ini" ''
@@ -46,6 +47,10 @@ in
       enable = true;
       target = "graphical-session.target";
     };
+  };
+
+  systemd.user.services.quickshell = {
+    Service.Environment = "QML_IMPORT_PATH=${builtins.concatStringsSep ":" qmlImportPaths}";
   };
 
   xdg.dataFile = builtins.listToAttrs (
@@ -71,6 +76,7 @@ in
     packages = with pkgs; [
       coreutils
       libnotify
+      qt6.qt5compat
     ];
 
     file."nix/modules/home/quickshell/.qmlls.ini".source = qmllsIni;
