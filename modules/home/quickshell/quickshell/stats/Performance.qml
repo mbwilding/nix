@@ -551,7 +551,7 @@ Item {
                                 text: coreCell.hoverPct + "%"
                                 color: coreCell.barColor
                                 font.family: Config.font.family
-                                font.pixelSize: pctLabel.floating ? Config.font.sizeMd : Config.font.sizeSm
+                                font.pixelSize: pctLabel.floating ? Config.font.sizeXl : Config.font.sizeLg
                                 font.weight: Font.SemiBold
 
                                 Behavior on font.pixelSize { NumberAnimation { duration: 80 } }
