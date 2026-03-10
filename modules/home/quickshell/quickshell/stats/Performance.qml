@@ -331,6 +331,20 @@ Item {
 
                     readonly property color barColor: pct > 80 ? Config.colors.danger : pct > 50 ? Config.colors.warning : Config.colors.accent
 
+                    // Dot position — mirrors the sparkCanvas paint formula so the floating label tracks it.
+                    // sparkCanvas has anchors.margins: 2, so its geometry is (width-4) × (height-4).
+                    readonly property real _canvasMargin: 2
+                    readonly property real _cw: Math.max(0, width - _canvasMargin * 2)
+                    readonly property real _ch: Math.max(0, height - _canvasMargin * 2)
+                    readonly property real _step: root.historyLen > 1 ? _cw / (root.historyLen - 1) : _cw
+                    readonly property real _xOff: (root.historyLen - history.length) * _step
+                    readonly property real dotX: (cellHovered && hoverIndex >= 0 && hoverIndex < history.length)
+                        ? _canvasMargin + _xOff + hoverIndex * _step
+                        : -1
+                    readonly property real dotY: (cellHovered && hoverIndex >= 0 && hoverIndex < history.length)
+                        ? _canvasMargin + _ch - (history[hoverIndex] / 100) * _ch
+                        : -1
+
                     // Card background
                     Rectangle {
                         id: cardBg
@@ -491,19 +505,35 @@ Item {
                             }
                         }
 
-                        // ── Percentage — top-right, live or hover historical ───
+                        // ── Percentage — floats beside the crosshair dot when hovered,
+                        //                falls back to static top-right when idle ────────
                         Text {
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.topMargin: Math.round(4 * Config.scale)
-                            anchors.rightMargin: Math.round(5 * Config.scale)
+                            id: pctLabel
                             text: coreCell.hoverPct + "%"
-                            color: coreCell.cellHovered && coreCell.hoverIndex >= 0
-                                   ? Qt.rgba(1, 1, 1, 0.55)
-                                   : coreCell.barColor
+                            color: coreCell.barColor
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
                             font.weight: Font.SemiBold
+
+                            readonly property real dotGap: Math.round(6 * Config.scale)
+                            readonly property bool flipLeft: coreCell.dotX > coreCell.width / 2
+
+                            // When hovered: float beside the dot.  When idle: park top-right.
+                            x: (coreCell.cellHovered && coreCell.dotX >= 0)
+                               ? (flipLeft
+                                  ? coreCell.dotX - dotGap - implicitWidth
+                                  : coreCell.dotX + dotGap)
+                               : parent.width - implicitWidth - Math.round(5 * Config.scale)
+
+                            y: (coreCell.cellHovered && coreCell.dotY >= 0)
+                               ? Math.max(0, Math.min(parent.height - implicitHeight,
+                                     coreCell.dotY - implicitHeight / 2))
+                               : Math.round(4 * Config.scale)
+
+                            Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
+                            Behavior on y { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
+                            Behavior on color { ColorAnimation { duration: 200 } }
+
                             layer.enabled: true
                             layer.effect: MultiEffect {
                                 shadowEnabled: true
@@ -511,9 +541,6 @@ Item {
                                 shadowBlur: 0.8
                                 shadowHorizontalOffset: 0
                                 shadowVerticalOffset: 1
-                            }
-                            Behavior on color {
-                                ColorAnimation { duration: 200 }
                             }
                         }
 

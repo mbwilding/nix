@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell.Io
 
 import ".."
@@ -194,6 +195,19 @@ Item {
 
         readonly property real hoverRate: (hoverIndex >= 0 && hoverIndex < history.length) ? history[hoverIndex] : currentRate
 
+        // Dot position — mirrors the canvas paint formula so the QML label tracks the dot
+        readonly property real _pad: Math.round(4 * Config.scale)
+        readonly property real _gw: width - _pad * 2
+        readonly property real _gh: height - _pad * 2
+        readonly property real _step: maxHistory > 1 ? _gw / (maxHistory - 1) : _gw
+        readonly property real _xOffset: (maxHistory - history.length) * _step
+        readonly property real dotX: hoverIndex >= 0
+            ? _pad + _xOffset + hoverIndex * _step
+            : -1
+        readonly property real dotY: (hoverIndex >= 0 && hoverIndex < history.length && sharedPeak > 0)
+            ? _pad + _gh - (history[hoverIndex] / sharedPeak) * _gh
+            : -1
+
         onHistoryChanged: graphCanvas.requestPaint()
         onSharedPeakChanged: graphCanvas.requestPaint()
         onHoverIndexChanged: graphCanvas.requestPaint()
@@ -320,17 +334,34 @@ Item {
             }
         }
 
-        // Top-right: hover historical value (only shown while hovering)
+        // Hover value — floats beside the dot on the line
         Text {
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: Math.round(6 * Config.scale)
-            visible: graph.hovered && graph.hoverIndex >= 0
+            id: hoverLabel
+            visible: graph.hovered && graph.hoverIndex >= 0 && graph.dotX >= 0
             text: graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
-            color: Qt.rgba(1, 1, 1, 0.55)
+            color: graph.lineColor
             font.family: Config.font.family
-            font.pixelSize: Config.font.sizeMd
-            font.weight: Font.Normal
+            font.pixelSize: Config.font.sizeSm
+            font.weight: Font.Medium
+
+            readonly property real dotGap: Math.round(6 * Config.scale)
+            // Flip to the left when the dot is in the right half so the label stays in bounds
+            readonly property bool flipLeft: graph.dotX > graph.width / 2
+            x: flipLeft
+               ? graph.dotX - dotGap - implicitWidth
+               : graph.dotX + dotGap
+            // Centre vertically on the dot, clamped inside the graph
+            y: Math.max(0, Math.min(graph.height - implicitHeight,
+                graph.dotY - implicitHeight / 2))
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: "#cc000000"
+                shadowBlur: 0.8
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 1
+            }
         }
     }
 }
