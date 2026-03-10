@@ -129,6 +129,11 @@ QtObject {
         readonly property int edgeHotspotSize: 4     // px tall strip at screen top that shows the stats drawer on hover
     }
 
+    readonly property QtObject lockscreen: QtObject {
+        readonly property int dvdCount: 3
+        readonly property int orbCount: 2
+    }
+
     readonly property QtObject battery: QtObject {
         readonly property var chargeLevels: ({
                 charging: {

@@ -121,79 +121,57 @@ Scope {
                         id: bgCanvas
                         anchors.fill: parent
 
-                        property real gx1: 0.25
-                        property real gy1: 0.30
-                        property real gx2: 0.75
-                        property real gy2: 0.65
+                        // Each orb: {x, y} in normalized [0,1] coords
+                        property var orbPos: []
+                        // Each orb: {vx, vy} in normalized units/s
+                        property var orbVel: []
 
-                        // Velocities in normalized units/s
-                        property real vx1: 0.0
-                        property real vy1: 0.0
-                        property real vx2: 0.0
-                        property real vy2: 0.0
+                        // Orb colour stops — cycles across orbs
+                        readonly property var orbColors: [
+                            ["rgba(192, 170, 255, 0.30)", "rgba(192, 170, 255, 0.00)"],
+                            ["rgba(255, 159, 243, 0.25)", "rgba(255, 159, 243, 0.00)"],
+                            ["rgba(137, 220, 235, 0.22)", "rgba(137, 220, 235, 0.00)"],
+                            ["rgba(166, 227, 161, 0.20)", "rgba(166, 227, 161, 0.00)"],
+                            ["rgba(243, 139, 168, 0.22)", "rgba(243, 139, 168, 0.00)"],
+                        ]
+                        // Orb radii as fraction of min(w,h) — cycles across orbs
+                        readonly property var orbRadii: [0.60, 0.55, 0.50, 0.58, 0.52]
 
                         Component.onCompleted: {
-                            gx1 = Math.random();
-                            gy1 = Math.random();
-                            gx2 = Math.random();
-                            gy2 = Math.random();
-                            const s1 = 0.018 + Math.random() * 0.012;
-                            const a1 = Math.random() * Math.PI * 2;
-                            vx1 = Math.cos(a1) * s1;
-                            vy1 = Math.sin(a1) * s1;
-                            const s2 = 0.018 + Math.random() * 0.012;
-                            const a2 = Math.random() * Math.PI * 2;
-                            vx2 = Math.cos(a2) * s2;
-                            vy2 = Math.sin(a2) * s2;
+                            const count = Config.lockscreen.orbCount;
+                            let pos = [], vel = [];
+                            for (let i = 0; i < count; i++) {
+                                pos.push({ x: Math.random(), y: Math.random() });
+                                const speed = 0.018 + Math.random() * 0.012;
+                                const angle = Math.random() * Math.PI * 2;
+                                vel.push({ vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
+                            }
+                            orbPos = pos;
+                            orbVel = vel;
                         }
 
                         FrameAnimation {
                             running: true
                             onTriggered: {
                                 const dt = Math.min(frameTime, 0.05);
-                                let x1 = bgCanvas.gx1 + bgCanvas.vx1 * dt;
-                                let y1 = bgCanvas.gy1 + bgCanvas.vy1 * dt;
-                                let x2 = bgCanvas.gx2 + bgCanvas.vx2 * dt;
-                                let y2 = bgCanvas.gy2 + bgCanvas.vy2 * dt;
-                                if (x1 < 0) {
-                                    x1 = 0;
-                                    bgCanvas.vx1 = Math.abs(bgCanvas.vx1);
-                                } else if (x1 > 1) {
-                                    x1 = 1;
-                                    bgCanvas.vx1 = -Math.abs(bgCanvas.vx1);
+                                const count = bgCanvas.orbPos.length;
+                                if (count === 0) return;
+                                let pos = bgCanvas.orbPos.map(p => ({ x: p.x, y: p.y }));
+                                let vel = bgCanvas.orbVel.map(v => ({ vx: v.vx, vy: v.vy }));
+                                for (let i = 0; i < count; i++) {
+                                    pos[i].x += vel[i].vx * dt;
+                                    pos[i].y += vel[i].vy * dt;
+                                    if (pos[i].x < 0) { pos[i].x = 0; vel[i].vx =  Math.abs(vel[i].vx); }
+                                    else if (pos[i].x > 1) { pos[i].x = 1; vel[i].vx = -Math.abs(vel[i].vx); }
+                                    if (pos[i].y < 0) { pos[i].y = 0; vel[i].vy =  Math.abs(vel[i].vy); }
+                                    else if (pos[i].y > 1) { pos[i].y = 1; vel[i].vy = -Math.abs(vel[i].vy); }
                                 }
-                                if (y1 < 0) {
-                                    y1 = 0;
-                                    bgCanvas.vy1 = Math.abs(bgCanvas.vy1);
-                                } else if (y1 > 1) {
-                                    y1 = 1;
-                                    bgCanvas.vy1 = -Math.abs(bgCanvas.vy1);
-                                }
-                                if (x2 < 0) {
-                                    x2 = 0;
-                                    bgCanvas.vx2 = Math.abs(bgCanvas.vx2);
-                                } else if (x2 > 1) {
-                                    x2 = 1;
-                                    bgCanvas.vx2 = -Math.abs(bgCanvas.vx2);
-                                }
-                                if (y2 < 0) {
-                                    y2 = 0;
-                                    bgCanvas.vy2 = Math.abs(bgCanvas.vy2);
-                                } else if (y2 > 1) {
-                                    y2 = 1;
-                                    bgCanvas.vy2 = -Math.abs(bgCanvas.vy2);
-                                }
-                                bgCanvas.gx1 = x1;
-                                bgCanvas.gy1 = y1;
-                                bgCanvas.gx2 = x2;
-                                bgCanvas.gy2 = y2;
+                                bgCanvas.orbPos = pos;
+                                bgCanvas.orbVel = vel;
                             }
                         }
 
-                        onGx1Changed: requestPaint()
-                        onGy1Changed: requestPaint()
-                        onGx2Changed: requestPaint()
-                        onGy2Changed: requestPaint()
+                        onOrbPosChanged: requestPaint()
                         onWidthChanged: requestPaint()
                         onHeightChanged: requestPaint()
 
@@ -205,125 +183,203 @@ Scope {
                             ctx.fillStyle = "#0d0d18";
                             ctx.fillRect(0, 0, w, h);
 
-                            const r1 = Math.min(w, h) * 0.6;
-                            const g1 = ctx.createRadialGradient(gx1 * w, gy1 * h, 0, gx1 * w, gy1 * h, r1);
-                            g1.addColorStop(0, "rgba(192, 170, 255, 0.30)");
-                            g1.addColorStop(1, "rgba(192, 170, 255, 0.00)");
-                            ctx.fillStyle = g1;
-                            ctx.fillRect(0, 0, w, h);
-
-                            const r2 = Math.min(w, h) * 0.55;
-                            const g2 = ctx.createRadialGradient(gx2 * w, gy2 * h, 0, gx2 * w, gy2 * h, r2);
-                            g2.addColorStop(0, "rgba(255, 159, 243, 0.25)");
-                            g2.addColorStop(1, "rgba(255, 159, 243, 0.00)");
-                            ctx.fillStyle = g2;
-                            ctx.fillRect(0, 0, w, h);
+                            const count = orbPos.length;
+                            for (let i = 0; i < count; i++) {
+                                const p = orbPos[i];
+                                const colIdx = i % orbColors.length;
+                                const radFrac = orbRadii[i % orbRadii.length];
+                                const r = Math.min(w, h) * radFrac;
+                                const cx = p.x * w;
+                                const cy = p.y * h;
+                                const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                                g.addColorStop(0, orbColors[colIdx][0]);
+                                g.addColorStop(1, orbColors[colIdx][1]);
+                                ctx.fillStyle = g;
+                                ctx.fillRect(0, 0, w, h);
+                            }
                         }
                     }
 
-                    // DVD bouncer
+                    // DVD bouncer — supports multiple logos bouncing off walls and each other
                     Item {
                         id: dvdBouncer
                         anchors.fill: parent
 
-                        property real dvdX: 0
-                        property real dvdY: 0
-                        property real dvdVX: 0
-                        property real dvdVY: 0
-                        property color dvdColor: Config.colors.accent
-
+                        readonly property int logoW: 220
+                        readonly property int logoH: Math.round(220 * 465.84 / 1058.4)
                         readonly property real dvdSpeed: 120
-
-                        Component.onCompleted: {
-                            const logoW = 220;
-                            const logoH = Math.round(220 * 465.84 / 1058.4);
-                            const maxX = dvdBouncer.width - logoW;
-                            const maxY = dvdBouncer.height - logoH;
-                            dvdX = Math.random() * maxX;
-                            dvdY = Math.random() * maxY;
-                            // Random one of 4 diagonal directions (true 45°)
-                            dvdVX = (Math.random() < 0.5 ? 1 : -1) * dvdSpeed;
-                            dvdVY = (Math.random() < 0.5 ? 1 : -1) * dvdSpeed;
-                            // Start on a random color
-                            dvdColorIdx = Math.floor(Math.random() * dvdColors.length);
-                            dvdColor = dvdColors[dvdColorIdx];
-                        }
-
                         readonly property var dvdColors: [Config.colors.accent, Config.colors.accentAlt, "#89dceb", "#a6e3a1", "#f38ba8", "#fab387", "#f9e2af"]
-                        property int dvdColorIdx: 0
 
-                        function pickNextColor() {
-                            dvdColorIdx = (dvdColorIdx + 1) % dvdColors.length;
-                            dvdColor = dvdColors[dvdColorIdx];
+                        // Flat state arrays — one entry per logo.
+                        // We store them as plain JS arrays and reassign the whole array to
+                        // trigger Repeater delegate bindings via the model array property.
+                        property var positions: []   // [{x, y}, ...]
+                        property var velocities: []  // [{vx, vy}, ...]
+                        property var colorIdxs: []   // [int, ...]
+                        property bool initialized: false
+
+                        function initLogos() {
+                            if (initialized || width <= 0 || height <= 0) return;
+                            initialized = true;
+                            const count = Config.lockscreen.dvdCount;
+                            const maxX = width - logoW;
+                            const maxY = height - logoH;
+                            const cr = (logoW / 2 + logoH / 2) / 2;
+                            const minDist = cr * 2;
+                            let pos = [], vel = [], cidx = [];
+                            for (let i = 0; i < count; i++) {
+                                let candidate = { x: 0, y: 0 };
+                                for (let attempt = 0; attempt < 30; attempt++) {
+                                    candidate = { x: Math.random() * maxX, y: Math.random() * maxY };
+                                    let ok = true;
+                                    for (let j = 0; j < pos.length; j++) {
+                                        const dx = (candidate.x + logoW / 2) - (pos[j].x + logoW / 2);
+                                        const dy = (candidate.y + logoH / 2) - (pos[j].y + logoH / 2);
+                                        if (Math.sqrt(dx * dx + dy * dy) < minDist) { ok = false; break; }
+                                    }
+                                    if (ok) break;
+                                }
+                                pos.push(candidate);
+                                vel.push({
+                                    vx: (Math.random() < 0.5 ? 1 : -1) * dvdSpeed,
+                                    vy: (Math.random() < 0.5 ? 1 : -1) * dvdSpeed
+                                });
+                                cidx.push((Math.floor(Math.random() * dvdColors.length) + i) % dvdColors.length);
+                            }
+                            positions = pos;
+                            velocities = vel;
+                            colorIdxs = cidx;
                         }
+
+                        Component.onCompleted: initLogos()
+                        onWidthChanged: initLogos()
+                        onHeightChanged: initLogos()
 
                         FrameAnimation {
                             id: dvdTimer
                             running: true
                             onTriggered: {
                                 const dt = Math.min(frameTime, 0.05);
-                                const logoW = dvdLogo.width;
-                                const logoH = dvdLogo.height;
-                                const maxX = dvdBouncer.width - logoW;
-                                const maxY = dvdBouncer.height - logoH;
+                                const count = dvdBouncer.positions.length;
+                                if (count === 0) return;
 
-                                let nx = dvdBouncer.dvdX + dvdBouncer.dvdVX * dt;
-                                let ny = dvdBouncer.dvdY + dvdBouncer.dvdVY * dt;
-                                let bounced = false;
+                                const lW = dvdBouncer.logoW;
+                                const lH = dvdBouncer.logoH;
+                                const maxX = dvdBouncer.width - lW;
+                                const maxY = dvdBouncer.height - lH;
+                                const colors = dvdBouncer.dvdColors;
 
-                                if (nx <= 0) {
-                                    nx = 0;
-                                    dvdBouncer.dvdVX = Math.abs(dvdBouncer.dvdVX);
-                                    bounced = true;
-                                } else if (nx >= maxX) {
-                                    nx = maxX;
-                                    dvdBouncer.dvdVX = -Math.abs(dvdBouncer.dvdVX);
-                                    bounced = true;
-                                }
-                                if (ny <= 0) {
-                                    ny = 0;
-                                    dvdBouncer.dvdVY = Math.abs(dvdBouncer.dvdVY);
-                                    bounced = true;
-                                } else if (ny >= maxY) {
-                                    ny = maxY;
-                                    dvdBouncer.dvdVY = -Math.abs(dvdBouncer.dvdVY);
-                                    bounced = true;
+                                // Deep-copy mutable state
+                                let pos  = dvdBouncer.positions.map(p => ({ x: p.x, y: p.y }));
+                                let vel  = dvdBouncer.velocities.map(v => ({ vx: v.vx, vy: v.vy }));
+                                let cidx = dvdBouncer.colorIdxs.slice();
+
+                                // Integrate positions
+                                for (let i = 0; i < count; i++) {
+                                    pos[i].x += vel[i].vx * dt;
+                                    pos[i].y += vel[i].vy * dt;
                                 }
 
-                                if (bounced)
-                                    dvdBouncer.pickNextColor();
-                                dvdBouncer.dvdX = nx;
-                                dvdBouncer.dvdY = ny;
+                                // Wall collisions
+                                for (let i = 0; i < count; i++) {
+                                    let bounced = false;
+                                    if (pos[i].x <= 0)    { pos[i].x = 0;    vel[i].vx =  Math.abs(vel[i].vx); bounced = true; }
+                                    else if (pos[i].x >= maxX) { pos[i].x = maxX; vel[i].vx = -Math.abs(vel[i].vx); bounced = true; }
+                                    if (pos[i].y <= 0)    { pos[i].y = 0;    vel[i].vy =  Math.abs(vel[i].vy); bounced = true; }
+                                    else if (pos[i].y >= maxY) { pos[i].y = maxY; vel[i].vy = -Math.abs(vel[i].vy); bounced = true; }
+                                    if (bounced)
+                                        cidx[i] = (cidx[i] + 1) % colors.length;
+                                }
+
+                                // Logo-logo elastic collisions (equal mass, rectangular bounding-box overlap)
+                                // Treat each logo's centre and use a circular proxy radius = half the diagonal.
+                                const rx = lW / 2;
+                                const ry = lH / 2;
+                                // Use an ellipse collision radius — average of half-extents works well visually
+                                const cr = (rx + ry) / 2;
+                                const minDist = cr * 2;
+
+                                for (let i = 0; i < count; i++) {
+                                    for (let j = i + 1; j < count; j++) {
+                                        const cxi = pos[i].x + rx;
+                                        const cyi = pos[i].y + ry;
+                                        const cxj = pos[j].x + rx;
+                                        const cyj = pos[j].y + ry;
+                                        const dx = cxj - cxi;
+                                        const dy = cyj - cyi;
+                                        const dist = Math.sqrt(dx * dx + dy * dy);
+                                        if (dist < minDist && dist > 0.001) {
+                                            // Separate overlapping logos
+                                            const overlap = (minDist - dist) / 2;
+                                            const nx = dx / dist;
+                                            const ny = dy / dist;
+                                            pos[i].x -= nx * overlap;
+                                            pos[i].y -= ny * overlap;
+                                            pos[j].x += nx * overlap;
+                                            pos[j].y += ny * overlap;
+
+                                            // Elastic collision: swap velocity components along collision normal
+                                            const dvx = vel[i].vx - vel[j].vx;
+                                            const dvy = vel[i].vy - vel[j].vy;
+                                            const dot = dvx * nx + dvy * ny;
+                                            if (dot > 0) { // only resolve if approaching
+                                                vel[i].vx -= dot * nx;
+                                                vel[i].vy -= dot * ny;
+                                                vel[j].vx += dot * nx;
+                                                vel[j].vy += dot * ny;
+
+                                                // Change colours on collision
+                                                cidx[i] = (cidx[i] + 1) % colors.length;
+                                                cidx[j] = (cidx[j] + 1) % colors.length;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Re-clamp after separation pushes
+                                for (let i = 0; i < count; i++) {
+                                    pos[i].x = Math.max(0, Math.min(maxX, pos[i].x));
+                                    pos[i].y = Math.max(0, Math.min(maxY, pos[i].y));
+                                }
+
+                                // Write back — reassign to trigger bindings
+                                dvdBouncer.positions  = pos;
+                                dvdBouncer.velocities = vel;
+                                dvdBouncer.colorIdxs  = cidx;
                             }
                         }
 
-                        Item {
-                            id: dvdLogo
-                            x: dvdBouncer.dvdX
-                            y: dvdBouncer.dvdY
-                            width: 220
-                            height: Math.round(220 * 465.84 / 1058.4)
-                            opacity: 0.55
+                        Repeater {
+                            model: dvdBouncer.positions.length
 
-                            Shape {
-                                anchors.fill: parent
-                                transform: Scale {
-                                    xScale: dvdLogo.width / 1058.4
-                                    yScale: dvdLogo.height / 465.84
-                                }
+                            Item {
+                                required property int index
+                                x: dvdBouncer.positions[index]?.x ?? 0
+                                y: dvdBouncer.positions[index]?.y ?? 0
+                                width: dvdBouncer.logoW
+                                height: dvdBouncer.logoH
+                                opacity: 0.55
 
-                                ShapePath {
-                                    fillColor: dvdBouncer.dvdColor
-                                    strokeColor: "transparent"
-                                    strokeWidth: 0
-                                    Behavior on fillColor {
-                                        ColorAnimation {
-                                            duration: 200
-                                        }
+                                Shape {
+                                    anchors.fill: parent
+                                    transform: Scale {
+                                        xScale: dvdBouncer.logoW / 1058.4
+                                        yScale: dvdBouncer.logoH / 465.84
                                     }
 
-                                    PathSvg {
-                                        path: "m91.053 0-13.719 57.707 102.28 0.039063h24c65.747 0 105.91 26.44 94.746 73.4-12.147 51.133-69.613 73.4-130.67 73.4h-22.947l29.787-125.45h-102.27l-43.521 183.2h145.05c109.07 0 212.76-57.573 231.01-131.15 3.3467-13.507 2.8806-47.253-5.3594-67.359-0.21299-0.787-0.42594-1.4-1.1855-3-0.293-0.653-0.56012-3.6412 1.1465-4.2812 0.947-0.36 2.7069 1.4944 2.9336 2.041 0.853 2.24 1.5059 3.9062 1.5059 3.9062l92.293 260.6 234.97-265.21 99.535-0.089844h24c65.76 0 106.25 26.44 95.092 73.4-12.147 51.133-69.947 73.4-131 73.4h-22.959l29.799-125.47h-102.27l-43.533 183.21h145.07c109.05 0 213.48-57.4 231-131.15 17.52-73.75-59.107-131.15-168.69-131.15h-216.4s-57.319 67.88-67.959 80.693c-57.12 68.787-67.241 87.226-68.961 91.986 0.24-4.8-1.8138-23.412-26.174-92.959-6.48-18.52-27.359-79.721-27.359-79.721h-389.25zm408.77 324.16c-276.04 0-499.83 31.72-499.83 70.84s223.79 70.84 499.83 70.84c276.04 0 499.83-31.72 499.83-70.84s-223.79-70.84-499.83-70.84zm-18.094 48.627c63.04 0 114.13 10.573 114.13 23.613s-51.095 23.613-114.13 23.613c-63.027 0-114.13-10.573-114.13-23.613s51.106-23.613 114.13-23.613z"
+                                    ShapePath {
+                                        fillColor: dvdBouncer.dvdColors[dvdBouncer.colorIdxs[index] ?? 0] ?? dvdBouncer.dvdColors[0]
+                                        strokeColor: "transparent"
+                                        strokeWidth: 0
+                                        Behavior on fillColor {
+                                            ColorAnimation {
+                                                duration: 200
+                                            }
+                                        }
+
+                                        PathSvg {
+                                            path: "m91.053 0-13.719 57.707 102.28 0.039063h24c65.747 0 105.91 26.44 94.746 73.4-12.147 51.133-69.613 73.4-130.67 73.4h-22.947l29.787-125.45h-102.27l-43.521 183.2h145.05c109.07 0 212.76-57.573 231.01-131.15 3.3467-13.507 2.8806-47.253-5.3594-67.359-0.21299-0.787-0.42594-1.4-1.1855-3-0.293-0.653-0.56012-3.6412 1.1465-4.2812 0.947-0.36 2.7069 1.4944 2.9336 2.041 0.853 2.24 1.5059 3.9062 1.5059 3.9062l92.293 260.6 234.97-265.21 99.535-0.089844h24c65.76 0 106.25 26.44 95.092 73.4-12.147 51.133-69.947 73.4-131 73.4h-22.959l29.799-125.47h-102.27l-43.533 183.21h145.07c109.05 0 213.48-57.4 231-131.15 17.52-73.75-59.107-131.15-168.69-131.15h-216.4s-57.319 67.88-67.959 80.693c-57.12 68.787-67.241 87.226-68.961 91.986 0.24-4.8-1.8138-23.412-26.174-92.959-6.48-18.52-27.359-79.721-27.359-79.721h-389.25zm408.77 324.16c-276.04 0-499.83 31.72-499.83 70.84s223.79 70.84 499.83 70.84c276.04 0 499.83-31.72 499.83-70.84s-223.79-70.84-499.83-70.84zm-18.094 48.627c63.04 0 114.13 10.573 114.13 23.613s-51.095 23.613-114.13 23.613c-63.027 0-114.13-10.573-114.13-23.613s51.106-23.613 114.13-23.613z"
+                                        }
                                     }
                                 }
                             }
