@@ -18,11 +18,12 @@ QtObject {
 
     readonly property QtObject font: QtObject {
         readonly property string family: "NeoSpleen Nerd Font"
-        readonly property int sizeSm: Math.round(10 * root.fontSize)
-        readonly property int sizeXs: Math.round(11 * root.fontSize)
-        readonly property int sizeMd: Math.round(12 * root.fontSize)
-        readonly property int sizeLg: Math.round(13 * root.fontSize)
-        readonly property int sizeXl: Math.round(15 * root.fontSize)
+        readonly property int sizeXxs:   Math.round(8  * root.fontSize)
+        readonly property int sizeSm:    Math.round(10 * root.fontSize)
+        readonly property int sizeXs:    Math.round(11 * root.fontSize)
+        readonly property int sizeMd:    Math.round(12 * root.fontSize)
+        readonly property int sizeLg:    Math.round(13 * root.fontSize)
+        readonly property int sizeXl:    Math.round(15 * root.fontSize)
     }
 
     readonly property QtObject colors: QtObject {

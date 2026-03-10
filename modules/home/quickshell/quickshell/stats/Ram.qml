@@ -132,7 +132,7 @@ Item {
                     text: Math.round(root.ramPercent * 100) + "%"
                     color: root.usageColor
                     font.family:    Config.font.family
-                    font.pixelSize: Math.round(Config.font.sizeMd * 2.6)
+                    font.pixelSize: Math.round(44 * Config.scale)
                     font.weight:    Font.Bold
 
                     Behavior on color { ColorAnimation { duration: 400 } }
