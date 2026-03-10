@@ -21,14 +21,30 @@ Item {
         maskSource: roundMask
     }
 
-    // Mask shape — must be a real scene item (not inline) for OpacityMask to work.
-    // Placed outside the layer so it exists as an independent item in the scene.
-    Rectangle {
+    // Mask shape — bottom corners rounded, top corners square.
+    // Two overlapping rectangles: a full-width plain rect covers the top half
+    // (squaring off the rounded top corners of the rounded rect beneath it).
+    Item {
         id: roundMask
         width: root.width
         height: root.height
-        radius: Math.round(Config.stats.radius * Config.scale)
         visible: false
+
+        readonly property real r: Math.round(Config.stats.radius * Config.scale)
+
+        // Rounded rect — gives us the bottom two rounded corners
+        Rectangle {
+            width: parent.width
+            height: parent.height
+            radius: roundMask.r
+            color: "white"
+        }
+        // Plain rect over the top — kills the top two rounded corners
+        Rectangle {
+            width: parent.width
+            height: roundMask.r
+            color: "white"
+        }
     }
 
     // ── Player selection ──────────────────────────────────────────────────────
