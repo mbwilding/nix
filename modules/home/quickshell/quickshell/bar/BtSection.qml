@@ -72,7 +72,7 @@ BarSectionItem {
         a.discovering = btSection.popupOpen;
     }
 
-    function btIcon() {
+    readonly property string btIcon: {
         const a = btSection.adapter;
         if (!a || !a.enabled)
             return "network-bluetooth-inactive-symbolic";
@@ -145,7 +145,7 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: btSection.popupOpen
 
-        iconSource: Quickshell.iconPath(btSection.btIcon())
+        iconSource: Quickshell.iconPath(btSection.btIcon)
         label: btSection.lowestBattery >= 0 ? btSection.lowestBattery + "%" : ""
         labelWidth: btSection.statusLabelWidth
         labelColor: {
