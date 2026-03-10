@@ -257,100 +257,143 @@ Item {
             NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
         }
 
-        // Song info pinned to the very bottom-left
-        ColumnLayout {
+        // Song info pill — bottom-left, shrink-wraps content
+        Item {
+            id: infoPill
             anchors {
                 left: parent.left
-                right: parent.right
                 bottom: parent.bottom
                 leftMargin: Math.round(14 * Config.scale)
-                rightMargin: Math.round(14 * Config.scale)
                 bottomMargin: Math.round(12 * Config.scale)
             }
-            spacing: Math.round(3 * Config.scale)
 
-            Text {
-                Layout.fillWidth: true
-                text: root.trackTitle
-                color: "white"
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeXl
-                font.weight: Font.Bold
-                elide: Text.ElideRight
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#cc000000"
-                    shadowBlur: 0.7
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 2
-                }
+            // Pill sizes to inner content; animates smoothly on track change
+            width: infoPillBg.implicitWidth
+            height: infoPillBg.implicitHeight
+            Behavior on width {
+                NumberAnimation { duration: 380; easing.type: Easing.InOutCubic }
             }
-            Text {
-                Layout.fillWidth: true
-                text: root.trackArtist
-                color: Qt.rgba(1, 1, 1, 0.90)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
-                elide: Text.ElideRight
-                visible: root.trackArtist !== ""
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#cc000000"
-                    shadowBlur: 0.7
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 2
-                }
+            Behavior on height {
+                NumberAnimation { duration: 320; easing.type: Easing.InOutCubic }
             }
-            Text {
-                Layout.fillWidth: true
-                text: root.trackAlbum
-                color: Qt.rgba(1, 1, 1, 0.60)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
-                elide: Text.ElideRight
-                visible: root.trackAlbum !== ""
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#cc000000"
-                    shadowBlur: 0.7
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 2
+
+            Rectangle {
+                id: infoPillBg
+                anchors.fill: parent
+                implicitWidth: infoColInner.implicitWidth + Math.round(20 * Config.scale)
+                implicitHeight: infoColInner.implicitHeight + Math.round(12 * Config.scale)
+                radius: Math.round(10 * Config.scale)
+                color: Qt.rgba(0.05, 0.04, 0.12, 0.72)
+                border.color: Qt.rgba(1, 1, 1, 0.10)
+                border.width: 1
+
+                // Subtle scale pulse on track change
+                property string watchKey: root.trackTitle + root.trackArtist
+                onWatchKeyChanged: pulseAnim.restart()
+                SequentialAnimation {
+                    id: pulseAnim
+                    NumberAnimation { target: infoPillBg; property: "scale"; to: 1.03; duration: 120; easing.type: Easing.OutCubic }
+                    NumberAnimation { target: infoPillBg; property: "scale"; to: 1.0;  duration: 200; easing.type: Easing.OutElastic; easing.overshoot: 1.5 }
+                }
+
+                ColumnLayout {
+                    id: infoColInner
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        leftMargin: Math.round(10 * Config.scale)
+                        rightMargin: Math.round(10 * Config.scale)
+                        topMargin: Math.round(6 * Config.scale)
+                    }
+                    // Width drives pill width — max out at card width minus margins
+                    width: Math.min(implicitWidth, root.width - Math.round(28 * Config.scale))
+                    spacing: Math.round(3 * Config.scale)
+
+                    Text {
+                        id: titleText
+                        Layout.fillWidth: true
+                        text: root.trackTitle
+                        color: "white"
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeXl
+                        font.weight: Font.Bold
+                        elide: Text.ElideRight
+                        // Cross-fade on track change
+                        Behavior on text {
+                            SequentialAnimation {
+                                NumberAnimation { target: titleText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
+                                PropertyAction  { target: titleText; property: "text" }
+                                NumberAnimation { target: titleText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
+                            }
+                        }
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: true
+                            shadowColor: "#e6000000"
+                            shadowBlur: 1.0
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 1
+                            shadowScale: 1.04
+                        }
+                    }
+                    Text {
+                        id: artistText
+                        Layout.fillWidth: true
+                        text: root.trackArtist
+                        color: Qt.rgba(1, 1, 1, 0.90)
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeMd
+                        elide: Text.ElideRight
+                        visible: root.trackArtist !== ""
+                        Behavior on text {
+                            SequentialAnimation {
+                                NumberAnimation { target: artistText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
+                                PropertyAction  { target: artistText; property: "text" }
+                                NumberAnimation { target: artistText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
+                            }
+                        }
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: true
+                            shadowColor: "#e6000000"
+                            shadowBlur: 1.0
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 1
+                            shadowScale: 1.04
+                        }
+                    }
+                    Text {
+                        id: albumText
+                        Layout.fillWidth: true
+                        text: root.trackAlbum
+                        color: Qt.rgba(1, 1, 1, 0.60)
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeSm
+                        elide: Text.ElideRight
+                        visible: root.trackAlbum !== ""
+                        Behavior on text {
+                            SequentialAnimation {
+                                NumberAnimation { target: albumText; property: "opacity"; to: 0; duration: 100; easing.type: Easing.InCubic }
+                                PropertyAction  { target: albumText; property: "text" }
+                                NumberAnimation { target: albumText; property: "opacity"; to: 1; duration: 180; easing.type: Easing.OutCubic }
+                            }
+                        }
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: true
+                            shadowColor: "#e6000000"
+                            shadowBlur: 1.0
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 1
+                            shadowScale: 1.04
+                        }
+                    }
                 }
             }
         }
     }
 
     // ── Time display + inline seek — bottom-right corner ─────────────────────
-    // Frosted pill, direct child of root so cardHover fires correctly.
-    // Springs in with cardHover — same trigger as the centre controls.
-    // Collapsed: shows "0:00 / 3:45" inside the pill.
-    // Expanded (timeHover): snaps open to full width with seek slider.
-
-    // Plain text — always visible when pill is not shown
-    Text {
-        id: timeLabelPlain
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.rightMargin: Math.round(14 * Config.scale)
-        anchors.bottomMargin: Math.round(12 * Config.scale)
-        text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
-        color: Qt.rgba(1, 1, 1, 0.55)
-        font.family: Config.font.family
-        font.pixelSize: Config.font.sizeLg
-        visible: !cardHover.hovered && !timeHover.hovered && root.player !== null
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#cc000000"
-            shadowBlur: 0.7
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 2
-        }
-    }
-
     Item {
         id: timeArea
         anchors.right: parent.right
@@ -374,9 +417,9 @@ Item {
             }
         }
 
-        // Spring-in on card hover, from the right edge; hidden entirely when nothing is playing
-        scale: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.72
-        opacity: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.0
+        // Always visible when a player exists; expands on hover
+        scale: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : (root.player ? 0.95 : 0.72)
+        opacity: root.player ? 1.0 : 0.0
         transformOrigin: Item.Right
         Behavior on scale {
             NumberAnimation {
