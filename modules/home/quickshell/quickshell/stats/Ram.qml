@@ -70,10 +70,12 @@ Item {
                     const ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
 
-                    const cx = width  / 2
-                    const cy = height / 2
-                    const r  = Math.min(width, height) / 2 - Math.round(8 * Config.scale)
                     const lw = Math.round(10 * Config.scale)
+                    // Shift cy down so the glow at the top of the arc (270°) isn't clipped
+                    const topBleed = Math.ceil(lw * 1.5)
+                    const cx = width  / 2
+                    const cy = height / 2 + topBleed
+                    const r  = Math.min(width, height - topBleed) / 2 - Math.round(8 * Config.scale)
 
                     // Arc spans from 210° to 330° (240° sweep), bottom-left to bottom-right
                     const startAngle = 210 * Math.PI / 180
