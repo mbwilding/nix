@@ -304,6 +304,7 @@ Scope {
                     // Tab 1 — CPU boxes (full-bleed, self-padded)
                     Performance {
                         anchors.fill: parent
+                        active: root.visible_
                         visible: drawer.activeTab === 1
                         opacity: drawer.activeTab === 1 ? 1 : 0
                         Behavior on opacity {
@@ -316,6 +317,7 @@ Scope {
                     // Tab 2 — RAM
                     Ram {
                         anchors.fill: parent
+                        active: root.visible_
                         visible: drawer.activeTab === 2
                         opacity: drawer.activeTab === 2 ? 1 : 0
                         Behavior on opacity {
@@ -328,6 +330,7 @@ Scope {
                     // Tab 3 — GPU
                     Gpu {
                         anchors.fill: parent
+                        active: root.visible_
                         visible: drawer.activeTab === 3
                         opacity: drawer.activeTab === 3 ? 1 : 0
                         Behavior on opacity {
@@ -340,6 +343,7 @@ Scope {
                     // Tab 4 — Network
                     Network {
                         anchors.fill: parent
+                        active: root.visible_
                         visible: drawer.activeTab === 4
                         opacity: drawer.activeTab === 4 ? 1 : 0
                         Behavior on opacity {
