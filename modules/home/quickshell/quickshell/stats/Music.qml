@@ -237,7 +237,7 @@ Item {
         color: Qt.rgba(1, 1, 1, 0.55)
         font.family: Config.font.family
         font.pixelSize: Config.font.sizeLg
-        visible: !cardHover.hovered && !timeHover.hovered
+        visible: !cardHover.hovered && !timeHover.hovered && root.player !== null
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
@@ -271,9 +271,9 @@ Item {
             }
         }
 
-        // Spring-in on card hover, from the right edge
-        scale: (cardHover.hovered || timeHover.hovered) ? 1.0 : 0.72
-        opacity: (cardHover.hovered || timeHover.hovered) ? 1.0 : 0.0
+        // Spring-in on card hover, from the right edge; hidden entirely when nothing is playing
+        scale: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.72
+        opacity: (root.player && (cardHover.hovered || timeHover.hovered)) ? 1.0 : 0.0
         transformOrigin: Item.Right
         Behavior on scale {
             NumberAnimation {
@@ -436,9 +436,9 @@ Item {
             }
         }
 
-        // Spring-in on card hover
-        scale: (cardHover.hovered || volHover.hovered) ? 1.0 : 0.72
-        opacity: (cardHover.hovered || volHover.hovered) ? 1.0 : 0.0
+        // Spring-in on card hover; hidden entirely when nothing is playing
+        scale: (root.player && (cardHover.hovered || volHover.hovered)) ? 1.0 : 0.72
+        opacity: (root.player && (cardHover.hovered || volHover.hovered)) ? 1.0 : 0.0
         transformOrigin: Item.Left
         Behavior on scale {
             NumberAnimation {
@@ -587,8 +587,8 @@ Item {
 
             transformOrigin: Item.Center
             readonly property bool fits: implicitHeight <= artZone.height
-            scale: (cardHover.hovered && fits) ? 1.0 : 0.72
-            opacity: (cardHover.hovered && fits) ? 1.0 : 0.0
+            scale: (root.player && cardHover.hovered && fits) ? 1.0 : 0.72
+            opacity: (root.player && cardHover.hovered && fits) ? 1.0 : 0.0
             Behavior on scale {
                 NumberAnimation {
                     duration: 320
