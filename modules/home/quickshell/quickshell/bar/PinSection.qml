@@ -30,7 +30,7 @@ Item {
         IconImage {
             anchors.centerIn: parent
             implicitSize: Config.bar.batteryIconSize
-            source: Quickshell.iconPath(root.pinned ? "view-pin-symbolic" : "view-unpin-symbolic")
+            source: Quickshell.iconPath(root.pinned ? "window-pin-symbolic" : "window-unpin-symbolic")
             layer.enabled: true
             layer.effect: MultiEffect {
                 colorization: 1.0

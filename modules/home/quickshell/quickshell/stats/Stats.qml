@@ -346,7 +346,7 @@ Scope {
         IconImage {
             anchors.centerIn: parent
             implicitSize: Math.round(16 * Config.scale)
-            source: Quickshell.iconPath(pinTab.pinned ? "view-pin-symbolic" : "view-unpin-symbolic")
+            source: Quickshell.iconPath(pinTab.pinned ? "window-pin-symbolic" : "window-unpin-symbolic")
             layer.enabled: true
             layer.effect: MultiEffect {
                 colorization: 1.0
