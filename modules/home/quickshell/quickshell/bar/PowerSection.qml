@@ -47,11 +47,10 @@ BarSectionItem {
     signal exitPopupReq
     signal closePopupReq
 
-    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
     property int statusLabelWidth: 0
 
     implicitWidth: hasBattery
-        ? Config.bar.batteryIconSize + statusButtonExtraWidth
+        ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
         : powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
     implicitHeight: hasBattery
         ? Config.bar.batteryIconSize + Math.round(10 * Config.scale)
@@ -75,46 +74,29 @@ BarSectionItem {
         popupOpen: powerSection.popupOpen
         clickable: false
 
-        Row {
-            anchors.centerIn: parent
-            spacing: Math.round(3 * Config.scale)
-
-            IconImage {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.bar.batteryIconSize
-                source: {
-                    const b = powerSection.b;
-                    if (!b || !b.isLaptopBattery)
-                        return "";
-                    const pct = Math.round(b.percentage * 100);
-                    const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
-                    const level = Math.min(100, Math.round(pct / 10) * 10);
-                    const lvlStr = String(level).padStart(3, "0");
-                    const chargeSuffix = charging ? "-charging" : "";
-                    return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: {
-                    const b = powerSection.b;
-                    if (!b || !b.isLaptopBattery) return "";
-                    return Math.round(b.percentage * 100) + "%";
-                }
-                width: powerSection.statusLabelWidth > 0 ? powerSection.statusLabelWidth : implicitWidth
-                horizontalAlignment: Text.AlignRight
-                color: {
-                    const b = powerSection.b;
-                    if (!b) return Config.colors.textPrimary;
-                    const pct = b.percentage * 100;
-                    if (pct <= 10) return Config.colors.danger;
-                    if (pct <= 20) return Config.colors.warning;
-                    return Config.colors.textPrimary;
-                }
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
-            }
+        iconSource: {
+            const b = powerSection.b;
+            if (!b || !b.isLaptopBattery) return "";
+            const pct = Math.round(b.percentage * 100);
+            const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
+            const level = Math.min(100, Math.round(pct / 10) * 10);
+            const lvlStr = String(level).padStart(3, "0");
+            const chargeSuffix = charging ? "-charging" : "";
+            return Quickshell.iconPath("battery-" + lvlStr + chargeSuffix + "-symbolic");
+        }
+        label: {
+            const b = powerSection.b;
+            if (!b || !b.isLaptopBattery) return "";
+            return Math.round(b.percentage * 100) + "%";
+        }
+        labelWidth: powerSection.statusLabelWidth
+        labelColor: {
+            const b = powerSection.b;
+            if (!b) return Config.colors.textPrimary;
+            const pct = b.percentage * 100;
+            if (pct <= 10) return Config.colors.danger;
+            if (pct <= 20) return Config.colors.warning;
+            return Config.colors.textPrimary;
         }
     }
 
