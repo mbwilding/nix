@@ -273,7 +273,7 @@ Item {
                 text:  graph.label
                 color: graph.lineColor
                 font.family:    Config.font.family
-                font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+                font.pixelSize: Config.font.sizeMd
                 font.weight:    Font.Bold
                 opacity: 0.85
             }
@@ -281,7 +281,7 @@ Item {
                 text:  graph.formatFn ? graph.formatFn(graph.currentRate) : ""
                 color: Config.colors.textPrimary
                 font.family:    Config.font.family
-                font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+                font.pixelSize: Config.font.sizeMd
                 font.weight:    Font.Medium
             }
         }
@@ -295,7 +295,7 @@ Item {
             text:    graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
             color:   Qt.rgba(1, 1, 1, 0.55)
             font.family:    Config.font.family
-            font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+            font.pixelSize: Config.font.sizeMd
             font.weight:    Font.Normal
         }
     }
