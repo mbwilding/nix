@@ -24,7 +24,6 @@ Item {
         id: btn
         anchors.fill: parent
         hovered: pinMouse.containsMouse
-        popupOpen: root.pinned
         clickable: true
 
         IconImage {
