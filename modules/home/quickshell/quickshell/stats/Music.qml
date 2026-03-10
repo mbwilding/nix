@@ -14,36 +14,97 @@ ColumnLayout {
 
     spacing: Math.round(10 * Config.scale)
 
-    readonly property MprisPlayer player: MprisController.currentPlayer
+    // Pick the best available player:
+    //   1. A player that is currently playing
+    //   2. The first player in the list (paused/stopped)
+    //   3. null if no players
+    readonly property MprisPlayer player: {
+        void Mpris.players.valuesChanged
+        let playing = null
+        let first = null
+        const vals = Mpris.players.values
+        for (let i = 0; i < vals.length; i++) {
+            const p = vals[i]
+            if (!first) first = p
+            if (p.isPlaying && !playing) playing = p
+        }
+        return playing ?? first ?? null
+    }
 
     readonly property string trackTitle: player ? (player.trackTitle || "Nothing playing") : "Nothing playing"
     readonly property string trackArtist: player ? (player.trackArtist || "") : ""
+    readonly property string trackAlbum: player ? (player.trackAlbum || "") : ""
+    readonly property string artUrl: player ? (player.trackArtUrl || "") : ""
     readonly property bool isPlaying: player ? player.isPlaying : false
     readonly property real progress: (player && player.length > 0) ? Math.max(0, Math.min(1, player.position / player.length)) : 0
 
-    // Track info
-    ColumnLayout {
+    // Album art + track info row
+    RowLayout {
         Layout.fillWidth: true
-        spacing: Math.round(3 * Config.scale)
+        spacing: Math.round(10 * Config.scale)
 
-        Text {
-            Layout.fillWidth: true
-            text: root.trackTitle
-            color: Config.colors.textPrimary
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeMd
-            font.weight: Font.Medium
-            elide: Text.ElideRight
+        // Album art
+        Rectangle {
+            implicitWidth: Math.round(54 * Config.scale)
+            implicitHeight: Math.round(54 * Config.scale)
+            radius: Math.round(6 * Config.scale)
+            color: Config.colors.surface
+            visible: true
+            clip: true
+
+            Image {
+                id: artImage
+                anchors.fill: parent
+                source: root.artUrl
+                fillMode: Image.PreserveAspectCrop
+                visible: root.artUrl !== "" && status === Image.Ready
+                cache: false
+            }
+
+            // Fallback music note icon when no art
+            Text {
+                anchors.centerIn: parent
+                text: "\u266b"
+                color: Config.colors.textMuted
+                font.pixelSize: Math.round(22 * Config.scale)
+                visible: root.artUrl === "" || artImage.status !== Image.Ready
+            }
         }
 
-        Text {
+        // Track info
+        ColumnLayout {
             Layout.fillWidth: true
-            text: root.trackArtist
-            color: Config.colors.textSecondary
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeSm
-            elide: Text.ElideRight
-            visible: root.trackArtist !== ""
+            spacing: Math.round(3 * Config.scale)
+
+            Text {
+                Layout.fillWidth: true
+                text: root.trackTitle
+                color: Config.colors.textPrimary
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeMd
+                font.weight: Font.Medium
+                elide: Text.ElideRight
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: root.trackArtist
+                color: Config.colors.textSecondary
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                elide: Text.ElideRight
+                visible: root.trackArtist !== ""
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: root.trackAlbum
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                elide: Text.ElideRight
+                visible: root.trackAlbum !== "" && root.trackArtist !== ""
+            }
         }
     }
 
