@@ -408,7 +408,7 @@ Item {
                 text: card.value
                 color: card.valueColor
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeLg
+                font.pixelSize: Config.font.sizeXxl
                 font.weight: Font.SemiBold
                 Behavior on color { ColorAnimation { duration: 400 } }
             }
@@ -417,7 +417,7 @@ Item {
                 text: card.label
                 color: Config.colors.textMuted
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
+                font.pixelSize: Config.font.sizeLg
             }
         }
     }
