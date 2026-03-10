@@ -119,7 +119,7 @@ QtObject {
         readonly property int radius: 18
         readonly property int height: 220             // drawer height in px (pre-scale)
         readonly property int maxWidth: 1200          // max drawer width in px (pre-scale)
-        readonly property int musicWidth: 260
+        readonly property int musicWidth: 188  // matches inner card height (stats.height - 2*drawerPad) for a square card
         readonly property int clockWidth: 200
         readonly property int rightWidth: 260
         readonly property int fontSizeTime: Math.round(root.font.sizeMd * 2.6)
