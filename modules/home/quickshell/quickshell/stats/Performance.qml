@@ -507,40 +507,64 @@ Item {
 
                         // ── Percentage — floats beside the crosshair dot when hovered,
                         //                falls back to static top-right when idle ────────
-                        Text {
+                        Item {
                             id: pctLabel
-                            text: coreCell.hoverPct + "%"
-                            color: coreCell.barColor
-                            font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeSm
-                            font.weight: Font.SemiBold
 
+                            readonly property bool floating: coreCell.cellHovered && coreCell.dotX >= 0
                             readonly property real dotGap: Math.round(6 * Config.scale)
                             readonly property bool flipLeft: coreCell.dotX > coreCell.width / 2
+                            readonly property real _hPad: Math.round(4 * Config.scale)
+                            readonly property real _vPad: Math.round(2 * Config.scale)
+
+                            width: pctLabelText.implicitWidth + (floating ? _hPad * 2 : 0)
+                            height: pctLabelText.implicitHeight + (floating ? _vPad * 2 : 0)
 
                             // When hovered: float beside the dot.  When idle: park top-right.
-                            x: (coreCell.cellHovered && coreCell.dotX >= 0)
+                            x: floating
                                ? (flipLeft
-                                  ? coreCell.dotX - dotGap - implicitWidth
+                                  ? coreCell.dotX - dotGap - width
                                   : coreCell.dotX + dotGap)
-                               : parent.width - implicitWidth - Math.round(5 * Config.scale)
+                               : parent.width - pctLabelText.implicitWidth - Math.round(5 * Config.scale)
 
-                            y: (coreCell.cellHovered && coreCell.dotY >= 0)
-                               ? Math.max(0, Math.min(parent.height - implicitHeight,
-                                     coreCell.dotY - implicitHeight / 2))
+                            y: floating
+                               ? Math.max(0, Math.min(parent.height - height,
+                                     coreCell.dotY - height / 2))
                                : Math.round(4 * Config.scale)
 
                             Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
                             Behavior on y { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
-                            Behavior on color { ColorAnimation { duration: 200 } }
 
-                            layer.enabled: true
-                            layer.effect: MultiEffect {
-                                shadowEnabled: true
-                                shadowColor: "#cc000000"
-                                shadowBlur: 0.8
-                                shadowHorizontalOffset: 0
-                                shadowVerticalOffset: 1
+                            // Pill background — only visible when floating
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: Math.round(4 * Config.scale)
+                                color: Qt.rgba(0.05, 0.04, 0.12, 0.88)
+                                border.color: Qt.rgba(coreCell.barColor.r, coreCell.barColor.g, coreCell.barColor.b, 0.35)
+                                border.width: 1
+                                opacity: pctLabel.floating ? 1.0 : 0.0
+                                Behavior on opacity { NumberAnimation { duration: 120 } }
+                            }
+
+                            Text {
+                                id: pctLabelText
+                                anchors.centerIn: parent
+                                text: coreCell.hoverPct + "%"
+                                color: coreCell.barColor
+                                font.family: Config.font.family
+                                font.pixelSize: pctLabel.floating ? Config.font.sizeMd : Config.font.sizeSm
+                                font.weight: Font.SemiBold
+
+                                Behavior on font.pixelSize { NumberAnimation { duration: 80 } }
+                                Behavior on color { ColorAnimation { duration: 200 } }
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    shadowEnabled: true
+                                    shadowColor: "#cc000000"
+                                    shadowBlur: 0.8
+                                    shadowHorizontalOffset: 0
+                                    shadowVerticalOffset: 1
+                                }
                             }
                         }
 
