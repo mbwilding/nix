@@ -310,49 +310,55 @@ Item {
         }
 
         // ── Labels ────────────────────────────────────────────────────────────
-        // Top-left: label + live current value
-        Row {
+        // Direction tag — top-left, always fixed
+        Text {
+            id: dirTag
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: Math.round(6 * Config.scale)
-            spacing: Math.round(5 * Config.scale)
-
-            Text {
-                text: graph.label
-                color: graph.lineColor
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
-                font.weight: Font.Bold
-                opacity: 0.85
-            }
-            Text {
-                text: graph.formatFn ? graph.formatFn(graph.currentRate) : ""
-                color: Config.colors.textPrimary
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
-                font.weight: Font.Medium
-            }
-        }
-
-        // Hover value — floats beside the dot on the line
-        Text {
-            id: hoverLabel
-            visible: graph.hovered && graph.hoverIndex >= 0 && graph.dotX >= 0
-            text: graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
+            text: graph.label
             color: graph.lineColor
             font.family: Config.font.family
-            font.pixelSize: Config.font.sizeSm
-            font.weight: Font.Medium
+            font.pixelSize: Config.font.sizeLg
+            font.weight: Font.Bold
+            opacity: 0.85
+        }
 
+        // Rate value — rests below the tag when idle,
+        // floats beside the crosshair dot when hovered.
+        Text {
+            id: rateLabel
+
+            text: graph.formatFn
+                  ? graph.formatFn(graph.hovered && graph.hoverIndex >= 0
+                                   ? graph.hoverRate
+                                   : graph.currentRate)
+                  : ""
+
+            color: graph.lineColor
+            font.family: Config.font.family
+            font.pixelSize: Config.font.sizeLg
+            font.weight: Font.SemiBold
+
+            readonly property real _margin: Math.round(6 * Config.scale)
+            readonly property real _restX: dirTag.x
+            readonly property real _restY: dirTag.y + dirTag.implicitHeight + Math.round(2 * Config.scale)
             readonly property real dotGap: Math.round(6 * Config.scale)
-            // Flip to the left when the dot is in the right half so the label stays in bounds
             readonly property bool flipLeft: graph.dotX > graph.width / 2
-            x: flipLeft
-               ? graph.dotX - dotGap - implicitWidth
-               : graph.dotX + dotGap
-            // Centre vertically on the dot, clamped inside the graph
-            y: Math.max(0, Math.min(graph.height - implicitHeight,
-                graph.dotY - implicitHeight / 2))
+
+            x: (graph.hovered && graph.dotX >= 0)
+               ? (flipLeft
+                  ? graph.dotX - dotGap - implicitWidth
+                  : graph.dotX + dotGap)
+               : _restX
+
+            y: (graph.hovered && graph.dotY >= 0)
+               ? Math.max(0, Math.min(graph.height - implicitHeight,
+                     graph.dotY - implicitHeight / 2))
+               : _restY
+
+            Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
+            Behavior on y { NumberAnimation { duration: 80; easing.type: Easing.OutCubic } }
 
             layer.enabled: true
             layer.effect: MultiEffect {
