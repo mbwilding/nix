@@ -108,16 +108,113 @@ Item {
         cache: false
     }
 
-    // Fallback
+    // Fallback — dark background with animated orbs when nothing is playing
     Rectangle {
+        id: fallbackBg
         anchors.fill: parent
-        color: Qt.rgba(Config.colors.surface.r, Config.colors.surface.g, Config.colors.surface.b, 1)
+        color: "#0d0d18"
         visible: root.artUrl === "" || artImage.status !== Image.Ready
-        Text {
+
+        Canvas {
+            id: idleOrbCanvas
+            anchors.fill: parent
+
+            // Only animate when visible (no player / no art)
+            readonly property bool active: fallbackBg.visible
+
+            property var orbPos: []
+            property var orbVel: []
+
+            readonly property var orbColors: [
+                ["rgba(192, 170, 255, 0.30)", "rgba(192, 170, 255, 0.00)"],
+                ["rgba(255, 159, 243, 0.25)", "rgba(255, 159, 243, 0.00)"],
+                ["rgba(137, 220, 235, 0.22)", "rgba(137, 220, 235, 0.00)"],
+                ["rgba(166, 227, 161, 0.20)", "rgba(166, 227, 161, 0.00)"],
+                ["rgba(243, 139, 168, 0.22)", "rgba(243, 139, 168, 0.00)"],
+            ]
+            readonly property var orbRadii: [0.60, 0.55, 0.50, 0.58, 0.52]
+
+            Component.onCompleted: {
+                const count = Config.lockscreen.orbCount;
+                let pos = [], vel = [];
+                for (let i = 0; i < count; i++) {
+                    pos.push({ x: Math.random(), y: Math.random() });
+                    const speed = 0.018 + Math.random() * 0.012;
+                    const angle = Math.random() * Math.PI * 2;
+                    vel.push({ vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
+                }
+                orbPos = pos;
+                orbVel = vel;
+            }
+
+            FrameAnimation {
+                running: idleOrbCanvas.active
+                onTriggered: {
+                    const dt = Math.min(frameTime, 0.05);
+                    const count = idleOrbCanvas.orbPos.length;
+                    if (count === 0) return;
+                    let pos = idleOrbCanvas.orbPos.map(p => ({ x: p.x, y: p.y }));
+                    let vel = idleOrbCanvas.orbVel.map(v => ({ vx: v.vx, vy: v.vy }));
+                    for (let i = 0; i < count; i++) {
+                        pos[i].x += vel[i].vx * dt;
+                        pos[i].y += vel[i].vy * dt;
+                        if (pos[i].x < 0) { pos[i].x = 0; vel[i].vx = Math.abs(vel[i].vx); }
+                        else if (pos[i].x > 1) { pos[i].x = 1; vel[i].vx = -Math.abs(vel[i].vx); }
+                        if (pos[i].y < 0) { pos[i].y = 0; vel[i].vy = Math.abs(vel[i].vy); }
+                        else if (pos[i].y > 1) { pos[i].y = 1; vel[i].vy = -Math.abs(vel[i].vy); }
+                    }
+                    idleOrbCanvas.orbPos = pos;
+                    idleOrbCanvas.orbVel = vel;
+                }
+            }
+
+            onOrbPosChanged: requestPaint()
+            onWidthChanged: requestPaint()
+            onHeightChanged: requestPaint()
+
+            onPaint: {
+                const ctx = getContext("2d");
+                const w = width, h = height;
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = "#0d0d18";
+                ctx.fillRect(0, 0, w, h);
+                const count = orbPos.length;
+                for (let i = 0; i < count; i++) {
+                    const p = orbPos[i];
+                    const colIdx = i % orbColors.length;
+                    const radFrac = orbRadii[i % orbRadii.length];
+                    const r = Math.min(w, h) * radFrac;
+                    const cx = p.x * w;
+                    const cy = p.y * h;
+                    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                    g.addColorStop(0, orbColors[colIdx][0]);
+                    g.addColorStop(1, orbColors[colIdx][1]);
+                    ctx.fillStyle = g;
+                    ctx.fillRect(0, 0, w, h);
+                }
+            }
+        }
+
+        // Centered idle label — only shown when no player at all
+        Column {
             anchors.centerIn: parent
-            text: "\u266b"
-            color: Config.colors.textMuted
-            font.pixelSize: Math.round(48 * Config.scale)
+            spacing: Math.round(8 * Config.scale)
+            visible: root.player === null
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "\u266b"
+                color: Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.55)
+                font.family: Config.font.family
+                font.pixelSize: Math.round(40 * Config.scale)
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Nothing playing"
+                color: Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.60)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeMd
+            }
         }
     }
 
@@ -135,8 +232,10 @@ Item {
         height: Math.round(130 * Config.scale)
 
         // Scrim — tall, starts dark early, fully opaque at bottom
+        // Hidden when nothing is playing (idle orb state shows instead)
         Rectangle {
             anchors.fill: parent
+            visible: root.player !== null
             gradient: Gradient {
                 orientation: Gradient.Vertical
                 GradientStop {
