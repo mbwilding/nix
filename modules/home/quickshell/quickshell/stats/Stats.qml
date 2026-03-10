@@ -182,6 +182,22 @@ Scope {
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
                         }
+
+                        // Vertical divider before pin button
+                        Rectangle {
+                            Layout.alignment: Qt.AlignVCenter
+                            width: 1
+                            height: Math.round(20 * Config.scale)
+                            color: Config.colors.border
+                            opacity: 0.5
+                        }
+
+                        // Pin button — toggles the stats drawer's pinned state
+                        PinTabButton {
+                            Layout.alignment: Qt.AlignVCenter
+                            pinned: root.pinned
+                            onClicked: root.toggle()
+                        }
                     }
 
                     // Bottom separator
@@ -305,6 +321,46 @@ Scope {
         HoverHandler {
             id: tabHover
             onHoveredChanged: { if (hovered) tabIcon.hovered() }
+        }
+    }
+
+    // ── Inline pin button component ───────────────────────────────────────────
+    component PinTabButton: Item {
+        id: pinTab
+        property bool pinned: false
+        signal clicked
+
+        implicitWidth:  Math.round(44 * Config.scale)
+        implicitHeight: Math.round(44 * Config.scale)
+
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: Math.round(4 * Config.scale)
+            radius: Math.round(7 * Config.scale)
+            color: pinTab.pinned
+                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
+                : pinHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            Behavior on color { ColorAnimation { duration: 100 } }
+        }
+
+        IconImage {
+            anchors.centerIn: parent
+            implicitSize: Math.round(16 * Config.scale)
+            source: Quickshell.iconPath(pinTab.pinned ? "view-pin-symbolic" : "view-unpin-symbolic")
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                colorization: 1.0
+                colorizationColor: pinTab.pinned ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
+                Behavior on colorizationColor { ColorAnimation { duration: 120 } }
+            }
+        }
+
+        HoverHandler { id: pinHover }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: pinTab.clicked()
         }
     }
 }

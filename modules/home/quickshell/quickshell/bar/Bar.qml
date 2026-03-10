@@ -682,6 +682,13 @@ Scope {
                 }
             }
 
+            PinSection {
+                id: pinSection
+                visible: false
+                pinned: root.pinned
+                onTogglePinReq: root.toggle()
+            }
+
             // ----------------------------------------------------------------
             // Top-level bar layout — driven by Config.bar.layout
             // ----------------------------------------------------------------
@@ -711,6 +718,7 @@ Scope {
                             case BarItems.system:    return systemComponent
                             case BarItems.clock:     return clockComponent
                             case BarItems.separator: return barSeparatorComponent
+                            case BarItems.pin:       return pinComponent
                             default:                 return null
                             }
                         }
@@ -911,6 +919,24 @@ Scope {
                     Component.onDestruction: {
                         notifSection.visible = false;
                         notifSection.parent = pill;
+                    }
+                }
+            }
+
+            // Pin button proxy — reparents pinSection into the layout
+            Component {
+                id: pinComponent
+                Item {
+                    id: pinProxy
+                    implicitWidth: pinSection.implicitWidth
+                    implicitHeight: pinSection.implicitHeight
+                    Component.onCompleted: {
+                        pinSection.parent = pinProxy;
+                        pinSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        pinSection.visible = false;
+                        pinSection.parent = pill;
                     }
                 }
             }

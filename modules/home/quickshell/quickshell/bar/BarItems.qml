@@ -14,4 +14,6 @@ QtObject {
     readonly property int clock: 2
     // A vertical separator line — can be placed multiple times
     readonly property int separator: 3
+    // Pin button — toggles the bar's pinned (always-visible) state
+    readonly property int pin: 4
 }
