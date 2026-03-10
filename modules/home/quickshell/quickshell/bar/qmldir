@@ -7,6 +7,7 @@ BtSection 1.0 BtSection.qml
 EthernetSection 1.0 EthernetSection.qml
 ClockSection 1.0 ClockSection.qml
 NotifSection 1.0 NotifSection.qml
+PinSection 1.0 PinSection.qml
 PowerSection 1.0 PowerSection.qml
 singleton SystemItems 1.0 SystemItems.qml
 TrayItem 1.0 TrayItem.qml
