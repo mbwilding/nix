@@ -47,9 +47,9 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        scrollY:   flickable.contentY
+        scrollY: flickable.contentY
         maxScrollY: Math.max(0, flickable.contentHeight - flickable.height)
-        contentH:  flickable.contentHeight
+        contentH: flickable.contentHeight
         viewportH: flickable.height
         thumbColor: root.thumbColor
     }

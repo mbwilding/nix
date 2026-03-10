@@ -58,9 +58,7 @@ BarSectionItem {
         onExited: brightnessSection.keepPopupReq()
         onWheel: wheel => {
             // Scroll on the icon adjusts screen brightness (primary)
-            brightnessSection.setScreenBrightnessReq(
-                Math.max(0, Math.min(1, brightnessSection.screenBrightness + (wheel.angleDelta.y / 120) * 0.05))
-            );
+            brightnessSection.setScreenBrightnessReq(Math.max(0, Math.min(1, brightnessSection.screenBrightness + (wheel.angleDelta.y / 120) * 0.05)));
             brightnessSection.keepAliveReq();
         }
     }
@@ -72,8 +70,7 @@ BarSectionItem {
         clickable: false
 
         iconSource: Quickshell.iconPath("high-brightness-symbolic")
-        label: brightnessSection.screenAvailable
-            ? Math.round(brightnessSection.screenBrightness * 100) + "%" : ""
+        label: brightnessSection.screenAvailable ? Math.round(brightnessSection.screenBrightness * 100) + "%" : ""
         labelWidth: brightnessSection.statusLabelWidth
         labelColor: Config.colors.textPrimary
     }
@@ -99,11 +96,7 @@ BarSectionItem {
 
         onSetScreenFraction: v => brightnessSection.setScreenBrightnessReq(v)
         onSetKbdFraction: v => brightnessSection.setKbdBrightnessReq(v)
-        onScrollScreenDelta: delta => brightnessSection.setScreenBrightnessReq(
-            Math.max(0, Math.min(1, brightnessSection.screenBrightness + delta * 0.05))
-        )
-        onScrollKbdDelta: delta => brightnessSection.setKbdBrightnessReq(
-            Math.max(0, Math.min(1, brightnessSection.kbdBrightness + delta * 0.05))
-        )
+        onScrollScreenDelta: delta => brightnessSection.setScreenBrightnessReq(Math.max(0, Math.min(1, brightnessSection.screenBrightness + delta * 0.05)))
+        onScrollKbdDelta: delta => brightnessSection.setKbdBrightnessReq(Math.max(0, Math.min(1, brightnessSection.kbdBrightness + delta * 0.05)))
     }
 }

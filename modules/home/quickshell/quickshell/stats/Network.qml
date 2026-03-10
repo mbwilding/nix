@@ -15,7 +15,7 @@ Item {
     // ── Data collection ───────────────────────────────────────────────────────
 
     readonly property int historyLen: 60   // samples to keep
-    readonly property int interval:   1000 // ms between samples
+    readonly property int interval: 1000 // ms between samples
 
     property var rxHistory: []   // bytes/sec, newest last
     property var txHistory: []   // bytes/sec, newest last
@@ -23,67 +23,71 @@ Item {
     property real rxBytesPerSec: 0
     property real txBytesPerSec: 0
 
-    property var _prevRx:   null
-    property var _prevTx:   null
+    property var _prevRx: null
+    property var _prevTx: null
     property var _prevTime: null
 
     // ── Shared hover state (drives both graphs simultaneously) ────────────────
-    property bool sharedHovered:    false
-    property int  sharedHoverIndex: -1
+    property bool sharedHovered: false
+    property int sharedHoverIndex: -1
 
     // ── Shared y-axis peak (so both graphs use identical scale) ───────────────
     readonly property real sharedPeak: {
-        let peak = 1024
-        const all = root.rxHistory.concat(root.txHistory)
+        let peak = 1024;
+        const all = root.rxHistory.concat(root.txHistory);
         for (let i = 0; i < all.length; i++)
-            if (all[i] > peak) peak = all[i]
-        return peak * 1.10
+            if (all[i] > peak)
+                peak = all[i];
+        return peak * 1.10;
     }
 
     function _sumInterface(text, col) {
-        let total = 0
+        let total = 0;
         for (const line of text.split("\n")) {
-            const trimmed = line.trim()
+            const trimmed = line.trim();
             if (!trimmed || trimmed.startsWith("Inter") || trimmed.startsWith("face"))
-                continue
-            const parts = trimmed.split(/\s+/)
-            if (parts[0].replace(":", "") === "lo") continue
-            total += parseInt(parts[col]) || 0
+                continue;
+            const parts = trimmed.split(/\s+/);
+            if (parts[0].replace(":", "") === "lo")
+                continue;
+            total += parseInt(parts[col]) || 0;
         }
-        return total
+        return total;
     }
 
     function formatSpeed(bps) {
-        if (bps >= 1048576) return (bps / 1048576).toFixed(2) + " MB/s"
-        if (bps >= 1024)    return (bps / 1024).toFixed(1) + " KB/s"
-        return Math.round(bps) + " B/s"
+        if (bps >= 1048576)
+            return (bps / 1048576).toFixed(2) + " MB/s";
+        if (bps >= 1024)
+            return (bps / 1024).toFixed(1) + " KB/s";
+        return Math.round(bps) + " B/s";
     }
 
     property Process _netProc: Process {
         command: ["cat", "/proc/net/dev"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const now  = Date.now()
-                const rx   = root._sumInterface(this.text, 1)
-                const tx   = root._sumInterface(this.text, 9)
+                const now = Date.now();
+                const rx = root._sumInterface(this.text, 1);
+                const tx = root._sumInterface(this.text, 9);
                 if (root._prevRx !== null && root._prevTime !== null) {
-                    const dt = (now - root._prevTime) / 1000
+                    const dt = (now - root._prevTime) / 1000;
                     if (dt > 0) {
-                        const rxRate = Math.max(0, (rx - root._prevRx) / dt)
-                        const txRate = Math.max(0, (tx - root._prevTx) / dt)
-                        root.rxBytesPerSec = rxRate
-                        root.txBytesPerSec = txRate
+                        const rxRate = Math.max(0, (rx - root._prevRx) / dt);
+                        const txRate = Math.max(0, (tx - root._prevTx) / dt);
+                        root.rxBytesPerSec = rxRate;
+                        root.txBytesPerSec = txRate;
 
                         // Append and trim history
-                        const rxH = root.rxHistory.concat([rxRate])
-                        const txH = root.txHistory.concat([txRate])
-                        root.rxHistory = rxH.length > root.historyLen ? rxH.slice(rxH.length - root.historyLen) : rxH
-                        root.txHistory = txH.length > root.historyLen ? txH.slice(txH.length - root.historyLen) : txH
+                        const rxH = root.rxHistory.concat([rxRate]);
+                        const txH = root.txHistory.concat([txRate]);
+                        root.rxHistory = rxH.length > root.historyLen ? rxH.slice(rxH.length - root.historyLen) : rxH;
+                        root.txHistory = txH.length > root.historyLen ? txH.slice(txH.length - root.historyLen) : txH;
                     }
                 }
-                root._prevRx   = rx
-                root._prevTx   = tx
-                root._prevTime = now
+                root._prevRx = rx;
+                root._prevTx = tx;
+                root._prevTime = now;
             }
         }
     }
@@ -107,39 +111,39 @@ Item {
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history:     root.txHistory
-            maxHistory:  root.historyLen
+            history: root.txHistory
+            maxHistory: root.historyLen
             currentRate: root.txBytesPerSec
-            sharedPeak:  root.sharedPeak
-            lineColor:   Config.colors.accentAlt
-            fillColor:   Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
-            label:       "UP"
-            formatFn:    root.formatSpeed
-            hovered:     root.sharedHovered
-            hoverIndex:  root.sharedHoverIndex
+            sharedPeak: root.sharedPeak
+            lineColor: Config.colors.accentAlt
+            fillColor: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
+            label: "UP"
+            formatFn: root.formatSpeed
+            hovered: root.sharedHovered
+            hoverIndex: root.sharedHoverIndex
         }
 
         // ── Divider ───────────────────────────────────────────────────────────
         Rectangle {
             Layout.fillWidth: true
             height: Config.panelBorder.width
-            color:  Config.panelBorder.color
+            color: Config.panelBorder.color
         }
 
         // ── Download graph ────────────────────────────────────────────────────
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history:     root.rxHistory
-            maxHistory:  root.historyLen
+            history: root.rxHistory
+            maxHistory: root.historyLen
             currentRate: root.rxBytesPerSec
-            sharedPeak:  root.sharedPeak
-            lineColor:   Config.colors.accent
-            fillColor:   Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-            label:       "DOWN"
-            formatFn:    root.formatSpeed
-            hovered:     root.sharedHovered
-            hoverIndex:  root.sharedHoverIndex
+            sharedPeak: root.sharedPeak
+            lineColor: Config.colors.accent
+            fillColor: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+            label: "DOWN"
+            formatFn: root.formatSpeed
+            hovered: root.sharedHovered
+            hoverIndex: root.sharedHoverIndex
         }
     }
 
@@ -152,21 +156,22 @@ Item {
         onPositionChanged: mouse => {
             // Map x into a history index using the graph geometry.
             // Both graphs have the same width and maxHistory so one calculation serves both.
-            const pad   = Math.round(4 * Config.scale)
-            const gw    = width - pad * 2
-            const n     = root.rxHistory.length
-            if (n === 0) return
-            const step  = gw / (root.historyLen - 1)
-            const xOff  = (root.historyLen - n) * step
-            const relX  = Math.max(0, Math.min(gw, mouse.x - pad - xOff))
-            const idx   = Math.max(0, Math.min(n - 1, Math.round(relX / step)))
-            root.sharedHovered    = true
-            root.sharedHoverIndex = idx
+            const pad = Math.round(4 * Config.scale);
+            const gw = width - pad * 2;
+            const n = root.rxHistory.length;
+            if (n === 0)
+                return;
+            const step = gw / (root.historyLen - 1);
+            const xOff = (root.historyLen - n) * step;
+            const relX = Math.max(0, Math.min(gw, mouse.x - pad - xOff));
+            const idx = Math.max(0, Math.min(n - 1, Math.round(relX / step)));
+            root.sharedHovered = true;
+            root.sharedHoverIndex = idx;
         }
 
         onExited: {
-            root.sharedHovered    = false
-            root.sharedHoverIndex = -1
+            root.sharedHovered = false;
+            root.sharedHoverIndex = -1;
         }
     }
 
@@ -174,26 +179,25 @@ Item {
     component NetworkGraph: Item {
         id: graph
 
-        property var    history:     []
-        property int    maxHistory:  60
-        property real   currentRate: 0
-        property real   sharedPeak:  1024
-        property color  lineColor:   "white"
-        property color  fillColor:   Qt.rgba(1, 1, 1, 0.15)
-        property string label:       ""
-        property var    formatFn:    null
+        property var history: []
+        property int maxHistory: 60
+        property real currentRate: 0
+        property real sharedPeak: 1024
+        property color lineColor: "white"
+        property color fillColor: Qt.rgba(1, 1, 1, 0.15)
+        property string label: ""
+        property var formatFn: null
 
         // Driven externally by the shared mouse overlay
-        property bool   hovered:    false
-        property int    hoverIndex: -1
+        property bool hovered: false
+        property int hoverIndex: -1
 
-        readonly property real hoverRate: (hoverIndex >= 0 && hoverIndex < history.length)
-                                          ? history[hoverIndex] : currentRate
+        readonly property real hoverRate: (hoverIndex >= 0 && hoverIndex < history.length) ? history[hoverIndex] : currentRate
 
-        onHistoryChanged:    graphCanvas.requestPaint()
+        onHistoryChanged: graphCanvas.requestPaint()
         onSharedPeakChanged: graphCanvas.requestPaint()
         onHoverIndexChanged: graphCanvas.requestPaint()
-        onHoveredChanged:    graphCanvas.requestPaint()
+        onHoveredChanged: graphCanvas.requestPaint()
 
         // ── Canvas graph ──────────────────────────────────────────────────────
         Canvas {
@@ -201,89 +205,92 @@ Item {
             anchors.fill: parent
 
             onPaint: {
-                const ctx = getContext("2d")
-                ctx.clearRect(0, 0, width, height)
+                const ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
 
-                const hist = graph.history
-                const peak = graph.sharedPeak
+                const hist = graph.history;
+                const peak = graph.sharedPeak;
 
-                const pad  = Math.round(4 * Config.scale)
-                const gw   = width  - pad * 2
-                const gh   = height - pad * 2
-                const n    = hist.length
-                const step = gw / (graph.maxHistory - 1)
-                const xOffset = (graph.maxHistory - n) * step
+                const pad = Math.round(4 * Config.scale);
+                const gw = width - pad * 2;
+                const gh = height - pad * 2;
+                const n = hist.length;
+                const step = gw / (graph.maxHistory - 1);
+                const xOffset = (graph.maxHistory - n) * step;
 
                 // ── Grid (3 horizontal lines at 25%, 50%, 75%) ────────────────
-                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.07).toString()
-                ctx.lineWidth   = 1
-                ctx.setLineDash([])
+                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.07).toString();
+                ctx.lineWidth = 1;
+                ctx.setLineDash([]);
                 for (let g = 1; g <= 3; g++) {
-                    const gy = pad + gh * (1 - g / 4)
-                    ctx.beginPath()
-                    ctx.moveTo(pad, gy)
-                    ctx.lineTo(pad + gw, gy)
-                    ctx.stroke()
+                    const gy = pad + gh * (1 - g / 4);
+                    ctx.beginPath();
+                    ctx.moveTo(pad, gy);
+                    ctx.lineTo(pad + gw, gy);
+                    ctx.stroke();
                 }
 
                 // ── Vertical time ticks (every 15 samples) ────────────────────
-                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.05).toString()
+                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.05).toString();
                 for (let t = 0; t < graph.maxHistory; t += 15) {
-                    const tx = pad + t * step
-                    ctx.beginPath()
-                    ctx.moveTo(tx, pad)
-                    ctx.lineTo(tx, pad + gh)
-                    ctx.stroke()
+                    const tx = pad + t * step;
+                    ctx.beginPath();
+                    ctx.moveTo(tx, pad);
+                    ctx.lineTo(tx, pad + gh);
+                    ctx.stroke();
                 }
 
-                if (hist.length < 2) return
+                if (hist.length < 2)
+                    return;
 
                 // ── Curve ─────────────────────────────────────────────────────
-                ctx.beginPath()
+                ctx.beginPath();
                 for (let i = 0; i < n; i++) {
-                    const x = pad + xOffset + i * step
-                    const y = pad + gh - (hist[i] / peak) * gh
-                    if (i === 0) ctx.moveTo(x, y)
-                    else         ctx.lineTo(x, y)
+                    const x = pad + xOffset + i * step;
+                    const y = pad + gh - (hist[i] / peak) * gh;
+                    if (i === 0)
+                        ctx.moveTo(x, y);
+                    else
+                        ctx.lineTo(x, y);
                 }
-                ctx.strokeStyle = graph.lineColor.toString()
-                ctx.lineWidth   = Math.round(1.5 * Config.scale)
-                ctx.lineJoin    = "round"
-                ctx.stroke()
+                ctx.strokeStyle = graph.lineColor.toString();
+                ctx.lineWidth = Math.round(1.5 * Config.scale);
+                ctx.lineJoin = "round";
+                ctx.stroke();
 
                 // Fill under curve
-                const lastX  = pad + xOffset + (n - 1) * step
-                const firstX = pad + xOffset
-                ctx.lineTo(lastX,  pad + gh)
-                ctx.lineTo(firstX, pad + gh)
-                ctx.closePath()
-                ctx.fillStyle = graph.fillColor.toString()
-                ctx.fill()
+                const lastX = pad + xOffset + (n - 1) * step;
+                const firstX = pad + xOffset;
+                ctx.lineTo(lastX, pad + gh);
+                ctx.lineTo(firstX, pad + gh);
+                ctx.closePath();
+                ctx.fillStyle = graph.fillColor.toString();
+                ctx.fill();
 
                 // ── Hover crosshair ───────────────────────────────────────────
                 if (graph.hovered && graph.hoverIndex >= 0 && graph.hoverIndex < n) {
-                    const hi = graph.hoverIndex
-                    const hx = pad + xOffset + hi * step
-                    const hy = pad + gh - (hist[hi] / peak) * gh
+                    const hi = graph.hoverIndex;
+                    const hx = pad + xOffset + hi * step;
+                    const hy = pad + gh - (hist[hi] / peak) * gh;
 
                     // Dashed vertical guide
-                    ctx.beginPath()
-                    ctx.moveTo(hx, pad)
-                    ctx.lineTo(hx, pad + gh)
-                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.25).toString()
-                    ctx.lineWidth   = 1
-                    ctx.setLineDash([Math.round(3 * Config.scale), Math.round(3 * Config.scale)])
-                    ctx.stroke()
-                    ctx.setLineDash([])
+                    ctx.beginPath();
+                    ctx.moveTo(hx, pad);
+                    ctx.lineTo(hx, pad + gh);
+                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.25).toString();
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([Math.round(3 * Config.scale), Math.round(3 * Config.scale)]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
 
                     // Dot
-                    ctx.beginPath()
-                    ctx.arc(hx, hy, Math.round(3.5 * Config.scale), 0, Math.PI * 2)
-                    ctx.fillStyle   = graph.lineColor.toString()
-                    ctx.fill()
-                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.8).toString()
-                    ctx.lineWidth   = Math.round(1.5 * Config.scale)
-                    ctx.stroke()
+                    ctx.beginPath();
+                    ctx.arc(hx, hy, Math.round(3.5 * Config.scale), 0, Math.PI * 2);
+                    ctx.fillStyle = graph.lineColor.toString();
+                    ctx.fill();
+                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.8).toString();
+                    ctx.lineWidth = Math.round(1.5 * Config.scale);
+                    ctx.stroke();
                 }
             }
         }
@@ -291,39 +298,39 @@ Item {
         // ── Labels ────────────────────────────────────────────────────────────
         // Top-left: label + live current value
         Row {
-            anchors.left:    parent.left
-            anchors.top:     parent.top
+            anchors.left: parent.left
+            anchors.top: parent.top
             anchors.margins: Math.round(6 * Config.scale)
             spacing: Math.round(5 * Config.scale)
 
             Text {
-                text:  graph.label
+                text: graph.label
                 color: graph.lineColor
-                font.family:    Config.font.family
+                font.family: Config.font.family
                 font.pixelSize: Config.font.sizeMd
-                font.weight:    Font.Bold
+                font.weight: Font.Bold
                 opacity: 0.85
             }
             Text {
-                text:  graph.formatFn ? graph.formatFn(graph.currentRate) : ""
+                text: graph.formatFn ? graph.formatFn(graph.currentRate) : ""
                 color: Config.colors.textPrimary
-                font.family:    Config.font.family
+                font.family: Config.font.family
                 font.pixelSize: Config.font.sizeMd
-                font.weight:    Font.Medium
+                font.weight: Font.Medium
             }
         }
 
         // Top-right: hover historical value (only shown while hovering)
         Text {
-            anchors.right:   parent.right
-            anchors.top:     parent.top
+            anchors.right: parent.right
+            anchors.top: parent.top
             anchors.margins: Math.round(6 * Config.scale)
             visible: graph.hovered && graph.hoverIndex >= 0
-            text:    graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
-            color:   Qt.rgba(1, 1, 1, 0.55)
-            font.family:    Config.font.family
+            text: graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
+            color: Qt.rgba(1, 1, 1, 0.55)
+            font.family: Config.font.family
             font.pixelSize: Config.font.sizeMd
-            font.weight:    Font.Normal
+            font.weight: Font.Normal
         }
     }
 }

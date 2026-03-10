@@ -37,19 +37,25 @@ PopupContainer {
 
     // Internal counts for raw mode, derived from rawModel.values reactively.
     readonly property int _rawConnectedCount: {
-        if (!root.rawModel || !root.rawIsConnectedFn) return 0;
+        if (!root.rawModel || !root.rawIsConnectedFn)
+            return 0;
         void root.rawModel.valuesChanged;
         const vals = root.rawModel.values;
         let n = 0;
-        for (let i = 0; i < vals.length; i++) if (root.rawIsConnectedFn(vals[i])) n++;
+        for (let i = 0; i < vals.length; i++)
+            if (root.rawIsConnectedFn(vals[i]))
+                n++;
         return n;
     }
     readonly property int _rawAvailableCount: {
-        if (!root.rawModel || !root.rawIsConnectedFn) return 0;
+        if (!root.rawModel || !root.rawIsConnectedFn)
+            return 0;
         void root.rawModel.valuesChanged;
         const vals = root.rawModel.values;
         let n = 0;
-        for (let i = 0; i < vals.length; i++) if (!root.rawIsConnectedFn(vals[i])) n++;
+        for (let i = 0; i < vals.length; i++)
+            if (!root.rawIsConnectedFn(vals[i]))
+                n++;
         return n;
     }
 
@@ -84,7 +90,8 @@ PopupContainer {
     readonly property bool _hasWifiMeta: {
         const lists = [root.availableItems, root.connectedItems];
         for (let l = 0; l < lists.length; l++) {
-            if (lists[l].length > 0 && lists[l][0].band !== undefined) return true;
+            if (lists[l].length > 0 && lists[l][0].band !== undefined)
+                return true;
         }
         return false;
     }
@@ -93,7 +100,8 @@ PopupContainer {
     readonly property bool _hasSaved: {
         // JS-array mode (wifi)
         for (let i = 0; i < root.availableItems.length; i++) {
-            if (root.availableItems[i].saved) return true;
+            if (root.availableItems[i].saved)
+                return true;
         }
         // Raw-model mode (bluetooth)
         if (root.rawModel && root.rawSavedFn) {
@@ -101,7 +109,8 @@ PopupContainer {
             const vals = root.rawModel.values;
             for (let j = 0; j < vals.length; j++) {
                 if (!root.rawIsConnectedFn || !root.rawIsConnectedFn(vals[j])) {
-                    if (root.rawSavedFn(vals[j])) return true;
+                    if (root.rawSavedFn(vals[j]))
+                        return true;
                 }
             }
         }
@@ -117,27 +126,31 @@ PopupContainer {
                 const it = items[i];
                 tm.text = it.label || "";
                 const lw = tm.advanceWidth;
-                if (lw > maxLabel) maxLabel = lw;
+                if (lw > maxLabel)
+                    maxLabel = lw;
 
                 if (it.band !== undefined) {
                     tm.text = (it.signal !== undefined) ? it.signal + "%" : "";
                     const sw = tm.advanceWidth;
-                    if (sw > maxSig) maxSig = sw;
+                    if (sw > maxSig)
+                        maxSig = sw;
 
                     tm.text = it.band ? it.band + " GHz" : "";
                     const bw = tm.advanceWidth;
-                    if (bw > maxBand) maxBand = bw;
+                    if (bw > maxBand)
+                        maxBand = bw;
 
                     tm.text = it.security || "";
                     const secw = tm.advanceWidth;
-                    if (secw > maxSec) maxSec = secw;
+                    if (secw > maxSec)
+                        maxSec = secw;
                 }
             }
         }
-        root._maxLabelWidth  = maxLabel;
+        root._maxLabelWidth = maxLabel;
         root._maxSignalWidth = maxSig;
-        root._maxBandWidth   = maxBand;
-        root._maxSecWidth    = maxSec;
+        root._maxBandWidth = maxBand;
+        root._maxSecWidth = maxSec;
         tm.text = root.emptyText;
         root._emptyTextWidth = tm.advanceWidth;
     }
@@ -147,16 +160,14 @@ PopupContainer {
     onEmptyTextChanged: root._recomputeMaxLabelWidth()
     Component.onCompleted: root._recomputeMaxLabelWidth()
 
-    readonly property real _metaCols: _hasWifiMeta
-        ? _maxSignalWidth + _maxBandWidth + _maxSecWidth + _colGap * 3
-        : 0
+    readonly property real _metaCols: _hasWifiMeta ? _maxSignalWidth + _maxBandWidth + _maxSecWidth + _colGap * 3 : 0
 
-    width: Math.max(
-        root._emptyTextWidth + root._emptyOverhead,
-        root._maxLabelWidth + root._iconSize + root._metaCols + root._rowOverhead
-    )
+    width: Math.max(root._emptyTextWidth + root._emptyOverhead, root._maxLabelWidth + root._iconSize + root._metaCols + root._rowOverhead)
     Behavior on width {
-        NumberAnimation { duration: 100; easing.type: Easing.InOutQuart }
+        NumberAnimation {
+            duration: 100
+            easing.type: Easing.InOutQuart
+        }
     }
 
     // ── Height ────────────────────────────────────────────────────────────────
@@ -177,8 +188,10 @@ PopupContainer {
 
     HoverHandler {
         onHoveredChanged: {
-            if (hovered) root.hoverOpen()
-            else root.hoverExit()
+            if (hovered)
+                root.hoverOpen();
+            else
+                root.hoverExit();
         }
     }
 
@@ -197,8 +210,7 @@ PopupContainer {
 
             // ── Empty placeholder ─────────────────────────────────────────
             Text {
-                visible: root.availableItems.length === 0 && root.connectedItems.length === 0
-                         && (root.rawModel === null)
+                visible: root.availableItems.length === 0 && root.connectedItems.length === 0 && (root.rawModel === null)
                 text: root.emptyText
                 color: Config.colors.textMuted
                 font.family: Config.font.family
@@ -233,7 +245,11 @@ PopupContainer {
                     height: availRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
                     color: availMouse.containsMouse ? Config.colors.rowHover : "transparent"
-                    Behavior on color { ColorAnimation { duration: 60 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
 
                     // Row mouse — declared first so RowLayout children sit on top and receive events first
                     MouseArea {
@@ -270,8 +286,7 @@ PopupContainer {
                         // Signal %
                         Text {
                             visible: availRow._hasMeta
-                            text: availRow._hasMeta && availRow.modelData.signal !== undefined
-                                  ? availRow.modelData.signal + "%" : ""
+                            text: availRow._hasMeta && availRow.modelData.signal !== undefined ? availRow.modelData.signal + "%" : ""
                             color: Config.colors.textMuted
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
@@ -281,8 +296,7 @@ PopupContainer {
                         // Band (2.4 GHz / 5 GHz / 6 GHz)
                         Text {
                             visible: availRow._hasMeta
-                            text: availRow._hasMeta && availRow.modelData.band
-                                  ? availRow.modelData.band + " GHz" : ""
+                            text: availRow._hasMeta && availRow.modelData.band ? availRow.modelData.band + " GHz" : ""
                             color: Config.colors.textMuted
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
@@ -323,7 +337,11 @@ PopupContainer {
                                 color: savedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizePopup
-                                Behavior on color { ColorAnimation { duration: 80 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 80
+                                    }
+                                }
                             }
 
                             MouseArea {
@@ -333,13 +351,12 @@ PopupContainer {
                                 hoverEnabled: availRow._saved
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    mouse.accepted = true
-                                    root.availableForgetClicked(availRow.index)
+                                    mouse.accepted = true;
+                                    root.availableForgetClicked(availRow.index);
                                 }
                             }
                         }
                     }
-
                 }
             }
 
@@ -364,15 +381,19 @@ PopupContainer {
                     width: parent.width
                     height: connRowLayout.implicitHeight + Math.round(8 * Config.scale)
                     radius: Math.round(6 * Config.scale)
-                    color: connMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
-                    border.color: connMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
+                    color: connMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
+                    border.color: connMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
                     border.width: 1
-                    Behavior on color { ColorAnimation { duration: 60 } }
-                    Behavior on border.color { ColorAnimation { duration: 60 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
+                    Behavior on border.color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
 
                     RowLayout {
                         id: connRowLayout
@@ -398,8 +419,7 @@ PopupContainer {
                         // Signal %
                         Text {
                             visible: connRow._hasMeta
-                            text: connRow._hasMeta && connRow.modelData.signal !== undefined
-                                  ? connRow.modelData.signal + "%" : ""
+                            text: connRow._hasMeta && connRow.modelData.signal !== undefined ? connRow.modelData.signal + "%" : ""
                             color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
@@ -409,8 +429,7 @@ PopupContainer {
                         // Band
                         Text {
                             visible: connRow._hasMeta
-                            text: connRow._hasMeta && connRow.modelData.band
-                                  ? connRow.modelData.band + " GHz" : ""
+                            text: connRow._hasMeta && connRow.modelData.band ? connRow.modelData.band + " GHz" : ""
                             color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.7)
                             font.family: Config.font.family
                             font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.82)
@@ -459,19 +478,19 @@ PopupContainer {
                     id: rawAvailRow
                     required property var modelData
 
-                    readonly property bool _isConn: root.rawIsConnectedFn
-                                                    ? root.rawIsConnectedFn(rawAvailRow.modelData)
-                                                    : false
-                    readonly property bool _saved: root.rawSavedFn
-                                                    ? root.rawSavedFn(rawAvailRow.modelData)
-                                                    : false
+                    readonly property bool _isConn: root.rawIsConnectedFn ? root.rawIsConnectedFn(rawAvailRow.modelData) : false
+                    readonly property bool _saved: root.rawSavedFn ? root.rawSavedFn(rawAvailRow.modelData) : false
 
                     visible: !_isConn
                     width: parent.width
                     height: visible ? rawAvailLayout.implicitHeight + Math.round(8 * Config.scale) : 0
                     radius: Math.round(6 * Config.scale)
                     color: rawAvailMouse.containsMouse ? Config.colors.rowHover : "transparent"
-                    Behavior on color { ColorAnimation { duration: 60 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
 
                     // Row mouse — declared first so RowLayout children sit on top and receive events first
                     MouseArea {
@@ -494,8 +513,7 @@ PopupContainer {
 
                         IconImage {
                             implicitSize: root._iconSize
-                            source: Quickshell.iconPath(
-                                root.rawIconFn ? root.rawIconFn(rawAvailRow.modelData) : "")
+                            source: Quickshell.iconPath(root.rawIconFn ? root.rawIconFn(rawAvailRow.modelData) : "")
                         }
 
                         Text {
@@ -529,7 +547,11 @@ PopupContainer {
                                 color: rawSavedIndicatorMouse.containsMouse ? Config.colors.danger : Config.colors.textMuted
                                 font.family: Config.font.family
                                 font.pixelSize: Config.bar.fontSizePopup
-                                Behavior on color { ColorAnimation { duration: 80 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 80
+                                    }
+                                }
                             }
 
                             MouseArea {
@@ -539,8 +561,8 @@ PopupContainer {
                                 hoverEnabled: rawAvailRow._saved
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    mouse.accepted = true
-                                    root.rawAvailableForgetClicked(rawAvailRow.modelData)
+                                    mouse.accepted = true;
+                                    root.rawAvailableForgetClicked(rawAvailRow.modelData);
                                 }
                             }
                         }
@@ -563,27 +585,27 @@ PopupContainer {
                     id: rawConnRow
                     required property var modelData
 
-                    readonly property bool _isConn: root.rawIsConnectedFn
-                                                    ? root.rawIsConnectedFn(rawConnRow.modelData)
-                                                    : false
-                    readonly property real _battery: (root.rawBatteryFn && rawConnRow._isConn)
-                                                     ? root.rawBatteryFn(rawConnRow.modelData)
-                                                     : -1
+                    readonly property bool _isConn: root.rawIsConnectedFn ? root.rawIsConnectedFn(rawConnRow.modelData) : false
+                    readonly property real _battery: (root.rawBatteryFn && rawConnRow._isConn) ? root.rawBatteryFn(rawConnRow.modelData) : -1
                     readonly property bool _hasBattery: rawConnRow._battery >= 0
 
                     visible: _isConn
                     width: parent.width
                     height: visible ? rawConnInner.implicitHeight + Math.round(8 * Config.scale) : 0
                     radius: Math.round(6 * Config.scale)
-                    color: rawConnMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
-                    border.color: rawConnMouse.containsMouse
-                           ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
-                           : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
+                    color: rawConnMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.10)
+                    border.color: rawConnMouse.containsMouse ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70) : Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.30)
                     border.width: 1
-                    Behavior on color { ColorAnimation { duration: 60 } }
-                    Behavior on border.color { ColorAnimation { duration: 60 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
+                    Behavior on border.color {
+                        ColorAnimation {
+                            duration: 60
+                        }
+                    }
 
                     Column {
                         id: rawConnInner
@@ -602,8 +624,7 @@ PopupContainer {
 
                             IconImage {
                                 implicitSize: root._iconSize
-                                source: Quickshell.iconPath(
-                                    root.rawIconFn ? root.rawIconFn(rawConnRow.modelData) : "")
+                                source: Quickshell.iconPath(root.rawIconFn ? root.rawIconFn(rawConnRow.modelData) : "")
                             }
                             Text {
                                 text: root.rawLabelFn ? root.rawLabelFn(rawConnRow.modelData) : ""
@@ -618,8 +639,10 @@ PopupContainer {
                                 text: rawConnRow._hasBattery ? Math.round(rawConnRow._battery * 100) + "%" : ""
                                 color: {
                                     const pct = rawConnRow._battery * 100;
-                                    if (pct <= 15) return Config.colors.danger;
-                                    if (pct <= 30) return Config.colors.warning;
+                                    if (pct <= 15)
+                                        return Config.colors.danger;
+                                    if (pct <= 30)
+                                        return Config.colors.warning;
                                     return Config.colors.success;
                                 }
                                 font.family: Config.font.family
@@ -648,19 +671,18 @@ PopupContainer {
                                     orientation: Gradient.Horizontal
                                     GradientStop {
                                         position: 0.0
-                                        color: rawConnRow._battery <= 0.15 ? Config.colors.danger
-                                             : rawConnRow._battery <= 0.30 ? Config.colors.warning
-                                             : Config.colors.success
+                                        color: rawConnRow._battery <= 0.15 ? Config.colors.danger : rawConnRow._battery <= 0.30 ? Config.colors.warning : Config.colors.success
                                     }
                                     GradientStop {
                                         position: 1.0
-                                        color: rawConnRow._battery <= 0.15 ? Qt.rgba(1, 0.41, 0.47, 0.7)
-                                             : rawConnRow._battery <= 0.30 ? Qt.rgba(1, 0.69, 0.38, 0.7)
-                                             : Config.colors.accent
+                                        color: rawConnRow._battery <= 0.15 ? Qt.rgba(1, 0.41, 0.47, 0.7) : rawConnRow._battery <= 0.30 ? Qt.rgba(1, 0.69, 0.38, 0.7) : Config.colors.accent
                                     }
                                 }
                                 Behavior on width {
-                                    NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                                    NumberAnimation {
+                                        duration: 300
+                                        easing.type: Easing.OutCubic
+                                    }
                                 }
                             }
                         }
@@ -679,9 +701,7 @@ PopupContainer {
 
             // ── Raw empty placeholder ─────────────────────────────────────
             Text {
-                visible: root.rawModel !== null
-                         && root._rawAvailableCount === 0
-                         && root._rawConnectedCount === 0
+                visible: root.rawModel !== null && root._rawAvailableCount === 0 && root._rawConnectedCount === 0
                 text: root.emptyText
                 color: Config.colors.textMuted
                 font.family: Config.font.family

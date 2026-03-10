@@ -32,11 +32,11 @@ Item {
     id: root
 
     // Margins around the viewport (excluding the scrollbar side which is fixed)
-    property int topMargin:    Math.round(8 * Config.scale)
+    property int topMargin: Math.round(8 * Config.scale)
     property int bottomMargin: Math.round(8 * Config.scale)
-    property int leftMargin:   Math.round(8 * Config.scale)
+    property int leftMargin: Math.round(8 * Config.scale)
     // rightMargin is between viewport and scrollbar — kept at 4px
-    property int rightMargin:  Math.round(4 * Config.scale)
+    property int rightMargin: Math.round(4 * Config.scale)
 
     // Optional thumb color override
     property color thumbColor: Config.colors.textMuted
@@ -67,9 +67,7 @@ Item {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
             const step = Math.round(40 * Config.scale);
-            root.scrollY = Math.max(0,
-                Math.min(root.maxScrollY,
-                    root.scrollY - event.angleDelta.y / 120 * step));
+            root.scrollY = Math.max(0, Math.min(root.maxScrollY, root.scrollY - event.angleDelta.y / 120 * step));
         }
     }
 
@@ -91,9 +89,9 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        scrollY:   root.scrollY
+        scrollY: root.scrollY
         maxScrollY: root.maxScrollY
-        contentH:  root._contentH
+        contentH: root._contentH
         viewportH: viewport.height
         thumbColor: root.thumbColor
     }

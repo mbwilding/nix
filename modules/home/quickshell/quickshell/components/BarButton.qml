@@ -31,11 +31,11 @@ Rectangle {
     property bool clickable: true
 
     // ── Icon+label variant ────────────────────────────────────────────────────
-    property url    iconSource: ""          // set to activate icon+label mode
+    property url iconSource: ""          // set to activate icon+label mode
     property string label: ""              // percentage string, e.g. "85%"
-    property color  labelColor: Config.colors.textPrimary
-    property bool   dimmed: false          // true → fade to disabledOpacity
-    property int    labelWidth: 0          // fixed width for label column
+    property color labelColor: Config.colors.textPrimary
+    property bool dimmed: false          // true → fade to disabledOpacity
+    property int labelWidth: 0          // fixed width for label column
 
     // ── Fallback (icon-only / custom content) ─────────────────────────────────
     default property alias content: root.data
@@ -43,25 +43,19 @@ Rectangle {
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     readonly property bool _iconMode: iconSource != ""
-    readonly property int  _spacing:  Math.round(3 * Config.scale)
-    readonly property int  _pad:      Math.round(10 * Config.scale)
+    readonly property int _spacing: Math.round(3 * Config.scale)
+    readonly property int _pad: Math.round(10 * Config.scale)
 
-    implicitWidth: _iconMode && label !== ""
-        ? Config.bar.batteryIconSize + _spacing + labelWidth + _pad
-        : Config.bar.batteryIconSize + _pad
+    implicitWidth: _iconMode && label !== "" ? Config.bar.batteryIconSize + _spacing + labelWidth + _pad : Config.bar.batteryIconSize + _pad
     implicitHeight: Config.bar.batteryIconSize + _pad
 
     // ── Visuals ───────────────────────────────────────────────────────────────
 
     radius: Math.round(8 * Config.scale)
 
-    color: (clickable && (hovered || popupOpen))
-        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12)
-        : "transparent"
+    color: (clickable && (hovered || popupOpen)) ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.12) : "transparent"
 
-    border.color: (clickable && (hovered || popupOpen))
-        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
-        : "transparent"
+    border.color: (clickable && (hovered || popupOpen)) ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70) : "transparent"
     border.width: 1
 
     // Outer neon glow ring — only on hover/active
@@ -74,11 +68,23 @@ Rectangle {
         border.width: 2
         opacity: (root.clickable && (root.hovered || root.popupOpen)) ? 0.4 : 0
         antialiasing: true
-        Behavior on opacity { NumberAnimation { duration: 80 } }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 80
+            }
+        }
     }
 
-    Behavior on color       { ColorAnimation { duration: 80 } }
-    Behavior on border.color { ColorAnimation { duration: 80 } }
+    Behavior on color {
+        ColorAnimation {
+            duration: 80
+        }
+    }
+    Behavior on border.color {
+        ColorAnimation {
+            duration: 80
+        }
+    }
 
     // ── Icon + label row (only when iconSource is set) ────────────────────────
 
@@ -94,7 +100,10 @@ Rectangle {
 
             opacity: root.dimmed ? Config.bar.disabledOpacity : 1.0
             Behavior on opacity {
-                NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.InOutQuad
+                }
             }
         }
 
@@ -111,7 +120,10 @@ Rectangle {
 
             opacity: root.dimmed ? Config.bar.disabledOpacity : 1.0
             Behavior on opacity {
-                NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.InOutQuad
+                }
             }
         }
     }

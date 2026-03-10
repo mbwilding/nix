@@ -119,7 +119,8 @@ Scope {
     // Helper: returns true if `value` appears in `arr`
     function inList(arr, value) {
         for (let i = 0; i < arr.length; i++) {
-            if (arr[i] === value) return true;
+            if (arr[i] === value)
+                return true;
         }
         return false;
     }
@@ -571,13 +572,13 @@ Scope {
             // They are positioned by the layout Repeater below via visible.
             // ----------------------------------------------------------------
 
-             WifiSection {
-                 id: wifiSection
-                 visible: false
-                 activePopup: root.activePopup
-                 availableHeight: win.screen ? win.screen.height : 800
-                 statusLabelWidth: root.statusLabelWidth
-                 onOpenPopupReq: name => root.openPopup(name)
+            WifiSection {
+                id: wifiSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                statusLabelWidth: root.statusLabelWidth
+                onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
                 onExitPopupReq: root.exitPopup()
                 onKeepAliveReq: root.keepAlive()
@@ -609,35 +610,35 @@ Scope {
                 onKeepAliveReq: root.keepAlive()
             }
 
-             BtSection {
-                 id: btSection
-                 visible: false
-                 activePopup: root.activePopup
-                 availableHeight: win.screen ? win.screen.height : 800
-                 statusLabelWidth: root.statusLabelWidth
-                 onOpenPopupReq: name => root.openPopup(name)
+            BtSection {
+                id: btSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                statusLabelWidth: root.statusLabelWidth
+                onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
                 onExitPopupReq: root.exitPopup()
             }
 
-             VolumeSection {
-                 id: volumeSection
-                 visible: false
-                 activePopup: root.activePopup
-                 availableHeight: win.screen ? win.screen.height : 800
-                 statusLabelWidth: root.statusLabelWidth
-                 onOpenPopupReq: name => root.openPopup(name)
+            VolumeSection {
+                id: volumeSection
+                visible: false
+                activePopup: root.activePopup
+                availableHeight: win.screen ? win.screen.height : 800
+                statusLabelWidth: root.statusLabelWidth
+                onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
                 onExitPopupReq: root.exitPopup()
                 onKeepAliveReq: root.keepAlive()
             }
 
-             BrightnessSection {
-                 id: brightnessSection
-                 visible: false
-                 activePopup: root.activePopup
-                 sliderLabelWidth: root.sliderLabelWidth
-                 statusLabelWidth: root.statusLabelWidth
+            BrightnessSection {
+                id: brightnessSection
+                visible: false
+                activePopup: root.activePopup
+                sliderLabelWidth: root.sliderLabelWidth
+                statusLabelWidth: root.statusLabelWidth
                 screenBrightness: BrightnessService.screenBrightness
                 screenAvailable: BrightnessService.screenAvailable
                 kbdBrightness: BrightnessService.kbdBrightness
@@ -650,12 +651,12 @@ Scope {
                 onSetKbdBrightnessReq: v => BrightnessService.setKbdBrightness(v)
             }
 
-             PowerSection {
-                 id: powerSection
-                 visible: false
-                 activePopup: root.activePopup
-                 statusLabelWidth: root.statusLabelWidth
-                 onOpenPopupReq: name => root.openPopup(name)
+            PowerSection {
+                id: powerSection
+                visible: false
+                activePopup: root.activePopup
+                statusLabelWidth: root.statusLabelWidth
+                onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
                 onExitPopupReq: root.exitPopup()
                 onClosePopupReq: root.closePopup()
@@ -714,12 +715,18 @@ Scope {
 
                         sourceComponent: {
                             switch (barSlotLoader.modelData) {
-                            case BarItems.tray:      return trayComponent
-                            case BarItems.system:    return systemComponent
-                            case BarItems.clock:     return clockComponent
-                            case BarItems.separator: return barSeparatorComponent
-                            case BarItems.pin:       return pinComponent
-                            default:                 return null
+                            case BarItems.tray:
+                                return trayComponent;
+                            case BarItems.system:
+                                return systemComponent;
+                            case BarItems.clock:
+                                return clockComponent;
+                            case BarItems.separator:
+                                return barSeparatorComponent;
+                            case BarItems.pin:
+                                return pinComponent;
+                            default:
+                                return null;
                             }
                         }
                     }
@@ -791,15 +798,24 @@ Scope {
 
                             sourceComponent: {
                                 switch (sysSlotLoader.modelData) {
-                                case SystemItems.wifi:          return sysWifiComponent
-                                case SystemItems.ethernet:      return sysEthernetComponent
-                                case SystemItems.bluetooth:     return sysBtComponent
-                                case SystemItems.volume:        return sysVolumeComponent
-                                case SystemItems.brightness:    return sysBrightnessComponent
-                                case SystemItems.power:         return sysPowerComponent
-                                case SystemItems.notifications: return sysNotifComponent
-                                case SystemItems.separator:     return barSeparatorComponent
-                                default:                        return null
+                                case SystemItems.wifi:
+                                    return sysWifiComponent;
+                                case SystemItems.ethernet:
+                                    return sysEthernetComponent;
+                                case SystemItems.bluetooth:
+                                    return sysBtComponent;
+                                case SystemItems.volume:
+                                    return sysVolumeComponent;
+                                case SystemItems.brightness:
+                                    return sysBrightnessComponent;
+                                case SystemItems.power:
+                                    return sysPowerComponent;
+                                case SystemItems.notifications:
+                                    return sysNotifComponent;
+                                case SystemItems.separator:
+                                    return barSeparatorComponent;
+                                default:
+                                    return null;
                                 }
                             }
                         }

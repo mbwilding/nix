@@ -126,23 +126,13 @@ QtObject {
 
     function setScreenBrightness(frac) {
         const raw = Math.round(frac * root._screenMax);
-        root._screenWriteProc.command = [
-            "brightnessctl",
-            "--device=" + root.screenDevice.split("/").pop(),
-            "set",
-            String(raw)
-        ];
+        root._screenWriteProc.command = ["brightnessctl", "--device=" + root.screenDevice.split("/").pop(), "set", String(raw)];
         root._screenWriteProc.running = true;
     }
 
     function setKbdBrightness(frac) {
         const raw = Math.round(frac * root._kbdMax);
-        root._kbdWriteProc.command = [
-            "brightnessctl",
-            "--device=" + root.kbdDevice.split("/").pop(),
-            "set",
-            String(raw)
-        ];
+        root._kbdWriteProc.command = ["brightnessctl", "--device=" + root.kbdDevice.split("/").pop(), "set", String(raw)];
         root._kbdWriteProc.running = true;
     }
 }

@@ -36,8 +36,14 @@ Item {
         opacity: 0.35
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Config.colors.accent }
-            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+            GradientStop {
+                position: 0.0
+                color: Config.colors.accent
+            }
+            GradientStop {
+                position: 1.0
+                color: Config.colors.accentAlt
+            }
         }
     }
 
@@ -50,8 +56,14 @@ Item {
         radius: height / 2
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Config.colors.accent }
-            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+            GradientStop {
+                position: 0.0
+                color: Config.colors.accent
+            }
+            GradientStop {
+                position: 1.0
+                color: Config.colors.accentAlt
+            }
         }
     }
 }

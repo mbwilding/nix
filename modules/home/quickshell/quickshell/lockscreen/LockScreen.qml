@@ -127,13 +127,7 @@ Scope {
                         property var orbVel: []
 
                         // Orb colour stops — cycles across orbs
-                        readonly property var orbColors: [
-                            ["rgba(192, 170, 255, 0.30)", "rgba(192, 170, 255, 0.00)"],
-                            ["rgba(255, 159, 243, 0.25)", "rgba(255, 159, 243, 0.00)"],
-                            ["rgba(137, 220, 235, 0.22)", "rgba(137, 220, 235, 0.00)"],
-                            ["rgba(166, 227, 161, 0.20)", "rgba(166, 227, 161, 0.00)"],
-                            ["rgba(243, 139, 168, 0.22)", "rgba(243, 139, 168, 0.00)"],
-                        ]
+                        readonly property var orbColors: [["rgba(192, 170, 255, 0.30)", "rgba(192, 170, 255, 0.00)"], ["rgba(255, 159, 243, 0.25)", "rgba(255, 159, 243, 0.00)"], ["rgba(137, 220, 235, 0.22)", "rgba(137, 220, 235, 0.00)"], ["rgba(166, 227, 161, 0.20)", "rgba(166, 227, 161, 0.00)"], ["rgba(243, 139, 168, 0.22)", "rgba(243, 139, 168, 0.00)"],]
                         // Orb radii as fraction of min(w,h) — cycles across orbs
                         readonly property var orbRadii: [0.60, 0.55, 0.50, 0.58, 0.52]
 
@@ -141,10 +135,16 @@ Scope {
                             const count = Config.lockscreen.orbCount;
                             let pos = [], vel = [];
                             for (let i = 0; i < count; i++) {
-                                pos.push({ x: Math.random(), y: Math.random() });
+                                pos.push({
+                                    x: Math.random(),
+                                    y: Math.random()
+                                });
                                 const speed = 0.018 + Math.random() * 0.012;
                                 const angle = Math.random() * Math.PI * 2;
-                                vel.push({ vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
+                                vel.push({
+                                    vx: Math.cos(angle) * speed,
+                                    vy: Math.sin(angle) * speed
+                                });
                             }
                             orbPos = pos;
                             orbVel = vel;
@@ -155,16 +155,33 @@ Scope {
                             onTriggered: {
                                 const dt = Math.min(frameTime, 0.05);
                                 const count = bgCanvas.orbPos.length;
-                                if (count === 0) return;
-                                let pos = bgCanvas.orbPos.map(p => ({ x: p.x, y: p.y }));
-                                let vel = bgCanvas.orbVel.map(v => ({ vx: v.vx, vy: v.vy }));
+                                if (count === 0)
+                                    return;
+                                let pos = bgCanvas.orbPos.map(p => ({
+                                            x: p.x,
+                                            y: p.y
+                                        }));
+                                let vel = bgCanvas.orbVel.map(v => ({
+                                            vx: v.vx,
+                                            vy: v.vy
+                                        }));
                                 for (let i = 0; i < count; i++) {
                                     pos[i].x += vel[i].vx * dt;
                                     pos[i].y += vel[i].vy * dt;
-                                    if (pos[i].x < 0) { pos[i].x = 0; vel[i].vx =  Math.abs(vel[i].vx); }
-                                    else if (pos[i].x > 1) { pos[i].x = 1; vel[i].vx = -Math.abs(vel[i].vx); }
-                                    if (pos[i].y < 0) { pos[i].y = 0; vel[i].vy =  Math.abs(vel[i].vy); }
-                                    else if (pos[i].y > 1) { pos[i].y = 1; vel[i].vy = -Math.abs(vel[i].vy); }
+                                    if (pos[i].x < 0) {
+                                        pos[i].x = 0;
+                                        vel[i].vx = Math.abs(vel[i].vx);
+                                    } else if (pos[i].x > 1) {
+                                        pos[i].x = 1;
+                                        vel[i].vx = -Math.abs(vel[i].vx);
+                                    }
+                                    if (pos[i].y < 0) {
+                                        pos[i].y = 0;
+                                        vel[i].vy = Math.abs(vel[i].vy);
+                                    } else if (pos[i].y > 1) {
+                                        pos[i].y = 1;
+                                        vel[i].vy = -Math.abs(vel[i].vy);
+                                    }
                                 }
                                 bgCanvas.orbPos = pos;
                                 bgCanvas.orbVel = vel;
@@ -219,25 +236,33 @@ Scope {
                         property bool initialized: false
 
                         function initLogos() {
-                            if (initialized || width <= 0 || height <= 0) return;
+                            if (initialized || width <= 0 || height <= 0)
+                                return;
                             initialized = true;
                             const count = Config.lockscreen.dvdCount;
                             const maxX = width - logoW;
                             const maxY = height - logoH;
                             let pos = [], vel = [], cidx = [];
                             for (let i = 0; i < count; i++) {
-                                let candidate = { x: 0, y: 0 };
+                                let candidate = {
+                                    x: 0,
+                                    y: 0
+                                };
                                 for (let attempt = 0; attempt < 30; attempt++) {
-                                    candidate = { x: Math.random() * maxX, y: Math.random() * maxY };
+                                    candidate = {
+                                        x: Math.random() * maxX,
+                                        y: Math.random() * maxY
+                                    };
                                     let ok = true;
                                     for (let j = 0; j < pos.length; j++) {
                                         // AABB overlap check — same as runtime collision
-                                        if (candidate.x < pos[j].x + logoW && candidate.x + logoW > pos[j].x &&
-                                            candidate.y < pos[j].y + logoH && candidate.y + logoH > pos[j].y) {
-                                            ok = false; break;
+                                        if (candidate.x < pos[j].x + logoW && candidate.x + logoW > pos[j].x && candidate.y < pos[j].y + logoH && candidate.y + logoH > pos[j].y) {
+                                            ok = false;
+                                            break;
                                         }
                                     }
-                                    if (ok) break;
+                                    if (ok)
+                                        break;
                                 }
                                 pos.push(candidate);
                                 vel.push({
@@ -261,7 +286,8 @@ Scope {
                             onTriggered: {
                                 const dt = Math.min(frameTime, 0.05);
                                 const count = dvdBouncer.positions.length;
-                                if (count === 0) return;
+                                if (count === 0)
+                                    return;
 
                                 const lW = dvdBouncer.logoW;
                                 const lH = dvdBouncer.logoH;
@@ -270,8 +296,14 @@ Scope {
                                 const colors = dvdBouncer.dvdColors;
 
                                 // Deep-copy mutable state
-                                let pos  = dvdBouncer.positions.map(p => ({ x: p.x, y: p.y }));
-                                let vel  = dvdBouncer.velocities.map(v => ({ vx: v.vx, vy: v.vy }));
+                                let pos = dvdBouncer.positions.map(p => ({
+                                            x: p.x,
+                                            y: p.y
+                                        }));
+                                let vel = dvdBouncer.velocities.map(v => ({
+                                            vx: v.vx,
+                                            vy: v.vy
+                                        }));
                                 let cidx = dvdBouncer.colorIdxs.slice();
 
                                 // Integrate positions
@@ -283,10 +315,24 @@ Scope {
                                 // Wall collisions
                                 for (let i = 0; i < count; i++) {
                                     let bounced = false;
-                                    if (pos[i].x <= 0)    { pos[i].x = 0;    vel[i].vx =  Math.abs(vel[i].vx); bounced = true; }
-                                    else if (pos[i].x >= maxX) { pos[i].x = maxX; vel[i].vx = -Math.abs(vel[i].vx); bounced = true; }
-                                    if (pos[i].y <= 0)    { pos[i].y = 0;    vel[i].vy =  Math.abs(vel[i].vy); bounced = true; }
-                                    else if (pos[i].y >= maxY) { pos[i].y = maxY; vel[i].vy = -Math.abs(vel[i].vy); bounced = true; }
+                                    if (pos[i].x <= 0) {
+                                        pos[i].x = 0;
+                                        vel[i].vx = Math.abs(vel[i].vx);
+                                        bounced = true;
+                                    } else if (pos[i].x >= maxX) {
+                                        pos[i].x = maxX;
+                                        vel[i].vx = -Math.abs(vel[i].vx);
+                                        bounced = true;
+                                    }
+                                    if (pos[i].y <= 0) {
+                                        pos[i].y = 0;
+                                        vel[i].vy = Math.abs(vel[i].vy);
+                                        bounced = true;
+                                    } else if (pos[i].y >= maxY) {
+                                        pos[i].y = maxY;
+                                        vel[i].vy = -Math.abs(vel[i].vy);
+                                        bounced = true;
+                                    }
                                     if (bounced)
                                         cidx[i] = (cidx[i] + 1) % colors.length;
                                 }
@@ -346,9 +392,9 @@ Scope {
                                 }
 
                                 // Write back — reassign to trigger bindings
-                                dvdBouncer.positions  = pos;
+                                dvdBouncer.positions = pos;
                                 dvdBouncer.velocities = vel;
-                                dvdBouncer.colorIdxs  = cidx;
+                                dvdBouncer.colorIdxs = cidx;
                             }
                         }
 
@@ -559,7 +605,9 @@ Scope {
                                             font.pixelSize: Math.round(11 * Config.scale)
                                             opacity: 0.9
                                             Behavior on color {
-                                                ColorAnimation { duration: 150 }
+                                                ColorAnimation {
+                                                    duration: 150
+                                                }
                                             }
                                         }
 

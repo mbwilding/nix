@@ -31,58 +31,59 @@ Item {
         command: ["cat", "/proc/stat"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const lines = this.text.split("\n")
-                const newPercents = []
-                const newPrev = []
-                let totalPct = 0
-                let coreCount = 0
+                const lines = this.text.split("\n");
+                const newPercents = [];
+                const newPrev = [];
+                let totalPct = 0;
+                let coreCount = 0;
                 for (const line of lines) {
-                    if (!line.startsWith("cpu") || line.startsWith("cpu ")) continue
-                    const parts = line.trim().split(/\s+/)
-                    const idx = parseInt(parts[0].slice(3))
-                    if (isNaN(idx)) continue
-                    const user    = parseInt(parts[1]) || 0
-                    const nice    = parseInt(parts[2]) || 0
-                    const system  = parseInt(parts[3]) || 0
-                    const idle    = parseInt(parts[4]) || 0
-                    const iowait  = parseInt(parts[5]) || 0
-                    const irq     = parseInt(parts[6]) || 0
-                    const sirq    = parseInt(parts[7]) || 0
-                    const idleTotal = idle + iowait
-                    const total   = idleTotal + user + nice + system + irq + sirq
-                    let pct = 0
-                    const prev = root._prevCores[idx]
+                    if (!line.startsWith("cpu") || line.startsWith("cpu "))
+                        continue;
+                    const parts = line.trim().split(/\s+/);
+                    const idx = parseInt(parts[0].slice(3));
+                    if (isNaN(idx))
+                        continue;
+                    const user = parseInt(parts[1]) || 0;
+                    const nice = parseInt(parts[2]) || 0;
+                    const system = parseInt(parts[3]) || 0;
+                    const idle = parseInt(parts[4]) || 0;
+                    const iowait = parseInt(parts[5]) || 0;
+                    const irq = parseInt(parts[6]) || 0;
+                    const sirq = parseInt(parts[7]) || 0;
+                    const idleTotal = idle + iowait;
+                    const total = idleTotal + user + nice + system + irq + sirq;
+                    let pct = 0;
+                    const prev = root._prevCores[idx];
                     if (prev) {
-                        const dIdle  = idleTotal - prev[0]
-                        const dTotal = total - prev[1]
+                        const dIdle = idleTotal - prev[0];
+                        const dTotal = total - prev[1];
                         if (dTotal > 0)
-                            pct = Math.round((1 - dIdle / dTotal) * 100)
+                            pct = Math.round((1 - dIdle / dTotal) * 100);
                     }
-                    newPercents[idx] = pct
-                    newPrev[idx] = [idleTotal, total]
-                    totalPct += pct
-                    coreCount++
+                    newPercents[idx] = pct;
+                    newPrev[idx] = [idleTotal, total];
+                    totalPct += pct;
+                    coreCount++;
                 }
-                root._prevCores = newPrev
-                root.corePercents = newPercents
-                root.avgPercent = coreCount > 0 ? Math.round(totalPct / coreCount) : 0
+                root._prevCores = newPrev;
+                root.corePercents = newPercents;
+                root.avgPercent = coreCount > 0 ? Math.round(totalPct / coreCount) : 0;
             }
         }
     }
 
     // Read all core frequencies in one shot: outputs "khz0 khz1 khz2 ..." space-separated
     property Process _freqProc: Process {
-        command: ["sh", "-c",
-            "paste -s -d' ' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null"]
+        command: ["sh", "-c", "paste -s -d' ' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const parts = this.text.trim().split(/\s+/)
-                const freqs = []
+                const parts = this.text.trim().split(/\s+/);
+                const freqs = [];
                 for (let i = 0; i < parts.length; i++) {
-                    const v = parseInt(parts[i])
-                    freqs.push(isNaN(v) ? 0 : v)
+                    const v = parseInt(parts[i]);
+                    freqs.push(isNaN(v) ? 0 : v);
                 }
-                root.coreFreqsKhz = freqs
+                root.coreFreqsKhz = freqs;
             }
         }
     }
@@ -111,46 +112,34 @@ Item {
     }
 
     property Timer _cpuTimer: Timer {
-        interval: 2000; repeat: true; running: true; triggeredOnStart: true
+        interval: 2000
+        repeat: true
+        running: true
+        triggeredOnStart: true
         onTriggered: {
-            root._cpuProc.running = true
-            root._freqProc.running = true
-            root._profileProc.running = true
-            root._tempProc.running = true
-            root._sysPowerProc.running = true
+            root._cpuProc.running = true;
+            root._freqProc.running = true;
+            root._profileProc.running = true;
+            root._tempProc.running = true;
+            root._sysPowerProc.running = true;
         }
     }
 
     property int avgPercent: 0
 
-    readonly property color avgColor:
-        avgPercent > 80 ? Config.colors.danger  :
-        avgPercent > 50 ? Config.colors.warning :
-                          Config.colors.accent
+    readonly property color avgColor: avgPercent > 80 ? Config.colors.danger : avgPercent > 50 ? Config.colors.warning : Config.colors.accent
 
-    readonly property color profileColor:
-        powerProfile === "performance" ? Config.colors.accentAlt :
-        powerProfile === "balanced"    ? Config.colors.accent    :
-                                         Config.colors.textMuted
+    readonly property color profileColor: powerProfile === "performance" ? Config.colors.accentAlt : powerProfile === "balanced" ? Config.colors.accent : Config.colors.textMuted
 
     readonly property int cpuTempC: Math.round(root.cpuTempMilliC / 1000)
-    readonly property color tempColor:
-        cpuTempC >= 90 ? Config.colors.danger  :
-        cpuTempC >= 70 ? Config.colors.warning :
-                          Config.colors.accent
+    readonly property color tempColor: cpuTempC >= 90 ? Config.colors.danger : cpuTempC >= 70 ? Config.colors.warning : Config.colors.accent
 
     readonly property real sysPowerW: root.sysPowerUw / 1000000
-    readonly property color powerColor:
-        sysPowerW >= 50 ? Config.colors.danger  :
-        sysPowerW >= 30 ? Config.colors.warning :
-                          Config.colors.accent
+    readonly property color powerColor: sysPowerW >= 50 ? Config.colors.danger : sysPowerW >= 30 ? Config.colors.warning : Config.colors.accent
 
     // Compute a nice column count: aim for roughly square cells
     readonly property int coreCount: root.corePercents.length
-    readonly property int cols: coreCount <= 4  ? 2
-                              : coreCount <= 8  ? 4
-                              : coreCount <= 16 ? 4
-                              : 8
+    readonly property int cols: coreCount <= 4 ? 2 : coreCount <= 8 ? 4 : coreCount <= 16 ? 4 : 8
     readonly property int rows: coreCount > 0 ? Math.ceil(coreCount / cols) : 1
 
     readonly property int pad: Math.round(12 * Config.scale)
@@ -184,10 +173,16 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
 
                 Text {
                     text: root.powerProfile
@@ -196,7 +191,11 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.capitalization: Font.Capitalize
                     visible: root.powerProfile !== ""
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
                 Text {
@@ -214,10 +213,16 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                     visible: root.sysPowerW > 0
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
 
                 Text {
                     text: root.cpuTempC + "°C"
@@ -226,7 +231,11 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                     visible: root.cpuTempC > 0
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
             }
 
@@ -262,7 +271,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            readonly property real cellW: (width  - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
+            readonly property real cellW: (width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
             readonly property real cellH: (height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1)
 
             Repeater {
@@ -274,27 +283,18 @@ Item {
                     readonly property int col: index % root.cols
                     readonly property int row: Math.floor(index / root.cols)
                     readonly property int freqKhz: root.coreFreqsKhz[index] ?? 0
-                    readonly property string freqText: freqKhz > 0
-                        ? (freqKhz / 1000000).toFixed(2)
-                        : ""
+                    readonly property string freqText: freqKhz > 0 ? (freqKhz / 1000000).toFixed(2) : ""
 
                     // Access parent dimensions via the containing Item's properties
-                    readonly property real _cellW: parent.width > 0
-                        ? (parent.width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
-                        : 0
-                    readonly property real _cellH: parent.height > 0
-                        ? (parent.height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1)
-                        : 0
+                    readonly property real _cellW: parent.width > 0 ? (parent.width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1) : 0
+                    readonly property real _cellH: parent.height > 0 ? (parent.height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1) : 0
 
                     x: col * (_cellW + root.gap)
                     y: row * (_cellH + root.gap)
                     width: _cellW
                     height: _cellH
 
-                    readonly property color barColor:
-                        pct > 80 ? Config.colors.danger  :
-                        pct > 50 ? Config.colors.warning :
-                                   Config.colors.accent
+                    readonly property color barColor: pct > 80 ? Config.colors.danger : pct > 50 ? Config.colors.warning : Config.colors.accent
 
                     Rectangle {
                         anchors.fill: parent
@@ -313,10 +313,21 @@ Item {
                             radius: Math.round(6 * Config.scale)
                             gradient: Gradient {
                                 orientation: Gradient.Vertical
-                                GradientStop { position: 0.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.80) }
-                                GradientStop { position: 1.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.30) }
+                                GradientStop {
+                                    position: 0.0
+                                    color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.80)
+                                }
+                                GradientStop {
+                                    position: 1.0
+                                    color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.30)
+                                }
                             }
-                            Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                            Behavior on height {
+                                NumberAnimation {
+                                    duration: 400
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
                         }
 
                         // Core number (top-left)

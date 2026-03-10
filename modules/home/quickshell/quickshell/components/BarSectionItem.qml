@@ -28,12 +28,12 @@ Item {
     property Item popupItem: null
 
     containmentMask: Item {
-        readonly property real _popupW: root.popupItem ? root.popupItem.width  : 0
+        readonly property real _popupW: root.popupItem ? root.popupItem.width : 0
         readonly property real _popupH: root.popupItem ? root.popupItem.height : 0
 
-        x:      root.popupOpen ? -Math.max(0, (_popupW - root.width) / 2) : 0
-        y:      root.popupOpen ? -_popupH - Config.bar.popupOffset : 0
-        width:  root.popupOpen ? Math.max(root.width, _popupW) : root.width
+        x: root.popupOpen ? -Math.max(0, (_popupW - root.width) / 2) : 0
+        y: root.popupOpen ? -_popupH - Config.bar.popupOffset : 0
+        width: root.popupOpen ? Math.max(root.width, _popupW) : root.width
         height: root.popupOpen ? _popupH + Config.bar.popupOffset + root.height : root.height
     }
 }
