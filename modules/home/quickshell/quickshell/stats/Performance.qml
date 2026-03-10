@@ -97,7 +97,7 @@ Item {
                     text: "CPU"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
+                    font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                 }
 
@@ -107,7 +107,7 @@ Item {
                     text: root.avgPercent + "%"
                     color: root.avgColor
                     font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
+                    font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
@@ -195,7 +195,7 @@ Item {
                             text: "C" + index
                             color: Qt.rgba(1, 1, 1, 0.38)
                             font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.font.sizeSm * 0.72)
+                            font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
                         }
 
                         // Percentage label (centred)
@@ -204,7 +204,7 @@ Item {
                             text: pct + "%"
                             color: "white"
                             font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                            font.pixelSize: Config.font.sizeSm
                             font.weight: Font.Medium
                         }
                     }

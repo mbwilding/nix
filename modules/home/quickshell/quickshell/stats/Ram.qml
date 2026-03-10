@@ -132,7 +132,7 @@ Item {
                     text: Math.round(root.ramPercent * 100) + "%"
                     color: root.usageColor
                     font.family:    Config.font.family
-                    font.pixelSize: Math.round(Config.font.sizeMd * 2.2)
+                    font.pixelSize: Math.round(Config.font.sizeMd * 2.6)
                     font.weight:    Font.Bold
 
                     Behavior on color { ColorAnimation { duration: 400 } }
@@ -143,7 +143,7 @@ Item {
                     text: root.ramUsedGb.toFixed(1) + " / " + root.ramTotalGb.toFixed(0) + " GB"
                     color: Config.colors.textSecondary
                     font.family:    Config.font.family
-                    font.pixelSize: Config.font.sizeSm
+                    font.pixelSize: Config.font.sizeMd
                 }
 
                 Text {
@@ -151,7 +151,7 @@ Item {
                     text: "RAM"
                     color: Config.colors.textMuted
                     font.family:    Config.font.family
-                    font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                    font.pixelSize: Config.font.sizeSm
                     font.weight:    Font.Medium
                     opacity: 0.7
                 }
@@ -174,14 +174,14 @@ Item {
                         text: "Used"
                         color: Config.colors.textMuted
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeSm
+                        font.pixelSize: Config.font.sizeMd
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: root.ramUsedGb.toFixed(2) + " GB"
                         color: root.usageColor
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeSm
+                        font.pixelSize: Config.font.sizeMd
                         font.weight:    Font.Medium
                         Behavior on color { ColorAnimation { duration: 400 } }
                     }
@@ -204,14 +204,14 @@ Item {
                         text: "Cached"
                         color: Config.colors.textMuted
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeSm
+                        font.pixelSize: Config.font.sizeMd
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: root.ramCachedGb.toFixed(2) + " GB"
                         color: Config.colors.textSecondary
                         font.family:    Config.font.family
-                        font.pixelSize: Config.font.sizeSm
+                        font.pixelSize: Config.font.sizeMd
                     }
                 }
                 Item {
