@@ -199,10 +199,13 @@ Item {
             anchors.top:   parent.top
             height: parent.height - infoStrip.height
 
-            ColumnLayout {
-                id: controlsColumn
+            // Centering wrapper — sizes itself to the ColumnLayout,
+            // then anchors.centerIn places it dead-centre in artZone.
+            Item {
+                id: controlsWrapper
                 anchors.centerIn: parent
-                width: parent.width - Math.round(24 * Config.scale)
+                width:  artZone.width - Math.round(24 * Config.scale)
+                height: controlsColumn.implicitHeight
 
                 transformOrigin: Item.Center
                 scale:   cardHover.hovered ? 1.0 : 0.72
@@ -210,7 +213,11 @@ Item {
                 Behavior on scale   { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
                 Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
-                spacing: Math.round(14 * Config.scale)
+                ColumnLayout {
+                    id: controlsColumn
+                    anchors.left:  parent.left
+                    anchors.right: parent.right
+                    spacing: Math.round(14 * Config.scale)
 
                 // ── Seek bar — full width, times inline below ─────────────────
             Item {
@@ -465,6 +472,7 @@ Item {
                             if (!root.player || !root.player.volumeSupported) return
                             root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200))
                         }
+                    }
                     }
                 }
             }
