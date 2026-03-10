@@ -233,36 +233,36 @@ Scope {
                             Layout.fillWidth: true
                             iconName: "audio-headphones-symbolic"
                             active: drawer.activeTab === 0
-                            onHovered: drawer.activeTab = 0
-                            onClicked: drawer.expanded = !drawer.expanded
+                            onClicked: drawer.activeTab = 0
+                            onDoubleClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "show-gpu-effects-symbolic"
                             active: drawer.activeTab === 1
-                            onHovered: drawer.activeTab = 1
-                            onClicked: drawer.expanded = !drawer.expanded
+                            onClicked: drawer.activeTab = 1
+                            onDoubleClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "media-flash-sd-mmc-symbolic"
                             active: drawer.activeTab === 2
-                            onHovered: drawer.activeTab = 2
-                            onClicked: drawer.expanded = !drawer.expanded
+                            onClicked: drawer.activeTab = 2
+                            onDoubleClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "audio-card-symbolic"
                             active: drawer.activeTab === 3
-                            onHovered: drawer.activeTab = 3
-                            onClicked: drawer.expanded = !drawer.expanded
+                            onClicked: drawer.activeTab = 3
+                            onDoubleClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "network-wired-symbolic"
                             active: drawer.activeTab === 4
-                            onHovered: drawer.activeTab = 4
-                            onClicked: drawer.expanded = !drawer.expanded
+                            onClicked: drawer.activeTab = 4
+                            onDoubleClicked: drawer.expanded = !drawer.expanded
                         }
 
                         // Hairline separator before pin
@@ -393,8 +393,9 @@ Scope {
         id: tabIcon
         property string iconName: ""
         property bool active: false
-        signal hovered
+        property int tabIndex: -1
         signal clicked
+        signal doubleClicked
 
         implicitHeight: Math.round(36 * Config.scale)
 
@@ -402,7 +403,7 @@ Scope {
             anchors.fill: parent
             anchors.margins: Math.round(4 * Config.scale)
             radius: Math.round(6 * Config.scale)
-            color: tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            color: tabMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
             Behavior on color {
                 ColorAnimation { duration: 100 }
             }
@@ -422,18 +423,23 @@ Scope {
             }
         }
 
-        HoverHandler {
-            id: tabHover
-            onHoveredChanged: {
-                if (hovered)
-                    tabIcon.hovered();
-            }
+        // Short delay so a double-click can cancel the single-click action
+        Timer {
+            id: clickTimer
+            interval: 180
+            onTriggered: tabIcon.clicked()
         }
 
         MouseArea {
+            id: tabMouse
             anchors.fill: parent
+            hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: tabIcon.clicked()
+            onClicked: clickTimer.restart()
+            onDoubleClicked: {
+                clickTimer.stop()
+                tabIcon.doubleClicked()
+            }
         }
     }
 
