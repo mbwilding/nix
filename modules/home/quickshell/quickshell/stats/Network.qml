@@ -31,6 +31,15 @@ Item {
     property bool sharedHovered:    false
     property int  sharedHoverIndex: -1
 
+    // ── Shared y-axis peak (so both graphs use identical scale) ───────────────
+    readonly property real sharedPeak: {
+        let peak = 1024
+        const all = root.rxHistory.concat(root.txHistory)
+        for (let i = 0; i < all.length; i++)
+            if (all[i] > peak) peak = all[i]
+        return peak * 1.10
+    }
+
     function _sumInterface(text, col) {
         let total = 0
         for (const line of text.split("\n")) {
@@ -101,12 +110,20 @@ Item {
             history:     root.rxHistory
             maxHistory:  root.historyLen
             currentRate: root.rxBytesPerSec
+            sharedPeak:  root.sharedPeak
             lineColor:   Config.colors.accent
             fillColor:   Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
             label:       "DOWN"
             formatFn:    root.formatSpeed
             hovered:     root.sharedHovered
             hoverIndex:  root.sharedHoverIndex
+        }
+
+        // ── Divider ───────────────────────────────────────────────────────────
+        Rectangle {
+            Layout.fillWidth: true
+            height: Config.panelBorder.width
+            color:  Config.panelBorder.color
         }
 
         // ── Upload graph ──────────────────────────────────────────────────────
@@ -116,6 +133,7 @@ Item {
             history:     root.txHistory
             maxHistory:  root.historyLen
             currentRate: root.txBytesPerSec
+            sharedPeak:  root.sharedPeak
             lineColor:   Config.colors.accentAlt
             fillColor:   Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
             label:       "UP"
@@ -159,6 +177,7 @@ Item {
         property var    history:     []
         property int    maxHistory:  60
         property real   currentRate: 0
+        property real   sharedPeak:  1024
         property color  lineColor:   "white"
         property color  fillColor:   Qt.rgba(1, 1, 1, 0.15)
         property string label:       ""
@@ -171,9 +190,10 @@ Item {
         readonly property real hoverRate: (hoverIndex >= 0 && hoverIndex < history.length)
                                           ? history[hoverIndex] : currentRate
 
-        onHistoryChanged:   graphCanvas.requestPaint()
+        onHistoryChanged:    graphCanvas.requestPaint()
+        onSharedPeakChanged: graphCanvas.requestPaint()
         onHoverIndexChanged: graphCanvas.requestPaint()
-        onHoveredChanged:   graphCanvas.requestPaint()
+        onHoveredChanged:    graphCanvas.requestPaint()
 
         // ── Canvas graph ──────────────────────────────────────────────────────
         Canvas {
@@ -185,22 +205,38 @@ Item {
                 ctx.clearRect(0, 0, width, height)
 
                 const hist = graph.history
-                if (hist.length < 2) return
-
-                // Peak for y-scaling — rolling max with a floor of 1 KB/s
-                let peak = 1024
-                for (let i = 0; i < hist.length; i++)
-                    if (hist[i] > peak) peak = hist[i]
-                peak *= 1.10  // 10% headroom
+                const peak = graph.sharedPeak
 
                 const pad  = Math.round(4 * Config.scale)
                 const gw   = width  - pad * 2
                 const gh   = height - pad * 2
                 const n    = hist.length
                 const step = gw / (graph.maxHistory - 1)
-
-                // Newest sample pinned to right edge
                 const xOffset = (graph.maxHistory - n) * step
+
+                // ── Grid (3 horizontal lines at 25%, 50%, 75%) ────────────────
+                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.07).toString()
+                ctx.lineWidth   = 1
+                ctx.setLineDash([])
+                for (let g = 1; g <= 3; g++) {
+                    const gy = pad + gh * (1 - g / 4)
+                    ctx.beginPath()
+                    ctx.moveTo(pad, gy)
+                    ctx.lineTo(pad + gw, gy)
+                    ctx.stroke()
+                }
+
+                // ── Vertical time ticks (every 15 samples) ────────────────────
+                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.05).toString()
+                for (let t = 0; t < graph.maxHistory; t += 15) {
+                    const tx = pad + t * step
+                    ctx.beginPath()
+                    ctx.moveTo(tx, pad)
+                    ctx.lineTo(tx, pad + gh)
+                    ctx.stroke()
+                }
+
+                if (hist.length < 2) return
 
                 // ── Curve ─────────────────────────────────────────────────────
                 ctx.beginPath()
