@@ -197,7 +197,9 @@ Scope {
                     color: Config.colors.surfaceAlt
                     border.color: Config.colors.border
                     border.width: 1
-                    clip: true
+                    // layer.enabled renders the rectangle (including its radius) as a
+                    // texture, so children are clipped to the rounded shape correctly.
+                    layer.enabled: true
 
                     Music {
                         anchors.fill: parent
