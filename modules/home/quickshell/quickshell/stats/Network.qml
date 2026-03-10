@@ -92,8 +92,7 @@ Item {
     ColumnLayout {
         id: graphColumn
         anchors.fill: parent
-        anchors.margins: Math.round(12 * Config.scale)
-        spacing: Math.round(10 * Config.scale)
+        spacing: 0
 
         // ── Download graph ────────────────────────────────────────────────────
         NetworkGraph {
@@ -176,18 +175,10 @@ Item {
         onHoverIndexChanged: graphCanvas.requestPaint()
         onHoveredChanged:   graphCanvas.requestPaint()
 
-        // ── Background card ───────────────────────────────────────────────────
-        Rectangle {
-            anchors.fill: parent
-            radius: Math.round(8 * Config.scale)
-            color: Qt.rgba(0, 0, 0, 0.25)
-        }
-
         // ── Canvas graph ──────────────────────────────────────────────────────
         Canvas {
             id: graphCanvas
             anchors.fill: parent
-            anchors.margins: Math.round(1 * Config.scale)
 
             onPaint: {
                 const ctx = getContext("2d")
