@@ -118,19 +118,37 @@ Scope {
             // 0=Media  1=CPU  2=RAM  3=GPU  4=Network
             property int activeTab: 0
 
+            // Fullscreen expansion — double-click any tab icon to toggle
+            property bool expanded: false
+            readonly property int expandedW: win.implicitWidth
+            readonly property int expandedH: win.implicitHeight
+
+            readonly property int targetW: expanded ? expandedW : drawerWidth
+            readonly property int targetH: expanded ? expandedH : root.drawerHeight
+            readonly property int targetRadius: expanded ? 0 : Math.round(Config.stats.radius * Config.scale)
+
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
 
-            width: drawer.drawerWidth
-            height: root.drawerHeight
+            width: targetW
+            height: targetH
 
-            radius: Math.round(Config.stats.radius * Config.scale)
+            radius: targetRadius
             antialiasing: true
             color: Config.colors.surface
             opacity: root.visible_ ? 1 : 0
             clip: true
 
+            Behavior on width {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on height {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on radius {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
             Behavior on anchors.topMargin {
                 NumberAnimation {
                     duration: Config.stats.animateSpeed
@@ -143,6 +161,10 @@ Scope {
                     easing.type: Easing.InOutQuad
                 }
             }
+
+            // Escape key collapses fullscreen
+            Keys.onEscapePressed: drawer.expanded = false
+            focus: drawer.expanded
 
             HoverHandler {
                 onHoveredChanged: {
@@ -212,30 +234,35 @@ Scope {
                             iconName: "audio-headphones-symbolic"
                             active: drawer.activeTab === 0
                             onHovered: drawer.activeTab = 0
+                            onClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "show-gpu-effects-symbolic"
                             active: drawer.activeTab === 1
                             onHovered: drawer.activeTab = 1
+                            onClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "media-flash-sd-mmc-symbolic"
                             active: drawer.activeTab === 2
                             onHovered: drawer.activeTab = 2
+                            onClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "audio-card-symbolic"
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
+                            onClicked: drawer.expanded = !drawer.expanded
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "network-wired-symbolic"
                             active: drawer.activeTab === 4
                             onHovered: drawer.activeTab = 4
+                            onClicked: drawer.expanded = !drawer.expanded
                         }
 
                         // Hairline separator before pin
@@ -330,13 +357,22 @@ Scope {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
-            width: drawer.drawerWidth
-            height: root.drawerHeight
-            radius: Math.round(Config.stats.radius * Config.scale)
+            width: drawer.targetW
+            height: drawer.targetH
+            radius: drawer.targetRadius
             color: "transparent"
             border.color: Config.panelBorder.color
             border.width: Config.panelBorder.width
             opacity: root.visible_ ? 1 : 0
+            Behavior on width {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on height {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on radius {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
             Behavior on anchors.topMargin {
                 NumberAnimation {
                     duration: Config.stats.animateSpeed
@@ -358,6 +394,7 @@ Scope {
         property string iconName: ""
         property bool active: false
         signal hovered
+        signal clicked
 
         implicitHeight: Math.round(36 * Config.scale)
 
@@ -391,6 +428,12 @@ Scope {
                 if (hovered)
                     tabIcon.hovered();
             }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: tabIcon.clicked()
         }
     }
 
