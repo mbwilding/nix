@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Mpris
@@ -14,6 +15,15 @@ import "../components"
 // Controls slide up into the centre on hover.
 Item {
     id: root
+
+    layer.enabled: true
+    layer.effect: OpacityMask {
+        maskSource: Rectangle {
+            width: root.width
+            height: root.height
+            radius: Math.round(Config.stats.radius * Config.scale)
+        }
+    }
 
     // ── Player selection ──────────────────────────────────────────────────────
     readonly property MprisPlayer player: {
