@@ -49,8 +49,11 @@ BarSectionItem {
     signal exitPopupReq
     signal keepAliveReq
 
+    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
+    property int statusLabelWidth: 0
+
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitWidth: Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+    implicitWidth: Config.bar.batteryIconSize + statusButtonExtraWidth
     popupItem: volumePopup
     visible: volumeSection.defaultSink !== null
 
@@ -186,6 +189,8 @@ BarSectionItem {
                     const v = a.volume;
                     return (isNaN(v) || v === undefined) ? "0%" : Math.round(v * 100) + "%";
                 }
+                width: volumeSection.statusLabelWidth > 0 ? volumeSection.statusLabelWidth : implicitWidth
+                horizontalAlignment: Text.AlignRight
                 color: (volumeSection.audio && volumeSection.audio.muted)
                     ? Config.colors.textMuted
                     : Config.colors.textPrimary

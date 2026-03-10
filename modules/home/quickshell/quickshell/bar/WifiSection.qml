@@ -39,9 +39,12 @@ BarSectionItem {
     signal showPasswordDialogReq(string ssid_)
     signal hidePasswordDialogReq
 
+    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
+    property int statusLabelWidth: 0
+
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitWidth: hasWifiDevice ? (strength >= 0
-        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        ? Config.bar.batteryIconSize + statusButtonExtraWidth
         : Config.bar.batteryIconSize + Math.round(10 * Config.scale)) : 0
     visible: hasWifiDevice
     popupItem: wifiPopup
@@ -296,10 +299,21 @@ BarSectionItem {
                     const existing = nets.findIndex(n => n.ssid === ssid_);
                     if (existing >= 0) {
                         const prev = nets[existing];
-                        if (active && !prev.active)
+                        if (active && !prev.active) {
+                            // Active entry always wins — it has the real connected BSSID data.
                             nets[existing] = { ssid: ssid_, signal, active, band, security };
-                        else if (!active && !prev.active && signal > prev.signal)
-                            nets[existing] = { ssid: ssid_, signal, active, band, security };
+                        } else if (!active && !prev.active) {
+                            // For available networks, keep the highest-signal entry but
+                            // prefer a higher band (5/6 GHz) when signals are within 10 dB,
+                            // since APs broadcasting the same SSID on both 2.4 and 5 GHz
+                            // should be shown as 5 GHz capable.
+                            const bandRank = b => b === "6" ? 3 : b === "5" ? 2 : b === "2.4" ? 1 : 0;
+                            const newRank  = bandRank(band);
+                            const prevRank = bandRank(prev.band);
+                            const signalDiff = signal - prev.signal;
+                            if (signalDiff > 10 || (newRank > prevRank && signalDiff >= -10))
+                                nets[existing] = { ssid: ssid_, signal, active, band, security };
+                        }
                     } else {
                         nets.push({ ssid: ssid_, signal, active, band, security });
                     }
@@ -448,6 +462,8 @@ BarSectionItem {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: wifiSection.strength >= 0
                 text: wifiSection.strength + "%"
+                width: wifiSection.statusLabelWidth > 0 ? wifiSection.statusLabelWidth : implicitWidth
+                horizontalAlignment: Text.AlignRight
                 color: Config.colors.textPrimary
                 font.family: Config.font.family
                 font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)

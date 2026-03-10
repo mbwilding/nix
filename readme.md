@@ -27,5 +27,3 @@ nix develop
 
 ## Quickshell Todos
 
-- Wifi in available is showing as 2.4 GHz for all but connected shows the actual one which is good, but sometimes it does show the correct one in the available list but rarely
-- When bar button are at 100% next to icon, it touches its own button edge, not sure how to fix without the button resizing which will look bad
