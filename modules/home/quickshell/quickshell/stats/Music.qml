@@ -92,15 +92,16 @@ Item {
         anchors.left:   parent.left
         anchors.right:  parent.right
         anchors.bottom: parent.bottom
-        height: Math.round(90 * Config.scale)
+        height: Math.round(130 * Config.scale)
 
-        // Scrim
+        // Scrim — tall, starts dark early, fully opaque at bottom
         Rectangle {
             anchors.fill: parent
             gradient: Gradient {
                 orientation: Gradient.Vertical
-                GradientStop { position: 0.0; color: "transparent" }
-                GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.80) }
+                GradientStop { position: 0.0;  color: "transparent" }
+                GradientStop { position: 0.30; color: Qt.rgba(0, 0, 0, 0.55) }
+                GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.92) }
             }
         }
 
@@ -110,50 +111,50 @@ Item {
                 left:         parent.left
                 right:        parent.right
                 bottom:       parent.bottom
-                leftMargin:   Math.round(12 * Config.scale)
-                rightMargin:  Math.round(12 * Config.scale)
-                bottomMargin: Math.round(10 * Config.scale)
+                leftMargin:   Math.round(14 * Config.scale)
+                rightMargin:  Math.round(14 * Config.scale)
+                bottomMargin: Math.round(12 * Config.scale)
             }
-            spacing: Math.round(1 * Config.scale)
+            spacing: Math.round(3 * Config.scale)
 
             Text {
                 Layout.fillWidth: true
                 text: root.trackTitle
                 color: "white"
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
-                font.weight: Font.SemiBold
+                font.pixelSize: Config.font.sizeXl
+                font.weight: Font.Bold
                 elide: Text.ElideRight
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: "#cc000000"
-                    shadowBlur: 0.6
+                    shadowBlur: 0.7
                     shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 1
+                    shadowVerticalOffset: 2
                 }
             }
             Text {
                 Layout.fillWidth: true
                 text: root.trackArtist
-                color: Qt.rgba(1, 1, 1, 0.85)
+                color: Qt.rgba(1, 1, 1, 0.90)
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
+                font.pixelSize: Config.font.sizeMd
                 elide: Text.ElideRight
                 visible: root.trackArtist !== ""
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: "#cc000000"
-                    shadowBlur: 0.6
+                    shadowBlur: 0.7
                     shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 1
+                    shadowVerticalOffset: 2
                 }
             }
             Text {
                 Layout.fillWidth: true
                 text: root.trackAlbum
-                color: Qt.rgba(1, 1, 1, 0.55)
+                color: Qt.rgba(1, 1, 1, 0.60)
                 font.family: Config.font.family
                 font.pixelSize: Config.font.sizeSm
                 elide: Text.ElideRight
@@ -162,9 +163,9 @@ Item {
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: "#cc000000"
-                    shadowBlur: 0.6
+                    shadowBlur: 0.7
                     shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 1
+                    shadowVerticalOffset: 2
                 }
             }
         }
