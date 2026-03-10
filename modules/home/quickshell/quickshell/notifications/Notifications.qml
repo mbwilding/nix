@@ -223,7 +223,10 @@ Scope {
             const actions = [];
             for (let i = 0; i < rawActions.length; i++) {
                 const a = rawActions[i];
-                actions.push({ identifier: a.identifier ?? "", text: a.text ?? "" });
+                actions.push({
+                    identifier: a.identifier ?? "",
+                    text: a.text ?? ""
+                });
             }
 
             const snapId = Date.now() + Math.random();

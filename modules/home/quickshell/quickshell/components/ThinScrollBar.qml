@@ -55,7 +55,9 @@ Item {
         color: root.thumbColor
 
         Behavior on y {
-            NumberAnimation { duration: 60 }
+            NumberAnimation {
+                duration: 60
+            }
         }
     }
 }

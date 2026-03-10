@@ -25,7 +25,8 @@ Scope {
     readonly property bool screenAvailable: BrightnessService.screenAvailable
     readonly property bool volumeAvailable: Pipewire.defaultAudioSink !== null
 
-    onActiveRowChanged: if (root.activeRow !== "") root.frozenRow = root.activeRow
+    onActiveRowChanged: if (root.activeRow !== "")
+        root.frozenRow = root.activeRow
 
     // Animated display value — smoothly follows the active row's real value
     property real displayValue: 0
@@ -34,8 +35,10 @@ Scope {
             const v = Pipewire.defaultAudioSink?.audio?.volume ?? 0;
             return (isNaN(v) || v === undefined) ? 0 : v;
         }
-        if (root.frozenRow === "screen") return BrightnessService.screenBrightness;
-        if (root.frozenRow === "kbd")    return BrightnessService.kbdBrightness;
+        if (root.frozenRow === "screen")
+            return BrightnessService.screenBrightness;
+        if (root.frozenRow === "kbd")
+            return BrightnessService.kbdBrightness;
         return 0;
     }
     onTargetValueChanged: displayValue = targetValue
@@ -187,14 +190,18 @@ Scope {
                                 "kbd": "input-keyboard-brightness",
                                 "screen": "video-display-brightness-symbolic",
                                 "volume": (() => {
-                                    const audio = Pipewire.defaultAudioSink?.audio;
-                                    if (!audio || audio.muted) return "audio-volume-muted-symbolic";
-                                    const vol = audio.volume;
-                                    if (isNaN(vol) || vol === undefined) return "audio-volume-muted-symbolic";
-                                    if (vol <= 0.33) return "audio-volume-low-symbolic";
-                                    if (vol <= 0.66) return "audio-volume-medium-symbolic";
-                                    return "audio-volume-high-symbolic";
-                                })()
+                                        const audio = Pipewire.defaultAudioSink?.audio;
+                                        if (!audio || audio.muted)
+                                            return "audio-volume-muted-symbolic";
+                                        const vol = audio.volume;
+                                        if (isNaN(vol) || vol === undefined)
+                                            return "audio-volume-muted-symbolic";
+                                        if (vol <= 0.33)
+                                            return "audio-volume-low-symbolic";
+                                        if (vol <= 0.66)
+                                            return "audio-volume-medium-symbolic";
+                                        return "audio-volume-high-symbolic";
+                                    })()
                             }[root.frozenRow] ?? "")
                         }
                     }

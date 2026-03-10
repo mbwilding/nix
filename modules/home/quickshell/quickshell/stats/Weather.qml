@@ -22,21 +22,36 @@ ColumnLayout {
 
     function weatherIcon(code) {
         const c = parseInt(code);
-        if (c === 113) return "\u2600\ufe0f";
-        if (c === 116) return "\u26c5";
-        if (c === 119 || c === 122) return "\u2601\ufe0f";
-        if (c >= 176 && c <= 186) return "\ud83c\udf27\ufe0f";
-        if (c >= 200 && c <= 201) return "\u26a1";
-        if (c >= 227 && c <= 230) return "\u2744\ufe0f";
-        if (c >= 260 && c <= 266) return "\ud83c\udf2b\ufe0f";
-        if (c >= 281 && c <= 284) return "\ud83c\udf27\ufe0f";
-        if (c >= 293 && c <= 296) return "\ud83c\udf26\ufe0f";
-        if (c >= 299 && c <= 314) return "\ud83c\udf27\ufe0f";
-        if (c >= 317 && c <= 330) return "\ud83c\udf28\ufe0f";
-        if (c >= 335 && c <= 350) return "\u2744\ufe0f";
-        if (c >= 353 && c <= 359) return "\ud83c\udf26\ufe0f";
-        if (c >= 362 && c <= 374) return "\ud83c\udf28\ufe0f";
-        if (c >= 377 && c <= 395) return "\ud83c\udf27\ufe0f";
+        if (c === 113)
+            return "\u2600\ufe0f";
+        if (c === 116)
+            return "\u26c5";
+        if (c === 119 || c === 122)
+            return "\u2601\ufe0f";
+        if (c >= 176 && c <= 186)
+            return "\ud83c\udf27\ufe0f";
+        if (c >= 200 && c <= 201)
+            return "\u26a1";
+        if (c >= 227 && c <= 230)
+            return "\u2744\ufe0f";
+        if (c >= 260 && c <= 266)
+            return "\ud83c\udf2b\ufe0f";
+        if (c >= 281 && c <= 284)
+            return "\ud83c\udf27\ufe0f";
+        if (c >= 293 && c <= 296)
+            return "\ud83c\udf26\ufe0f";
+        if (c >= 299 && c <= 314)
+            return "\ud83c\udf27\ufe0f";
+        if (c >= 317 && c <= 330)
+            return "\ud83c\udf28\ufe0f";
+        if (c >= 335 && c <= 350)
+            return "\u2744\ufe0f";
+        if (c >= 353 && c <= 359)
+            return "\ud83c\udf26\ufe0f";
+        if (c >= 362 && c <= 374)
+            return "\ud83c\udf28\ufe0f";
+        if (c >= 377 && c <= 395)
+            return "\ud83c\udf27\ufe0f";
         return "\ud83c\udf21\ufe0f";
     }
 
@@ -48,12 +63,12 @@ ColumnLayout {
                 root.error = false;
                 try {
                     const data = JSON.parse(this.text);
-                    const cur  = data.current_condition[0];
-                    root.tempC     = cur.temp_C;
+                    const cur = data.current_condition[0];
+                    root.tempC = cur.temp_C;
                     root.feelsLike = cur.FeelsLikeC;
                     root.condition = root.weatherIcon(cur.weatherCode);
                     const area = data.nearest_area[0];
-                    root.location  = area.areaName[0].value + ", " + area.country[0].value;
+                    root.location = area.areaName[0].value + ", " + area.country[0].value;
                 } catch (e) {
                     root.error = true;
                 }
@@ -115,5 +130,7 @@ ColumnLayout {
         visible: !root.loading && !root.error && root.location !== ""
     }
 
-    Item { Layout.fillHeight: true }
+    Item {
+        Layout.fillHeight: true
+    }
 }

@@ -166,14 +166,13 @@ BarSectionItem {
         iconSource: Quickshell.iconPath(volumeSection.volumeIcon())
         label: {
             const a = volumeSection.audio;
-            if (!a) return "";
+            if (!a)
+                return "";
             const v = a.volume;
             return (isNaN(v) || v === undefined) ? "0%" : Math.round(v * 100) + "%";
         }
         labelWidth: volumeSection.statusLabelWidth
-        labelColor: (volumeSection.audio && volumeSection.audio.muted)
-            ? Config.colors.textMuted
-            : Config.colors.textPrimary
+        labelColor: (volumeSection.audio && volumeSection.audio.muted) ? Config.colors.textMuted : Config.colors.textPrimary
         dimmed: !!(volumeSection.audio && volumeSection.audio.muted)
     }
 

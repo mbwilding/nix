@@ -42,9 +42,7 @@ BarSectionItem {
     property int statusLabelWidth: 0
 
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitWidth: hasWifiDevice ? (strength >= 0
-        ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
-        : Config.bar.batteryIconSize + Math.round(10 * Config.scale)) : 0
+    implicitWidth: hasWifiDevice ? (strength >= 0 ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale) : Config.bar.batteryIconSize + Math.round(10 * Config.scale)) : 0
     visible: hasWifiDevice
     popupItem: wifiPopup
 
@@ -224,23 +222,32 @@ BarSectionItem {
 
     // Derive the frequency band label from MHz value
     function freqBand(mhz) {
-        if (mhz <= 0)   return "";
-        if (mhz < 3000) return "2.4";
-        if (mhz < 5925) return "5";
+        if (mhz <= 0)
+            return "";
+        if (mhz < 3000)
+            return "2.4";
+        if (mhz < 5925)
+            return "5";
         return "6";
     }
-
 
     // Normalise the security string from nmcli into a short human label
     function secLabel(sec) {
         const s = (sec || "").toUpperCase();
-        if (s.includes("WPA3") && s.includes("WPA2")) return "WPA2/3";
-        if (s.includes("WPA3"))  return "WPA3";
-        if (s.includes("WPA2"))  return "WPA2";
-        if (s.includes("WPA1") || (s.includes("WPA") && !s.includes("WPA2") && !s.includes("WPA3"))) return "WPA";
-        if (s.includes("OWE"))   return "OWE";
-        if (s.includes("SAE"))   return "WPA3";
-        if (s === "" || s === "--") return "Open";
+        if (s.includes("WPA3") && s.includes("WPA2"))
+            return "WPA2/3";
+        if (s.includes("WPA3"))
+            return "WPA3";
+        if (s.includes("WPA2"))
+            return "WPA2";
+        if (s.includes("WPA1") || (s.includes("WPA") && !s.includes("WPA2") && !s.includes("WPA3")))
+            return "WPA";
+        if (s.includes("OWE"))
+            return "OWE";
+        if (s.includes("SAE"))
+            return "WPA3";
+        if (s === "" || s === "--")
+            return "Open";
         return sec;
     }
 
@@ -268,7 +275,8 @@ BarSectionItem {
                 // Returns [token, remainder].
                 function popRight(s) {
                     const i = s.lastIndexOf(":");
-                    if (i < 0) return ["", s];
+                    if (i < 0)
+                        return ["", s];
                     return [s.slice(i + 1), s.slice(0, i)];
                 }
 
@@ -280,8 +288,8 @@ BarSectionItem {
                     // We need 4 rightmost colon-separated tokens; ssid is the rest.
                     let rest = line;
                     let security_, freqStr_, activeStr_, signalStr_, ssid_;
-                    [security_,  rest] = popRight(rest);
-                    [freqStr_,   rest] = popRight(rest);
+                    [security_, rest] = popRight(rest);
+                    [freqStr_, rest] = popRight(rest);
                     [activeStr_, rest] = popRight(rest);
                     [signalStr_, rest] = popRight(rest);
                     ssid_ = rest;
@@ -289,10 +297,10 @@ BarSectionItem {
                     if (!ssid_)
                         continue;
 
-                    const active   = activeStr_ === "yes";
-                    const signal   = parseInt(signalStr_) || 0;
-                    const freqMhz  = parseInt(freqStr_) || 0;
-                    const band     = wifiSection.freqBand(freqMhz);
+                    const active = activeStr_ === "yes";
+                    const signal = parseInt(signalStr_) || 0;
+                    const freqMhz = parseInt(freqStr_) || 0;
+                    const band = wifiSection.freqBand(freqMhz);
                     const security = wifiSection.secLabel(security_);
 
                     const existing = nets.findIndex(n => n.ssid === ssid_);
@@ -300,21 +308,39 @@ BarSectionItem {
                         const prev = nets[existing];
                         if (active && !prev.active) {
                             // Active entry always wins — it has the real connected BSSID data.
-                            nets[existing] = { ssid: ssid_, signal, active, band, security };
+                            nets[existing] = {
+                                ssid: ssid_,
+                                signal,
+                                active,
+                                band,
+                                security
+                            };
                         } else if (!active && !prev.active) {
                             // For available networks, keep the highest-signal entry but
                             // prefer a higher band (5/6 GHz) when signals are within 10 dB,
                             // since APs broadcasting the same SSID on both 2.4 and 5 GHz
                             // should be shown as 5 GHz capable.
                             const bandRank = b => b === "6" ? 3 : b === "5" ? 2 : b === "2.4" ? 1 : 0;
-                            const newRank  = bandRank(band);
+                            const newRank = bandRank(band);
                             const prevRank = bandRank(prev.band);
                             const signalDiff = signal - prev.signal;
                             if (signalDiff > 10 || (newRank > prevRank && signalDiff >= -10))
-                                nets[existing] = { ssid: ssid_, signal, active, band, security };
+                                nets[existing] = {
+                                    ssid: ssid_,
+                                    signal,
+                                    active,
+                                    band,
+                                    security
+                                };
                         }
                     } else {
-                        nets.push({ ssid: ssid_, signal, active, band, security });
+                        nets.push({
+                            ssid: ssid_,
+                            signal,
+                            active,
+                            band,
+                            security
+                        });
                     }
                 }
                 nets.sort((a, b) => b.signal - a.signal);
