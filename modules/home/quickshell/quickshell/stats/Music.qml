@@ -89,6 +89,7 @@ Item {
 
     // ── Persistent bottom scrim + song info ───────────────────────────────────
     Item {
+        id: infoStrip
         anchors.left:   parent.left
         anchors.right:  parent.right
         anchors.bottom: parent.bottom
@@ -176,7 +177,7 @@ Item {
         id: controlsOverlay
         anchors.fill: parent
 
-        // Scrim fades in alongside controls
+        // Scrim fades in over the art zone only
         Rectangle {
             anchors.fill: parent
             opacity: cardHover.hovered ? 1 : 0
@@ -184,36 +185,34 @@ Item {
             gradient: Gradient {
                 orientation: Gradient.Vertical
                 GradientStop { position: 0.0;  color: "transparent" }
-                GradientStop { position: 0.25; color: Qt.rgba(0, 0, 0, 0.40) }
-                GradientStop { position: 0.75; color: Qt.rgba(0, 0, 0, 0.40) }
-                GradientStop { position: 1.0;  color: "transparent" }
+                GradientStop { position: 0.35; color: Qt.rgba(0, 0, 0, 0.45) }
+                GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.45) }
             }
         }
 
-        // Controls column — scales up from 0.72 with OutBack overshoot (depth push).
-        // Centred within the art zone (above the 130px info strip) using explicit y.
-        ColumnLayout {
-            id: controlsColumn
-            anchors.horizontalCenter: parent.horizontalCenter
-            // Art zone height = parent.height - infoStripH
-            // Centre of art zone = artZoneH / 2
-            // y positions the top of the column, so: y = artZoneCentre - implicitHeight/2
-            readonly property real infoStripH: Math.round(130 * Config.scale)
-            readonly property real artZoneH:   parent.height - infoStripH
-            y: artZoneH / 2 - implicitHeight / 2
-            width: parent.width - Math.round(24 * Config.scale)
+        // Art zone — explicit item whose bounds are exactly the area above the
+        // info strip. anchors.centerIn this and the maths are always correct.
+        Item {
+            id: artZone
+            anchors.left:  parent.left
+            anchors.right: parent.right
+            anchors.top:   parent.top
+            height: parent.height - infoStrip.height
 
-            transformOrigin: Item.Center
-            scale:   cardHover.hovered ? 1.0 : 0.72
-            opacity: cardHover.hovered ? 1.0 : 0.0
-            Behavior on scale   { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
-            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+            ColumnLayout {
+                id: controlsColumn
+                anchors.centerIn: parent
+                width: parent.width - Math.round(24 * Config.scale)
 
-            spacing: Math.round(14 * Config.scale)
-            // Stretch children to fill the available width
-            Layout.fillWidth: true
+                transformOrigin: Item.Center
+                scale:   cardHover.hovered ? 1.0 : 0.72
+                opacity: cardHover.hovered ? 1.0 : 0.0
+                Behavior on scale   { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
+                Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
-            // ── Seek bar — full width, times inline below ─────────────────
+                spacing: Math.round(14 * Config.scale)
+
+                // ── Seek bar — full width, times inline below ─────────────────
             Item {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
@@ -468,6 +467,7 @@ Item {
                         }
                     }
                 }
+            }
             }
         }
     }
