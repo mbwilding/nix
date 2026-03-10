@@ -43,9 +43,7 @@ BarSectionItem {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
-
-    implicitWidth: Config.bar.batteryIconSize + statusButtonExtraWidth
+    implicitWidth: Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: brightnessSection.screenAvailable || brightnessSection.kbdAvailable
 
@@ -73,27 +71,11 @@ BarSectionItem {
         popupOpen: brightnessSection.popupOpen
         clickable: false
 
-        Row {
-            anchors.centerIn: parent
-            spacing: Math.round(3 * Config.scale)
-
-            IconImage {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.bar.batteryIconSize
-                source: Quickshell.iconPath("high-brightness-symbolic")
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: brightnessSection.screenAvailable
-                text: Math.round(brightnessSection.screenBrightness * 100) + "%"
-                width: brightnessSection.statusLabelWidth > 0 ? brightnessSection.statusLabelWidth : implicitWidth
-                horizontalAlignment: Text.AlignRight
-                color: Config.colors.textPrimary
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
-            }
-        }
+        iconSource: Quickshell.iconPath("high-brightness-symbolic")
+        label: brightnessSection.screenAvailable
+            ? Math.round(brightnessSection.screenBrightness * 100) + "%" : ""
+        labelWidth: brightnessSection.statusLabelWidth
+        labelColor: Config.colors.textPrimary
     }
 
     // ── Popup ─────────────────────────────────────────────────────────────────

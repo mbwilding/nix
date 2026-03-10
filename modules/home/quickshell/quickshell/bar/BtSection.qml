@@ -60,11 +60,10 @@ BarSectionItem {
     signal keepPopupReq
     signal exitPopupReq
 
-    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
     property int statusLabelWidth: 0
 
     implicitWidth: lowestBattery >= 0
-        ? Config.bar.batteryIconSize + statusButtonExtraWidth
+        ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
         : Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     popupItem: btPopup
@@ -146,39 +145,16 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: btSection.popupOpen
 
-        Row {
-            anchors.centerIn: parent
-            spacing: Math.round(3 * Config.scale)
-
-            IconImage {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.bar.batteryIconSize
-                source: Quickshell.iconPath(btSection.btIcon())
-                opacity: (btSection.adapter && btSection.adapter.enabled) ? 1.0 : Config.bar.disabledOpacity
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: btSection.lowestBattery >= 0
-                text: btSection.lowestBattery + "%"
-                width: btSection.statusLabelWidth > 0 ? btSection.statusLabelWidth : implicitWidth
-                horizontalAlignment: Text.AlignRight
-                color: {
-                    const pct = btSection.lowestBattery;
-                    if (pct <= 15) return Config.colors.danger;
-                    if (pct <= 30) return Config.colors.warning;
-                    return Config.colors.textPrimary;
-                }
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
-            }
+        iconSource: Quickshell.iconPath(btSection.btIcon())
+        label: btSection.lowestBattery >= 0 ? btSection.lowestBattery + "%" : ""
+        labelWidth: btSection.statusLabelWidth
+        labelColor: {
+            const pct = btSection.lowestBattery;
+            if (pct <= 15) return Config.colors.danger;
+            if (pct <= 30) return Config.colors.warning;
+            return Config.colors.textPrimary;
         }
+        dimmed: !(btSection.adapter && btSection.adapter.enabled)
     }
 
     BarSectionPopup {
