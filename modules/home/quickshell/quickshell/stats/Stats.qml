@@ -2,9 +2,11 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Widgets
 
 import "."
 import ".."
@@ -23,7 +25,6 @@ Scope {
     // Convenience sizes (all scaled)
     readonly property int drawerHeight: Math.round(Config.stats.height * Config.scale)
     readonly property int drawerPad:    Math.round(16 * Config.scale)
-    readonly property int cardGap:      Math.round(10 * Config.scale)
 
     // Called by mouse hover — shows with timeout
     function showMouse() {
@@ -35,25 +36,17 @@ Scope {
     // Called by IPC toggle
     function toggle() {
         if (root.visible_ && root.pinned) {
-            // Pinned and visible → hide and unpin
             root.pinned = false;
             root.visible_ = false;
             hideTimer.stop();
         } else if (root.visible_) {
-            // Visible via mouse → pin it (cancel the timeout)
             root.pinned = true;
             hideTimer.stop();
         } else {
-            // Hidden → show and pin
             root.pinned = true;
             root.visible_ = true;
             hideTimer.stop();
         }
-    }
-
-    function keepAlive() {
-        if (root.visible_ && !root.pinned)
-            hideTimer.restart();
     }
 
     function hide() {
@@ -65,17 +58,12 @@ Scope {
     Timer {
         id: hideTimer
         interval: Config.stats.hideDelay
-        onTriggered: {
-            if (!root.pinned)
-                root.hide();
-        }
+        onTriggered: { if (!root.pinned) root.hide() }
     }
 
     IpcHandler {
         target: "stats"
-        function toggle() {
-            root.toggle();
-        }
+        function toggle() { root.toggle() }
     }
 
     PanelWindow {
@@ -92,9 +80,7 @@ Scope {
         implicitWidth: win.screen ? win.screen.width : 1920
         implicitHeight: win.screen ? win.screen.height : 1080
 
-        // Only intercept mouse input where the drawer or trigger strip is.
         mask: Region {
-            // hotspot strip along the middle third of the top edge (always active)
             Region {
                 x: Math.round(win.implicitWidth * Config.stats.triggerStart)
                 y: 0
@@ -102,7 +88,6 @@ Scope {
                 height: Config.stats.edgeHotspotSize
                 intersection: Intersection.Combine
             }
-            // Drawer card itself
             Region {
                 item: drawer
                 intersection: Intersection.Combine
@@ -111,18 +96,13 @@ Scope {
 
         // ── Hover trigger strip ──────────────────────────────────────────────
         Item {
-            id: triggerStrip
             anchors.top: parent.top
             x: Math.round(win.implicitWidth * Config.stats.triggerStart)
             width: Math.round(win.implicitWidth * (Config.stats.triggerEnd - Config.stats.triggerStart))
             height: Config.stats.edgeHotspotSize
 
             HoverHandler {
-                onHoveredChanged: {
-                    if (hovered)
-                        root.showMouse();
-                    // no else: leaving the strip is handled by the drawer's HoverHandler
-                }
+                onHoveredChanged: { if (hovered) root.showMouse() }
             }
         }
 
@@ -134,6 +114,9 @@ Scope {
                 win.implicitWidth - Math.round(40 * Config.scale),
                 Math.round(Config.stats.maxWidth * Config.scale)
             )
+
+            // Active tab index: 0 = Media, 1 = Performance
+            property int activeTab: 0
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
@@ -148,109 +131,104 @@ Scope {
             border.width: Config.panelBorder.width
             border.color: Config.panelBorder.color
             opacity: root.visible_ ? 1 : 0
-            clip: true
+            // layer.enabled for proper radius clipping of children (album art etc.)
+            layer.enabled: true
 
             Behavior on anchors.topMargin {
-                NumberAnimation {
-                    duration: Config.stats.animateSpeed
-                    easing.type: Easing.InOutCubic
-                }
+                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
             }
-
             Behavior on opacity {
-                NumberAnimation {
-                    duration: Config.stats.animateSpeed
-                    easing.type: Easing.InOutQuad
-                }
+                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutQuad }
             }
 
-            // Keep alive while the mouse is over the drawer.
-            // Stop the timer while hovered; restart it on leave so hide
-            // happens hideDelay ms after the mouse exits, not after entry.
             HoverHandler {
                 onHoveredChanged: {
-                    if (hovered)
-                        hideTimer.stop();
-                    else if (!root.pinned)
-                        hideTimer.restart();
+                    if (hovered)      hideTimer.stop()
+                    else if (!root.pinned) hideTimer.restart()
                 }
             }
 
-            // ── Inner layout ─────────────────────────────────────────────────
-            // anchors.fill gives drawerRow a real height, so Layout.fillHeight works.
+            // ── Layout: tab strip | content ──────────────────────────────────
             RowLayout {
-                id: drawerRow
-                anchors {
-                    fill: parent
-                    topMargin: root.drawerPad
-                    bottomMargin: root.drawerPad
-                    leftMargin: root.drawerPad
-                    rightMargin: root.drawerPad
-                }
-                spacing: root.cardGap
+                anchors.fill: parent
+                spacing: 0
 
-                // ── Left: Music ───────────────────────────────────────────────
+                // ── Tab strip (left edge) ─────────────────────────────────────
+                // Narrow column of icon-only tabs; hover switches the active tab.
                 Rectangle {
+                    id: tabStrip
                     Layout.fillHeight: true
-                    Layout.preferredWidth: Math.round(Config.stats.musicWidth * Config.scale)
-                    radius: Math.round(10 * Config.scale)
-                    color: Config.colors.surfaceAlt
-                    // layer.enabled composites children into an offscreen texture so
-                    // the rounded radius actually clips the album art image.
-                    // The border is drawn inside Music.qml as a top-layer overlay so
-                    // it isn't hidden behind the art.
-                    layer.enabled: true
+                    Layout.preferredWidth: Math.round(44 * Config.scale)
+                    color: Qt.rgba(0, 0, 0, 0.18)
 
+                    // Left-side rounded corners follow the drawer radius; right side is flat.
+                    // We achieve this with a clipping trick: extend slightly into the content
+                    // area and let the drawer's own layer clip it.
+                    ColumnLayout {
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            top: parent.top
+                            topMargin: Math.round(18 * Config.scale)
+                        }
+                        spacing: Math.round(6 * Config.scale)
+
+                        // Tab 0 — Media (music note)
+                        TabIcon {
+                            iconName: "audio-x-generic-symbolic"
+                            active: drawer.activeTab === 0
+                            onHovered: drawer.activeTab = 0
+                        }
+
+                        // Tab 1 — Performance (CPU/chip)
+                        TabIcon {
+                            iconName: "computer-symbolic"
+                            active: drawer.activeTab === 1
+                            onHovered: drawer.activeTab = 1
+                        }
+                    }
+
+                    // Right-edge separator line
+                    Rectangle {
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        width: 1
+                        color: Config.colors.border
+                        opacity: 0.6
+                    }
+                }
+
+                // ── Content area ──────────────────────────────────────────────
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    // Media tab
                     Music {
                         anchors.fill: parent
+                        anchors.margins: root.drawerPad
+                        visible: drawer.activeTab === 0
+                        opacity: drawer.activeTab === 0 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 120 } }
                     }
-                }
 
-                // ── Centre: Clock ─────────────────────────────────────────────
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: Math.round(Config.stats.clockWidth * Config.scale)
-                    radius: Math.round(10 * Config.scale)
-                    color: Config.colors.surfaceAlt
-                    border.color: Config.colors.border
-                    border.width: 1
-
-                    Clock {
-                        anchors.centerIn: parent
-                    }
-                }
-
-                // ── Right: Performance + Network + Weather stacked ────────────
-                ColumnLayout {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: Math.round(Config.stats.rightWidth * Config.scale)
-                    spacing: root.cardGap
-
-                    // Performance
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        radius: Math.round(10 * Config.scale)
-                        color: Config.colors.surfaceAlt
-                        border.color: Config.colors.border
-                        border.width: 1
-                        clip: true
+                    // Performance tab
+                    Item {
+                        anchors.fill: parent
+                        anchors.margins: root.drawerPad
+                        visible: drawer.activeTab === 1
+                        opacity: drawer.activeTab === 1 ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 120 } }
 
                         ColumnLayout {
-                            anchors {
-                                fill: parent
-                                topMargin: Math.round(8 * Config.scale)
-                                leftMargin: Math.round(14 * Config.scale)
-                                rightMargin: Math.round(14 * Config.scale)
-                                bottomMargin: Math.round(8 * Config.scale)
-                            }
-                            spacing: Math.round(4 * Config.scale)
+                            anchors.fill: parent
+                            spacing: Math.round(8 * Config.scale)
 
                             Text {
                                 text: "System"
                                 color: Config.colors.textMuted
                                 font.family: Config.font.family
-                                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
+                                font.pixelSize: Config.font.sizeSm
                             }
 
                             Performance {
@@ -259,76 +237,56 @@ Scope {
                             }
                         }
                     }
-
-                    // Network
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        radius: Math.round(10 * Config.scale)
-                        color: Config.colors.surfaceAlt
-                        border.color: Config.colors.border
-                        border.width: 1
-                        clip: true
-
-                        ColumnLayout {
-                            anchors {
-                                fill: parent
-                                topMargin: Math.round(8 * Config.scale)
-                                leftMargin: Math.round(14 * Config.scale)
-                                rightMargin: Math.round(14 * Config.scale)
-                                bottomMargin: Math.round(8 * Config.scale)
-                            }
-                            spacing: Math.round(4 * Config.scale)
-
-                            Text {
-                                text: "Network"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
-                            }
-
-                            Network {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
-                        }
-                    }
-
-                    // Weather
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        radius: Math.round(10 * Config.scale)
-                        color: Config.colors.surfaceAlt
-                        border.color: Config.colors.border
-                        border.width: 1
-                        clip: true
-
-                        ColumnLayout {
-                            anchors {
-                                fill: parent
-                                topMargin: Math.round(8 * Config.scale)
-                                leftMargin: Math.round(14 * Config.scale)
-                                rightMargin: Math.round(14 * Config.scale)
-                                bottomMargin: Math.round(8 * Config.scale)
-                            }
-                            spacing: Math.round(4 * Config.scale)
-
-                            Text {
-                                text: "Weather"
-                                color: Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
-                            }
-
-                            Weather {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
-                        }
-                    }
                 }
             }
+
+            // Border overlay — layer.enabled hides the Rectangle's own border,
+            // so we redraw it as a topmost transparent child.
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                color: "transparent"
+                border.color: Config.panelBorder.color
+                border.width: Config.panelBorder.width
+            }
+        }
+    }
+
+    // ── Tab icon component (inline) ───────────────────────────────────────────
+    component TabIcon: Item {
+        id: tabIcon
+        property string iconName: ""
+        property bool active: false
+        signal hovered
+
+        implicitWidth: Math.round(32 * Config.scale)
+        implicitHeight: Math.round(32 * Config.scale)
+
+        Rectangle {
+            anchors.fill: parent
+            radius: Math.round(8 * Config.scale)
+            color: tabIcon.active
+                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
+                : tabHover.containsMouse
+                    ? Qt.rgba(1, 1, 1, 0.08)
+                    : "transparent"
+            Behavior on color { ColorAnimation { duration: 100 } }
+        }
+
+        IconImage {
+            anchors.centerIn: parent
+            implicitSize: Math.round(16 * Config.scale)
+            source: Quickshell.iconPath(tabIcon.iconName)
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                colorization: 1.0
+                colorizationColor: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
+            }
+        }
+
+        HoverHandler {
+            id: tabHover
+            onHoveredChanged: { if (hovered) tabIcon.hovered() }
         }
     }
 }

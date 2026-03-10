@@ -11,10 +11,16 @@ import ".."
 import "../components"
 
 // Music/media section for the top menu drawer.
-// Square card: album art fills the entire background,
-// track info and controls sit over a dark gradient at the bottom.
-Item {
+// Album art fills the card background, clipped to rounded corners via
+// layer.enabled on this Rectangle root. Track info and controls sit over
+// a dark gradient scrim at the bottom.
+Rectangle {
     id: root
+    radius: Math.round(10 * Config.scale)
+    color: Config.colors.surfaceAlt
+    // layer.enabled composites children into an offscreen texture so the
+    // rounded radius actually clips the album art image.
+    layer.enabled: true
 
     // ── Player selection ─────────────────────────────────────────────────────
     readonly property MprisPlayer player: {
