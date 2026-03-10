@@ -220,22 +220,21 @@ Item {
             }
         }
 
-        // Art zone — explicit item whose bounds are exactly the area above the
-        // info strip. anchors.centerIn this and the maths are always correct.
+        // Art zone — used only to size the scrim correctly above the info strip.
         Item {
             id: artZone
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
             height: parent.height - infoStrip.height
+        }
 
-            // Controls column — centred in artZone via anchors on a named target.
-            // ColumnLayout is positioned by anchors (not by a parent Layout), so
-            // mixing anchors + ColumnLayout here is valid and reliable.
-            ColumnLayout {
-                id: controlsColumn
-                anchors.centerIn: controlsOverlay
-                width: controlsOverlay.width - Math.round(24 * Config.scale)
+        // Controls column — direct child of controlsOverlay so anchors.centerIn
+        // parent resolves to controlsOverlay (full card), giving true visual centre.
+        ColumnLayout {
+            id: controlsColumn
+            anchors.centerIn: parent
+            width: parent.width - Math.round(24 * Config.scale)
 
                 transformOrigin: Item.Center
                 scale: cardHover.hovered ? 1.0 : 0.72
@@ -614,7 +613,6 @@ Item {
                                 if (!root.player || !root.player.volumeSupported)
                                     return;
                                 root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200));
-                            }
                         }
                     }
                 }
