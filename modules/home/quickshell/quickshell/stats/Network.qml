@@ -13,13 +13,17 @@ import ".."
 Item {
     id: root
 
+    // Set to false (bound to Stats.qml's visible_) to pause polling
+    property bool active: true
+
     // ── Data collection ───────────────────────────────────────────────────────
 
     readonly property int historyLen: 60   // samples to keep
-    readonly property int interval: 1000 // ms between samples
+    readonly property int interval: 1000   // ms between samples
 
-    property var rxHistory: []   // bytes/sec, newest last
-    property var txHistory: []   // bytes/sec, newest last
+    // Exposed snapshot arrays (plain JS, oldest→newest) for Canvas bindings.
+    property var rxHistory: []
+    property var txHistory: []
 
     property real rxBytesPerSec: 0
     property real txBytesPerSec: 0
@@ -28,6 +32,23 @@ Item {
     property var _prevTx: null
     property var _prevTime: null
 
+    // Internal ring structs
+    property var _ringRx: ({ buf: new Float64Array(60), head: 0, count: 0 })
+    property var _ringTx: ({ buf: new Float64Array(60), head: 0, count: 0 })
+
+    // Push a value into a ring and return an ordered JS array snapshot (oldest→newest).
+    // Float64Array is used for network rates which can exceed Float32 precision at high speeds.
+    function _ringPush(ring, val) {
+        ring.buf[ring.head] = val;
+        ring.head = (ring.head + 1) % root.historyLen;
+        if (ring.count < root.historyLen) ring.count++;
+        const snap = [];
+        const start = ring.count < root.historyLen ? 0 : ring.head;
+        for (let i = 0; i < ring.count; i++)
+            snap.push(ring.buf[(start + i) % root.historyLen]);
+        return snap;
+    }
+
     // ── Shared hover state (drives both graphs simultaneously) ────────────────
     property bool sharedHovered: false
     property int sharedHoverIndex: -1
@@ -35,10 +56,10 @@ Item {
     // ── Shared y-axis peak (so both graphs use identical scale) ───────────────
     readonly property real sharedPeak: {
         let peak = 1024;
-        const all = root.rxHistory.concat(root.txHistory);
-        for (let i = 0; i < all.length; i++)
-            if (all[i] > peak)
-                peak = all[i];
+        const rx = root.rxHistory;
+        const tx = root.txHistory;
+        for (let i = 0; i < rx.length; i++) if (rx[i] > peak) peak = rx[i];
+        for (let i = 0; i < tx.length; i++) if (tx[i] > peak) peak = tx[i];
         return peak * 1.10;
     }
 
@@ -78,12 +99,8 @@ Item {
                         const txRate = Math.max(0, (tx - root._prevTx) / dt);
                         root.rxBytesPerSec = rxRate;
                         root.txBytesPerSec = txRate;
-
-                        // Append and trim history
-                        const rxH = root.rxHistory.concat([rxRate]);
-                        const txH = root.txHistory.concat([txRate]);
-                        root.rxHistory = rxH.length > root.historyLen ? rxH.slice(rxH.length - root.historyLen) : rxH;
-                        root.txHistory = txH.length > root.historyLen ? txH.slice(txH.length - root.historyLen) : txH;
+                        root.rxHistory = root._ringPush(root._ringRx, rxRate);
+                        root.txHistory = root._ringPush(root._ringTx, txRate);
                     }
                 }
                 root._prevRx = rx;
@@ -96,7 +113,7 @@ Item {
     property Timer _netTimer: Timer {
         interval: root.interval
         repeat: true
-        running: true
+        running: root.active
         triggeredOnStart: true
         onTriggered: root._netProc.running = true
     }

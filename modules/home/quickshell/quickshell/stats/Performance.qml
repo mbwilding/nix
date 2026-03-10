@@ -12,6 +12,9 @@ import "../components"
 Item {
     id: root
 
+    // Set to false (bound to Stats.qml's visible_) to pause polling
+    property bool active: true
+
     property var corePercents: []
     property var coreFreqsKhz: []
     property var _prevCores: []
@@ -20,9 +23,40 @@ Item {
     property int cpuTempMilliC: 0
     property real sysPowerUw: 0      // µW from BAT1/power_now (total system draw)
 
-    // Per-core sparkline history — array of arrays, each inner array is a ring buffer
+    // ── Ring-buffer history ───────────────────────────────────────────────────
+    // Each core's history is a Float32Array ring; metadata is stored alongside.
+    // Layout per core: { buf: Float32Array(historyLen), head: int, count: int }
     readonly property int historyLen: 30
+
+    // Exposed read-only snapshot arrays (plain JS arrays) rebuilt after each push
+    // so Canvas bindings can diff-detect the change.
     property var coreHistory: []
+
+    // Internal ring state — one entry per detected core.
+    property var _rings: []
+
+    // Push a value into a ring and return a fresh snapshot JS array (oldest→newest).
+    function _ringPush(ring, val) {
+        ring.buf[ring.head] = val;
+        ring.head = (ring.head + 1) % root.historyLen;
+        if (ring.count < root.historyLen) ring.count++;
+        // Build ordered snapshot
+        const snap = [];
+        const start = ring.count < root.historyLen ? 0 : ring.head;
+        for (let i = 0; i < ring.count; i++) {
+            snap.push(ring.buf[(start + i) % root.historyLen]);
+        }
+        return snap;
+    }
+
+    function _ensureRings(n) {
+        let rings = root._rings;
+        while (rings.length < n) {
+            rings.push({ buf: new Float32Array(root.historyLen), head: 0, count: 0 });
+        }
+        if (rings.length > n) rings = rings.slice(0, n);
+        root._rings = rings;
+    }
 
     property Process _cpuInfoProc: Process {
         command: ["sh", "-c", "grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs"]
@@ -48,20 +82,20 @@ Item {
                     const idx = parseInt(parts[0].slice(3));
                     if (isNaN(idx))
                         continue;
-                    const user = parseInt(parts[1]) || 0;
-                    const nice = parseInt(parts[2]) || 0;
-                    const system = parseInt(parts[3]) || 0;
-                    const idle = parseInt(parts[4]) || 0;
-                    const iowait = parseInt(parts[5]) || 0;
-                    const irq = parseInt(parts[6]) || 0;
-                    const sirq = parseInt(parts[7]) || 0;
+                    const user    = parseInt(parts[1]) || 0;
+                    const nice    = parseInt(parts[2]) || 0;
+                    const system  = parseInt(parts[3]) || 0;
+                    const idle    = parseInt(parts[4]) || 0;
+                    const iowait  = parseInt(parts[5]) || 0;
+                    const irq     = parseInt(parts[6]) || 0;
+                    const sirq    = parseInt(parts[7]) || 0;
                     const idleTotal = idle + iowait;
-                    const total = idleTotal + user + nice + system + irq + sirq;
+                    const total     = idleTotal + user + nice + system + irq + sirq;
                     let pct = 0;
                     const prev = root._prevCores[idx];
                     if (prev) {
-                        const dIdle = idleTotal - prev[0];
-                        const dTotal = total - prev[1];
+                        const dIdle  = idleTotal - prev[0];
+                        const dTotal = total     - prev[1];
                         if (dTotal > 0)
                             pct = Math.round((1 - dIdle / dTotal) * 100);
                     }
@@ -74,20 +108,13 @@ Item {
                 root.corePercents = newPercents;
                 root.avgPercent = coreCount > 0 ? Math.round(totalPct / coreCount) : 0;
 
-                // Update sparkline history for each core
+                // Update ring-buffer history for each core
                 const n = newPercents.length;
-                let hist = root.coreHistory.slice();
-                // Grow or shrink history array to match core count
-                while (hist.length < n)
-                    hist.push([]);
-                if (hist.length > n)
-                    hist = hist.slice(0, n);
+                root._ensureRings(n);
+                const rings = root._rings;
+                const hist = [];
                 for (let i = 0; i < n; i++) {
-                    const buf = hist[i].slice();
-                    buf.push(newPercents[i] ?? 0);
-                    if (buf.length > root.historyLen)
-                        buf.shift();
-                    hist[i] = buf;
+                    hist.push(root._ringPush(rings[i], newPercents[i] ?? 0));
                 }
                 root.coreHistory = hist;
             }
@@ -136,7 +163,7 @@ Item {
     property Timer _cpuTimer: Timer {
         interval: 2000
         repeat: true
-        running: true
+        running: root.active
         triggeredOnStart: true
         onTriggered: {
             root._cpuProc.running = true;
