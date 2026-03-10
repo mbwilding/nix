@@ -227,16 +227,11 @@ Scope {
                     }
 
                     // Tab 3 — Network
-                    Item {
+                    Network {
                         anchors.fill: parent
-                        anchors.margins: root.drawerPad
                         visible: drawer.activeTab === 3
                         opacity: drawer.activeTab === 3 ? 1 : 0
                         Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                        Network {
-                            anchors.fill: parent
-                        }
                     }
                 }
             }
