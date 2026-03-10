@@ -17,7 +17,6 @@ Item {
     id: root
 
     // ── Player selection ─────────────────────────────────────────────────────
-    // Prefer a currently-playing player, then first available, then null.
     readonly property MprisPlayer player: {
         void Mpris.players.valuesChanged
         let playing = null
@@ -39,21 +38,17 @@ Item {
     readonly property real trackLength: (player && player.lengthSupported && player.length > 0) ? player.length : 0
     readonly property real volume: player ? Math.max(0, Math.min(1, player.volume)) : 0
 
-    // Live position — polled by positionTimer so it stays current while playing.
+    // Live position — polled every second while playing.
     property real livePosition: 0
 
-    // Polling timer: fires every second while playing to refresh livePosition.
     Timer {
         id: positionTimer
         interval: 1000
         repeat: true
         running: root.player !== null && root.isPlaying
-        onTriggered: {
-            if (root.player) root.livePosition = root.player.position
-        }
+        onTriggered: if (root.player) root.livePosition = root.player.position
     }
 
-    // Also update immediately when the player/track changes.
     onPlayerChanged: root.livePosition = root.player ? root.player.position : 0
     Connections {
         target: root.player
@@ -63,7 +58,6 @@ Item {
     readonly property real progress: root.trackLength > 0
         ? Math.max(0, Math.min(1, root.livePosition / root.trackLength)) : 0
 
-    // Helper: format seconds → m:ss
     function formatTime(secs) {
         const s = Math.max(0, Math.floor(secs))
         const m = Math.floor(s / 60)
@@ -81,7 +75,7 @@ Item {
         cache: false
     }
 
-    // Solid fallback when no art is available
+    // Fallback when no art
     Rectangle {
         anchors.fill: parent
         color: Config.colors.surface
@@ -95,19 +89,14 @@ Item {
         }
     }
 
-    // ── Bottom gradient overlay ──────────────────────────────────────────────
+    // ── Gradient scrim — covers the full card height so text always has contrast
     Rectangle {
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        height: parent.height * 0.85
+        anchors.fill: parent
         gradient: Gradient {
             orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 0.40; color: Qt.rgba(0, 0, 0, 0.50) }
-            GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.92) }
+            GradientStop { position: 0.0;  color: "transparent" }
+            GradientStop { position: 0.30; color: Qt.rgba(0, 0, 0, 0.25) }
+            GradientStop { position: 1.0;  color: Qt.rgba(0, 0, 0, 0.88) }
         }
     }
 
@@ -123,72 +112,53 @@ Item {
         }
         spacing: Math.round(4 * Config.scale)
 
-        // ── Track title ──────────────────────────────────────────────────────
-        Item {
+        // ── Track info block with dark pill background for readability ────────
+        Rectangle {
             Layout.fillWidth: true
-            implicitHeight: titleText.implicitHeight
+            implicitHeight: textCol.implicitHeight + Math.round(8 * Config.scale)
+            radius: Math.round(6 * Config.scale)
+            color: Qt.rgba(0, 0, 0, 0.45)
 
-            Text {
-                id: titleText
-                width: parent.width
-                text: root.trackTitle
-                color: "white"
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeMd
-                font.weight: Font.SemiBold
-                elide: Text.ElideRight
-            }
-            MultiEffect {
-                source: titleText; anchors.fill: titleText
-                shadowEnabled: true; shadowColor: "black"
-                shadowBlur: 1.0; shadowOpacity: 1.0
-                shadowHorizontalOffset: 0; shadowVerticalOffset: 1
-            }
-        }
+            ColumnLayout {
+                id: textCol
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    leftMargin: Math.round(7 * Config.scale)
+                    rightMargin: Math.round(7 * Config.scale)
+                }
+                spacing: Math.round(2 * Config.scale)
 
-        // ── Artist ───────────────────────────────────────────────────────────
-        Item {
-            Layout.fillWidth: true
-            implicitHeight: artistText.implicitHeight
-            visible: root.trackArtist !== ""
+                Text {
+                    Layout.fillWidth: true
+                    text: root.trackTitle
+                    color: "white"
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    font.weight: Font.SemiBold
+                    elide: Text.ElideRight
+                }
 
-            Text {
-                id: artistText
-                width: parent.width
-                text: root.trackArtist
-                color: Qt.rgba(1, 1, 1, 0.85)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
-                elide: Text.ElideRight
-            }
-            MultiEffect {
-                source: artistText; anchors.fill: artistText
-                shadowEnabled: true; shadowColor: "black"
-                shadowBlur: 1.0; shadowOpacity: 1.0
-                shadowHorizontalOffset: 0; shadowVerticalOffset: 1
-            }
-        }
+                Text {
+                    Layout.fillWidth: true
+                    text: root.trackArtist
+                    color: Qt.rgba(1, 1, 1, 0.80)
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                    elide: Text.ElideRight
+                    visible: root.trackArtist !== ""
+                }
 
-        // ── Album ────────────────────────────────────────────────────────────
-        Item {
-            Layout.fillWidth: true
-            implicitHeight: albumText.implicitHeight
-            visible: root.trackAlbum !== ""
-
-            Text {
-                id: albumText
-                width: parent.width
-                text: root.trackAlbum
-                color: Qt.rgba(1, 1, 1, 0.62)
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
-                elide: Text.ElideRight
-            }
-            MultiEffect {
-                source: albumText; anchors.fill: albumText
-                shadowEnabled: true; shadowColor: "black"
-                shadowBlur: 1.0; shadowOpacity: 1.0
-                shadowHorizontalOffset: 0; shadowVerticalOffset: 1
+                Text {
+                    Layout.fillWidth: true
+                    text: root.trackAlbum
+                    color: Qt.rgba(1, 1, 1, 0.58)
+                    font.family: Config.font.family
+                    font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
+                    elide: Text.ElideRight
+                    visible: root.trackAlbum !== ""
+                }
             }
         }
 
@@ -226,7 +196,6 @@ Item {
 
             // Play / Pause
             Rectangle {
-                id: playBtn
                 implicitWidth: Math.round(34 * Config.scale)
                 implicitHeight: Math.round(34 * Config.scale)
                 radius: implicitWidth / 2
@@ -247,8 +216,7 @@ Item {
 
                 Text {
                     anchors.centerIn: parent
-                    // ▶ U+25B6 sits slightly left of optical centre in most fonts;
-                    // nudge it 1 scaled px right when showing play so it looks centred.
+                    // ▶ is optically left-heavy; nudge 1px right when in play state
                     anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
                     text: root.isPlaying ? "\u23f8" : "\u25b6"
                     color: "white"
@@ -301,11 +269,9 @@ Item {
             spacing: Math.round(6 * Config.scale)
             opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-            // Seek icon
             IconImage {
                 implicitSize: Math.round(Config.font.sizeSm * 1.1)
                 source: Quickshell.iconPath("media-seek-forward-symbolic")
-                // tint white so it shows over the dark overlay
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     colorization: 1.0
@@ -313,7 +279,6 @@ Item {
                 }
             }
 
-            // Seek track
             Item {
                 id: seekTrack
                 Layout.fillWidth: true
@@ -321,7 +286,6 @@ Item {
 
                 readonly property real frac: root.progress
 
-                // Rail
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width
@@ -329,8 +293,6 @@ Item {
                     radius: height / 2
                     color: Qt.rgba(1, 1, 1, 0.25)
                 }
-
-                // Fill
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * seekTrack.frac
@@ -343,27 +305,19 @@ Item {
                     }
                     Behavior on width { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
                 }
-
-                // Thumb glow
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     x: seekTrack.width * seekTrack.frac - width / 2
                     width: Math.round(14 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Config.colors.glowAccent
-                    opacity: 0.5
+                    height: width; radius: width / 2
+                    color: Config.colors.glowAccent; opacity: 0.5
                     Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
                 }
-
-                // Thumb
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     x: seekTrack.width * seekTrack.frac - width / 2
                     width: Math.round(10 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: "white"
+                    height: width; radius: width / 2; color: "white"
                     Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuart } }
                 }
 
@@ -371,29 +325,26 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.SizeHorCursor
-
                     function applyX(mx) {
                         if (!root.player || !root.player.positionSupported || root.trackLength <= 0) return
-                        const target = Math.max(0, Math.min(1, mx / seekTrack.width)) * root.trackLength
-                        root.player.position = target
-                        root.livePosition = target
+                        const t = Math.max(0, Math.min(1, mx / seekTrack.width)) * root.trackLength
+                        root.player.position = t
+                        root.livePosition = t
                     }
-
                     onPressed:         mouse => applyX(mouse.x)
                     onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
-                    onWheel:           wheel => {
+                    onWheel: wheel => {
                         if (!root.player || !root.player.positionSupported || root.trackLength <= 0) return
-                        const target = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5))
-                        root.player.position = target
-                        root.livePosition = target
+                        const t = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5))
+                        root.player.position = t
+                        root.livePosition = t
                     }
                 }
             }
 
-            // Elapsed / Total timestamp
             Text {
                 text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
-                color: Qt.rgba(1, 1, 1, 0.70)
+                color: Qt.rgba(1, 1, 1, 0.75)
                 font.family: Config.font.family
                 font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
             }
@@ -405,14 +356,13 @@ Item {
             spacing: Math.round(6 * Config.scale)
             opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-            // Volume icon — switches with level like the bar popup does
             IconImage {
                 implicitSize: Math.round(Config.font.sizeSm * 1.1)
                 source: {
                     const v = root.volume
-                    if (v <= 0) return Quickshell.iconPath("audio-volume-muted-symbolic")
-                    if (v < 0.34) return Quickshell.iconPath("audio-volume-low-symbolic")
-                    if (v < 0.67) return Quickshell.iconPath("audio-volume-medium-symbolic")
+                    if (v <= 0)    return Quickshell.iconPath("audio-volume-muted-symbolic")
+                    if (v < 0.34)  return Quickshell.iconPath("audio-volume-low-symbolic")
+                    if (v < 0.67)  return Quickshell.iconPath("audio-volume-medium-symbolic")
                     return Quickshell.iconPath("audio-volume-high-symbolic")
                 }
                 layer.enabled: true
@@ -422,7 +372,6 @@ Item {
                 }
             }
 
-            // Volume track
             Item {
                 id: volTrack
                 Layout.fillWidth: true
@@ -430,7 +379,6 @@ Item {
 
                 readonly property real frac: root.volume
 
-                // Rail
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width
@@ -438,8 +386,6 @@ Item {
                     radius: height / 2
                     color: Qt.rgba(1, 1, 1, 0.25)
                 }
-
-                // Fill
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * volTrack.frac
@@ -452,27 +398,19 @@ Item {
                     }
                     Behavior on width { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                 }
-
-                // Thumb glow
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     x: volTrack.width * volTrack.frac - width / 2
                     width: Math.round(14 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: Config.colors.glowAccent
-                    opacity: 0.5
+                    height: width; radius: width / 2
+                    color: Config.colors.glowAccent; opacity: 0.5
                     Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                 }
-
-                // Thumb
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     x: volTrack.width * volTrack.frac - width / 2
                     width: Math.round(10 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: "white"
+                    height: width; radius: width / 2; color: "white"
                     Behavior on x { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
                 }
 
@@ -480,20 +418,29 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.SizeHorCursor
-
                     function applyX(mx) {
                         if (!root.player || !root.player.volumeSupported) return
                         root.player.volume = Math.max(0, Math.min(1, mx / volTrack.width))
                     }
-
                     onPressed:         mouse => applyX(mouse.x)
                     onPositionChanged: mouse => { if (pressed) applyX(mouse.x) }
-                    onWheel:           wheel => {
+                    onWheel: wheel => {
                         if (!root.player || !root.player.volumeSupported) return
                         root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200))
                     }
                 }
             }
         }
+    }
+
+    // ── Border overlay — drawn last so it sits on top of the art and matches
+    //    the other cards. The parent Rectangle uses layer.enabled for clipping
+    //    but that hides its own border, so we redraw it here.
+    Rectangle {
+        anchors.fill: parent
+        radius: Math.round(10 * Config.scale)
+        color: "transparent"
+        border.color: Config.colors.border
+        border.width: 1
     }
 }
