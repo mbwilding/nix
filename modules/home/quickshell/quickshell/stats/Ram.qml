@@ -12,6 +12,9 @@ import "../components"
 Item {
     id: root
 
+    // Set to false (bound to Stats.qml's visible_) to pause polling
+    property bool active: true
+
     property real ramUsedGb:   0
     property real ramTotalGb:  0
     property real ramCachedGb: 0
@@ -22,14 +25,27 @@ Item {
                                       : ramPercent > 0.65 ? Config.colors.warning
                                       : Config.colors.accent
 
-    // ── History ───────────────────────────────────────────────────────────────
+    // ── Ring-buffer history ───────────────────────────────────────────────────
     readonly property int historyLen: 60
-    property var usedHistory:   []   // GB
-    property var cachedHistory: []   // GB
 
-    function _push(arr, val) {
-        const a = arr.concat([val]);
-        return a.length > root.historyLen ? a.slice(a.length - root.historyLen) : a;
+    // Exposed snapshot arrays (plain JS, oldest→newest) for Canvas bindings.
+    property var usedHistory:   []
+    property var cachedHistory: []
+
+    // Internal ring structs
+    property var _ringUsed:   ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringCached: ({ buf: new Float32Array(60), head: 0, count: 0 })
+
+    // Push a value into a ring and return an ordered JS array snapshot (oldest→newest).
+    function _ringPush(ring, val) {
+        ring.buf[ring.head] = val;
+        ring.head = (ring.head + 1) % root.historyLen;
+        if (ring.count < root.historyLen) ring.count++;
+        const snap = [];
+        const start = ring.count < root.historyLen ? 0 : ring.head;
+        for (let i = 0; i < ring.count; i++)
+            snap.push(ring.buf[(start + i) % root.historyLen]);
+        return snap;
     }
 
     // ── Data ─────────────────────────────────────────────────────────────────
@@ -48,8 +64,8 @@ Item {
                 root.ramUsedGb   = (total - available) / 1048576;
                 root.ramCachedGb = (cached + buffers)  / 1048576;
 
-                root.usedHistory   = root._push(root.usedHistory,   root.ramUsedGb);
-                root.cachedHistory = root._push(root.cachedHistory,  root.ramCachedGb);
+                root.usedHistory   = root._ringPush(root._ringUsed,   root.ramUsedGb);
+                root.cachedHistory = root._ringPush(root._ringCached,  root.ramCachedGb);
             }
         }
     }
@@ -57,7 +73,7 @@ Item {
     property Timer _ramTimer: Timer {
         interval: 2000
         repeat: true
-        running: true
+        running: root.active
         triggeredOnStart: true
         onTriggered: root._ramProc.running = true
     }
@@ -233,7 +249,7 @@ Item {
         readonly property real _pad:     Math.round(4 * Config.scale)
         readonly property real _gw:      width  - _pad * 2
         readonly property real _gh:      height - _pad * 2
-        readonly property real _step:    historyLen > 1 ? _gw / (root.historyLen - 1) : _gw
+        readonly property real _step:    root.historyLen > 1 ? _gw / (root.historyLen - 1) : _gw
         readonly property real _xOffset: (root.historyLen - history.length) * _step
         readonly property real dotX: hoverIndex >= 0
             ? _pad + _xOffset + hoverIndex * _step

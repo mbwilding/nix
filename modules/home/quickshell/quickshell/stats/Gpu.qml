@@ -12,6 +12,9 @@ import "../components"
 Item {
     id: root
 
+    // Set to false (bound to Stats.qml's visible_) to pause polling
+    property bool active: true
+
     // ── Raw data ──────────────────────────────────────────────────────────────
     property int gpuPercent: 0
     property int vcnPercent: 0
@@ -34,19 +37,37 @@ Item {
     readonly property string sclkText: root.sclkHz > 0 ? (root.sclkHz / 1000000).toFixed(0) + " MHz" : "—"
     readonly property string mclkText: root.mclkMhz > 0 ? root.mclkMhz + " MHz" : "—"
 
-    // ── History ───────────────────────────────────────────────────────────────
+    // ── Ring-buffer history ───────────────────────────────────────────────────
     readonly property int historyLen: 60
-    property var gpuHistory:   []   // percent 0-100
-    property var vramHistory:  []   // fraction 0-1
-    property var tempHistory:  []   // °C
-    property var powerHistory: []   // watts
-    property var sclkHistory:  []   // MHz
-    property var mclkHistory:  []   // MHz
-    property var vcnHistory:   []   // percent 0-100
 
-    function _pushHistory(arr, val) {
-        const a = arr.concat([val]);
-        return a.length > root.historyLen ? a.slice(a.length - root.historyLen) : a;
+    // Exposed snapshot arrays (plain JS, oldest→newest) for Canvas bindings.
+    property var gpuHistory:   []
+    property var vramHistory:  []
+    property var tempHistory:  []
+    property var powerHistory: []
+    property var sclkHistory:  []
+    property var mclkHistory:  []
+    property var vcnHistory:   []
+
+    // Internal ring structs — one per metric.
+    property var _ringGpu:   ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringVram:  ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringTemp:  ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringPower: ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringSclk:  ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringMclk:  ({ buf: new Float32Array(60), head: 0, count: 0 })
+    property var _ringVcn:   ({ buf: new Float32Array(60), head: 0, count: 0 })
+
+    // Push a value into a ring and return an ordered JS array snapshot (oldest→newest).
+    function _ringPush(ring, val) {
+        ring.buf[ring.head] = val;
+        ring.head = (ring.head + 1) % root.historyLen;
+        if (ring.count < root.historyLen) ring.count++;
+        const snap = [];
+        const start = ring.count < root.historyLen ? 0 : ring.head;
+        for (let i = 0; i < ring.count; i++)
+            snap.push(ring.buf[(start + i) % root.historyLen]);
+        return snap;
     }
 
     // ── Colours ───────────────────────────────────────────────────────────────
@@ -70,8 +91,8 @@ Item {
                 const lines = this.text.trim().split("\n");
                 root.gpuPercent = parseInt(lines[0]) || 0;
                 root.vcnPercent = parseInt(lines[1]) || 0;
-                root.gpuHistory  = root._pushHistory(root.gpuHistory,  root.gpuPercent);
-                root.vcnHistory  = root._pushHistory(root.vcnHistory,  root.vcnPercent);
+                root.gpuHistory = root._ringPush(root._ringGpu, root.gpuPercent);
+                root.vcnHistory = root._ringPush(root._ringVcn, root.vcnPercent);
             }
         }
     }
@@ -83,7 +104,7 @@ Item {
                 const lines = this.text.trim().split("\n");
                 root.vramUsedBytes  = parseFloat(lines[0]) || 0;
                 root.vramTotalBytes = parseFloat(lines[1]) || 0;
-                root.vramHistory = root._pushHistory(root.vramHistory, root.vramFrac);
+                root.vramHistory = root._ringPush(root._ringVram, root.vramFrac);
             }
         }
     }
@@ -96,9 +117,9 @@ Item {
                 root.sclkHz     = parseInt(lines[0])   || 0;
                 root.tempMilliC = parseInt(lines[1])   || 0;
                 root.powerUw    = parseFloat(lines[2]) || 0;
-                root.tempHistory  = root._pushHistory(root.tempHistory,  root.tempC);
-                root.powerHistory = root._pushHistory(root.powerHistory, root.powerW);
-                root.sclkHistory  = root._pushHistory(root.sclkHistory,  root.sclkHz > 0 ? root.sclkHz / 1000000 : 0);
+                root.tempHistory  = root._ringPush(root._ringTemp,  root.tempC);
+                root.powerHistory = root._ringPush(root._ringPower, root.powerW);
+                root.sclkHistory  = root._ringPush(root._ringSclk,  root.sclkHz > 0 ? root.sclkHz / 1000000 : 0);
             }
         }
     }
@@ -112,7 +133,7 @@ Item {
                         const m = line.match(/(\d+)Mhz/);
                         if (m) {
                             root.mclkMhz = parseInt(m[1]);
-                            root.mclkHistory = root._pushHistory(root.mclkHistory, root.mclkMhz);
+                            root.mclkHistory = root._ringPush(root._ringMclk, root.mclkMhz);
                             break;
                         }
                     }
@@ -136,7 +157,7 @@ Item {
     property Timer _timer: Timer {
         interval: 2000
         repeat: true
-        running: true
+        running: root.active
         triggeredOnStart: true
         onTriggered: {
             root._utilProc.running = true;
