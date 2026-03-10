@@ -19,7 +19,7 @@ BarSectionItem {
 
     property string activePopup: ""         // bound to root.activePopup
     property int sliderLabelWidth: 0        // bound to root.sliderLabelWidth
-
+    property int statusLabelWidth: 0        // bound to root.statusLabelWidth
     // Screen state — bind to BrightnessService.*
     property real screenBrightness: 0
     property bool screenAvailable: false
@@ -43,7 +43,9 @@ BarSectionItem {
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
-    implicitWidth: Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
+
+    implicitWidth: Config.bar.batteryIconSize + statusButtonExtraWidth
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     visible: brightnessSection.screenAvailable || brightnessSection.kbdAvailable
 
@@ -85,6 +87,8 @@ BarSectionItem {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: brightnessSection.screenAvailable
                 text: Math.round(brightnessSection.screenBrightness * 100) + "%"
+                width: brightnessSection.statusLabelWidth > 0 ? brightnessSection.statusLabelWidth : implicitWidth
+                horizontalAlignment: Text.AlignRight
                 color: Config.colors.textPrimary
                 font.family: Config.font.family
                 font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
