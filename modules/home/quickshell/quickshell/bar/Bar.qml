@@ -854,11 +854,11 @@ Scope {
                 id: sysBrightnessComponent
                 Item {
                     id: brightnessProxy
-                    implicitWidth: brightnessSection.implicitWidth
+                    implicitWidth: brightnessSection.visible ? brightnessSection.implicitWidth : 0
                     implicitHeight: brightnessSection.implicitHeight
                     Component.onCompleted: {
                         brightnessSection.parent = brightnessProxy;
-                        brightnessSection.visible = true;
+                        brightnessSection.visible = Qt.binding(() => BrightnessService.screenAvailable || BrightnessService.kbdAvailable);
                     }
                     Component.onDestruction: {
                         brightnessSection.visible = false;
