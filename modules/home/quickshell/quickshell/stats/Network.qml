@@ -8,7 +8,7 @@ import ".."
 
 // Network history graphs for the stats drawer.
 // Two Canvas graphs stacked vertically — download (accent) and upload (accentAlt).
-// Mouseover shows the value at that point in history.
+// Mouse tracking is shared: hovering either graph shows the crosshair on both.
 Item {
     id: root
 
@@ -26,6 +26,10 @@ Item {
     property var _prevRx:   null
     property var _prevTx:   null
     property var _prevTime: null
+
+    // ── Shared hover state (drives both graphs simultaneously) ────────────────
+    property bool sharedHovered:    false
+    property int  sharedHoverIndex: -1
 
     function _sumInterface(text, col) {
         let total = 0
@@ -86,6 +90,7 @@ Item {
     // ── Layout ────────────────────────────────────────────────────────────────
 
     ColumnLayout {
+        id: graphColumn
         anchors.fill: parent
         anchors.margins: Math.round(12 * Config.scale)
         spacing: Math.round(10 * Config.scale)
@@ -94,26 +99,57 @@ Item {
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history: root.rxHistory
-            maxHistory: root.historyLen
+            history:     root.rxHistory
+            maxHistory:  root.historyLen
             currentRate: root.rxBytesPerSec
-            lineColor: Config.colors.accent
-            fillColor: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-            label: "DOWN"
-            formatFn: root.formatSpeed
+            lineColor:   Config.colors.accent
+            fillColor:   Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+            label:       "DOWN"
+            formatFn:    root.formatSpeed
+            hovered:     root.sharedHovered
+            hoverIndex:  root.sharedHoverIndex
         }
 
         // ── Upload graph ──────────────────────────────────────────────────────
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history: root.txHistory
-            maxHistory: root.historyLen
+            history:     root.txHistory
+            maxHistory:  root.historyLen
             currentRate: root.txBytesPerSec
-            lineColor: Config.colors.accentAlt
-            fillColor: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
-            label: "UP"
-            formatFn: root.formatSpeed
+            lineColor:   Config.colors.accentAlt
+            fillColor:   Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
+            label:       "UP"
+            formatFn:    root.formatSpeed
+            hovered:     root.sharedHovered
+            hoverIndex:  root.sharedHoverIndex
+        }
+    }
+
+    // ── Shared mouse overlay (sits above both graphs, full column area) ────────
+    MouseArea {
+        anchors.fill: graphColumn
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+
+        onPositionChanged: mouse => {
+            // Map x into a history index using the graph geometry.
+            // Both graphs have the same width and maxHistory so one calculation serves both.
+            const pad   = Math.round(4 * Config.scale)
+            const gw    = width - pad * 2
+            const n     = root.rxHistory.length
+            if (n === 0) return
+            const step  = gw / (root.historyLen - 1)
+            const xOff  = (root.historyLen - n) * step
+            const relX  = Math.max(0, Math.min(gw, mouse.x - pad - xOff))
+            const idx   = Math.max(0, Math.min(n - 1, Math.round(relX / step)))
+            root.sharedHovered    = true
+            root.sharedHoverIndex = idx
+        }
+
+        onExited: {
+            root.sharedHovered    = false
+            root.sharedHoverIndex = -1
         }
     }
 
@@ -129,13 +165,16 @@ Item {
         property string label:       ""
         property var    formatFn:    null
 
-        onHistoryChanged: graphCanvas.requestPaint()
+        // Driven externally by the shared mouse overlay
+        property bool   hovered:    false
+        property int    hoverIndex: -1
 
-        // Mouse state
-        property bool   hovered:     false
-        property int    hoverIndex:  -1   // index into history array under cursor
         readonly property real hoverRate: (hoverIndex >= 0 && hoverIndex < history.length)
                                           ? history[hoverIndex] : currentRate
+
+        onHistoryChanged:   graphCanvas.requestPaint()
+        onHoverIndexChanged: graphCanvas.requestPaint()
+        onHoveredChanged:   graphCanvas.requestPaint()
 
         // ── Background card ───────────────────────────────────────────────────
         Rectangle {
@@ -157,23 +196,22 @@ Item {
                 const hist = graph.history
                 if (hist.length < 2) return
 
-                // Peak for scaling — use rolling max with a floor of 1 KB/s
+                // Peak for y-scaling — rolling max with a floor of 1 KB/s
                 let peak = 1024
                 for (let i = 0; i < hist.length; i++)
                     if (hist[i] > peak) peak = hist[i]
-                // Add 10% headroom
-                peak *= 1.10
+                peak *= 1.10  // 10% headroom
 
-                const pad   = Math.round(4 * Config.scale)
-                const gw    = width  - pad * 2
-                const gh    = height - pad * 2
-                const n     = hist.length
-                const step  = gw / (graph.maxHistory - 1)
+                const pad  = Math.round(4 * Config.scale)
+                const gw   = width  - pad * 2
+                const gh   = height - pad * 2
+                const n    = hist.length
+                const step = gw / (graph.maxHistory - 1)
 
-                // Offset so newest sample is always at right edge
+                // Newest sample pinned to right edge
                 const xOffset = (graph.maxHistory - n) * step
 
-                // Build path
+                // ── Curve ─────────────────────────────────────────────────────
                 ctx.beginPath()
                 for (let i = 0; i < n; i++) {
                     const x = pad + xOffset + i * step
@@ -181,15 +219,13 @@ Item {
                     if (i === 0) ctx.moveTo(x, y)
                     else         ctx.lineTo(x, y)
                 }
-
-                // Stroke
                 ctx.strokeStyle = graph.lineColor.toString()
                 ctx.lineWidth   = Math.round(1.5 * Config.scale)
                 ctx.lineJoin    = "round"
                 ctx.stroke()
 
                 // Fill under curve
-                const lastX = pad + xOffset + (n - 1) * step
+                const lastX  = pad + xOffset + (n - 1) * step
                 const firstX = pad + xOffset
                 ctx.lineTo(lastX,  pad + gh)
                 ctx.lineTo(firstX, pad + gh)
@@ -197,13 +233,13 @@ Item {
                 ctx.fillStyle = graph.fillColor.toString()
                 ctx.fill()
 
-                // Hover crosshair
+                // ── Hover crosshair ───────────────────────────────────────────
                 if (graph.hovered && graph.hoverIndex >= 0 && graph.hoverIndex < n) {
                     const hi = graph.hoverIndex
                     const hx = pad + xOffset + hi * step
                     const hy = pad + gh - (hist[hi] / peak) * gh
 
-                    // Vertical guide line
+                    // Dashed vertical guide
                     ctx.beginPath()
                     ctx.moveTo(hx, pad)
                     ctx.lineTo(hx, pad + gh)
@@ -213,7 +249,7 @@ Item {
                     ctx.stroke()
                     ctx.setLineDash([])
 
-                    // Dot on the line
+                    // Dot
                     ctx.beginPath()
                     ctx.arc(hx, hy, Math.round(3.5 * Config.scale), 0, Math.PI * 2)
                     ctx.fillStyle   = graph.lineColor.toString()
@@ -226,70 +262,41 @@ Item {
         }
 
         // ── Labels ────────────────────────────────────────────────────────────
-        // Top-left: graph label
-        Text {
+        // Top-left: label + live current value
+        Row {
             anchors.left:    parent.left
             anchors.top:     parent.top
             anchors.margins: Math.round(6 * Config.scale)
-            text:  graph.label
-            color: graph.lineColor
-            font.family:    Config.font.family
-            font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
-            font.weight:    Font.Bold
-            opacity: 0.85
+            spacing: Math.round(5 * Config.scale)
+
+            Text {
+                text:  graph.label
+                color: graph.lineColor
+                font.family:    Config.font.family
+                font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+                font.weight:    Font.Bold
+                opacity: 0.85
+            }
+            Text {
+                text:  graph.formatFn ? graph.formatFn(graph.currentRate) : ""
+                color: Config.colors.textPrimary
+                font.family:    Config.font.family
+                font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+                font.weight:    Font.Medium
+            }
         }
 
-        // Top-right: current or hover value
+        // Top-right: hover historical value (only shown while hovering)
         Text {
             anchors.right:   parent.right
             anchors.top:     parent.top
             anchors.margins: Math.round(6 * Config.scale)
-            text:  graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
-            color: Config.colors.textPrimary
+            visible: graph.hovered && graph.hoverIndex >= 0
+            text:    graph.formatFn ? graph.formatFn(graph.hoverRate) : ""
+            color:   Qt.rgba(1, 1, 1, 0.55)
             font.family:    Config.font.family
-            font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
-            font.weight:    Font.Medium
-        }
-
-        // ── Mouse tracking ────────────────────────────────────────────────────
-        HoverHandler {
-            id: hoverHandler
-            onHoveredChanged: {
-                graph.hovered = hovered
-                if (!hovered) {
-                    graph.hoverIndex = -1
-                    graphCanvas.requestPaint()
-                }
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-
-            onPositionChanged: mouse => {
-                const hist = graph.history
-                if (hist.length === 0) return
-                const pad    = Math.round(4 * Config.scale)
-                const gw     = graphCanvas.width - pad * 2
-                const step   = gw / (graph.maxHistory - 1)
-                const xOff   = (graph.maxHistory - hist.length) * step
-                // Clamp to graph area
-                const relX   = Math.max(0, Math.min(gw, mouse.x - pad - xOff))
-                const idx    = Math.round(relX / step)
-                const clamped = Math.max(0, Math.min(hist.length - 1, idx))
-                if (graph.hoverIndex !== clamped) {
-                    graph.hoverIndex = clamped
-                    graphCanvas.requestPaint()
-                }
-            }
-
-            onExited: {
-                graph.hovered    = false
-                graph.hoverIndex = -1
-                graphCanvas.requestPaint()
-            }
+            font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+            font.weight:    Font.Normal
         }
     }
 }
