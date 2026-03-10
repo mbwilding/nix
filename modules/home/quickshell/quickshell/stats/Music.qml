@@ -191,15 +191,16 @@ Item {
         }
 
         // Controls column — scales up from 0.72 with OutBack overshoot (depth push).
+        // Centred within the art zone (above the 130px info strip) using explicit y.
         ColumnLayout {
             id: controlsColumn
             anchors.horizontalCenter: parent.horizontalCenter
-            // Centre within the art area above the info strip (130 px tall).
-            // midpoint of art area = (parent.height - infoH) / 2
-            // verticalCenter anchor = parent.height / 2
-            // offset = midpoint - verticalCenter = -infoH / 2
-            anchors.verticalCenter:       parent.verticalCenter
-            anchors.verticalCenterOffset: -Math.round(65 * Config.scale)
+            // Art zone height = parent.height - infoStripH
+            // Centre of art zone = artZoneH / 2
+            // y positions the top of the column, so: y = artZoneCentre - implicitHeight/2
+            readonly property real infoStripH: Math.round(130 * Config.scale)
+            readonly property real artZoneH:   parent.height - infoStripH
+            y: artZoneH / 2 - implicitHeight / 2
             width: parent.width - Math.round(24 * Config.scale)
 
             transformOrigin: Item.Center

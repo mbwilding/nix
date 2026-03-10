@@ -120,7 +120,7 @@ Scope {
             antialiasing: true
             color: Config.colors.surface
             opacity: root.visible_ ? 1 : 0
-            layer.enabled: true   // clips album art + all children to radius
+            clip: true
 
             Behavior on anchors.topMargin {
                 NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
