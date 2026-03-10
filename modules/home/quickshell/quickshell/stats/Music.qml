@@ -193,7 +193,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.rightMargin: Math.round(14 * Config.scale)
-            anchors.bottomMargin: Math.round(12 * Config.scale)
+            anchors.bottomMargin: Math.round(8 * Config.scale)
             width: timeHover.hovered ? Math.round(200 * Config.scale) : timeLabelCollapsed.implicitWidth
             height: Math.max(timeLabelCollapsed.implicitHeight, Math.round(28 * Config.scale))
 
