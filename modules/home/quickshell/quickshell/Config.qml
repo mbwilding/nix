@@ -18,13 +18,13 @@ QtObject {
 
     readonly property QtObject font: QtObject {
         readonly property string family: "NeoSpleen Nerd Font"
-        readonly property int sizeXxs:   Math.round(8  * root.fontSize)
-        readonly property int sizeSm:    Math.round(10 * root.fontSize)
-        readonly property int sizeXs:    Math.round(11 * root.fontSize)
-        readonly property int sizeMd:    Math.round(12 * root.fontSize)
-        readonly property int sizeLg:    Math.round(13 * root.fontSize)
-        readonly property int sizeXl:    Math.round(15 * root.fontSize)
-        readonly property int sizeXxl:   Math.round(20 * root.fontSize)
+        readonly property int sizeXxs: Math.round(8 * root.fontSize)
+        readonly property int sizeSm: Math.round(10 * root.fontSize)
+        readonly property int sizeXs: Math.round(11 * root.fontSize)
+        readonly property int sizeMd: Math.round(12 * root.fontSize)
+        readonly property int sizeLg: Math.round(13 * root.fontSize)
+        readonly property int sizeXl: Math.round(15 * root.fontSize)
+        readonly property int sizeXxl: Math.round(20 * root.fontSize)
     }
 
     readonly property QtObject colors: QtObject {
@@ -109,7 +109,7 @@ QtObject {
         readonly property real disabledOpacity: 0.35
         readonly property int popupRadius: Math.round(14 * root.scale)
         readonly property real triggerStart: 1 / 3   // fraction of screen width where trigger strip begins
-        readonly property real triggerEnd:   2 / 3   // fraction of screen width where trigger strip ends
+        readonly property real triggerEnd: 2 / 3   // fraction of screen width where trigger strip ends
         readonly property int edgeHotspotSize: 4     // px tall strip at screen bottom that shows the bar on hover
         readonly property var layout: [BarItems.tray, BarItems.separator, BarItems.system, BarItems.separator, BarItems.clock, BarItems.separator, BarItems.pin]
         readonly property var systemLayout: [SystemItems.wifi, SystemItems.bluetooth, SystemItems.volume, SystemItems.brightness, SystemItems.power, SystemItems.ethernet, SystemItems.notifications]
@@ -127,7 +127,7 @@ QtObject {
         readonly property int fontSizeTime: Math.round(root.font.sizeMd * 2.6)
         readonly property int fontSizeDate: Math.round(root.font.sizeMd * 1.2)
         readonly property real triggerStart: 1 / 3   // fraction of screen width where trigger strip begins
-        readonly property real triggerEnd:   2 / 3   // fraction of screen width where trigger strip ends
+        readonly property real triggerEnd: 2 / 3   // fraction of screen width where trigger strip ends
         readonly property int edgeHotspotSize: 4     // px tall strip at screen top that shows the stats drawer on hover
     }
 

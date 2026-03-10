@@ -49,12 +49,8 @@ BarSectionItem {
 
     property int statusLabelWidth: 0
 
-    implicitWidth: hasBattery
-        ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
-        : powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
-    implicitHeight: hasBattery
-        ? Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-        : powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
+    implicitWidth: hasBattery ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale) : powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
+    implicitHeight: hasBattery ? Config.bar.batteryIconSize + Math.round(10 * Config.scale) : powerGlyphText.implicitHeight + Math.round(6 * Config.scale)
     popupItem: powerPopup
 
     MouseArea {
@@ -76,7 +72,8 @@ BarSectionItem {
 
         iconSource: {
             const b = powerSection.b;
-            if (!b || !b.isLaptopBattery) return "";
+            if (!b || !b.isLaptopBattery)
+                return "";
             const pct = Math.round(b.percentage * 100);
             const charging = b.state === UPowerDeviceState.Charging || b.state === UPowerDeviceState.FullyCharged;
             const level = Math.min(100, Math.round(pct / 10) * 10);
@@ -86,16 +83,20 @@ BarSectionItem {
         }
         label: {
             const b = powerSection.b;
-            if (!b || !b.isLaptopBattery) return "";
+            if (!b || !b.isLaptopBattery)
+                return "";
             return Math.round(b.percentage * 100) + "%";
         }
         labelWidth: powerSection.statusLabelWidth
         labelColor: {
             const b = powerSection.b;
-            if (!b) return Config.colors.textPrimary;
+            if (!b)
+                return Config.colors.textPrimary;
             const pct = b.percentage * 100;
-            if (pct <= 10) return Config.colors.danger;
-            if (pct <= 20) return Config.colors.warning;
+            if (pct <= 10)
+                return Config.colors.danger;
+            if (pct <= 20)
+                return Config.colors.warning;
             return Config.colors.textPrimary;
         }
     }
@@ -166,13 +167,13 @@ BarSectionItem {
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin:  Math.round(12 * Config.scale)
+                    anchors.leftMargin: Math.round(12 * Config.scale)
                     anchors.rightMargin: Math.round(12 * Config.scale)
                     spacing: Math.round(10 * Config.scale)
 
                     // Left icon — first profile (Power Saver)
                     Item {
-                        implicitWidth:  Config.bar.batteryIconSize
+                        implicitWidth: Config.bar.batteryIconSize
                         implicitHeight: Config.bar.batteryIconSize
 
                         Text {
@@ -181,7 +182,11 @@ BarSectionItem {
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.powerIconSize
                             color: profileSlider.activeIndex === 0 ? Config.colors.accent : Config.colors.textSecondary
-                            Behavior on color { ColorAnimation { duration: 100 } }
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 100
+                                }
+                            }
                         }
                     }
 
@@ -211,10 +216,21 @@ BarSectionItem {
                             opacity: 0.35
                             gradient: Gradient {
                                 orientation: Gradient.Horizontal
-                                GradientStop { position: 0.0; color: Config.colors.accent }
-                                GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                                GradientStop {
+                                    position: 0.0
+                                    color: Config.colors.accent
+                                }
+                                GradientStop {
+                                    position: 1.0
+                                    color: Config.colors.accentAlt
+                                }
                             }
-                            Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 120
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
                         }
 
                         // Fill
@@ -225,10 +241,21 @@ BarSectionItem {
                             radius: height / 2
                             gradient: Gradient {
                                 orientation: Gradient.Horizontal
-                                GradientStop { position: 0.0; color: Config.colors.accent }
-                                GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                                GradientStop {
+                                    position: 0.0
+                                    color: Config.colors.accent
+                                }
+                                GradientStop {
+                                    position: 1.0
+                                    color: Config.colors.accentAlt
+                                }
                             }
-                            Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 120
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
                         }
 
                         // Snap dots
@@ -255,7 +282,12 @@ BarSectionItem {
                             radius: width / 2
                             color: Config.colors.glowAccent
                             opacity: 0.55
-                            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 120
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
                         }
 
                         // Thumb
@@ -266,7 +298,12 @@ BarSectionItem {
                             height: width
                             radius: width / 2
                             color: Config.colors.sliderThumb
-                            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutQuart } }
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 120
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
                         }
 
                         MouseArea {
@@ -277,13 +314,17 @@ BarSectionItem {
 
                             function pickProfile(mx) {
                                 const n = profileSlider.count;
-                                if (n < 2) return;
+                                if (n < 2)
+                                    return;
                                 const idx = Math.max(0, Math.min(n - 1, Math.round(mx / sliderTrack.width * (n - 1))));
                                 PowerProfiles.profile = profileSlider.visibleProfiles[idx].profile;
                             }
 
-                            onPressed:         mouse => pickProfile(mouse.x)
-                            onPositionChanged: mouse => { if (pressed) pickProfile(mouse.x); }
+                            onPressed: mouse => pickProfile(mouse.x)
+                            onPositionChanged: mouse => {
+                                if (pressed)
+                                    pickProfile(mouse.x);
+                            }
                             onWheel: wheel => {
                                 const dir = wheel.angleDelta.y > 0 ? -1 : 1;
                                 const next = Math.max(0, Math.min(profileSlider.count - 1, profileSlider.activeIndex + dir));
@@ -295,7 +336,7 @@ BarSectionItem {
 
                     // Right icon — last profile (Performance or Balanced)
                     Item {
-                        implicitWidth:  Config.bar.batteryIconSize
+                        implicitWidth: Config.bar.batteryIconSize
                         implicitHeight: Config.bar.batteryIconSize
 
                         Text {
@@ -304,7 +345,11 @@ BarSectionItem {
                             font.family: Config.font.family
                             font.pixelSize: Config.bar.powerIconSize
                             color: profileSlider.activeIndex === profileSlider.count - 1 ? Config.colors.accent : Config.colors.textSecondary
-                            Behavior on color { ColorAnimation { duration: 100 } }
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 100
+                                }
+                            }
                         }
                     }
                 }

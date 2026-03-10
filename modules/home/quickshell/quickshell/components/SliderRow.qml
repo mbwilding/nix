@@ -14,10 +14,10 @@ Item {
     id: root
 
     property string iconName: ""
-    property real   fraction: 0         // 0..1
+    property real fraction: 0         // 0..1
     property string label: Math.round(fraction * 100) + "%"
-    property int    labelWidth: 0
-    property real   iconOffset: 0       // vertical nudge for the icon
+    property int labelWidth: 0
+    property real iconOffset: 0       // vertical nudge for the icon
 
     signal setFraction(real v)
     signal scrollDelta(real delta)
@@ -27,12 +27,12 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin:  Math.round(12 * Config.scale)
+        anchors.leftMargin: Math.round(12 * Config.scale)
         anchors.rightMargin: Math.round(12 * Config.scale)
         spacing: Math.round(10 * Config.scale)
 
         Item {
-            implicitWidth:  Config.bar.batteryIconSize
+            implicitWidth: Config.bar.batteryIconSize
             implicitHeight: Config.bar.batteryIconSize
 
             IconImage {
@@ -68,7 +68,12 @@ Item {
                 radius: width / 2
                 color: Config.colors.glowAccent
                 opacity: 0.55
-                Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
+                Behavior on x {
+                    NumberAnimation {
+                        duration: 70
+                        easing.type: Easing.OutQuart
+                    }
+                }
             }
 
             // Thumb
@@ -79,7 +84,12 @@ Item {
                 height: width
                 radius: width / 2
                 color: Config.colors.sliderThumb
-                Behavior on x { NumberAnimation { duration: 70; easing.type: Easing.OutQuart } }
+                Behavior on x {
+                    NumberAnimation {
+                        duration: 70
+                        easing.type: Easing.OutQuart
+                    }
+                }
             }
 
             MouseArea {
@@ -93,9 +103,12 @@ Item {
                     root.entered();
                 }
 
-                onPressed:        mouse => setFromX(mouse.x)
-                onPositionChanged: mouse => { if (pressed) setFromX(mouse.x); }
-                onWheel:          wheel => {
+                onPressed: mouse => setFromX(mouse.x)
+                onPositionChanged: mouse => {
+                    if (pressed)
+                        setFromX(mouse.x);
+                }
+                onWheel: wheel => {
                     root.scrollDelta(wheel.angleDelta.y / 120);
                     root.entered();
                 }

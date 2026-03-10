@@ -319,7 +319,11 @@ Item {
                         for (let i = 0; i < snapActions.length; i++) {
                             const sa = snapActions[i];
                             const la = liveActions[i];
-                            result.push({ identifier: sa.identifier, text: sa.text, invoke: la ? (() => la.invoke()) : null });
+                            result.push({
+                                identifier: sa.identifier,
+                                text: sa.text,
+                                invoke: la ? (() => la.invoke()) : null
+                            });
                         }
                         return result;
                     } else {
@@ -329,7 +333,11 @@ Item {
                         const result = [];
                         for (let i = 0; i < rawActions.length; i++) {
                             const a = rawActions[i];
-                            result.push({ identifier: a.identifier ?? "", text: a.text ?? "", invoke: (() => a.invoke()) });
+                            result.push({
+                                identifier: a.identifier ?? "",
+                                text: a.text ?? "",
+                                invoke: (() => a.invoke())
+                            });
                         }
                         return result;
                     }

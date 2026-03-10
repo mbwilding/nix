@@ -17,7 +17,7 @@ Item {
     property bool pinned: false
     signal togglePinReq
 
-    implicitWidth:  btn.implicitWidth
+    implicitWidth: btn.implicitWidth
     implicitHeight: btn.implicitHeight
 
     BarButton {
@@ -35,7 +35,11 @@ Item {
             layer.effect: MultiEffect {
                 colorization: 1.0
                 colorizationColor: root.pinned ? Config.colors.accent : Config.colors.textSecondary
-                Behavior on colorizationColor { ColorAnimation { duration: 120 } }
+                Behavior on colorizationColor {
+                    ColorAnimation {
+                        duration: 120
+                    }
+                }
             }
         }
     }

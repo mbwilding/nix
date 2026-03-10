@@ -12,97 +12,71 @@ Item {
     id: root
 
     // ── Raw data ──────────────────────────────────────────────────────────────
-    property int    gpuPercent:     0
-    property int    vcnPercent:     0
-    property real   vramUsedBytes:  0
-    property real   vramTotalBytes: 0
-    property int    sclkHz:         0      // precise core clock from hwmon
-    property int    mclkMhz:        0      // active memory clock from pp_dpm_mclk
-    property int    tempMilliC:     0
-    property real   powerUw:        0      // microwatts
-    property string perfLevel:      ""     // power_dpm_force_performance_level
-    property string dpmState:       ""     // power_dpm_state
-    property string pciState:       ""     // power_state (D0/D3/…)
+    property int gpuPercent: 0
+    property int vcnPercent: 0
+    property real vramUsedBytes: 0
+    property real vramTotalBytes: 0
+    property int sclkHz: 0      // precise core clock from hwmon
+    property int mclkMhz: 0      // active memory clock from pp_dpm_mclk
+    property int tempMilliC: 0
+    property real powerUw: 0      // microwatts
+    property string perfLevel: ""     // power_dpm_force_performance_level
+    property string dpmState: ""     // power_dpm_state
+    property string pciState: ""     // power_state (D0/D3/…)
 
     // ── Derived ───────────────────────────────────────────────────────────────
-    readonly property int    tempC:       Math.round(root.tempMilliC / 1000)
-    readonly property real   powerW:      root.powerUw / 1000000
-    readonly property real   vramUsedGb:  root.vramUsedBytes  / 1073741824
-    readonly property real   vramTotalGb: root.vramTotalBytes / 1073741824
-    readonly property real   vramFrac:    root.vramTotalBytes > 0 ? root.vramUsedBytes / root.vramTotalBytes : 0
-    readonly property string sclkText:    root.sclkHz > 0  ? (root.sclkHz / 1000000).toFixed(0) + " MHz" : "—"
-    readonly property string mclkText:    root.mclkMhz > 0 ? root.mclkMhz + " MHz"                       : "—"
+    readonly property int tempC: Math.round(root.tempMilliC / 1000)
+    readonly property real powerW: root.powerUw / 1000000
+    readonly property real vramUsedGb: root.vramUsedBytes / 1073741824
+    readonly property real vramTotalGb: root.vramTotalBytes / 1073741824
+    readonly property real vramFrac: root.vramTotalBytes > 0 ? root.vramUsedBytes / root.vramTotalBytes : 0
+    readonly property string sclkText: root.sclkHz > 0 ? (root.sclkHz / 1000000).toFixed(0) + " MHz" : "—"
+    readonly property string mclkText: root.mclkMhz > 0 ? root.mclkMhz + " MHz" : "—"
 
     // ── Colours ───────────────────────────────────────────────────────────────
-    readonly property color gpuColor:
-        root.gpuPercent > 85 ? Config.colors.danger  :
-        root.gpuPercent > 55 ? Config.colors.warning :
-                               Config.colors.accent
+    readonly property color gpuColor: root.gpuPercent > 85 ? Config.colors.danger : root.gpuPercent > 55 ? Config.colors.warning : Config.colors.accent
 
-    readonly property color vramColor:
-        root.vramFrac > 0.85 ? Config.colors.danger  :
-        root.vramFrac > 0.65 ? Config.colors.warning :
-                               Config.colors.accent
+    readonly property color vramColor: root.vramFrac > 0.85 ? Config.colors.danger : root.vramFrac > 0.65 ? Config.colors.warning : Config.colors.accent
 
-    readonly property color tempColor:
-        root.tempC >= 90 ? Config.colors.danger  :
-        root.tempC >= 70 ? Config.colors.warning :
-                           Config.colors.accent
+    readonly property color tempColor: root.tempC >= 90 ? Config.colors.danger : root.tempC >= 70 ? Config.colors.warning : Config.colors.accent
 
-    readonly property color powerColor:
-        root.powerW >= 35 ? Config.colors.danger  :
-        root.powerW >= 20 ? Config.colors.warning :
-                            Config.colors.accent
+    readonly property color powerColor: root.powerW >= 35 ? Config.colors.danger : root.powerW >= 20 ? Config.colors.warning : Config.colors.accent
 
-    readonly property color perfLevelColor:
-        root.perfLevel === "high"   ? Config.colors.danger    :
-        root.perfLevel === "low"    ? Config.colors.textMuted :
-        root.perfLevel === "manual" ? Config.colors.warning   :
-                                      Config.colors.accent
+    readonly property color perfLevelColor: root.perfLevel === "high" ? Config.colors.danger : root.perfLevel === "low" ? Config.colors.textMuted : root.perfLevel === "manual" ? Config.colors.warning : Config.colors.accent
 
-    readonly property color dpmStateColor:
-        root.dpmState === "performance" ? Config.colors.accentAlt :
-        root.dpmState === "battery"     ? Config.colors.textMuted :
-                                          Config.colors.accent
+    readonly property color dpmStateColor: root.dpmState === "performance" ? Config.colors.accentAlt : root.dpmState === "battery" ? Config.colors.textMuted : Config.colors.accent
 
     // ── Processes ─────────────────────────────────────────────────────────────
     property Process _utilProc: Process {
-        command: ["cat",
-            "/sys/class/drm/card1/device/gpu_busy_percent",
-            "/sys/class/drm/card1/device/vcn_busy_percent"]
+        command: ["cat", "/sys/class/drm/card1/device/gpu_busy_percent", "/sys/class/drm/card1/device/vcn_busy_percent"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const lines = this.text.trim().split("\n")
-                root.gpuPercent = parseInt(lines[0]) || 0
-                root.vcnPercent = parseInt(lines[1]) || 0
+                const lines = this.text.trim().split("\n");
+                root.gpuPercent = parseInt(lines[0]) || 0;
+                root.vcnPercent = parseInt(lines[1]) || 0;
             }
         }
     }
 
     property Process _vramProc: Process {
-        command: ["cat",
-            "/sys/class/drm/card1/device/mem_info_vram_used",
-            "/sys/class/drm/card1/device/mem_info_vram_total"]
+        command: ["cat", "/sys/class/drm/card1/device/mem_info_vram_used", "/sys/class/drm/card1/device/mem_info_vram_total"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const lines = this.text.trim().split("\n")
-                root.vramUsedBytes  = parseFloat(lines[0]) || 0
-                root.vramTotalBytes = parseFloat(lines[1]) || 0
+                const lines = this.text.trim().split("\n");
+                root.vramUsedBytes = parseFloat(lines[0]) || 0;
+                root.vramTotalBytes = parseFloat(lines[1]) || 0;
             }
         }
     }
 
     property Process _hwmonProc: Process {
-        command: ["sh", "-c",
-            "cat /sys/class/hwmon/hwmon7/freq1_input " +
-                "/sys/class/hwmon/hwmon7/temp1_input " +
-                "/sys/class/hwmon/hwmon7/power1_input 2>/dev/null"]
+        command: ["sh", "-c", "cat /sys/class/hwmon/hwmon7/freq1_input " + "/sys/class/hwmon/hwmon7/temp1_input " + "/sys/class/hwmon/hwmon7/power1_input 2>/dev/null"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const lines = this.text.trim().split("\n")
-                root.sclkHz     = parseInt(lines[0])   || 0
-                root.tempMilliC = parseInt(lines[1])   || 0
-                root.powerUw    = parseFloat(lines[2]) || 0
+                const lines = this.text.trim().split("\n");
+                root.sclkHz = parseInt(lines[0]) || 0;
+                root.tempMilliC = parseInt(lines[1]) || 0;
+                root.powerUw = parseFloat(lines[2]) || 0;
             }
         }
     }
@@ -113,8 +87,11 @@ Item {
             onStreamFinished: {
                 for (const line of this.text.split("\n")) {
                     if (line.includes("*")) {
-                        const m = line.match(/(\d+)Mhz/)
-                        if (m) { root.mclkMhz = parseInt(m[1]); break }
+                        const m = line.match(/(\d+)Mhz/);
+                        if (m) {
+                            root.mclkMhz = parseInt(m[1]);
+                            break;
+                        }
                     }
                 }
             }
@@ -122,34 +99,34 @@ Item {
     }
 
     property Process _stateProc: Process {
-        command: ["sh", "-c",
-            "cat /sys/class/drm/card1/device/power_dpm_force_performance_level " +
-                "/sys/class/drm/card1/device/power_dpm_state " +
-                "/sys/class/drm/card1/device/power_state 2>/dev/null"]
+        command: ["sh", "-c", "cat /sys/class/drm/card1/device/power_dpm_force_performance_level " + "/sys/class/drm/card1/device/power_dpm_state " + "/sys/class/drm/card1/device/power_state 2>/dev/null"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const lines = this.text.trim().split("\n")
-                root.perfLevel = (lines[0] || "").trim()
-                root.dpmState  = (lines[1] || "").trim()
-                root.pciState  = (lines[2] || "").trim()
+                const lines = this.text.trim().split("\n");
+                root.perfLevel = (lines[0] || "").trim();
+                root.dpmState = (lines[1] || "").trim();
+                root.pciState = (lines[2] || "").trim();
             }
         }
     }
 
     property Timer _timer: Timer {
-        interval: 2000; repeat: true; running: true; triggeredOnStart: true
+        interval: 2000
+        repeat: true
+        running: true
+        triggeredOnStart: true
         onTriggered: {
-            root._utilProc.running  = true
-            root._vramProc.running  = true
-            root._hwmonProc.running = true
-            root._mclkProc.running  = true
-            root._stateProc.running = true
+            root._utilProc.running = true;
+            root._vramProc.running = true;
+            root._hwmonProc.running = true;
+            root._mclkProc.running = true;
+            root._stateProc.running = true;
         }
     }
 
     // ── Sizing helpers ────────────────────────────────────────────────────────
-    readonly property int pad:   Math.round(14 * Config.scale)
-    readonly property int gap:   Math.round(8  * Config.scale)
+    readonly property int pad: Math.round(14 * Config.scale)
+    readonly property int gap: Math.round(8 * Config.scale)
     readonly property int cardR: Math.round(10 * Config.scale)
 
     // ── Layout ────────────────────────────────────────────────────────────────
@@ -180,10 +157,16 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
 
                 Text {
                     text: root.dpmState
@@ -192,7 +175,11 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.capitalization: Font.Capitalize
                     visible: root.dpmState !== ""
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
                 Text {
                     text: "·"
@@ -208,10 +195,16 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.capitalization: Font.Capitalize
                     visible: root.perfLevel !== ""
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
 
                 Text {
                     text: root.tempC + "°C"
@@ -220,7 +213,11 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                     visible: root.tempC > 0
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
             }
 
@@ -308,10 +305,16 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 400
+                        }
+                    }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
 
                 Text {
                     text: root.vramUsedGb.toFixed(2) + " / " + root.vramTotalGb.toFixed(1) + " GB"
@@ -325,9 +328,7 @@ Item {
                     height: Math.round(18 * Config.scale)
                     width: pciLabel.implicitWidth + Math.round(12 * Config.scale)
                     radius: height / 2
-                    color: root.pciState === "D0"
-                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
-                        : Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.12)
+                    color: root.pciState === "D0" ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15) : Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.12)
                     border.color: root.pciState === "D0" ? Config.colors.accent : Config.colors.textMuted
                     border.width: 1
                     visible: root.pciState !== ""
@@ -364,10 +365,21 @@ Item {
                     opacity: 0.30
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: root.vramColor }
-                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        GradientStop {
+                            position: 0.0
+                            color: root.vramColor
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: Config.colors.accentAlt
+                        }
                     }
-                    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                    Behavior on width {
+                        NumberAnimation {
+                            duration: 400
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
@@ -376,10 +388,21 @@ Item {
                     radius: height / 2
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: root.vramColor }
-                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        GradientStop {
+                            position: 0.0
+                            color: root.vramColor
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: Config.colors.accentAlt
+                        }
                     }
-                    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                    Behavior on width {
+                        NumberAnimation {
+                            duration: 400
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
             }
         }
@@ -388,16 +411,20 @@ Item {
     // ── Inline MetricCard ─────────────────────────────────────────────────────
     component MetricCard: Rectangle {
         id: card
-        property string label:      ""
-        property string value:      "—"
-        property color  valueColor: Config.colors.accent
+        property string label: ""
+        property string value: "—"
+        property color valueColor: Config.colors.accent
 
         radius: root.cardR
         color: Config.colors.surfaceAlt
         border.color: Qt.rgba(card.valueColor.r, card.valueColor.g, card.valueColor.b, 0.20)
         border.width: 1
 
-        Behavior on border.color { ColorAnimation { duration: 400 } }
+        Behavior on border.color {
+            ColorAnimation {
+                duration: 400
+            }
+        }
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -410,7 +437,11 @@ Item {
                 font.family: Config.font.family
                 font.pixelSize: Config.font.sizeXxl
                 font.weight: Font.SemiBold
-                Behavior on color { ColorAnimation { duration: 400 } }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 400
+                    }
+                }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter

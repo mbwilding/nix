@@ -20,43 +20,49 @@ Scope {
     property bool pinned: false
 
     readonly property int drawerHeight: drawer.drawerWidth + Math.round(44 * Config.scale)
-    readonly property int drawerPad:    Math.round(16 * Config.scale)
+    readonly property int drawerPad: Math.round(16 * Config.scale)
 
     function showMouse() {
-        root.visible_ = true
-        if (!root.pinned) hideTimer.restart()
+        root.visible_ = true;
+        if (!root.pinned)
+            hideTimer.restart();
     }
 
     function toggle() {
         if (root.visible_ && root.pinned) {
-            root.pinned = false
-            root.visible_ = false
-            hideTimer.stop()
+            root.pinned = false;
+            root.visible_ = false;
+            hideTimer.stop();
         } else if (root.visible_) {
-            root.pinned = true
-            hideTimer.stop()
+            root.pinned = true;
+            hideTimer.stop();
         } else {
-            root.pinned = true
-            root.visible_ = true
-            hideTimer.stop()
+            root.pinned = true;
+            root.visible_ = true;
+            hideTimer.stop();
         }
     }
 
     function hide() {
-        root.visible_ = false
-        root.pinned = false
-        hideTimer.stop()
+        root.visible_ = false;
+        root.pinned = false;
+        hideTimer.stop();
     }
 
     Timer {
         id: hideTimer
         interval: Config.stats.hideDelay
-        onTriggered: { if (!root.pinned) root.hide() }
+        onTriggered: {
+            if (!root.pinned)
+                root.hide();
+        }
     }
 
     IpcHandler {
         target: "stats"
-        function toggle() { root.toggle() }
+        function toggle() {
+            root.toggle();
+        }
     }
 
     PanelWindow {
@@ -70,7 +76,7 @@ Scope {
         exclusiveZone: 0
         color: "transparent"
 
-        implicitWidth:  win.screen ? win.screen.width  : 1920
+        implicitWidth: win.screen ? win.screen.width : 1920
         implicitHeight: win.screen ? win.screen.height : 1080
 
         mask: Region {
@@ -94,7 +100,10 @@ Scope {
             width: Math.round(win.implicitWidth * (Config.stats.triggerEnd - Config.stats.triggerStart))
             height: Config.stats.edgeHotspotSize
             HoverHandler {
-                onHoveredChanged: { if (hovered) root.showMouse() }
+                onHoveredChanged: {
+                    if (hovered)
+                        root.showMouse();
+                }
             }
         }
 
@@ -103,8 +112,8 @@ Scope {
             id: drawer
 
             // Tab bar runs across the top; content fills below.
-            readonly property int tabBarHeight:  Math.round(44 * Config.scale)
-            readonly property int drawerWidth:   Math.round(400 * Config.scale)
+            readonly property int tabBarHeight: Math.round(44 * Config.scale)
+            readonly property int drawerWidth: Math.round(400 * Config.scale)
 
             // 0=Media  1=CPU  2=RAM  3=GPU  4=Network
             property int activeTab: 0
@@ -113,7 +122,7 @@ Scope {
             anchors.top: parent.top
             anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
 
-            width:  drawer.drawerWidth
+            width: drawer.drawerWidth
             height: root.drawerHeight
 
             radius: Math.round(Config.stats.radius * Config.scale)
@@ -123,16 +132,24 @@ Scope {
             clip: true
 
             Behavior on anchors.topMargin {
-                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
+                NumberAnimation {
+                    duration: Config.stats.animateSpeed
+                    easing.type: Easing.InOutCubic
+                }
             }
             Behavior on opacity {
-                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: Config.stats.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             HoverHandler {
                 onHoveredChanged: {
-                    if (hovered)           hideTimer.stop()
-                    else if (!root.pinned) hideTimer.restart()
+                    if (hovered)
+                        hideTimer.stop();
+                    else if (!root.pinned)
+                        hideTimer.restart();
                 }
             }
 
@@ -150,7 +167,7 @@ Scope {
                     // Tabs spread evenly across the bar
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin:  Math.round(8 * Config.scale)
+                        anchors.leftMargin: Math.round(8 * Config.scale)
                         anchors.rightMargin: Math.round(8 * Config.scale)
                         spacing: 0
 
@@ -209,8 +226,8 @@ Scope {
 
                     // Bottom separator
                     Rectangle {
-                        anchors.left:   parent.left
-                        anchors.right:  parent.right
+                        anchors.left: parent.left
+                        anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         height: 1
                         color: Config.colors.border
@@ -229,7 +246,11 @@ Scope {
                         anchors.fill: parent
                         visible: drawer.activeTab === 0
                         opacity: drawer.activeTab === 0 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
 
                     // Tab 1 — CPU boxes (full-bleed, self-padded)
@@ -237,7 +258,11 @@ Scope {
                         anchors.fill: parent
                         visible: drawer.activeTab === 1
                         opacity: drawer.activeTab === 1 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
 
                     // Tab 2 — RAM
@@ -245,7 +270,11 @@ Scope {
                         anchors.fill: parent
                         visible: drawer.activeTab === 2
                         opacity: drawer.activeTab === 2 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
 
                     // Tab 3 — GPU
@@ -253,7 +282,11 @@ Scope {
                         anchors.fill: parent
                         visible: drawer.activeTab === 3
                         opacity: drawer.activeTab === 3 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
 
                     // Tab 4 — Network
@@ -261,7 +294,11 @@ Scope {
                         anchors.fill: parent
                         visible: drawer.activeTab === 4
                         opacity: drawer.activeTab === 4 ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 150
+                            }
+                        }
                     }
                 }
             }
@@ -272,7 +309,7 @@ Scope {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: root.visible_ ? 0 : -root.drawerHeight
-            width:  drawer.drawerWidth
+            width: drawer.drawerWidth
             height: root.drawerHeight
             radius: Math.round(Config.stats.radius * Config.scale)
             color: "transparent"
@@ -280,10 +317,16 @@ Scope {
             border.width: Config.panelBorder.width
             opacity: root.visible_ ? 1 : 0
             Behavior on anchors.topMargin {
-                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutCubic }
+                NumberAnimation {
+                    duration: Config.stats.animateSpeed
+                    easing.type: Easing.InOutCubic
+                }
             }
             Behavior on opacity {
-                NumberAnimation { duration: Config.stats.animateSpeed; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: Config.stats.animateSpeed
+                    easing.type: Easing.InOutQuad
+                }
             }
         }
     }
@@ -302,10 +345,12 @@ Scope {
             anchors.fill: parent
             anchors.margins: Math.round(4 * Config.scale)
             radius: Math.round(7 * Config.scale)
-            color: tabIcon.active
-                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
-                : tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-            Behavior on color { ColorAnimation { duration: 100 } }
+            color: tabIcon.active ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            Behavior on color {
+                ColorAnimation {
+                    duration: 100
+                }
+            }
         }
 
         ColumnLayout {
@@ -330,13 +375,20 @@ Scope {
                 font.family: Config.font.family
                 font.pixelSize: Config.font.sizeXxs
                 font.weight: tabIcon.active ? Font.Medium : Font.Normal
-                Behavior on color { ColorAnimation { duration: 100 } }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 100
+                    }
+                }
             }
         }
 
         HoverHandler {
             id: tabHover
-            onHoveredChanged: { if (hovered) tabIcon.hovered() }
+            onHoveredChanged: {
+                if (hovered)
+                    tabIcon.hovered();
+            }
         }
     }
 
@@ -346,17 +398,19 @@ Scope {
         property bool pinned: false
         signal clicked
 
-        implicitWidth:  Math.round(44 * Config.scale)
+        implicitWidth: Math.round(44 * Config.scale)
         implicitHeight: Math.round(44 * Config.scale)
 
         Rectangle {
             anchors.fill: parent
             anchors.margins: Math.round(4 * Config.scale)
             radius: Math.round(7 * Config.scale)
-            color: pinTab.pinned
-                ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22)
-                : pinHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-            Behavior on color { ColorAnimation { duration: 100 } }
+            color: pinTab.pinned ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : pinHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            Behavior on color {
+                ColorAnimation {
+                    duration: 100
+                }
+            }
         }
 
         IconImage {
@@ -367,11 +421,17 @@ Scope {
             layer.effect: MultiEffect {
                 colorization: 1.0
                 colorizationColor: pinTab.pinned ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
-                Behavior on colorizationColor { ColorAnimation { duration: 120 } }
+                Behavior on colorizationColor {
+                    ColorAnimation {
+                        duration: 120
+                    }
+                }
             }
         }
 
-        HoverHandler { id: pinHover }
+        HoverHandler {
+            id: pinHover
+        }
 
         MouseArea {
             anchors.fill: parent

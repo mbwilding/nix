@@ -68,7 +68,14 @@ BarSectionItem {
                     const state = parts[2];
                     // Connection name is everything after the 3rd colon
                     const connection = parts.slice(3).join(":");
-                    ethDevs.push({ device, state, connection, ip4: "", ip6: "", speed: "" });
+                    ethDevs.push({
+                        device,
+                        state,
+                        connection,
+                        ip4: "",
+                        ip6: "",
+                        speed: ""
+                    });
                 }
                 ethSection.hasEthernetDevice = ethDevs.length > 0;
                 if (ethDevs.length > 0) {
@@ -159,7 +166,11 @@ BarSectionItem {
                 // Update the enriched device entry
                 const devs = ethEnrichProc.enrichedDevices.map(d => {
                     if (d.device === ethSpeedProc.devName)
-                        return Object.assign({}, d, { ip4: ethSpeedProc.ip4, speed: speed, carrier: ethSpeedProc.carrier });
+                        return Object.assign({}, d, {
+                            ip4: ethSpeedProc.ip4,
+                            speed: speed,
+                            carrier: ethSpeedProc.carrier
+                        });
                     return d;
                 });
                 ethEnrichProc.enrichedDevices = devs;
@@ -171,7 +182,10 @@ BarSectionItem {
             if (code !== 0) {
                 const devs = ethEnrichProc.enrichedDevices.map(d => {
                     if (d.device === ethSpeedProc.devName)
-                        return Object.assign({}, d, { ip4: ethSpeedProc.ip4, carrier: ethSpeedProc.carrier });
+                        return Object.assign({}, d, {
+                            ip4: ethSpeedProc.ip4,
+                            carrier: ethSpeedProc.carrier
+                        });
                     return d;
                 });
                 ethEnrichProc.enrichedDevices = devs;
@@ -353,12 +367,12 @@ BarSectionItem {
 
         implicitHeight: rowContent.implicitHeight + Math.round(12 * Config.scale)
         radius: Math.round(6 * Config.scale)
-        color: (row.clickable && rowMouse.containsMouse)
-            ? (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28) : Config.colors.surfaceAlt)
-            : (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent")
+        color: (row.clickable && rowMouse.containsMouse) ? (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.28) : Config.colors.surfaceAlt) : (connected ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18) : "transparent")
 
         Behavior on color {
-            ColorAnimation { duration: 80 }
+            ColorAnimation {
+                duration: 80
+            }
         }
 
         MouseArea {
@@ -367,7 +381,8 @@ BarSectionItem {
             hoverEnabled: true
             cursorShape: row.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
             onEntered: row.hovered()
-            onClicked: if (row.clickable) row.toggleRequested()
+            onClicked: if (row.clickable)
+                row.toggleRequested()
         }
 
         ColumnLayout {
@@ -381,7 +396,10 @@ BarSectionItem {
 
             opacity: (!row.available || row.toggling) ? Config.bar.disabledOpacity : 1.0
             Behavior on opacity {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             RowLayout {
@@ -406,7 +424,7 @@ BarSectionItem {
                     Layout.fillWidth: true
                     text: {
                         const conn = row.deviceInfo?.connection ?? "";
-                        const dev  = row.deviceInfo?.device ?? "";
+                        const dev = row.deviceInfo?.device ?? "";
                         return conn !== "" ? conn : dev;
                     }
                     color: row.connected ? Config.colors.accent : Config.colors.textPrimary
@@ -414,7 +432,9 @@ BarSectionItem {
                     font.pixelSize: Config.bar.fontSizePopup
                     elide: Text.ElideRight
                     Behavior on color {
-                        ColorAnimation { duration: 120 }
+                        ColorAnimation {
+                            duration: 120
+                        }
                     }
                 }
 
