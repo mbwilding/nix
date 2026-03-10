@@ -116,15 +116,6 @@ Scope {
             hideTimer.restart();
     }
 
-    // Helper: returns true if `value` appears in `arr`
-    function inList(arr, value) {
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i] === value)
-                return true;
-        }
-        return false;
-    }
-
     Timer {
         id: popupCloseTimer
         interval: Config.bar.hideDelay
