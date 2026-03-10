@@ -374,13 +374,6 @@ Item {
                         color: Config.colors.accentAlt
                     }
                 }
-                Behavior on width {
-                    enabled: timeHover.hovered
-                    NumberAnimation {
-                        duration: 80
-                        easing.type: Easing.OutQuart
-                    }
-                }
             }
             // Thumb
             Rectangle {
@@ -390,13 +383,6 @@ Item {
                 height: width
                 radius: width / 2
                 color: "white"
-                Behavior on x {
-                    enabled: timeHover.hovered
-                    NumberAnimation {
-                        duration: 80
-                        easing.type: Easing.OutQuart
-                    }
-                }
             }
 
             MouseArea {
@@ -546,13 +532,6 @@ Item {
                         color: Config.colors.accentAlt
                     }
                 }
-                Behavior on width {
-                    enabled: volHover.hovered
-                    NumberAnimation {
-                        duration: 60
-                        easing.type: Easing.OutQuart
-                    }
-                }
             }
             // Thumb
             Rectangle {
@@ -562,13 +541,6 @@ Item {
                 height: width
                 radius: width / 2
                 color: "white"
-                Behavior on x {
-                    enabled: volHover.hovered
-                    NumberAnimation {
-                        duration: 60
-                        easing.type: Easing.OutQuart
-                    }
-                }
             }
 
             MouseArea {
@@ -757,3 +729,4 @@ Item {
         }
     }
 }
+
