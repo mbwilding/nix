@@ -215,19 +215,19 @@ Scope {
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "preferences-devices-cpu"
+                            iconName: "show-gpu-effects-symbolic"
                             active: drawer.activeTab === 1
                             onHovered: drawer.activeTab = 1
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "dialog-memory-symbolic"
+                            iconName: "media-flash-sd-mmc-symbolic"
                             active: drawer.activeTab === 2
                             onHovered: drawer.activeTab = 2
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "video-card-inactive-symbolic"
+                            iconName: "media-flash-memory-stick-symbolic"
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
                         }
@@ -373,7 +373,7 @@ Scope {
 
         IconImage {
             anchors.centerIn: parent
-            implicitSize: Math.round(16 * Config.scale)
+            implicitSize: Math.round(20 * Config.scale)
             source: Quickshell.iconPath(tabIcon.iconName)
             layer.enabled: true
             layer.effect: MultiEffect {
@@ -419,7 +419,7 @@ Scope {
 
         IconImage {
             anchors.centerIn: parent
-            implicitSize: Math.round(13 * Config.scale)
+            implicitSize: Math.round(18 * Config.scale)
             source: Quickshell.iconPath(pinTab.pinned ? "window-pin-symbolic" : "window-unpin-symbolic")
             layer.enabled: true
             layer.effect: MultiEffect {
