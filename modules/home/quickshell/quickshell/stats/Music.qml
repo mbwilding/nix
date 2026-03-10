@@ -10,7 +10,8 @@ import Quickshell.Services.Mpris
 import ".."
 import "../components"
 
-// Music/media section — square album art on top, details below.
+// Music/media section — full-bleed art with persistent info overlay at bottom.
+// Controls slide up into the centre on hover.
 Item {
     id: root
 
@@ -60,192 +61,175 @@ Item {
         return m + ":" + (r < 10 ? "0" : "") + r
     }
 
-    // ── Layout: art (square, top) + detail panel (below) ─────────────────────
-    ColumnLayout {
+    // ── Art fills the entire content area ────────────────────────────────────
+    Image {
+        id: artImage
         anchors.fill: parent
-        spacing: 0
+        source: root.artUrl
+        fillMode: Image.PreserveAspectCrop
+        visible: root.artUrl !== "" && status === Image.Ready
+        cache: false
+    }
 
-        // ── Square album art ──────────────────────────────────────────────────
-        Item {
-            // 1:1 square, but never taller than ~55% of the drawer content area
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(width, Math.round(root.height * 0.52))
+    // Fallback
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(Config.colors.surface.r, Config.colors.surface.g, Config.colors.surface.b, 1)
+        visible: root.artUrl === "" || artImage.status !== Image.Ready
+        Text {
+            anchors.centerIn: parent
+            text: "\u266b"
+            color: Config.colors.textMuted
+            font.pixelSize: Math.round(48 * Config.scale)
+        }
+    }
 
-            // Art image — cropped to fill the square
-            Image {
-                id: artImage
-                anchors.fill: parent
-                source: root.artUrl
-                fillMode: Image.PreserveAspectCrop
-                visible: root.artUrl !== "" && status === Image.Ready
-                cache: false
-            }
+    // Hover detector over entire card
+    HoverHandler { id: cardHover }
 
-            // Fallback — no art
-            Rectangle {
-                anchors.fill: parent
-                color: Qt.rgba(
-                    Config.colors.surface.r,
-                    Config.colors.surface.g,
-                    Config.colors.surface.b, 1)
-                visible: root.artUrl === "" || artImage.status !== Image.Ready
+    // ── Persistent bottom scrim + song info ───────────────────────────────────
+    Item {
+        anchors.left:   parent.left
+        anchors.right:  parent.right
+        anchors.bottom: parent.bottom
+        height: Math.round(90 * Config.scale)
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "\u266b"
-                    color: Config.colors.textMuted
-                    font.pixelSize: Math.round(40 * Config.scale)
-                }
-            }
-
-            // Subtle bottom fade to blend into the panel below
-            Rectangle {
-                anchors.left:   parent.left
-                anchors.right:  parent.right
-                anchors.bottom: parent.bottom
-                height: Math.round(32 * Config.scale)
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-                    GradientStop { position: 0.0; color: "transparent" }
-                    GradientStop { position: 1.0; color: Config.colors.surface }
-                }
+        // Scrim
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0; color: "transparent" }
+                GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.80) }
             }
         }
 
-        // ── Detail panel ──────────────────────────────────────────────────────
+        // Song info pinned to the very bottom
         ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: Math.round(6 * Config.scale)
-
-            // Padding applied via inner layout margins
-            Item { Layout.preferredHeight: Math.round(2 * Config.scale) }
-
-            // Track info
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin:  Math.round(12 * Config.scale)
-                Layout.rightMargin: Math.round(12 * Config.scale)
-                spacing: Math.round(2 * Config.scale)
-
-                Text {
-                    Layout.fillWidth: true
-                    text: root.trackTitle
-                    color: Config.colors.textPrimary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeMd
-                    font.weight: Font.SemiBold
-                    elide: Text.ElideRight
-                }
-                Text {
-                    Layout.fillWidth: true
-                    text: root.trackArtist
-                    color: Config.colors.textSecondary
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                    elide: Text.ElideRight
-                    visible: root.trackArtist !== ""
-                }
-                Text {
-                    Layout.fillWidth: true
-                    text: root.trackAlbum
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                    elide: Text.ElideRight
-                    visible: root.trackAlbum !== ""
-                }
+            anchors {
+                left:         parent.left
+                right:        parent.right
+                bottom:       parent.bottom
+                leftMargin:   Math.round(12 * Config.scale)
+                rightMargin:  Math.round(12 * Config.scale)
+                bottomMargin: Math.round(10 * Config.scale)
             }
+            spacing: Math.round(1 * Config.scale)
 
-            // Playback controls
-            RowLayout {
+            Text {
                 Layout.fillWidth: true
-                Layout.leftMargin:  Math.round(12 * Config.scale)
-                Layout.rightMargin: Math.round(12 * Config.scale)
-                Layout.alignment: Qt.AlignHCenter
-                spacing: Math.round(16 * Config.scale)
+                text: root.trackTitle
+                color: "white"
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeMd
+                font.weight: Font.SemiBold
+                elide: Text.ElideRight
+            }
+            Text {
+                Layout.fillWidth: true
+                text: root.trackArtist
+                color: Qt.rgba(1, 1, 1, 0.75)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                elide: Text.ElideRight
+                visible: root.trackArtist !== ""
+            }
+            Text {
+                Layout.fillWidth: true
+                text: root.trackAlbum
+                color: Qt.rgba(1, 1, 1, 0.50)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                elide: Text.ElideRight
+                visible: root.trackAlbum !== ""
+            }
+        }
+    }
 
-                // Previous
+    // ── Controls overlay — slides up into centre on hover ─────────────────────
+    Item {
+        anchors.fill: parent
+        opacity: cardHover.hovered ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+
+        // Mid-card scrim so controls are legible without touching the bottom info
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0;  color: "transparent" }
+                GradientStop { position: 0.25; color: Qt.rgba(0, 0, 0, 0.35) }
+                GradientStop { position: 0.75; color: Qt.rgba(0, 0, 0, 0.35) }
+                GradientStop { position: 1.0;  color: "transparent" }
+            }
+        }
+
+        // Controls column — vertically centred, offset up slightly so it sits
+        // in the art area above the persistent info strip
+        ColumnLayout {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter:   parent.verticalCenter
+            anchors.verticalCenterOffset: -Math.round(30 * Config.scale)
+            spacing: Math.round(10 * Config.scale)
+
+            // Prev / Play / Next
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: Math.round(18 * Config.scale)
+
                 Rectangle {
-                    implicitWidth:  Math.round(28 * Config.scale)
-                    implicitHeight: Math.round(28 * Config.scale)
+                    implicitWidth: Math.round(30 * Config.scale); implicitHeight: implicitWidth
                     radius: implicitWidth / 2
-                    color: prevMouse.containsMouse ? Qt.rgba(1,1,1,0.12) : "transparent"
+                    color: prevMouse.containsMouse ? Qt.rgba(1,1,1,0.22) : Qt.rgba(1,1,1,0.10)
                     opacity: root.player ? 1 : Config.bar.disabledOpacity
                     Behavior on color { ColorAnimation { duration: 80 } }
-                    Text {
-                        anchors.centerIn: parent
-                        text: "\u23ee"
-                        color: Config.colors.textSecondary
-                        font.pixelSize: Config.font.sizeSm
-                    }
+                    Text { anchors.centerIn: parent; text: "\u23ee"; color: "white"; font.pixelSize: Config.font.sizeSm }
                     MouseArea { id: prevMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.previous() }
                 }
 
-                // Play/Pause
                 Rectangle {
-                    implicitWidth:  Math.round(36 * Config.scale)
-                    implicitHeight: Math.round(36 * Config.scale)
+                    implicitWidth: Math.round(42 * Config.scale); implicitHeight: implicitWidth
                     radius: implicitWidth / 2
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 0.65 : 0.45) }
-                        GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.55 : 0.35) }
+                        GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 0.85 : 0.65) }
+                        GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.75 : 0.55) }
                     }
-                    border.color: Config.colors.accent
+                    border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.85)
                     border.width: 1
                     opacity: root.player ? 1 : Config.bar.disabledOpacity
                     Text {
                         anchors.centerIn: parent
                         anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
                         text: root.isPlaying ? "\u23f8" : "\u25b6"
-                        color: "white"
-                        font.pixelSize: Config.font.sizeSm
-                        font.weight: Font.Medium
+                        color: "white"; font.pixelSize: Config.font.sizeLg; font.weight: Font.Medium
                     }
                     MouseArea { id: playMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.togglePlaying() }
                 }
 
-                // Next
                 Rectangle {
-                    implicitWidth:  Math.round(28 * Config.scale)
-                    implicitHeight: Math.round(28 * Config.scale)
+                    implicitWidth: Math.round(30 * Config.scale); implicitHeight: implicitWidth
                     radius: implicitWidth / 2
-                    color: nextMouse.containsMouse ? Qt.rgba(1,1,1,0.12) : "transparent"
+                    color: nextMouse.containsMouse ? Qt.rgba(1,1,1,0.22) : Qt.rgba(1,1,1,0.10)
                     opacity: root.player ? 1 : Config.bar.disabledOpacity
                     Behavior on color { ColorAnimation { duration: 80 } }
-                    Text {
-                        anchors.centerIn: parent
-                        text: "\u23ed"
-                        color: Config.colors.textSecondary
-                        font.pixelSize: Config.font.sizeSm
-                    }
+                    Text { anchors.centerIn: parent; text: "\u23ed"; color: "white"; font.pixelSize: Config.font.sizeSm }
                     MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.player) root.player.next() }
                 }
             }
 
             // Seek bar
             RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin:  Math.round(12 * Config.scale)
-                Layout.rightMargin: Math.round(12 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
                 opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-                IconImage {
-                    implicitSize: Math.round(Config.font.sizeSm * 1.1)
-                    source: Quickshell.iconPath("media-seek-forward-symbolic")
-                    layer.enabled: true
-                    layer.effect: MultiEffect { colorization: 1.0; colorizationColor: Config.colors.textMuted }
-                }
-
                 Item {
                     id: seekTrack
-                    Layout.fillWidth: true
+                    width: Math.round(220 * Config.scale)
                     height: Math.round(20 * Config.scale)
                     readonly property real frac: root.progress
 
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Config.colors.sliderRail }
+                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Qt.rgba(1,1,1,0.28) }
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         width: parent.width * seekTrack.frac; height: Math.round(3 * Config.scale); radius: height/2
@@ -274,7 +258,7 @@ Item {
 
                 Text {
                     text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
-                    color: Config.colors.textMuted
+                    color: Qt.rgba(1,1,1,0.70)
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeXxs
                 }
@@ -282,9 +266,6 @@ Item {
 
             // Volume bar
             RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin:  Math.round(12 * Config.scale)
-                Layout.rightMargin: Math.round(12 * Config.scale)
                 spacing: Math.round(6 * Config.scale)
                 opacity: root.player ? 1 : Config.bar.disabledOpacity
 
@@ -298,16 +279,16 @@ Item {
                         return Quickshell.iconPath("audio-volume-high-symbolic")
                     }
                     layer.enabled: true
-                    layer.effect: MultiEffect { colorization: 1.0; colorizationColor: Config.colors.textMuted }
+                    layer.effect: MultiEffect { colorization: 1.0; colorizationColor: "white" }
                 }
 
                 Item {
                     id: volTrack
-                    Layout.fillWidth: true
+                    width: Math.round(206 * Config.scale)
                     height: Math.round(20 * Config.scale)
                     readonly property real frac: root.volume
 
-                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Config.colors.sliderRail }
+                    Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: Math.round(3 * Config.scale); radius: height/2; color: Qt.rgba(1,1,1,0.28) }
                     Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         width: parent.width * volTrack.frac; height: Math.round(3 * Config.scale); radius: height/2
@@ -332,8 +313,6 @@ Item {
                     }
                 }
             }
-
-            Item { Layout.fillHeight: true }
         }
     }
 }
