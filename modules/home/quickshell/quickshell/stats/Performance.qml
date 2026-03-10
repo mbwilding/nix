@@ -19,6 +19,10 @@ Item {
     property int cpuTempMilliC: 0
     property real sysPowerUw: 0      // µW from BAT1/power_now (total system draw)
 
+    // Per-core sparkline history — array of arrays, each inner array is a ring buffer
+    readonly property int historyLen: 30
+    property var coreHistory: []
+
     property Process _cpuInfoProc: Process {
         command: ["sh", "-c", "grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs"]
         running: true
@@ -68,6 +72,23 @@ Item {
                 root._prevCores = newPrev;
                 root.corePercents = newPercents;
                 root.avgPercent = coreCount > 0 ? Math.round(totalPct / coreCount) : 0;
+
+                // Update sparkline history for each core
+                const n = newPercents.length;
+                let hist = root.coreHistory.slice();
+                // Grow or shrink history array to match core count
+                while (hist.length < n)
+                    hist.push([]);
+                if (hist.length > n)
+                    hist = hist.slice(0, n);
+                for (let i = 0; i < n; i++) {
+                    const buf = hist[i].slice();
+                    buf.push(newPercents[i] ?? 0);
+                    if (buf.length > root.historyLen)
+                        buf.shift();
+                    hist[i] = buf;
+                }
+                root.coreHistory = hist;
             }
         }
     }
@@ -137,13 +158,23 @@ Item {
     readonly property real sysPowerW: root.sysPowerUw / 1000000
     readonly property color powerColor: sysPowerW >= 50 ? Config.colors.danger : sysPowerW >= 30 ? Config.colors.warning : Config.colors.accent
 
-    // Compute a nice column count: aim for roughly square cells
+    // Compute a balanced grid: find the smallest cols >= sqrt(N) that divides N exactly,
+    // falling back to ceil(sqrt(N)) if N is prime or no clean divisor is found nearby.
     readonly property int coreCount: root.corePercents.length
-    readonly property int cols: coreCount <= 4 ? 2 : coreCount <= 8 ? 4 : coreCount <= 16 ? 4 : 8
+    readonly property int cols: {
+        const n = coreCount;
+        if (n <= 1) return 1;
+        const base = Math.ceil(Math.sqrt(n));
+        // Search upward from base for an exact divisor (no wasted cells)
+        for (let c = base; c <= n; c++) {
+            if (n % c === 0) return c;
+        }
+        return base;
+    }
     readonly property int rows: coreCount > 0 ? Math.ceil(coreCount / cols) : 1
 
     readonly property int pad: Math.round(12 * Config.scale)
-    readonly property int gap: Math.round(6 * Config.scale)
+    readonly property int gap: Math.round(5 * Config.scale)
 
     ColumnLayout {
         anchors.fill: parent
@@ -271,21 +302,19 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            readonly property real cellW: (width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
-            readonly property real cellH: (height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1)
-
             Repeater {
                 model: root.corePercents.length
 
                 delegate: Item {
+                    id: coreCell
                     required property int index
                     readonly property int pct: root.corePercents[index] ?? 0
                     readonly property int col: index % root.cols
                     readonly property int row: Math.floor(index / root.cols)
                     readonly property int freqKhz: root.coreFreqsKhz[index] ?? 0
                     readonly property string freqText: freqKhz > 0 ? (freqKhz / 1000000).toFixed(2) : ""
+                    readonly property var history: root.coreHistory[index] ?? []
 
-                    // Access parent dimensions via the containing Item's properties
                     readonly property real _cellW: parent.width > 0 ? (parent.width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1) : 0
                     readonly property real _cellH: parent.height > 0 ? (parent.height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1) : 0
 
@@ -296,30 +325,36 @@ Item {
 
                     readonly property color barColor: pct > 80 ? Config.colors.danger : pct > 50 ? Config.colors.warning : Config.colors.accent
 
+                    // Card background
                     Rectangle {
+                        id: cardBg
                         anchors.fill: parent
-                        radius: Math.round(8 * Config.scale)
+                        radius: Math.round(7 * Config.scale)
                         color: Config.colors.surface
-                        border.color: Qt.rgba(barColor.r, barColor.g, barColor.b, pct > 50 ? 0.6 : 0.20)
+                        border.color: Qt.rgba(coreCell.barColor.r, coreCell.barColor.g, coreCell.barColor.b, coreCell.pct > 50 ? 0.45 : 0.14)
                         border.width: 1
 
-                        // Fill rises from bottom
+                        Behavior on border.color {
+                            ColorAnimation { duration: 600 }
+                        }
+
+                        // ── Vertical fill bar — rises from bottom ─────────────
                         Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.margins: 2
-                            height: Math.max(0, (parent.height - 4) * (pct / 100))
+                            height: Math.max(0, (parent.height - 4) * (coreCell.pct / 100))
                             radius: Math.round(6 * Config.scale)
                             gradient: Gradient {
                                 orientation: Gradient.Vertical
                                 GradientStop {
                                     position: 0.0
-                                    color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.80)
+                                    color: Qt.rgba(coreCell.barColor.r, coreCell.barColor.g, coreCell.barColor.b, 0.75)
                                 }
                                 GradientStop {
                                     position: 1.0
-                                    color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.30)
+                                    color: Qt.rgba(coreCell.barColor.r, coreCell.barColor.g, coreCell.barColor.b, 0.28)
                                 }
                             }
                             Behavior on height {
@@ -330,39 +365,91 @@ Item {
                             }
                         }
 
-                        // Core number (top-left)
+                        // ── Sparkline history overlay (Canvas) ────────────────
+                        // Drawn on top of the fill bar as a subtle line + thin
+                        // filled area so you can see the trend without hiding the bar.
+                        Canvas {
+                            id: sparkCanvas
+                            anchors.fill: parent
+                            anchors.margins: 2
+
+                            readonly property var hist: coreCell.history
+
+                            onHistChanged: requestPaint()
+
+                            onPaint: {
+                                const ctx = getContext("2d");
+                                ctx.clearRect(0, 0, width, height);
+
+                                const buf = hist;
+                                if (!buf || buf.length < 2) return;
+
+                                const w = width;
+                                const h = height;
+                                const n = buf.length;
+                                const step = w / (n - 1);
+
+                                const pts = [];
+                                for (let i = 0; i < n; i++) {
+                                    pts.push({
+                                        x: i * step,
+                                        y: h - (buf[i] / 100) * h
+                                    });
+                                }
+
+                                // Subtle white history line — translucent so the fill
+                                // bar shows through and the curve reads as a ghost trail
+                                ctx.beginPath();
+                                ctx.moveTo(pts[0].x, pts[0].y);
+                                for (let i = 1; i < n; i++) {
+                                    const cpx = (pts[i - 1].x + pts[i].x) / 2;
+                                    ctx.bezierCurveTo(cpx, pts[i - 1].y, cpx, pts[i].y, pts[i].x, pts[i].y);
+                                }
+                                ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.22);
+                                ctx.lineWidth = Math.round(1.5 * Config.scale);
+                                ctx.stroke();
+                            }
+                        }
+
+                        // ── Core index — top-left ─────────────────────────────
                         Text {
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            anchors.topMargin: Math.round(3 * Config.scale)
-                            anchors.leftMargin: Math.round(4 * Config.scale)
-                            text: "C" + index
-                            color: Qt.rgba(1, 1, 1, 0.38)
+                            anchors.topMargin: Math.round(4 * Config.scale)
+                            anchors.leftMargin: Math.round(5 * Config.scale)
+                            text: "C" + coreCell.index
+                            color: Qt.rgba(1, 1, 1, 0.30)
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
                         }
 
-                        // Frequency (top-right)
+                        // ── Percentage — top-right, coloured ─────────────────
                         Text {
                             anchors.top: parent.top
                             anchors.right: parent.right
-                            anchors.topMargin: Math.round(3 * Config.scale)
-                            anchors.rightMargin: Math.round(4 * Config.scale)
-                            text: freqText
-                            color: Qt.rgba(1, 1, 1, 0.38)
+                            anchors.topMargin: Math.round(4 * Config.scale)
+                            anchors.rightMargin: Math.round(5 * Config.scale)
+                            text: coreCell.pct + "%"
+                            color: coreCell.barColor
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeSm
-                            visible: freqText !== ""
+                            font.weight: Font.SemiBold
+                            Behavior on color {
+                                ColorAnimation { duration: 500 }
+                            }
                         }
 
-                        // Percentage label (centred)
+                        // ── Frequency — below core index, left ────────────────
                         Text {
-                            anchors.centerIn: parent
-                            text: pct + "%"
-                            color: "white"
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.topMargin: Math.round(4 * Config.scale) + Config.font.sizeSm + Math.round(2 * Config.scale)
+                            anchors.leftMargin: Math.round(5 * Config.scale)
+                            text: coreCell.freqText
+                            color: Qt.rgba(1, 1, 1, 0.65)
                             font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeMd
-                            font.weight: Font.Medium
+                            font.pixelSize: Config.font.sizeSm
+                            visible: coreCell.freqText !== ""
                         }
                     }
                 }
