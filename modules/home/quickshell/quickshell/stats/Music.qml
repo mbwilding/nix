@@ -524,8 +524,8 @@ Item {
         anchors.top: parent.top
         anchors.leftMargin: Math.round(14 * Config.scale)
         anchors.topMargin: Math.round(12 * Config.scale)
-        width: volHover.hovered ? Math.round(160 * Config.scale) : volIconLabel.implicitWidth + Math.round(4 * Config.scale)
-        height: Math.max(volIconLabel.implicitHeight, Math.round(20 * Config.scale))
+        width: volHover.hovered ? Math.round(200 * Config.scale) : volIconCollapsed.implicitWidth + Math.round(4 * Config.scale)
+        height: Math.max(volIconCollapsed.implicitHeight, Math.round(28 * Config.scale))
 
         HoverHandler {
             id: volHover
@@ -539,9 +539,9 @@ Item {
             }
         }
 
-        // Volume icon — fades out when slider is shown
+        // Collapsed state: plain icon only
         IconImage {
-            id: volIconLabel
+            id: volIconCollapsed
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             implicitSize: Config.font.sizeLg
@@ -557,24 +557,18 @@ Item {
             }
             opacity: volHover.hovered ? 0.0 : 1.0
             Behavior on opacity {
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
+                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
             }
         }
 
-        // Inline volume slider — fades in on hover
+        // Expanded state: frosted pill with icon + slider + percentage
         Item {
             id: inlineVol
             anchors.fill: parent
             visible: volHover.hovered
             opacity: volHover.hovered ? 1.0 : 0.0
             Behavior on opacity {
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
+                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
             }
 
             // Frosted pill background
@@ -586,12 +580,35 @@ Item {
                 border.width: 1
             }
 
+            // Volume icon — left side inside pill
+            IconImage {
+                id: volIconInline
+                anchors.left: parent.left
+                anchors.leftMargin: Math.round(12 * Config.scale)
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: Config.font.sizeSm
+                source: volIconCollapsed.source
+            }
+
+            // Percentage label — right side inside pill
+            Text {
+                id: volPctLabel
+                anchors.right: parent.right
+                anchors.rightMargin: Math.round(12 * Config.scale)
+                anchors.verticalCenter: parent.verticalCenter
+                text: Math.round(root.volume * 100) + "%"
+                color: Qt.rgba(1, 1, 1, 0.85)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+            }
+
+            // Volume track — between icon and percentage
             Item {
                 id: inlineVolTrack
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Math.round(10 * Config.scale)
-                anchors.rightMargin: Math.round(10 * Config.scale)
+                anchors.left: volIconInline.right
+                anchors.right: volPctLabel.left
+                anchors.leftMargin: Math.round(8 * Config.scale)
+                anchors.rightMargin: Math.round(8 * Config.scale)
                 anchors.verticalCenter: parent.verticalCenter
                 height: Math.round(16 * Config.scale)
                 readonly property real frac: root.volume
@@ -612,21 +629,12 @@ Item {
                     radius: height / 2
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop {
-                            position: 0.0
-                            color: Config.colors.accent
-                        }
-                        GradientStop {
-                            position: 1.0
-                            color: Config.colors.accentAlt
-                        }
+                        GradientStop { position: 0.0; color: Config.colors.accent }
+                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
                     }
                     Behavior on width {
                         enabled: volHover.hovered
-                        NumberAnimation {
-                            duration: 60
-                            easing.type: Easing.OutQuart
-                        }
+                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
                     }
                 }
                 // Thumb
@@ -639,10 +647,7 @@ Item {
                     color: "white"
                     Behavior on x {
                         enabled: volHover.hovered
-                        NumberAnimation {
-                            duration: 60
-                            easing.type: Easing.OutQuart
-                        }
+                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
                     }
                 }
 
