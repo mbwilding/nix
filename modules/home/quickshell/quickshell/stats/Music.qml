@@ -229,13 +229,13 @@ Item {
             anchors.top: parent.top
             height: parent.height - infoStrip.height
 
-            // Centering wrapper — sizes itself to the ColumnLayout,
-            // then anchors.centerIn places it dead-centre in artZone.
-            Item {
-                id: controlsWrapper
-                anchors.centerIn: parent
-                width: artZone.width - Math.round(24 * Config.scale)
-                height: controlsColumn.implicitHeight
+            // Controls column — centred in artZone via anchors on a named target.
+            // ColumnLayout is positioned by anchors (not by a parent Layout), so
+            // mixing anchors + ColumnLayout here is valid and reliable.
+            ColumnLayout {
+                id: controlsColumn
+                anchors.centerIn: controlsOverlay
+                width: controlsOverlay.width - Math.round(24 * Config.scale)
 
                 transformOrigin: Item.Center
                 scale: cardHover.hovered ? 1.0 : 0.72
@@ -254,371 +254,366 @@ Item {
                     }
                 }
 
-                ColumnLayout {
-                    id: controlsColumn
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Math.round(14 * Config.scale)
+                spacing: Math.round(14 * Config.scale)
 
-                    // ── Seek bar — full width, times inline below ─────────────────
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignHCenter
-                        implicitHeight: Math.round(32 * Config.scale)
-                        opacity: root.player ? 1 : Config.bar.disabledOpacity
+                // ── Seek bar — full width, times inline below ─────────────────
+                Item {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
+                    implicitHeight: Math.round(32 * Config.scale)
+                    opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-                        // Time labels — positioned at each end, baseline-aligned below bar
-                        Text {
-                            id: timeElapsed
-                            anchors.left: parent.left
-                            anchors.bottom: parent.bottom
-                            text: root.formatTime(root.livePosition)
-                            color: Qt.rgba(1, 1, 1, 0.60)
-                            font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeXxs
-                        }
-                        Text {
-                            id: timeTotal
-                            anchors.right: parent.right
-                            anchors.bottom: parent.bottom
-                            text: root.formatTime(root.trackLength)
-                            color: Qt.rgba(1, 1, 1, 0.60)
-                            font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeXxs
-                        }
-
-                        // Track — sits above the time labels
-                        Item {
-                            id: seekTrack
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            height: Math.round(18 * Config.scale)
-                            readonly property real frac: root.progress
-
-                            // Rail
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width
-                                height: Math.round(3 * Config.scale)
-                                radius: height / 2
-                                color: Qt.rgba(1, 1, 1, 0.22)
-                            }
-                            // Fill
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width * seekTrack.frac
-                                height: Math.round(3 * Config.scale)
-                                radius: height / 2
-                                gradient: Gradient {
-                                    orientation: Gradient.Horizontal
-                                    GradientStop {
-                                        position: 0.0
-                                        color: Config.colors.accent
-                                    }
-                                    GradientStop {
-                                        position: 1.0
-                                        color: Config.colors.accentAlt
-                                    }
-                                }
-                                Behavior on width {
-                                    NumberAnimation {
-                                        duration: 80
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
-                            }
-                            // Thumb glow
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: seekTrack.width * seekTrack.frac - width / 2
-                                width: Math.round(14 * Config.scale)
-                                height: width
-                                radius: width / 2
-                                color: Config.colors.accentGlow
-                                opacity: 0.5
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 80
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
-                            }
-                            // Thumb
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: seekTrack.width * seekTrack.frac - width / 2
-                                width: Math.round(10 * Config.scale)
-                                height: width
-                                radius: width / 2
-                                color: "white"
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 80
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.SizeHorCursor
-                                function applyX(mx) {
-                                    if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
-                                        return;
-                                    const t = Math.max(0, Math.min(1, mx / seekTrack.width)) * root.trackLength;
-                                    root.player.position = t;
-                                    root.livePosition = t;
-                                }
-                                onPressed: mouse => applyX(mouse.x)
-                                onPositionChanged: mouse => {
-                                    if (pressed)
-                                        applyX(mouse.x);
-                                }
-                                onWheel: wheel => {
-                                    if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
-                                        return;
-                                    const t = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5));
-                                    root.player.position = t;
-                                    root.livePosition = t;
-                                }
-                            }
-                        }
+                    // Time labels — positioned at each end, baseline-aligned below bar
+                    Text {
+                        id: timeElapsed
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        text: root.formatTime(root.livePosition)
+                        color: Qt.rgba(1, 1, 1, 0.60)
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeXxs
+                    }
+                    Text {
+                        id: timeTotal
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        text: root.formatTime(root.trackLength)
+                        color: Qt.rgba(1, 1, 1, 0.60)
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeXxs
                     }
 
-                    // ── Transport — frosted-glass pill: prev · play · next ────────
+                    // Track — sits above the time labels
                     Item {
-                        Layout.alignment: Qt.AlignHCenter
-                        implicitWidth: transportRow.implicitWidth + Math.round(28 * Config.scale)
-                        implicitHeight: transportRow.implicitHeight + Math.round(16 * Config.scale)
-                        opacity: root.player ? 1 : Config.bar.disabledOpacity
+                        id: seekTrack
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        height: Math.round(18 * Config.scale)
+                        readonly property real frac: root.progress
 
-                        // Frosted pill background
+                        // Rail
                         Rectangle {
-                            anchors.fill: parent
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width
+                            height: Math.round(3 * Config.scale)
                             radius: height / 2
-                            color: Qt.rgba(0, 0, 0, 0.55)
-                            border.color: Qt.rgba(1, 1, 1, 0.22)
-                            border.width: 1
+                            color: Qt.rgba(1, 1, 1, 0.22)
+                        }
+                        // Fill
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width * seekTrack.frac
+                            height: Math.round(3 * Config.scale)
+                            radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop {
+                                    position: 0.0
+                                    color: Config.colors.accent
+                                }
+                                GradientStop {
+                                    position: 1.0
+                                    color: Config.colors.accentAlt
+                                }
+                            }
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
+                        }
+                        // Thumb glow
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: seekTrack.width * seekTrack.frac - width / 2
+                            width: Math.round(14 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: Config.colors.accentGlow
+                            opacity: 0.5
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
+                        }
+                        // Thumb
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: seekTrack.width * seekTrack.frac - width / 2
+                            width: Math.round(10 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: "white"
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
                         }
 
-                        RowLayout {
-                            id: transportRow
-                            anchors.centerIn: parent
-                            spacing: Math.round(6 * Config.scale)
-
-                            // Prev
-                            Item {
-                                implicitWidth: Math.round(34 * Config.scale)
-                                implicitHeight: implicitWidth
-                                Rectangle {
-                                    anchors.fill: parent
-                                    radius: height / 2
-                                    color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
-                                    Behavior on color {
-                                        ColorAnimation {
-                                            duration: 80
-                                        }
-                                    }
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\u23ee"
-                                    color: "white"
-                                    font.pixelSize: Config.font.sizeSm
-                                }
-                                MouseArea {
-                                    id: prevMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: if (root.player)
-                                        root.player.previous()
-                                }
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+                            function applyX(mx) {
+                                if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
+                                    return;
+                                const t = Math.max(0, Math.min(1, mx / seekTrack.width)) * root.trackLength;
+                                root.player.position = t;
+                                root.livePosition = t;
                             }
-
-                            // Play / Pause — larger accent circle
-                            Item {
-                                implicitWidth: Math.round(48 * Config.scale)
-                                implicitHeight: implicitWidth
-                                Rectangle {
-                                    anchors.fill: parent
-                                    radius: height / 2
-                                    gradient: Gradient {
-                                        orientation: Gradient.Horizontal
-                                        GradientStop {
-                                            position: 0.0
-                                            color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 1.0 : 0.95)
-                                        }
-                                        GradientStop {
-                                            position: 1.0
-                                            color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 1.0 : 0.85)
-                                        }
-                                    }
-                                    border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
-                                    border.width: 1
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
-                                    text: root.isPlaying ? "\u23f8" : "\u25b6"
-                                    color: "white"
-                                    font.pixelSize: Config.font.sizeLg
-                                    font.weight: Font.SemiBold
-                                }
-                                MouseArea {
-                                    id: playMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: if (root.player)
-                                        root.player.togglePlaying()
-                                }
+                            onPressed: mouse => applyX(mouse.x)
+                            onPositionChanged: mouse => {
+                                if (pressed)
+                                    applyX(mouse.x);
                             }
-
-                            // Next
-                            Item {
-                                implicitWidth: Math.round(34 * Config.scale)
-                                implicitHeight: implicitWidth
-                                Rectangle {
-                                    anchors.fill: parent
-                                    radius: height / 2
-                                    color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
-                                    Behavior on color {
-                                        ColorAnimation {
-                                            duration: 80
-                                        }
-                                    }
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\u23ed"
-                                    color: "white"
-                                    font.pixelSize: Config.font.sizeSm
-                                }
-                                MouseArea {
-                                    id: nextMouse
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: if (root.player)
-                                        root.player.next()
-                                }
+                            onWheel: wheel => {
+                                if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
+                                    return;
+                                const t = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5));
+                                root.player.position = t;
+                                root.livePosition = t;
                             }
                         }
                     }
+                }
 
-                    // ── Volume — icon + slim full-width bar ───────────────────────
+                // ── Transport — frosted-glass pill: prev · play · next ────────
+                Item {
+                    Layout.alignment: Qt.AlignHCenter
+                    implicitWidth: transportRow.implicitWidth + Math.round(28 * Config.scale)
+                    implicitHeight: transportRow.implicitHeight + Math.round(16 * Config.scale)
+                    opacity: root.player ? 1 : Config.bar.disabledOpacity
+
+                    // Frosted pill background
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: height / 2
+                        color: Qt.rgba(0, 0, 0, 0.55)
+                        border.color: Qt.rgba(1, 1, 1, 0.22)
+                        border.width: 1
+                    }
+
                     RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Math.round(8 * Config.scale)
-                        opacity: root.player ? 1 : Config.bar.disabledOpacity
+                        id: transportRow
+                        anchors.centerIn: parent
+                        spacing: Math.round(6 * Config.scale)
 
-                        IconImage {
-                            implicitSize: Math.round(Config.font.sizeSm * 1.05)
-                            source: {
-                                const v = root.volume;
-                                if (v <= 0)
-                                    return Quickshell.iconPath("audio-volume-muted-symbolic");
-                                if (v < 0.34)
-                                    return Quickshell.iconPath("audio-volume-low-symbolic");
-                                if (v < 0.67)
-                                    return Quickshell.iconPath("audio-volume-medium-symbolic");
-                                return Quickshell.iconPath("audio-volume-high-symbolic");
+                        // Prev
+                        Item {
+                            implicitWidth: Math.round(34 * Config.scale)
+                            implicitHeight: implicitWidth
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: height / 2
+                                color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 80
+                                    }
+                                }
                             }
-                            layer.enabled: true
-                            layer.effect: MultiEffect {
-                                colorization: 1.0
-                                colorizationColor: Qt.rgba(1, 1, 1, 0.70)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\u23ee"
+                                color: "white"
+                                font.pixelSize: Config.font.sizeSm
+                            }
+                            MouseArea {
+                                id: prevMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: if (root.player)
+                                    root.player.previous()
                             }
                         }
 
+                        // Play / Pause — larger accent circle
                         Item {
-                            id: volTrack
-                            Layout.fillWidth: true
-                            height: Math.round(18 * Config.scale)
-                            readonly property real frac: root.volume
-
+                            implicitWidth: Math.round(48 * Config.scale)
+                            implicitHeight: implicitWidth
                             Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width
-                                height: Math.round(3 * Config.scale)
-                                radius: height / 2
-                                color: Qt.rgba(1, 1, 1, 0.22)
-                            }
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width * volTrack.frac
-                                height: Math.round(3 * Config.scale)
+                                anchors.fill: parent
                                 radius: height / 2
                                 gradient: Gradient {
                                     orientation: Gradient.Horizontal
                                     GradientStop {
                                         position: 0.0
-                                        color: Config.colors.accent
+                                        color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 1.0 : 0.95)
                                     }
                                     GradientStop {
                                         position: 1.0
-                                        color: Config.colors.accentAlt
+                                        color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 1.0 : 0.85)
                                     }
                                 }
-                                Behavior on width {
-                                    NumberAnimation {
-                                        duration: 60
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
+                                border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
+                                border.width: 1
                             }
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: volTrack.width * volTrack.frac - width / 2
-                                width: Math.round(14 * Config.scale)
-                                height: width
-                                radius: width / 2
-                                color: Config.colors.accentGlow
-                                opacity: 0.5
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 60
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
-                            }
-                            Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: volTrack.width * volTrack.frac - width / 2
-                                width: Math.round(10 * Config.scale)
-                                height: width
-                                radius: width / 2
+                            Text {
+                                anchors.centerIn: parent
+                                anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
+                                text: root.isPlaying ? "\u23f8" : "\u25b6"
                                 color: "white"
-                                Behavior on x {
-                                    NumberAnimation {
-                                        duration: 60
-                                        easing.type: Easing.OutQuart
-                                    }
-                                }
+                                font.pixelSize: Config.font.sizeLg
+                                font.weight: Font.SemiBold
                             }
-
                             MouseArea {
+                                id: playMouse
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                cursorShape: Qt.SizeHorCursor
-                                function applyX(mx) {
-                                    if (!root.player || !root.player.volumeSupported)
-                                        return;
-                                    root.player.volume = Math.max(0, Math.min(1, mx / volTrack.width));
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: if (root.player)
+                                    root.player.togglePlaying()
+                            }
+                        }
+
+                        // Next
+                        Item {
+                            implicitWidth: Math.round(34 * Config.scale)
+                            implicitHeight: implicitWidth
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: height / 2
+                                color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 80
+                                    }
                                 }
-                                onPressed: mouse => applyX(mouse.x)
-                                onPositionChanged: mouse => {
-                                    if (pressed)
-                                        applyX(mouse.x);
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\u23ed"
+                                color: "white"
+                                font.pixelSize: Config.font.sizeSm
+                            }
+                            MouseArea {
+                                id: nextMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: if (root.player)
+                                    root.player.next()
+                            }
+                        }
+                    }
+                }
+
+                // ── Volume — icon + slim full-width bar ───────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Math.round(8 * Config.scale)
+                    opacity: root.player ? 1 : Config.bar.disabledOpacity
+
+                    IconImage {
+                        implicitSize: Math.round(Config.font.sizeSm * 1.05)
+                        source: {
+                            const v = root.volume;
+                            if (v <= 0)
+                                return Quickshell.iconPath("audio-volume-muted-symbolic");
+                            if (v < 0.34)
+                                return Quickshell.iconPath("audio-volume-low-symbolic");
+                            if (v < 0.67)
+                                return Quickshell.iconPath("audio-volume-medium-symbolic");
+                            return Quickshell.iconPath("audio-volume-high-symbolic");
+                        }
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            colorization: 1.0
+                            colorizationColor: Qt.rgba(1, 1, 1, 0.70)
+                        }
+                    }
+
+                    Item {
+                        id: volTrack
+                        Layout.fillWidth: true
+                        height: Math.round(18 * Config.scale)
+                        readonly property real frac: root.volume
+
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width
+                            height: Math.round(3 * Config.scale)
+                            radius: height / 2
+                            color: Qt.rgba(1, 1, 1, 0.22)
+                        }
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width * volTrack.frac
+                            height: Math.round(3 * Config.scale)
+                            radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop {
+                                    position: 0.0
+                                    color: Config.colors.accent
                                 }
-                                onWheel: wheel => {
-                                    if (!root.player || !root.player.volumeSupported)
-                                        return;
-                                    root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200));
+                                GradientStop {
+                                    position: 1.0
+                                    color: Config.colors.accentAlt
                                 }
+                            }
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 60
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
+                        }
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: volTrack.width * volTrack.frac - width / 2
+                            width: Math.round(14 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: Config.colors.accentGlow
+                            opacity: 0.5
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 60
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
+                        }
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: volTrack.width * volTrack.frac - width / 2
+                            width: Math.round(10 * Config.scale)
+                            height: width
+                            radius: width / 2
+                            color: "white"
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 60
+                                    easing.type: Easing.OutQuart
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+                            function applyX(mx) {
+                                if (!root.player || !root.player.volumeSupported)
+                                    return;
+                                root.player.volume = Math.max(0, Math.min(1, mx / volTrack.width));
+                            }
+                            onPressed: mouse => applyX(mouse.x)
+                            onPositionChanged: mouse => {
+                                if (pressed)
+                                    applyX(mouse.x);
+                            }
+                            onWheel: wheel => {
+                                if (!root.player || !root.player.volumeSupported)
+                                    return;
+                                root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200));
                             }
                         }
                     }
