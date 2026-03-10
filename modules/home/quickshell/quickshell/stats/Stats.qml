@@ -204,8 +204,8 @@ Scope {
                         anchors.rightMargin: 0
                         spacing: 0
 
-                        // Width per tab slot (excludes pin button)
-                        readonly property real itemWidth: (width - pinTabBtn.implicitWidth) / 5
+                        // Width per tab slot (excludes pin button + separator)
+                        readonly property real itemWidth: (width - pinTabBtn.implicitWidth - 1 - Math.round(6 * Config.scale)) / 5
 
                         TabIcon {
                             Layout.fillWidth: true
@@ -243,10 +243,19 @@ Scope {
                             onHovered: drawer.activeTab = 4
                         }
 
-                        // Pin button — right edge, no separator
+                        // Hairline separator before pin
+                        Rectangle {
+                            Layout.alignment: Qt.AlignVCenter
+                            width: 1
+                            height: Math.round(20 * Config.scale)
+                            color: Qt.rgba(1, 1, 1, 0.10)
+                        }
+
+                        // Pin button — right edge
                         PinTabButton {
                             id: pinTabBtn
                             Layout.alignment: Qt.AlignVCenter
+                            Layout.rightMargin: Math.round(6 * Config.scale)
                             pinned: root.pinned
                             onClicked: root.toggle()
                         }
@@ -415,33 +424,33 @@ Scope {
         property bool pinned: false
         signal clicked
 
-        implicitWidth: Math.round(44 * Config.scale)
-        implicitHeight: Math.round(44 * Config.scale)
+        implicitWidth: Math.round(32 * Config.scale)
+        implicitHeight: Math.round(32 * Config.scale)
 
+        // Circular hover/pinned background — subtle, not boxy
         Rectangle {
-            anchors.fill: parent
-            anchors.margins: Math.round(4 * Config.scale)
-            radius: Math.round(7 * Config.scale)
-            color: pinTab.pinned ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : pinHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            anchors.centerIn: parent
+            width: Math.round(26 * Config.scale)
+            height: width
+            radius: width / 2
+            color: pinTab.pinned
+                   ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+                   : pinHover.containsMouse ? Qt.rgba(1, 1, 1, 0.09) : "transparent"
             Behavior on color {
-                ColorAnimation {
-                    duration: 100
-                }
+                ColorAnimation { duration: 120 }
             }
         }
 
         IconImage {
             anchors.centerIn: parent
-            implicitSize: Math.round(16 * Config.scale)
+            implicitSize: Math.round(13 * Config.scale)
             source: Quickshell.iconPath(pinTab.pinned ? "window-pin-symbolic" : "window-unpin-symbolic")
             layer.enabled: true
             layer.effect: MultiEffect {
                 colorization: 1.0
-                colorizationColor: pinTab.pinned ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
+                colorizationColor: pinTab.pinned ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.45)
                 Behavior on colorizationColor {
-                    ColorAnimation {
-                        duration: 120
-                    }
+                    ColorAnimation { duration: 150 }
                 }
             }
         }
