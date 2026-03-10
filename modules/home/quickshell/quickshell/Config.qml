@@ -110,7 +110,7 @@ QtObject {
         readonly property real triggerStart: 1 / 3   // fraction of screen width where trigger strip begins
         readonly property real triggerEnd:   2 / 3   // fraction of screen width where trigger strip ends
         readonly property int edgeHotspotSize: 4     // px tall strip at screen bottom that shows the bar on hover
-        readonly property var layout: [BarItems.tray, BarItems.separator, BarItems.system, BarItems.separator, BarItems.clock]
+        readonly property var layout: [BarItems.tray, BarItems.separator, BarItems.system, BarItems.separator, BarItems.clock, BarItems.separator, BarItems.pin]
         readonly property var systemLayout: [SystemItems.wifi, SystemItems.bluetooth, SystemItems.volume, SystemItems.brightness, SystemItems.power, SystemItems.ethernet, SystemItems.notifications]
     }
 
