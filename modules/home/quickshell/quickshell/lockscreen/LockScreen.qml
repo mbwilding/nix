@@ -224,8 +224,6 @@ Scope {
                             const count = Config.lockscreen.dvdCount;
                             const maxX = width - logoW;
                             const maxY = height - logoH;
-                            const cr = (logoW / 2 + logoH / 2) / 2;
-                            const minDist = cr * 2;
                             let pos = [], vel = [], cidx = [];
                             for (let i = 0; i < count; i++) {
                                 let candidate = { x: 0, y: 0 };
@@ -233,9 +231,11 @@ Scope {
                                     candidate = { x: Math.random() * maxX, y: Math.random() * maxY };
                                     let ok = true;
                                     for (let j = 0; j < pos.length; j++) {
-                                        const dx = (candidate.x + logoW / 2) - (pos[j].x + logoW / 2);
-                                        const dy = (candidate.y + logoH / 2) - (pos[j].y + logoH / 2);
-                                        if (Math.sqrt(dx * dx + dy * dy) < minDist) { ok = false; break; }
+                                        // AABB overlap check — same as runtime collision
+                                        if (candidate.x < pos[j].x + logoW && candidate.x + logoW > pos[j].x &&
+                                            candidate.y < pos[j].y + logoH && candidate.y + logoH > pos[j].y) {
+                                            ok = false; break;
+                                        }
                                     }
                                     if (ok) break;
                                 }
@@ -291,44 +291,47 @@ Scope {
                                         cidx[i] = (cidx[i] + 1) % colors.length;
                                 }
 
-                                // Logo-logo elastic collisions (equal mass, rectangular bounding-box overlap)
-                                // Treat each logo's centre and use a circular proxy radius = half the diagonal.
-                                const rx = lW / 2;
-                                const ry = lH / 2;
-                                // Use an ellipse collision radius — average of half-extents works well visually
-                                const cr = (rx + ry) / 2;
-                                const minDist = cr * 2;
-
+                                // Logo-logo AABB collisions using SAT on the two rectangle axes.
+                                // For each overlapping pair, find the axis of minimum penetration,
+                                // separate along it, and swap the velocity component on that axis.
                                 for (let i = 0; i < count; i++) {
                                     for (let j = i + 1; j < count; j++) {
-                                        const cxi = pos[i].x + rx;
-                                        const cyi = pos[i].y + ry;
-                                        const cxj = pos[j].x + rx;
-                                        const cyj = pos[j].y + ry;
-                                        const dx = cxj - cxi;
-                                        const dy = cyj - cyi;
-                                        const dist = Math.sqrt(dx * dx + dy * dy);
-                                        if (dist < minDist && dist > 0.001) {
-                                            // Separate overlapping logos
-                                            const overlap = (minDist - dist) / 2;
-                                            const nx = dx / dist;
-                                            const ny = dy / dist;
-                                            pos[i].x -= nx * overlap;
-                                            pos[i].y -= ny * overlap;
-                                            pos[j].x += nx * overlap;
-                                            pos[j].y += ny * overlap;
+                                        const overlapX = (pos[i].x + lW) - pos[j].x;
+                                        const overlapXr = (pos[j].x + lW) - pos[i].x;
+                                        const overlapY = (pos[i].y + lH) - pos[j].y;
+                                        const overlapYr = (pos[j].y + lH) - pos[i].y;
 
-                                            // Elastic collision: swap velocity components along collision normal
-                                            const dvx = vel[i].vx - vel[j].vx;
-                                            const dvy = vel[i].vy - vel[j].vy;
-                                            const dot = dvx * nx + dvy * ny;
-                                            if (dot > 0) { // only resolve if approaching
-                                                vel[i].vx -= dot * nx;
-                                                vel[i].vy -= dot * ny;
-                                                vel[j].vx += dot * nx;
-                                                vel[j].vy += dot * ny;
+                                        // No overlap on either axis → no collision
+                                        if (overlapX <= 0 || overlapXr <= 0 || overlapY <= 0 || overlapYr <= 0)
+                                            continue;
 
-                                                // Change colours on collision
+                                        // Minimum penetration depth and direction on each axis
+                                        const penX = Math.min(overlapX, overlapXr);
+                                        const penY = Math.min(overlapY, overlapYr);
+                                        const signX = overlapX < overlapXr ? 1 : -1;
+                                        const signY = overlapY < overlapYr ? 1 : -1;
+
+                                        if (penX < penY) {
+                                            // Separate and reflect on X axis
+                                            const half = penX / 2;
+                                            pos[i].x -= signX * half;
+                                            pos[j].x += signX * half;
+                                            if ((vel[i].vx - vel[j].vx) * signX > 0) {
+                                                const tmp = vel[i].vx;
+                                                vel[i].vx = vel[j].vx;
+                                                vel[j].vx = tmp;
+                                                cidx[i] = (cidx[i] + 1) % colors.length;
+                                                cidx[j] = (cidx[j] + 1) % colors.length;
+                                            }
+                                        } else {
+                                            // Separate and reflect on Y axis
+                                            const half = penY / 2;
+                                            pos[i].y -= signY * half;
+                                            pos[j].y += signY * half;
+                                            if ((vel[i].vy - vel[j].vy) * signY > 0) {
+                                                const tmp = vel[i].vy;
+                                                vel[i].vy = vel[j].vy;
+                                                vel[j].vy = tmp;
                                                 cidx[i] = (cidx[i] + 1) % colors.length;
                                                 cidx[j] = (cidx[j] + 1) % colors.length;
                                             }
