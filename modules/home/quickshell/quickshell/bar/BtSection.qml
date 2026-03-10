@@ -60,8 +60,11 @@ BarSectionItem {
     signal keepPopupReq
     signal exitPopupReq
 
+    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
+    property int statusLabelWidth: 0
+
     implicitWidth: lowestBattery >= 0
-        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        ? Config.bar.batteryIconSize + statusButtonExtraWidth
         : Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     popupItem: btPopup
@@ -164,6 +167,8 @@ BarSectionItem {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: btSection.lowestBattery >= 0
                 text: btSection.lowestBattery + "%"
+                width: btSection.statusLabelWidth > 0 ? btSection.statusLabelWidth : implicitWidth
+                horizontalAlignment: Text.AlignRight
                 color: {
                     const pct = btSection.lowestBattery;
                     if (pct <= 15) return Config.colors.danger;

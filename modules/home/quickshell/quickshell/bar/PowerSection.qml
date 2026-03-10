@@ -47,8 +47,11 @@ BarSectionItem {
     signal exitPopupReq
     signal closePopupReq
 
+    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
+    property int statusLabelWidth: 0
+
     implicitWidth: hasBattery
-        ? Config.bar.batteryIconSize + Math.round(34 * Config.scale)
+        ? Config.bar.batteryIconSize + statusButtonExtraWidth
         : powerGlyphText.implicitWidth + Math.round(10 * Config.scale)
     implicitHeight: hasBattery
         ? Config.bar.batteryIconSize + Math.round(10 * Config.scale)
@@ -99,6 +102,8 @@ BarSectionItem {
                     if (!b || !b.isLaptopBattery) return "";
                     return Math.round(b.percentage * 100) + "%";
                 }
+                width: powerSection.statusLabelWidth > 0 ? powerSection.statusLabelWidth : implicitWidth
+                horizontalAlignment: Text.AlignRight
                 color: {
                     const b = powerSection.b;
                     if (!b) return Config.colors.textPrimary;
