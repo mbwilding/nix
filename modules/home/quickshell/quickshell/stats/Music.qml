@@ -194,8 +194,12 @@ Item {
         ColumnLayout {
             id: controlsColumn
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter:   parent.verticalCenter
-            anchors.verticalCenterOffset: -Math.round(30 * Config.scale)
+            // Centre within the art area above the info strip (130 px tall).
+            // midpoint of art area = (parent.height - infoH) / 2
+            // verticalCenter anchor = parent.height / 2
+            // offset = midpoint - verticalCenter = -infoH / 2
+            anchors.verticalCenter:       parent.verticalCenter
+            anchors.verticalCenterOffset: -Math.round(65 * Config.scale)
             width: parent.width - Math.round(24 * Config.scale)
 
             transformOrigin: Item.Center
@@ -308,8 +312,8 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     radius: height / 2
-                    color: Qt.rgba(1, 1, 1, 0.10)
-                    border.color: Qt.rgba(1, 1, 1, 0.18)
+                    color: Qt.rgba(0, 0, 0, 0.55)
+                    border.color: Qt.rgba(1, 1, 1, 0.22)
                     border.width: 1
                 }
 
@@ -324,7 +328,7 @@ Item {
                         implicitHeight: implicitWidth
                         Rectangle {
                             anchors.fill: parent; radius: height / 2
-                            color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                                color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
                             Behavior on color { ColorAnimation { duration: 80 } }
                         }
                         Text {
@@ -348,8 +352,8 @@ Item {
                             anchors.fill: parent; radius: height / 2
                             gradient: Gradient {
                                 orientation: Gradient.Horizontal
-                                GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 1.0 : 0.80) }
-                                GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 0.90 : 0.65) }
+                                GradientStop { position: 0.0; color: Qt.rgba(Config.colors.accent.r,    Config.colors.accent.g,    Config.colors.accent.b,    playMouse.containsMouse ? 1.0 : 0.95) }
+                                GradientStop { position: 1.0; color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 1.0 : 0.85) }
                             }
                             border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
                             border.width: 1
@@ -375,7 +379,7 @@ Item {
                         implicitHeight: implicitWidth
                         Rectangle {
                             anchors.fill: parent; radius: height / 2
-                            color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                                color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
                             Behavior on color { ColorAnimation { duration: 80 } }
                         }
                         Text {
