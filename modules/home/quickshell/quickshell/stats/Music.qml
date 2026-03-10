@@ -220,7 +220,10 @@ Item {
                 font.pixelSize: Config.font.sizeLg
                 opacity: timeHover.hovered ? 0.0 : 1.0
                 Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
                 }
                 layer.enabled: true
                 layer.effect: MultiEffect {
@@ -239,7 +242,10 @@ Item {
                 visible: timeHover.hovered
                 opacity: timeHover.hovered ? 1.0 : 0.0
                 Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
                 }
 
                 // Frosted pill background
@@ -302,12 +308,21 @@ Item {
                         radius: height / 2
                         gradient: Gradient {
                             orientation: Gradient.Horizontal
-                            GradientStop { position: 0.0; color: Config.colors.accent }
-                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                            GradientStop {
+                                position: 0.0
+                                color: Config.colors.accent
+                            }
+                            GradientStop {
+                                position: 1.0
+                                color: Config.colors.accentAlt
+                            }
                         }
                         Behavior on width {
                             enabled: timeHover.hovered
-                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutQuart
+                            }
                         }
                     }
                     // Thumb
@@ -320,7 +335,10 @@ Item {
                         color: "white"
                         Behavior on x {
                             enabled: timeHover.hovered
-                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutQuart
+                            }
                         }
                     }
 
@@ -363,17 +381,20 @@ Item {
         anchors.topMargin: Math.round(22 * Config.scale)
         // Collapsed width = icon + pill padding on both sides
         readonly property real pillPad: Math.round(10 * Config.scale)
-        width: volHover.hovered
-               ? Math.round(200 * Config.scale)
-               : volIcon.implicitWidth + pillPad * 2
+        width: volHover.hovered ? Math.round(200 * Config.scale) : volIcon.implicitWidth + pillPad * 2
         height: Math.round(28 * Config.scale)
 
-        HoverHandler { id: volHover }
+        HoverHandler {
+            id: volHover
+        }
 
         // Snap open; animate closed
         Behavior on width {
             enabled: !volHover.hovered
-            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
+            }
         }
 
         // Spring-in on card hover
@@ -381,10 +402,17 @@ Item {
         opacity: (cardHover.hovered || volHover.hovered) ? 1.0 : 0.0
         transformOrigin: Item.Left
         Behavior on scale {
-            NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.4 }
+            NumberAnimation {
+                duration: 320
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.4
+            }
         }
         Behavior on opacity {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation {
+                duration: 180
+                easing.type: Easing.OutCubic
+            }
         }
 
         // Frosted pill — always rendered, just wider on hover
@@ -405,9 +433,12 @@ Item {
             implicitSize: Config.font.sizeLg
             source: {
                 const v = root.volume;
-                if (!root.player || v <= 0)   return Quickshell.iconPath("audio-volume-muted-symbolic");
-                if (v <= 0.33)                return Quickshell.iconPath("audio-volume-low-symbolic");
-                if (v <= 0.66)                return Quickshell.iconPath("audio-volume-medium-symbolic");
+                if (!root.player || v <= 0)
+                    return Quickshell.iconPath("audio-volume-muted-symbolic");
+                if (v <= 0.33)
+                    return Quickshell.iconPath("audio-volume-low-symbolic");
+                if (v <= 0.66)
+                    return Quickshell.iconPath("audio-volume-medium-symbolic");
                 return Quickshell.iconPath("audio-volume-high-symbolic");
             }
         }
@@ -453,12 +484,21 @@ Item {
                 radius: height / 2
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: Config.colors.accent }
-                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                    GradientStop {
+                        position: 0.0
+                        color: Config.colors.accent
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Config.colors.accentAlt
+                    }
                 }
                 Behavior on width {
                     enabled: volHover.hovered
-                    NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                    NumberAnimation {
+                        duration: 60
+                        easing.type: Easing.OutQuart
+                    }
                 }
             }
             // Thumb
@@ -471,7 +511,10 @@ Item {
                 color: "white"
                 Behavior on x {
                     enabled: volHover.hovered
-                    NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                    NumberAnimation {
+                        duration: 60
+                        easing.type: Easing.OutQuart
+                    }
                 }
             }
 
@@ -484,7 +527,10 @@ Item {
                     root.player.volume = Math.max(0, Math.min(1, mx / inlineVolTrack.width));
                 }
                 onPressed: mouse => applyX(mouse.x)
-                onPositionChanged: mouse => { if (pressed) applyX(mouse.x); }
+                onPositionChanged: mouse => {
+                    if (pressed)
+                        applyX(mouse.x);
+                }
                 onWheel: wheel => {
                     if (!root.player || !root.player.volumeSupported)
                         return;
@@ -564,7 +610,9 @@ Item {
                             radius: height / 2
                             color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
                             Behavior on color {
-                                ColorAnimation { duration: 80 }
+                                ColorAnimation {
+                                    duration: 80
+                                }
                             }
                         }
                         Text {
@@ -631,7 +679,9 @@ Item {
                             radius: height / 2
                             color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
                             Behavior on color {
-                                ColorAnimation { duration: 80 }
+                                ColorAnimation {
+                                    duration: 80
+                                }
                             }
                         }
                         Text {
@@ -653,5 +703,4 @@ Item {
             }
         }
     }
-
 }
