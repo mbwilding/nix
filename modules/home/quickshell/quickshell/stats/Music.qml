@@ -194,15 +194,18 @@ Item {
             anchors.bottom: parent.bottom
             anchors.rightMargin: Math.round(14 * Config.scale)
             anchors.bottomMargin: Math.round(12 * Config.scale)
-            width: timeHover.hovered
-                   ? Math.round(160 * Config.scale)
-                   : timeLabel.implicitWidth
+            width: timeHover.hovered ? Math.round(160 * Config.scale) : timeLabel.implicitWidth
             height: timeLabel.implicitHeight
 
-            HoverHandler { id: timeHover }
+            HoverHandler {
+                id: timeHover
+            }
 
             Behavior on width {
-                NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
             }
 
             // "00:00 / 00:00" label — fades out when slider is shown
@@ -216,7 +219,10 @@ Item {
                 font.pixelSize: Config.font.sizeLg
                 opacity: timeHover.hovered ? 0.0 : 1.0
                 Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
                 }
                 layer.enabled: true
                 layer.effect: MultiEffect {
@@ -234,7 +240,10 @@ Item {
                 anchors.fill: parent
                 opacity: timeHover.hovered ? 1.0 : 0.0
                 Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
                 }
 
                 // Frosted pill background
@@ -272,11 +281,20 @@ Item {
                         radius: height / 2
                         gradient: Gradient {
                             orientation: Gradient.Horizontal
-                            GradientStop { position: 0.0; color: Config.colors.accent }
-                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                            GradientStop {
+                                position: 0.0
+                                color: Config.colors.accent
+                            }
+                            GradientStop {
+                                position: 1.0
+                                color: Config.colors.accentAlt
+                            }
                         }
                         Behavior on width {
-                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutQuart
+                            }
                         }
                     }
                     // Thumb
@@ -288,7 +306,10 @@ Item {
                         radius: width / 2
                         color: "white"
                         Behavior on x {
-                            NumberAnimation { duration: 80; easing.type: Easing.OutQuart }
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutQuart
+                            }
                         }
                     }
 
@@ -303,7 +324,10 @@ Item {
                             root.livePosition = t;
                         }
                         onPressed: mouse => applyX(mouse.x)
-                        onPositionChanged: mouse => { if (pressed) applyX(mouse.x); }
+                        onPositionChanged: mouse => {
+                            if (pressed)
+                                applyX(mouse.x);
+                        }
                         onWheel: wheel => {
                             if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
                                 return;
@@ -322,33 +346,6 @@ Item {
         id: controlsOverlay
         anchors.fill: parent
 
-        // Scrim fades in over the art zone only
-        Rectangle {
-            anchors.fill: parent
-            opacity: cardHover.hovered ? 1 : 0
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 180
-                    easing.type: Easing.OutCubic
-                }
-            }
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop {
-                    position: 0.0
-                    color: "transparent"
-                }
-                GradientStop {
-                    position: 0.35
-                    color: Qt.rgba(0, 0, 0, 0.45)
-                }
-                GradientStop {
-                    position: 1.0
-                    color: Qt.rgba(0, 0, 0, 0.45)
-                }
-            }
-        }
-
         // Art zone — used only to size the scrim correctly above the info strip.
         Item {
             id: artZone
@@ -365,195 +362,193 @@ Item {
             anchors.centerIn: parent
             width: parent.width - Math.round(24 * Config.scale)
 
-                transformOrigin: Item.Center
-                readonly property bool fits: implicitHeight <= artZone.height
-                scale: (cardHover.hovered && fits) ? 1.0 : 0.72
-                opacity: (cardHover.hovered && fits) ? 1.0 : 0.0
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 320
-                        easing.type: Easing.OutBack
-                        easing.overshoot: 1.4
-                    }
+            transformOrigin: Item.Center
+            readonly property bool fits: implicitHeight <= artZone.height
+            scale: (cardHover.hovered && fits) ? 1.0 : 0.72
+            opacity: (cardHover.hovered && fits) ? 1.0 : 0.0
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 320
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.4
                 }
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 180
-                        easing.type: Easing.OutCubic
-                    }
+            }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
                 }
+            }
 
-                spacing: Math.round(14 * Config.scale)
+            spacing: Math.round(14 * Config.scale)
 
-                // ── Transport — frosted-glass pill: prev · play · next ────────
-                Item {
-                    Layout.alignment: Qt.AlignHCenter
-                    implicitWidth: transportRow.implicitWidth + Math.round(28 * Config.scale)
-                    implicitHeight: transportRow.implicitHeight + Math.round(16 * Config.scale)
-                    opacity: root.player ? 1 : Config.bar.disabledOpacity
+            // ── Transport — frosted-glass pill: prev · play · next ────────
+            Item {
+                Layout.alignment: Qt.AlignHCenter
+                implicitWidth: transportRow.implicitWidth + Math.round(28 * Config.scale)
+                implicitHeight: transportRow.implicitHeight + Math.round(16 * Config.scale)
+                opacity: root.player ? 1 : Config.bar.disabledOpacity
 
-                    // Frosted pill background
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: height / 2
-                        color: Qt.rgba(0, 0, 0, 0.55)
-                        border.color: Qt.rgba(1, 1, 1, 0.22)
-                        border.width: 1
-                    }
-
-                    RowLayout {
-                        id: transportRow
-                        anchors.centerIn: parent
-                        spacing: Math.round(6 * Config.scale)
-
-                        // Prev
-                        Item {
-                            implicitWidth: Math.round(34 * Config.scale)
-                            implicitHeight: implicitWidth
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: height / 2
-                                color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
-                                Behavior on color {
-                                    ColorAnimation {
-                                        duration: 80
-                                    }
-                                }
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\u23ee"
-                                color: "white"
-                                font.pixelSize: Config.font.sizeSm
-                            }
-                            MouseArea {
-                                id: prevMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: if (root.player)
-                                    root.player.previous()
-                            }
-                        }
-
-                        // Play / Pause — larger accent circle
-                        Item {
-                            implicitWidth: Math.round(48 * Config.scale)
-                            implicitHeight: implicitWidth
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: height / 2
-                                gradient: Gradient {
-                                    orientation: Gradient.Horizontal
-                                    GradientStop {
-                                        position: 0.0
-                                        color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 1.0 : 0.95)
-                                    }
-                                    GradientStop {
-                                        position: 1.0
-                                        color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 1.0 : 0.85)
-                                    }
-                                }
-                                border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
-                                border.width: 1
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
-                                text: root.isPlaying ? "\u23f8" : "\u25b6"
-                                color: "white"
-                                font.pixelSize: Config.font.sizeLg
-                                font.weight: Font.SemiBold
-                            }
-                            MouseArea {
-                                id: playMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: if (root.player)
-                                    root.player.togglePlaying()
-                            }
-                        }
-
-                        // Next
-                        Item {
-                            implicitWidth: Math.round(34 * Config.scale)
-                            implicitHeight: implicitWidth
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: height / 2
-                                color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
-                                Behavior on color {
-                                    ColorAnimation {
-                                        duration: 80
-                                    }
-                                }
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\u23ed"
-                                color: "white"
-                                font.pixelSize: Config.font.sizeSm
-                            }
-                            MouseArea {
-                                id: nextMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: if (root.player)
-                                    root.player.next()
-                            }
-                        }
-                    }
+                // Frosted pill background
+                Rectangle {
+                    anchors.fill: parent
+                    radius: height / 2
+                    color: Qt.rgba(0, 0, 0, 0.55)
+                    border.color: Qt.rgba(1, 1, 1, 0.22)
+                    border.width: 1
                 }
 
+                RowLayout {
+                    id: transportRow
+                    anchors.centerIn: parent
+                    spacing: Math.round(6 * Config.scale)
+
+                    // Prev
+                    Item {
+                        implicitWidth: Math.round(34 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height / 2
+                            color: prevMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 80
+                                }
+                            }
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u23ee"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeSm
+                        }
+                        MouseArea {
+                            id: prevMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player)
+                                root.player.previous()
+                        }
+                    }
+
+                    // Play / Pause — larger accent circle
+                    Item {
+                        implicitWidth: Math.round(48 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height / 2
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop {
+                                    position: 0.0
+                                    color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, playMouse.containsMouse ? 1.0 : 0.95)
+                                }
+                                GradientStop {
+                                    position: 1.0
+                                    color: Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, playMouse.containsMouse ? 1.0 : 0.85)
+                                }
+                            }
+                            border.color: Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.70)
+                            border.width: 1
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            anchors.horizontalCenterOffset: root.isPlaying ? 0 : Math.round(1 * Config.scale)
+                            text: root.isPlaying ? "\u23f8" : "\u25b6"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeLg
+                            font.weight: Font.SemiBold
+                        }
+                        MouseArea {
+                            id: playMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player)
+                                root.player.togglePlaying()
+                        }
+                    }
+
+                    // Next
+                    Item {
+                        implicitWidth: Math.round(34 * Config.scale)
+                        implicitHeight: implicitWidth
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height / 2
+                            color: nextMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 80
+                                }
+                            }
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u23ed"
+                            color: "white"
+                            font.pixelSize: Config.font.sizeSm
+                        }
+                        MouseArea {
+                            id: nextMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (root.player)
+                                root.player.next()
+                        }
+                    }
+                }
+            }
         }
     }
 
-    // ── Volume display + inline slider — top-right corner ────────────────────
+    // ── Volume display + inline slider — top-left corner ─────────────────────
     Item {
         id: volArea
-        anchors.right: parent.right
+        anchors.left: parent.left
         anchors.top: parent.top
-        anchors.rightMargin: Math.round(14 * Config.scale)
+        anchors.leftMargin: Math.round(14 * Config.scale)
         anchors.topMargin: Math.round(12 * Config.scale)
-        width: volHover.hovered
-               ? Math.round(160 * Config.scale)
-               : volIconLabel.implicitWidth + Math.round(4 * Config.scale)
+        width: volHover.hovered ? Math.round(160 * Config.scale) : volIconLabel.implicitWidth + Math.round(4 * Config.scale)
         height: Math.max(volIconLabel.implicitHeight, Math.round(20 * Config.scale))
 
-        HoverHandler { id: volHover }
-
-        Behavior on width {
-            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        HoverHandler {
+            id: volHover
         }
 
-        // Volume icon label — fades out when slider is shown
-        Text {
-            id: volIconLabel
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            text: {
-                const v = root.volume;
-                if (v <= 0)    return "\u{1F507}"; // 🔇
-                if (v < 0.34)  return "\u{1F508}"; // 🔈
-                if (v < 0.67)  return "\u{1F509}"; // 🔉
-                return "\u{1F50A}";                 // 🔊
+        Behavior on width {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.OutCubic
             }
-            color: Qt.rgba(1, 1, 1, 0.55)
-            font.family: Config.font.family
-            font.pixelSize: Config.font.sizeLg
+        }
+
+        // Volume icon — fades out when slider is shown
+        IconImage {
+            id: volIconLabel
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            implicitSize: Config.font.sizeLg
+            source: {
+                const v = root.volume;
+                if (!root.player || v <= 0)
+                    return Quickshell.iconPath("audio-volume-muted-symbolic");
+                if (v <= 0.33)
+                    return Quickshell.iconPath("audio-volume-low-symbolic");
+                if (v <= 0.66)
+                    return Quickshell.iconPath("audio-volume-medium-symbolic");
+                return Quickshell.iconPath("audio-volume-high-symbolic");
+            }
             opacity: volHover.hovered ? 0.0 : 1.0
             Behavior on opacity {
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-            }
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: "#cc000000"
-                shadowBlur: 0.7
-                shadowHorizontalOffset: 0
-                shadowVerticalOffset: 2
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
             }
         }
 
@@ -563,7 +558,10 @@ Item {
             anchors.fill: parent
             opacity: volHover.hovered ? 1.0 : 0.0
             Behavior on opacity {
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
             }
 
             // Frosted pill background
@@ -601,11 +599,20 @@ Item {
                     radius: height / 2
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: Config.colors.accent }
-                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        GradientStop {
+                            position: 0.0
+                            color: Config.colors.accent
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: Config.colors.accentAlt
+                        }
                     }
                     Behavior on width {
-                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                        NumberAnimation {
+                            duration: 60
+                            easing.type: Easing.OutQuart
+                        }
                     }
                 }
                 // Thumb
@@ -617,7 +624,10 @@ Item {
                     radius: width / 2
                     color: "white"
                     Behavior on x {
-                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                        NumberAnimation {
+                            duration: 60
+                            easing.type: Easing.OutQuart
+                        }
                     }
                 }
 
@@ -630,7 +640,10 @@ Item {
                         root.player.volume = Math.max(0, Math.min(1, mx / inlineVolTrack.width));
                     }
                     onPressed: mouse => applyX(mouse.x)
-                    onPositionChanged: mouse => { if (pressed) applyX(mouse.x); }
+                    onPositionChanged: mouse => {
+                        if (pressed)
+                            applyX(mouse.x);
+                    }
                     onWheel: wheel => {
                         if (!root.player || !root.player.volumeSupported)
                             return;
