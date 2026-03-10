@@ -545,20 +545,12 @@ Scope {
                                         Layout.fillWidth: true
                                         height: Math.round(20 * Config.scale)
 
-                                        Text {
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            visible: passwordInput.text.length === 0
-                                            text: "Enter password…"
-                                            color: Config.colors.textMuted
-                                            font.family: Config.font.family
-                                            font.pixelSize: Math.round(13 * Config.scale)
-                                            opacity: 0.45
-                                        }
-
                                         Row {
                                             anchors.verticalCenter: parent.verticalCenter
                                             visible: passwordInput.text.length > 0
                                             spacing: Math.round(5 * Config.scale)
+                                            width: parent.width
+                                            clip: true
 
                                             Repeater {
                                                 model: Math.min(passwordInput.text.length, 32)
@@ -570,15 +562,6 @@ Scope {
                                                     color: root.pamIsError ? Config.colors.danger : Config.colors.accent
                                                     opacity: 0.85
                                                 }
-                                            }
-
-                                            Text {
-                                                visible: passwordInput.text.length > 32
-                                                text: "+" + (passwordInput.text.length - 32)
-                                                color: Config.colors.textMuted
-                                                font.family: Config.font.family
-                                                font.pixelSize: Math.round(10 * Config.scale)
-                                                anchors.verticalCenter: parent.verticalCenter
                                             }
                                         }
 
