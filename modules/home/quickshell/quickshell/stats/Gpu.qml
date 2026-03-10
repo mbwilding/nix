@@ -30,10 +30,10 @@ Item {
     readonly property real   vramUsedGb:  root.vramUsedBytes  / 1073741824
     readonly property real   vramTotalGb: root.vramTotalBytes / 1073741824
     readonly property real   vramFrac:    root.vramTotalBytes > 0 ? root.vramUsedBytes / root.vramTotalBytes : 0
-    readonly property string sclkText:    root.sclkHz > 0  ? (root.sclkHz / 1000000).toFixed(0) + " MHz"  : "—"
-    readonly property string mclkText:    root.mclkMhz > 0 ? root.mclkMhz + " MHz"                        : "—"
+    readonly property string sclkText:    root.sclkHz > 0  ? (root.sclkHz / 1000000).toFixed(0) + " MHz" : "—"
+    readonly property string mclkText:    root.mclkMhz > 0 ? root.mclkMhz + " MHz"                       : "—"
 
-    // ── Colours — change at thresholds ───────────────────────────────────────
+    // ── Colours ───────────────────────────────────────────────────────────────
     readonly property color gpuColor:
         root.gpuPercent > 85 ? Config.colors.danger  :
         root.gpuPercent > 55 ? Config.colors.warning :
@@ -54,18 +54,16 @@ Item {
         root.powerW >= 20 ? Config.colors.warning :
                             Config.colors.accent
 
-    // perfLevel colour: high=danger, low=muted, auto/balanced=accent
     readonly property color perfLevelColor:
-        root.perfLevel === "high"        ? Config.colors.danger     :
-        root.perfLevel === "low"         ? Config.colors.textMuted  :
-        root.perfLevel === "manual"      ? Config.colors.warning    :
-                                          Config.colors.accent
+        root.perfLevel === "high"   ? Config.colors.danger    :
+        root.perfLevel === "low"    ? Config.colors.textMuted :
+        root.perfLevel === "manual" ? Config.colors.warning   :
+                                      Config.colors.accent
 
-    // dpmState colour: performance=accentAlt, battery=textMuted, else accent
     readonly property color dpmStateColor:
-        root.dpmState === "performance"  ? Config.colors.accentAlt  :
-        root.dpmState === "battery"      ? Config.colors.textMuted  :
-                                           Config.colors.accent
+        root.dpmState === "performance" ? Config.colors.accentAlt :
+        root.dpmState === "battery"     ? Config.colors.textMuted :
+                                          Config.colors.accent
 
     // ── Processes ─────────────────────────────────────────────────────────────
     property Process _utilProc: Process {
@@ -102,14 +100,13 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = this.text.trim().split("\n")
-                root.sclkHz    = parseInt(lines[0]) || 0
-                root.tempMilliC = parseInt(lines[1]) || 0
-                root.powerUw   = parseFloat(lines[2]) || 0
+                root.sclkHz     = parseInt(lines[0])   || 0
+                root.tempMilliC = parseInt(lines[1])   || 0
+                root.powerUw    = parseFloat(lines[2]) || 0
             }
         }
     }
 
-    // Active memory clock: find the line ending with " *"
     property Process _mclkProc: Process {
         command: ["cat", "/sys/class/drm/card1/device/pp_dpm_mclk"]
         stdout: StdioCollector {
@@ -124,7 +121,6 @@ Item {
         }
     }
 
-    // Power state: perfLevel + dpmState + pciState in one shot
     property Process _stateProc: Process {
         command: ["sh", "-c",
             "cat /sys/class/drm/card1/device/power_dpm_force_performance_level " +
@@ -152,8 +148,8 @@ Item {
     }
 
     // ── Sizing helpers ────────────────────────────────────────────────────────
-    readonly property int pad: Math.round(14 * Config.scale)
-    readonly property int gap: Math.round(10 * Config.scale)
+    readonly property int pad:   Math.round(14 * Config.scale)
+    readonly property int gap:   Math.round(8  * Config.scale)
     readonly property int cardR: Math.round(10 * Config.scale)
 
     // ── Layout ────────────────────────────────────────────────────────────────
@@ -162,12 +158,11 @@ Item {
         anchors.margins: root.pad
         spacing: root.gap
 
-        // ══ Header: GPU% bar ════════════════════════════════════════════════
+        // ══ Header: GPU% · state · temp ══════════════════════════════════════
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Math.round(5 * Config.scale)
 
-            // Label row
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
@@ -190,7 +185,6 @@ Item {
 
                 Item { Layout.fillWidth: true }
 
-                // DPM state badge (e.g. "performance")
                 Text {
                     text: root.dpmState
                     color: root.dpmStateColor
@@ -200,7 +194,6 @@ Item {
                     visible: root.dpmState !== ""
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
-
                 Text {
                     text: "·"
                     color: Config.colors.textMuted
@@ -208,8 +201,6 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     visible: root.dpmState !== "" && root.perfLevel !== ""
                 }
-
-                // Perf level badge (e.g. "auto")
                 Text {
                     text: root.perfLevel
                     color: root.perfLevelColor
@@ -222,7 +213,6 @@ Item {
 
                 Item { Layout.fillWidth: true }
 
-                // Temperature
                 Text {
                     text: root.tempC + "°C"
                     color: root.tempColor
@@ -249,47 +239,41 @@ Item {
             opacity: 0.30
         }
 
-        // ══ Metric cards grid (2 × 2) ════════════════════════════════════════
+        // ══ Metric cards — 2×2 grid, fills available height ══════════════════
         GridLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             columns: 2
             columnSpacing: root.gap
             rowSpacing: root.gap
 
-            // ── Core Clock ──────────────────────────────────────────────────
             MetricCard {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 label: "Core Clock"
                 value: root.sclkText
                 valueColor: Config.colors.accentAlt
-                icon: "cpu-symbolic"
             }
-
-            // ── Mem Clock ───────────────────────────────────────────────────
             MetricCard {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 label: "Mem Clock"
                 value: root.mclkText
                 valueColor: Config.colors.accent
-                icon: "drive-harddisk-symbolic"
             }
-
-            // ── Power ───────────────────────────────────────────────────────
             MetricCard {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 label: "Power"
                 value: root.powerUw > 0 ? root.powerW.toFixed(1) + " W" : "—"
                 valueColor: root.powerColor
-                icon: "battery-symbolic"
             }
-
-            // ── VCN (video encode/decode) ────────────────────────────────
             MetricCard {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 label: "VCN"
                 value: root.vcnPercent + "%"
                 valueColor: root.vcnPercent > 60 ? Config.colors.warning : Config.colors.textSecondary
-                icon: "video-display-symbolic"
             }
         }
 
@@ -301,11 +285,12 @@ Item {
             opacity: 0.30
         }
 
-        // ══ VRAM bar ═════════════════════════════════════════════════════════
+        // ══ VRAM ══════════════════════════════════════════════════════════════
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Math.round(5 * Config.scale)
 
+            // Label row: VRAM XX% · used/total · PCI pill
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
@@ -334,14 +319,36 @@ Item {
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                 }
+
+                // PCI state pill tucked right
+                Rectangle {
+                    height: Math.round(18 * Config.scale)
+                    width: pciLabel.implicitWidth + Math.round(12 * Config.scale)
+                    radius: height / 2
+                    color: root.pciState === "D0"
+                        ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
+                        : Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.12)
+                    border.color: root.pciState === "D0" ? Config.colors.accent : Config.colors.textMuted
+                    border.width: 1
+                    visible: root.pciState !== ""
+
+                    Text {
+                        id: pciLabel
+                        anchors.centerIn: parent
+                        text: root.pciState
+                        color: root.pciState === "D0" ? Config.colors.accent : Config.colors.textMuted
+                        font.family: Config.font.family
+                        font.pixelSize: Config.font.sizeSm
+                        font.weight: Font.Medium
+                    }
+                }
             }
 
-            // Segmented VRAM bar — used (solid) + free (ghost)
+            // VRAM bar with glow
             Item {
                 Layout.fillWidth: true
                 height: Math.round(7 * Config.scale) + Math.round(4 * Config.scale)
 
-                // Rail
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width
@@ -349,7 +356,6 @@ Item {
                     radius: height / 2
                     color: Config.colors.sliderRail
                 }
-                // Glow
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * Math.min(1, root.vramFrac)
@@ -363,7 +369,6 @@ Item {
                     }
                     Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                 }
-                // Fill
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * Math.min(1, root.vramFrac)
@@ -378,55 +383,15 @@ Item {
                 }
             }
         }
-
-        // ══ PCI power state pill ══════════════════════════════════════════════
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Math.round(6 * Config.scale)
-
-            Text {
-                text: "PCI State"
-                color: Config.colors.textMuted
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
-            }
-
-            Rectangle {
-                height: Math.round(18 * Config.scale)
-                width: pciLabel.implicitWidth + Math.round(12 * Config.scale)
-                radius: height / 2
-                color: root.pciState === "D0"
-                    ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.15)
-                    : Qt.rgba(Config.colors.textMuted.r, Config.colors.textMuted.g, Config.colors.textMuted.b, 0.12)
-                border.color: root.pciState === "D0" ? Config.colors.accent : Config.colors.textMuted
-                border.width: 1
-
-                Text {
-                    id: pciLabel
-                    anchors.centerIn: parent
-                    text: root.pciState !== "" ? root.pciState : "—"
-                    color: root.pciState === "D0" ? Config.colors.accent : Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                    font.weight: Font.Medium
-                }
-            }
-
-            Item { Layout.fillWidth: true }
-        }
-
-        Item { Layout.fillHeight: true }
     }
 
-    // ── Inline MetricCard component ───────────────────────────────────────────
+    // ── Inline MetricCard ─────────────────────────────────────────────────────
     component MetricCard: Rectangle {
         id: card
         property string label:      ""
         property string value:      "—"
         property color  valueColor: Config.colors.accent
-        property string icon:       ""
 
-        implicitHeight: Math.round(58 * Config.scale)
         radius: root.cardR
         color: Config.colors.surfaceAlt
         border.color: Qt.rgba(card.valueColor.r, card.valueColor.g, card.valueColor.b, 0.20)
@@ -447,7 +412,6 @@ Item {
                 font.weight: Font.SemiBold
                 Behavior on color { ColorAnimation { duration: 400 } }
             }
-
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: card.label
