@@ -213,7 +213,7 @@ Item {
                 text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
                 color: Qt.rgba(1, 1, 1, 0.55)
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeXxs
+                font.pixelSize: Config.font.sizeLg
                 opacity: timeHover.hovered ? 0.0 : 1.0
                 Behavior on opacity {
                     NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
@@ -542,7 +542,7 @@ Item {
             }
             color: Qt.rgba(1, 1, 1, 0.55)
             font.family: Config.font.family
-            font.pixelSize: Config.font.sizeXxs
+            font.pixelSize: Config.font.sizeLg
             opacity: volHover.hovered ? 0.0 : 1.0
             Behavior on opacity {
                 NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
