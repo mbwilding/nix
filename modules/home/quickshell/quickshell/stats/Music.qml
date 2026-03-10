@@ -164,12 +164,15 @@ Item {
             }
         }
 
-        // Controls column — vertically centred, offset up slightly so it sits
-        // in the art area above the persistent info strip
+        // Controls column — slides up from below centre on hover.
         ColumnLayout {
+            id: controlsColumn
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter:   parent.verticalCenter
-            anchors.verticalCenterOffset: -Math.round(30 * Config.scale)
+            // Vertical position driven by y so we can animate it.
+            // Resting: 24 px below the centred target; hovered: at target.
+            readonly property real targetY: (parent.height - implicitHeight) / 2 - Math.round(30 * Config.scale)
+            y: cardHover.hovered ? targetY : targetY + Math.round(24 * Config.scale)
+            Behavior on y { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
             spacing: Math.round(10 * Config.scale)
 
             // Prev / Play / Next
