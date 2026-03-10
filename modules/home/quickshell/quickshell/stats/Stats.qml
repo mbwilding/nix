@@ -285,7 +285,7 @@ Scope {
                 text: tabIcon.label
                 color: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.font.sizeSm * 0.78)
+                font.pixelSize: Config.font.sizeXxs
                 font.weight: tabIcon.active ? Font.Medium : Font.Normal
                 Behavior on color { ColorAnimation { duration: 100 } }
             }
