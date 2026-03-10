@@ -19,7 +19,7 @@ Scope {
     property bool visible_: false
     property bool pinned: false
 
-    readonly property int drawerHeight: Math.round(Config.stats.height * Config.scale)
+    readonly property int drawerHeight: Math.round(Config.stats.height * Config.scale) + Math.round(44 * Config.scale)
     readonly property int drawerPad:    Math.round(16 * Config.scale)
 
     function showMouse() {
