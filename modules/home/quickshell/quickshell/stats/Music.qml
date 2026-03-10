@@ -263,13 +263,25 @@ Item {
                     font.pixelSize: Config.font.sizeSm
                 }
 
-                // Seek track — fills remaining space to the right of the time label
+                // Total time label — right side inside pill
+                Text {
+                    id: timeLabelTotal
+                    anchors.right: parent.right
+                    anchors.rightMargin: Math.round(12 * Config.scale)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.formatTime(root.trackLength)
+                    color: Qt.rgba(1, 1, 1, 0.85)
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                }
+
+                // Seek track — fills space between the two time labels
                 Item {
                     id: inlineSeekTrack
                     anchors.left: timeLabelInline.right
-                    anchors.right: parent.right
+                    anchors.right: timeLabelTotal.left
                     anchors.leftMargin: Math.round(8 * Config.scale)
-                    anchors.rightMargin: Math.round(12 * Config.scale)
+                    anchors.rightMargin: Math.round(8 * Config.scale)
                     anchors.verticalCenter: parent.verticalCenter
                     height: Math.round(16 * Config.scale)
                     readonly property real frac: root.progress
