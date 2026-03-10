@@ -117,7 +117,7 @@ QtObject {
         readonly property int animateSpeed: 220
         readonly property int hideDelay: 2000
         readonly property int radius: 18
-        readonly property int height: 220             // drawer height in px (pre-scale)
+        readonly property int height: 360             // drawer height in px (pre-scale)
         readonly property int maxWidth: 1200          // max drawer width in px (pre-scale)
         readonly property int musicWidth: 188  // matches inner card height (stats.height - 2*drawerPad) for a square card
         readonly property int clockWidth: 200
