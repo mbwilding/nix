@@ -227,7 +227,7 @@ Scope {
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "media-flash-memory-stick-symbolic"
+                            iconName: "audio-card-symbolic"
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
                         }
