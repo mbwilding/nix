@@ -17,6 +17,7 @@ Item {
     property string cpuName: ""
     property string powerProfile: ""
     property int cpuTempMilliC: 0
+    property real sysPowerUw: 0      // µW from BAT1/power_now (total system draw)
 
     property Process _cpuInfoProc: Process {
         command: ["sh", "-c", "grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs"]
@@ -102,6 +103,13 @@ Item {
         }
     }
 
+    property Process _sysPowerProc: Process {
+        command: ["cat", "/sys/class/power_supply/BAT1/power_now"]
+        stdout: StdioCollector {
+            onStreamFinished: root.sysPowerUw = parseFloat(this.text.trim()) || 0
+        }
+    }
+
     property Timer _cpuTimer: Timer {
         interval: 2000; repeat: true; running: true; triggeredOnStart: true
         onTriggered: {
@@ -109,6 +117,7 @@ Item {
             root._freqProc.running = true
             root._profileProc.running = true
             root._tempProc.running = true
+            root._sysPowerProc.running = true
         }
     }
 
@@ -128,6 +137,12 @@ Item {
     readonly property color tempColor:
         cpuTempC >= 90 ? Config.colors.danger  :
         cpuTempC >= 70 ? Config.colors.warning :
+                          Config.colors.accent
+
+    readonly property real sysPowerW: root.sysPowerUw / 1000000
+    readonly property color powerColor:
+        sysPowerW >= 50 ? Config.colors.danger  :
+        sysPowerW >= 30 ? Config.colors.warning :
                           Config.colors.accent
 
     // Compute a nice column count: aim for roughly square cells
@@ -181,6 +196,24 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.capitalization: Font.Capitalize
                     visible: root.powerProfile !== ""
+                    Behavior on color { ColorAnimation { duration: 400 } }
+                }
+
+                Text {
+                    text: "·"
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    visible: root.powerProfile !== "" && root.sysPowerW > 0
+                }
+
+                Text {
+                    text: root.sysPowerW.toFixed(1) + " W"
+                    color: root.powerColor
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    font.weight: Font.Medium
+                    visible: root.sysPowerW > 0
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
 
