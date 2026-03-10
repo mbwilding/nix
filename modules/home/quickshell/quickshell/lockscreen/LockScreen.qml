@@ -480,21 +480,6 @@ Scope {
                             width: parent.width
                             spacing: Math.round(10 * Config.scale)
 
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                visible: root.pamMessage !== ""
-                                text: root.pamMessage
-                                color: root.pamIsError ? Config.colors.danger : Config.colors.textMuted
-                                font.family: Config.font.family
-                                font.pixelSize: Math.round(11 * Config.scale)
-                                opacity: 0.9
-                                Behavior on color {
-                                    ColorAnimation {
-                                        duration: 150
-                                    }
-                                }
-                            }
-
                             Rectangle {
                                 width: parent.width
                                 height: Math.round(44 * Config.scale)
@@ -547,7 +532,7 @@ Scope {
 
                                         Row {
                                             anchors.verticalCenter: parent.verticalCenter
-                                            visible: passwordInput.text.length > 0
+                                            visible: passwordInput.text.length > 0 && root.pamMessage === ""
                                             spacing: Math.round(5 * Config.scale)
                                             width: parent.width
                                             clip: true
@@ -562,6 +547,19 @@ Scope {
                                                     color: root.pamIsError ? Config.colors.danger : Config.colors.accent
                                                     opacity: 0.85
                                                 }
+                                            }
+                                        }
+
+                                        Text {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            visible: root.pamMessage !== ""
+                                            text: root.pamMessage
+                                            color: root.pamIsError ? Config.colors.danger : Config.colors.textMuted
+                                            font.family: Config.font.family
+                                            font.pixelSize: Math.round(11 * Config.scale)
+                                            opacity: 0.9
+                                            Behavior on color {
+                                                ColorAnimation { duration: 150 }
                                             }
                                         }
 
