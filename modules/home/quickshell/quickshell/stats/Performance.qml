@@ -120,8 +120,8 @@ Item {
                           Config.colors.accent
 
     readonly property color profileColor:
-        powerProfile === "performance" ? Config.colors.danger  :
-        powerProfile === "balanced"    ? Config.colors.accent  :
+        powerProfile === "performance" ? Config.colors.accentAlt :
+        powerProfile === "balanced"    ? Config.colors.accent    :
                                          Config.colors.textMuted
 
     readonly property int cpuTempC: Math.round(root.cpuTempMilliC / 1000)
@@ -153,7 +153,9 @@ Item {
 
             RowLayout {
                 Layout.fillWidth: true
+                spacing: Math.round(6 * Config.scale)
 
+                // Left: "CPU  XX%"
                 Text {
                     text: "CPU"
                     color: Config.colors.textMuted
@@ -161,22 +163,29 @@ Item {
                     font.pixelSize: Config.font.sizeMd
                     font.weight: Font.Medium
                 }
+                Text {
+                    text: root.avgPercent + "%"
+                    color: root.avgColor
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    font.weight: Font.Medium
+                    Behavior on color { ColorAnimation { duration: 400 } }
+                }
 
+                // Centre: CPU name
                 Item { Layout.fillWidth: true }
-
                 Text {
                     text: root.cpuName
                     color: Config.colors.textMuted
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeSm
-                    Layout.alignment: Qt.AlignHCenter
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
-
                 Item { Layout.fillWidth: true }
 
+                // Right: temp · profile
                 Text {
                     text: root.cpuTempC + "°C"
                     color: root.tempColor
@@ -186,21 +195,20 @@ Item {
                     visible: root.cpuTempC > 0
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
-
                 Text {
                     text: "·"
                     color: Config.colors.textMuted
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
-                    visible: root.cpuTempC > 0
+                    visible: root.cpuTempC > 0 && root.powerProfile !== ""
                 }
-
                 Text {
-                    text: root.avgPercent + "%"
-                    color: root.avgColor
+                    text: root.powerProfile
+                    color: root.profileColor
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
-                    font.weight: Font.Medium
+                    font.capitalization: Font.Capitalize
+                    visible: root.powerProfile !== ""
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
             }
@@ -209,18 +217,6 @@ Item {
                 Layout.fillWidth: true
                 value: root.avgPercent / 100
                 barHeight: Math.round(6 * Config.scale)
-            }
-
-            // ── Power profile row ─────────────────────────────────────────────
-            Text {
-                Layout.alignment: Qt.AlignRight
-                text: root.powerProfile
-                color: root.profileColor
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
-                font.capitalization: Font.Capitalize
-                visible: root.powerProfile !== ""
-                Behavior on color { ColorAnimation { duration: 400 } }
             }
         }
 
