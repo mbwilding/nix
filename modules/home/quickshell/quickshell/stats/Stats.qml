@@ -199,27 +199,8 @@ Scope {
                     border.width: 1
                     clip: true
 
-                    ColumnLayout {
-                        anchors {
-                            fill: parent
-                            topMargin: Math.round(8 * Config.scale)
-                            leftMargin: Math.round(14 * Config.scale)
-                            rightMargin: Math.round(14 * Config.scale)
-                            bottomMargin: Math.round(8 * Config.scale)
-                        }
-                        spacing: Math.round(4 * Config.scale)
-
-                        Text {
-                            text: "Media"
-                            color: Config.colors.textMuted
-                            font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.78)
-                        }
-
-                        Music {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
+                    Music {
+                        anchors.fill: parent
                     }
                 }
 
