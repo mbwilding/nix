@@ -5,8 +5,9 @@ import QtQuick.Layouts
 import Quickshell.Io
 
 import ".."
+import "../components"
 
-// Per-core CPU boxes — fills the entire content area, no title.
+// Per-core CPU boxes with overall average bar — fills the entire content area.
 Item {
     id: root
 
@@ -20,6 +21,8 @@ Item {
                 const lines = this.text.split("\n")
                 const newPercents = []
                 const newPrev = []
+                let totalPct = 0
+                let coreCount = 0
                 for (const line of lines) {
                     if (!line.startsWith("cpu") || line.startsWith("cpu ")) continue
                     const parts = line.trim().split(/\s+/)
@@ -44,9 +47,12 @@ Item {
                     }
                     newPercents[idx] = pct
                     newPrev[idx] = [idleTotal, total]
+                    totalPct += pct
+                    coreCount++
                 }
                 root._prevCores = newPrev
                 root.corePercents = newPercents
+                root.avgPercent = coreCount > 0 ? Math.round(totalPct / coreCount) : 0
             }
         }
     }
@@ -55,6 +61,13 @@ Item {
         interval: 2000; repeat: true; running: true; triggeredOnStart: true
         onTriggered: root._cpuProc.running = true
     }
+
+    property int avgPercent: 0
+
+    readonly property color avgColor:
+        avgPercent > 80 ? Config.colors.danger  :
+        avgPercent > 50 ? Config.colors.warning :
+                          Config.colors.accent
 
     // Compute a nice column count: aim for roughly square cells
     readonly property int coreCount: root.corePercents.length
@@ -66,64 +79,134 @@ Item {
 
     readonly property int pad: Math.round(12 * Config.scale)
     readonly property int gap: Math.round(6 * Config.scale)
-    readonly property real cellW: (width  - 2 * pad - (cols - 1) * gap) / Math.max(cols, 1)
-    readonly property real cellH: (height - 2 * pad - (rows - 1) * gap) / Math.max(rows, 1)
 
-    // Grid of boxes using a Repeater inside a fixed-position Item grid
-    Item {
+    ColumnLayout {
         anchors.fill: parent
         anchors.margins: root.pad
+        spacing: Math.round(10 * Config.scale)
 
-        Repeater {
-            model: root.corePercents.length
+        // ── Overall CPU average bar ───────────────────────────────────────────
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Math.round(4 * Config.scale)
 
-            delegate: Item {
-                required property int index
-                readonly property int pct: root.corePercents[index] ?? 0
-                readonly property int col: index % root.cols
-                readonly property int row: Math.floor(index / root.cols)
+            RowLayout {
+                Layout.fillWidth: true
 
-                x: col * (root.cellW + root.gap)
-                y: row * (root.cellH + root.gap)
-                width: root.cellW
-                height: root.cellH
+                Text {
+                    text: "CPU"
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                    font.weight: Font.Medium
+                }
 
-                readonly property color barColor:
-                    pct > 80 ? Config.colors.danger
-                  : pct > 50 ? Config.colors.warning
-                  : Config.colors.accent
+                Item { Layout.fillWidth: true }
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: Math.round(8 * Config.scale)
-                    color: Config.colors.surface
-                    border.color: Qt.rgba(barColor.r, barColor.g, barColor.b, pct > 50 ? 0.6 : 0.25)
-                    border.width: 1
+                Text {
+                    text: root.avgPercent + "%"
+                    color: root.avgColor
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeSm
+                    font.weight: Font.Medium
+                    Behavior on color { ColorAnimation { duration: 400 } }
+                }
+            }
 
-                    // Fill rises from bottom
+            GradientProgressBar {
+                Layout.fillWidth: true
+                value: root.avgPercent / 100
+                barHeight: Math.round(6 * Config.scale)
+            }
+        }
+
+        // ── Divider ───────────────────────────────────────────────────────────
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Config.panelBorder.color
+            opacity: 0.35
+        }
+
+        // ── Per-core grid ─────────────────────────────────────────────────────
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            readonly property real cellW: (width  - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
+            readonly property real cellH: (height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1)
+
+            Repeater {
+                model: root.corePercents.length
+
+                delegate: Item {
+                    required property int index
+                    readonly property int pct: root.corePercents[index] ?? 0
+                    readonly property int col: index % root.cols
+                    readonly property int row: Math.floor(index / root.cols)
+
+                    // Access parent dimensions via the containing Item's properties
+                    readonly property real _cellW: parent.width > 0
+                        ? (parent.width - (root.cols - 1) * root.gap) / Math.max(root.cols, 1)
+                        : 0
+                    readonly property real _cellH: parent.height > 0
+                        ? (parent.height - (root.rows - 1) * root.gap) / Math.max(root.rows, 1)
+                        : 0
+
+                    x: col * (_cellW + root.gap)
+                    y: row * (_cellH + root.gap)
+                    width: _cellW
+                    height: _cellH
+
+                    readonly property color barColor:
+                        pct > 80 ? Config.colors.danger  :
+                        pct > 50 ? Config.colors.warning :
+                                   Config.colors.accent
+
                     Rectangle {
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.margins: 2
-                        height: Math.max(0, (parent.height - 4) * (pct / 100))
-                        radius: Math.round(6 * Config.scale)
-                        gradient: Gradient {
-                            orientation: Gradient.Vertical
-                            GradientStop { position: 0.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.80) }
-                            GradientStop { position: 1.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.35) }
-                        }
-                        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                    }
+                        anchors.fill: parent
+                        radius: Math.round(8 * Config.scale)
+                        color: Config.colors.surface
+                        border.color: Qt.rgba(barColor.r, barColor.g, barColor.b, pct > 50 ? 0.6 : 0.20)
+                        border.width: 1
 
-                    // Percentage label
-                    Text {
-                        anchors.centerIn: parent
-                        text: pct + "%"
-                        color: "white"
-                        font.family: Config.font.family
-                        font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
-                        font.weight: Font.Medium
+                        // Fill rises from bottom
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.margins: 2
+                            height: Math.max(0, (parent.height - 4) * (pct / 100))
+                            radius: Math.round(6 * Config.scale)
+                            gradient: Gradient {
+                                orientation: Gradient.Vertical
+                                GradientStop { position: 0.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.80) }
+                                GradientStop { position: 1.0; color: Qt.rgba(barColor.r, barColor.g, barColor.b, 0.30) }
+                            }
+                            Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                        }
+
+                        // Core number (top-left)
+                        Text {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.topMargin: Math.round(3 * Config.scale)
+                            anchors.leftMargin: Math.round(4 * Config.scale)
+                            text: "C" + index
+                            color: Qt.rgba(1, 1, 1, 0.38)
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.font.sizeSm * 0.72)
+                        }
+
+                        // Percentage label (centred)
+                        Text {
+                            anchors.centerIn: parent
+                            text: pct + "%"
+                            color: "white"
+                            font.family: Config.font.family
+                            font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                            font.weight: Font.Medium
+                        }
                     }
                 }
             }
