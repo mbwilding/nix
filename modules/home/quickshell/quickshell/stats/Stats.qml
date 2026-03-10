@@ -362,7 +362,7 @@ Scope {
             radius: drawer.targetRadius
             color: "transparent"
             border.color: Config.panelBorder.color
-            border.width: Config.panelBorder.width
+            border.width: drawer.expanded ? 0 : Config.panelBorder.width
             opacity: root.visible_ ? 1 : 0
             Behavior on width {
                 NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
@@ -371,6 +371,9 @@ Scope {
                 NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
             }
             Behavior on radius {
+                NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
+            }
+            Behavior on border.width {
                 NumberAnimation { duration: 280; easing.type: Easing.InOutCubic }
             }
             Behavior on anchors.topMargin {
