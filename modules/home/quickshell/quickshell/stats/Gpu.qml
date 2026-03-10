@@ -435,7 +435,7 @@ Item {
                 text: card.value
                 color: card.valueColor
                 font.family: Config.font.family
-                font.pixelSize: Config.font.sizeXxl
+                font.pixelSize: Config.font.sizeXxxl
                 font.weight: Font.SemiBold
                 Behavior on color {
                     ColorAnimation {
