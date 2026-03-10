@@ -21,9 +21,13 @@
 
   networking.hostName = "anon";
 
+  # Disable the integrated Radeon GPU (Raphael)
+  boot.kernelParams = [ "pci-stub.ids=1002:164e" ];
+  boot.kernelModules = [ "pci-stub" ];
+
   environment = {
     sessionVariables = {
-      # WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
+      WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
     };
     systemPackages = with pkgs; [
       solaar
