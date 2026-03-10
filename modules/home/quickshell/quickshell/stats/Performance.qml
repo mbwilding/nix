@@ -151,11 +151,11 @@ Item {
             Layout.fillWidth: true
             spacing: Math.round(4 * Config.scale)
 
+            // ── Label row: CPU XX%  ·  XX°C  ·  Profile ─────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
 
-                // Left: "CPU  XX%"
                 Text {
                     text: "CPU"
                     color: Config.colors.textMuted
@@ -172,20 +172,8 @@ Item {
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
 
-                // Centre: CPU name
-                Item { Layout.fillWidth: true }
-                Text {
-                    text: root.cpuName
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                    horizontalAlignment: Text.AlignHCenter
-                    elide: Text.ElideRight
-                    Layout.fillWidth: true
-                }
                 Item { Layout.fillWidth: true }
 
-                // Right: temp · profile
                 Text {
                     text: root.cpuTempC + "°C"
                     color: root.tempColor
@@ -211,6 +199,18 @@ Item {
                     visible: root.powerProfile !== ""
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
+            }
+
+            // ── CPU name (centred, smaller, elides gracefully) ────────────────
+            Text {
+                Layout.fillWidth: true
+                text: root.cpuName
+                color: Config.colors.textMuted
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                visible: root.cpuName !== ""
             }
 
             GradientProgressBar {
