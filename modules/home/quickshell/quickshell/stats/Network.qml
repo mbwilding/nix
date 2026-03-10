@@ -103,17 +103,17 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        // ── Download graph ────────────────────────────────────────────────────
+        // ── Upload graph ──────────────────────────────────────────────────────
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history:     root.rxHistory
+            history:     root.txHistory
             maxHistory:  root.historyLen
-            currentRate: root.rxBytesPerSec
+            currentRate: root.txBytesPerSec
             sharedPeak:  root.sharedPeak
-            lineColor:   Config.colors.accent
-            fillColor:   Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
-            label:       "DOWN"
+            lineColor:   Config.colors.accentAlt
+            fillColor:   Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
+            label:       "UP"
             formatFn:    root.formatSpeed
             hovered:     root.sharedHovered
             hoverIndex:  root.sharedHoverIndex
@@ -126,17 +126,17 @@ Item {
             color:  Config.panelBorder.color
         }
 
-        // ── Upload graph ──────────────────────────────────────────────────────
+        // ── Download graph ────────────────────────────────────────────────────
         NetworkGraph {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            history:     root.txHistory
+            history:     root.rxHistory
             maxHistory:  root.historyLen
-            currentRate: root.txBytesPerSec
+            currentRate: root.rxBytesPerSec
             sharedPeak:  root.sharedPeak
-            lineColor:   Config.colors.accentAlt
-            fillColor:   Qt.rgba(Config.colors.accentAlt.r, Config.colors.accentAlt.g, Config.colors.accentAlt.b, 0.18)
-            label:       "UP"
+            lineColor:   Config.colors.accent
+            fillColor:   Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.18)
+            label:       "DOWN"
             formatFn:    root.formatSpeed
             hovered:     root.sharedHovered
             hoverIndex:  root.sharedHoverIndex
