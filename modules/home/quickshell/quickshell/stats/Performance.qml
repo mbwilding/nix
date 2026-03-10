@@ -241,11 +241,9 @@ Item {
                     readonly property int col: index % root.cols
                     readonly property int row: Math.floor(index / root.cols)
                     readonly property int freqKhz: root.coreFreqsKhz[index] ?? 0
-                    readonly property string freqText: freqKhz >= 1000000
-                        ? (freqKhz / 1000000).toFixed(1) + "G"
-                        : freqKhz >= 1000
-                            ? Math.round(freqKhz / 1000) + "M"
-                            : ""
+                    readonly property string freqText: freqKhz > 0
+                        ? (freqKhz / 1000000).toFixed(2)
+                        : ""
 
                     // Access parent dimensions via the containing Item's properties
                     readonly property real _cellW: parent.width > 0
@@ -300,6 +298,19 @@ Item {
                             font.pixelSize: Config.font.sizeSm
                         }
 
+                        // Frequency (top-right)
+                        Text {
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.topMargin: Math.round(3 * Config.scale)
+                            anchors.rightMargin: Math.round(4 * Config.scale)
+                            text: freqText
+                            color: Qt.rgba(1, 1, 1, 0.38)
+                            font.family: Config.font.family
+                            font.pixelSize: Config.font.sizeSm
+                            visible: freqText !== ""
+                        }
+
                         // Percentage label (centred)
                         Text {
                             anchors.centerIn: parent
@@ -308,18 +319,6 @@ Item {
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeMd
                             font.weight: Font.Medium
-                        }
-
-                        // Frequency (bottom-centre)
-                        Text {
-                            anchors.bottom: parent.bottom
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottomMargin: Math.round(3 * Config.scale)
-                            text: freqText
-                            color: Qt.rgba(1, 1, 1, 0.45)
-                            font.family: Config.font.family
-                            font.pixelSize: Config.font.sizeSm
-                            visible: freqText !== ""
                         }
                     }
                 }
