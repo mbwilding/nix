@@ -195,7 +195,7 @@ Item {
                             text: "C" + index
                             color: Qt.rgba(1, 1, 1, 0.38)
                             font.family: Config.font.family
-                            font.pixelSize: Math.round(Config.font.sizeSm * 0.85)
+                            font.pixelSize: Config.font.sizeSm
                         }
 
                         // Percentage label (centred)

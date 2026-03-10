@@ -155,7 +155,7 @@ Item {
                     text: root.trackAlbum
                     color: Qt.rgba(1, 1, 1, 0.58)
                     font.family: Config.font.family
-                    font.pixelSize: Math.round(Config.font.sizeSm * 0.88)
+                    font.pixelSize: Config.font.sizeSm
                     elide: Text.ElideRight
                     visible: root.trackAlbum !== ""
                 }
@@ -346,7 +346,7 @@ Item {
                 text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
                 color: Qt.rgba(1, 1, 1, 0.75)
                 font.family: Config.font.family
-                font.pixelSize: Math.round(Config.font.sizeSm * 0.82)
+                font.pixelSize: Config.font.sizeXxs
             }
         }
 
