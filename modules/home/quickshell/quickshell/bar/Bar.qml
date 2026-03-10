@@ -30,16 +30,9 @@ Scope {
     readonly property bool anyPopupOpen: activePopup !== ""
     readonly property int sliderLabelWidth: Math.round(statusTextMetrics.boundingRect.width + 4 * Config.scale)
     // Fixed width for the "XX%" label in bar buttons, measured at the actual text size
-    // (fontSizePopup * 0.72) using "100%" as the widest string. Assigning this to every
-    // percentage Text keeps the icon from shifting as the number of digits changes.
-    readonly property int statusLabelWidth: Math.round(statusButtonTextMetrics.boundingRect.width)
-    // Extra width needed for bar button pill containing icon + "100%" label with comfortable padding.
-    // Measured at the actual text size (fontSizePopup * 0.72) so the pill never clips the text.
-    readonly property int statusButtonExtraWidth: Math.round(
-        Math.round(3 * Config.scale) +                     // icon-to-text spacing
-        statusLabelWidth +                                 // "100%" at actual font size
-        Math.round(16 * Config.scale)                      // 8px left + 8px right padding
-    )
+    // (fontSizePopup * 0.72) using "100%" as the widest string. Passed to each section
+    // so BarButton can reserve a stable slot — the icon never shifts as digits change.
+    readonly property int statusLabelWidth: Math.round(statusButtonTextMetrics.boundingRect.width) + Math.round(4 * Config.scale)
 
     signal removeHistoryEntry(var entryId)
     signal animateOutHistoryEntry(var snapId)
@@ -583,7 +576,6 @@ Scope {
                  visible: false
                  activePopup: root.activePopup
                  availableHeight: win.screen ? win.screen.height : 800
-                 statusButtonExtraWidth: root.statusButtonExtraWidth
                  statusLabelWidth: root.statusLabelWidth
                  onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
@@ -622,7 +614,6 @@ Scope {
                  visible: false
                  activePopup: root.activePopup
                  availableHeight: win.screen ? win.screen.height : 800
-                 statusButtonExtraWidth: root.statusButtonExtraWidth
                  statusLabelWidth: root.statusLabelWidth
                  onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
@@ -634,7 +625,6 @@ Scope {
                  visible: false
                  activePopup: root.activePopup
                  availableHeight: win.screen ? win.screen.height : 800
-                 statusButtonExtraWidth: root.statusButtonExtraWidth
                  statusLabelWidth: root.statusLabelWidth
                  onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()
@@ -647,7 +637,6 @@ Scope {
                  visible: false
                  activePopup: root.activePopup
                  sliderLabelWidth: root.sliderLabelWidth
-                 statusButtonExtraWidth: root.statusButtonExtraWidth
                  statusLabelWidth: root.statusLabelWidth
                 screenBrightness: BrightnessService.screenBrightness
                 screenAvailable: BrightnessService.screenAvailable
@@ -665,7 +654,6 @@ Scope {
                  id: powerSection
                  visible: false
                  activePopup: root.activePopup
-                 statusButtonExtraWidth: root.statusButtonExtraWidth
                  statusLabelWidth: root.statusLabelWidth
                  onOpenPopupReq: name => root.openPopup(name)
                 onKeepPopupReq: root.keepPopup()

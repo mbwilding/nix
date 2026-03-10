@@ -49,11 +49,10 @@ BarSectionItem {
     signal exitPopupReq
     signal keepAliveReq
 
-    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
     property int statusLabelWidth: 0
 
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
-    implicitWidth: Config.bar.batteryIconSize + statusButtonExtraWidth
+    implicitWidth: Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
     popupItem: volumePopup
     visible: volumeSection.defaultSink !== null
 
@@ -164,47 +163,18 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: volumeSection.popupOpen
 
-        Row {
-            anchors.centerIn: parent
-            spacing: Math.round(3 * Config.scale)
-
-            IconImage {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.bar.batteryIconSize
-                source: Quickshell.iconPath(volumeSection.volumeIcon())
-                opacity: (volumeSection.audio && volumeSection.audio.muted) ? Config.bar.disabledOpacity : 1.0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: {
-                    const a = volumeSection.audio;
-                    if (!a) return "";
-                    const v = a.volume;
-                    return (isNaN(v) || v === undefined) ? "0%" : Math.round(v * 100) + "%";
-                }
-                width: volumeSection.statusLabelWidth > 0 ? volumeSection.statusLabelWidth : implicitWidth
-                horizontalAlignment: Text.AlignRight
-                color: (volumeSection.audio && volumeSection.audio.muted)
-                    ? Config.colors.textMuted
-                    : Config.colors.textPrimary
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
-                opacity: (volumeSection.audio && volumeSection.audio.muted) ? Config.bar.disabledOpacity : 1.0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
+        iconSource: Quickshell.iconPath(volumeSection.volumeIcon())
+        label: {
+            const a = volumeSection.audio;
+            if (!a) return "";
+            const v = a.volume;
+            return (isNaN(v) || v === undefined) ? "0%" : Math.round(v * 100) + "%";
         }
+        labelWidth: volumeSection.statusLabelWidth
+        labelColor: (volumeSection.audio && volumeSection.audio.muted)
+            ? Config.colors.textMuted
+            : Config.colors.textPrimary
+        dimmed: !!(volumeSection.audio && volumeSection.audio.muted)
     }
 
     TextMetrics {

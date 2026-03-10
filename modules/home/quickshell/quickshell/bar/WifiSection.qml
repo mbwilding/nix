@@ -39,12 +39,11 @@ BarSectionItem {
     signal showPasswordDialogReq(string ssid_)
     signal hidePasswordDialogReq
 
-    property int statusButtonExtraWidth: Math.round(34 * Config.scale)
     property int statusLabelWidth: 0
 
     implicitHeight: Config.bar.batteryIconSize + Math.round(10 * Config.scale)
     implicitWidth: hasWifiDevice ? (strength >= 0
-        ? Config.bar.batteryIconSize + statusButtonExtraWidth
+        ? Config.bar.batteryIconSize + Math.round(3 * Config.scale) + statusLabelWidth + Math.round(10 * Config.scale)
         : Config.bar.batteryIconSize + Math.round(10 * Config.scale)) : 0
     visible: hasWifiDevice
     popupItem: wifiPopup
@@ -441,35 +440,11 @@ BarSectionItem {
         hovered: triggerArea.containsMouse
         popupOpen: wifiSection.popupOpen
 
-        Row {
-            anchors.centerIn: parent
-            spacing: Math.round(3 * Config.scale)
-
-            IconImage {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.bar.batteryIconSize
-                source: Quickshell.iconPath(wifiSection.barIcon)
-                opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: wifiSection.strength >= 0
-                text: wifiSection.strength + "%"
-                width: wifiSection.statusLabelWidth > 0 ? wifiSection.statusLabelWidth : implicitWidth
-                horizontalAlignment: Text.AlignRight
-                color: Config.colors.textPrimary
-                font.family: Config.font.family
-                font.pixelSize: Math.round(Config.bar.fontSizePopup * 0.72)
-                opacity: wifiSection.enabled ? 1.0 : Config.bar.disabledOpacity
-            }
-        }
+        iconSource: Quickshell.iconPath(wifiSection.barIcon)
+        label: wifiSection.strength >= 0 ? wifiSection.strength + "%" : ""
+        labelWidth: wifiSection.statusLabelWidth
+        labelColor: Config.colors.textPrimary
+        dimmed: !wifiSection.enabled
     }
 
     BarSectionPopup {
