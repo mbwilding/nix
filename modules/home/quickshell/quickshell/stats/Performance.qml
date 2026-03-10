@@ -12,8 +12,11 @@ Item {
     id: root
 
     property var corePercents: []
+    property var coreFreqsKhz: []
     property var _prevCores: []
     property string cpuName: ""
+    property string powerProfile: ""
+    property int cpuTempMilliC: 0
 
     property Process _cpuInfoProc: Process {
         command: ["sh", "-c", "grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs"]
@@ -66,9 +69,47 @@ Item {
         }
     }
 
+    // Read all core frequencies in one shot: outputs "khz0 khz1 khz2 ..." space-separated
+    property Process _freqProc: Process {
+        command: ["sh", "-c",
+            "paste -s -d' ' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const parts = this.text.trim().split(/\s+/)
+                const freqs = []
+                for (let i = 0; i < parts.length; i++) {
+                    const v = parseInt(parts[i])
+                    freqs.push(isNaN(v) ? 0 : v)
+                }
+                root.coreFreqsKhz = freqs
+            }
+        }
+    }
+
+    property Process _profileProc: Process {
+        command: ["cat", "/sys/firmware/acpi/platform_profile"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.powerProfile = this.text.trim()
+        }
+    }
+
+    property Process _tempProc: Process {
+        command: ["cat", "/sys/class/hwmon/hwmon1/temp1_input"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.cpuTempMilliC = parseInt(this.text.trim()) || 0
+        }
+    }
+
     property Timer _cpuTimer: Timer {
         interval: 2000; repeat: true; running: true; triggeredOnStart: true
-        onTriggered: root._cpuProc.running = true
+        onTriggered: {
+            root._cpuProc.running = true
+            root._freqProc.running = true
+            root._profileProc.running = true
+            root._tempProc.running = true
+        }
     }
 
     property int avgPercent: 0
@@ -76,6 +117,17 @@ Item {
     readonly property color avgColor:
         avgPercent > 80 ? Config.colors.danger  :
         avgPercent > 50 ? Config.colors.warning :
+                          Config.colors.accent
+
+    readonly property color profileColor:
+        powerProfile === "performance" ? Config.colors.danger  :
+        powerProfile === "balanced"    ? Config.colors.accent  :
+                                         Config.colors.textMuted
+
+    readonly property int cpuTempC: Math.round(root.cpuTempMilliC / 1000)
+    readonly property color tempColor:
+        cpuTempC >= 90 ? Config.colors.danger  :
+        cpuTempC >= 70 ? Config.colors.warning :
                           Config.colors.accent
 
     // Compute a nice column count: aim for roughly square cells
@@ -126,6 +178,24 @@ Item {
                 Item { Layout.fillWidth: true }
 
                 Text {
+                    text: root.cpuTempC + "°C"
+                    color: root.tempColor
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    font.weight: Font.Medium
+                    visible: root.cpuTempC > 0
+                    Behavior on color { ColorAnimation { duration: 400 } }
+                }
+
+                Text {
+                    text: "·"
+                    color: Config.colors.textMuted
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    visible: root.cpuTempC > 0
+                }
+
+                Text {
                     text: root.avgPercent + "%"
                     color: root.avgColor
                     font.family: Config.font.family
@@ -139,6 +209,18 @@ Item {
                 Layout.fillWidth: true
                 value: root.avgPercent / 100
                 barHeight: Math.round(6 * Config.scale)
+            }
+
+            // ── Power profile row ─────────────────────────────────────────────
+            Text {
+                Layout.alignment: Qt.AlignRight
+                text: root.powerProfile
+                color: root.profileColor
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                font.capitalization: Font.Capitalize
+                visible: root.powerProfile !== ""
+                Behavior on color { ColorAnimation { duration: 400 } }
             }
         }
 
@@ -166,6 +248,12 @@ Item {
                     readonly property int pct: root.corePercents[index] ?? 0
                     readonly property int col: index % root.cols
                     readonly property int row: Math.floor(index / root.cols)
+                    readonly property int freqKhz: root.coreFreqsKhz[index] ?? 0
+                    readonly property string freqText: freqKhz >= 1000000
+                        ? (freqKhz / 1000000).toFixed(1) + "G"
+                        : freqKhz >= 1000
+                            ? Math.round(freqKhz / 1000) + "M"
+                            : ""
 
                     // Access parent dimensions via the containing Item's properties
                     readonly property real _cellW: parent.width > 0
@@ -228,6 +316,18 @@ Item {
                             font.family: Config.font.family
                             font.pixelSize: Config.font.sizeMd
                             font.weight: Font.Medium
+                        }
+
+                        // Frequency (bottom-centre)
+                        Text {
+                            anchors.bottom: parent.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottomMargin: Math.round(3 * Config.scale)
+                            text: freqText
+                            color: Qt.rgba(1, 1, 1, 0.45)
+                            font.family: Config.font.family
+                            font.pixelSize: Config.font.sizeSm
+                            visible: freqText !== ""
                         }
                     }
                 }
