@@ -353,27 +353,30 @@ Item {
     }
 
     // ── Volume — top-left corner of the card ─────────────────────────────────
-    // Mirrors the seek bar pattern exactly:
-    //   card hover  → widget springs in
-    //   vol hover   → bare icon fades out, frosted pill fades/snaps in
+    // Single frosted pill always present: icon-sized when collapsed, full width
+    // on hover. No cross-fade — pill just grows/shrinks around the icon.
     Item {
         id: volArea
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.leftMargin: Math.round(22 * Config.scale)
         anchors.topMargin: Math.round(22 * Config.scale)
-        width: volHover.hovered ? Math.round(200 * Config.scale) : volIconBare.implicitWidth
+        // Collapsed width = icon + pill padding on both sides
+        readonly property real pillPad: Math.round(10 * Config.scale)
+        width: volHover.hovered
+               ? Math.round(200 * Config.scale)
+               : volIcon.implicitWidth + pillPad * 2
         height: Math.round(28 * Config.scale)
 
         HoverHandler { id: volHover }
 
-        // Snap open instantly on hover; animate closed on mouse-out
+        // Snap open; animate closed
         Behavior on width {
             enabled: !volHover.hovered
             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
         }
 
-        // Spring-in on card hover — same as center controls
+        // Spring-in on card hover
         scale: (cardHover.hovered || volHover.hovered) ? 1.0 : 0.72
         opacity: (cardHover.hovered || volHover.hovered) ? 1.0 : 0.0
         transformOrigin: Item.Left
@@ -384,10 +387,20 @@ Item {
             NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
         }
 
-        // Collapsed: bare icon, always visible
+        // Frosted pill — always rendered, just wider on hover
+        Rectangle {
+            anchors.fill: parent
+            radius: height / 2
+            color: Qt.rgba(0, 0, 0, 0.55)
+            border.color: Qt.rgba(1, 1, 1, 0.22)
+            border.width: 1
+        }
+
+        // Icon — pinned left inside pill
         IconImage {
-            id: volIconBare
+            id: volIcon
             anchors.left: parent.left
+            anchors.leftMargin: volArea.pillPad
             anchors.verticalCenter: parent.verticalCenter
             implicitSize: Config.font.sizeLg
             source: {
@@ -399,114 +412,83 @@ Item {
             }
         }
 
-        // Expanded: frosted pill — icon + slider + %, fades in on vol hover
+        // Percentage label — right side, only shown when expanded
+        Text {
+            id: volPctLabel
+            anchors.right: parent.right
+            anchors.rightMargin: Math.round(12 * Config.scale)
+            anchors.verticalCenter: parent.verticalCenter
+            text: Math.round(root.volume * 100) + "%"
+            color: Qt.rgba(1, 1, 1, 0.85)
+            font.family: Config.font.family
+            font.pixelSize: Config.font.sizeSm
+            visible: volHover.hovered
+        }
+
+        // Slider track — fills between icon and % label
         Item {
-            id: inlineVol
-            anchors.fill: parent
-            opacity: volHover.hovered ? 1.0 : 0.0
-            Behavior on opacity {
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-            }
+            id: inlineVolTrack
+            anchors.left: volIcon.right
+            anchors.right: volPctLabel.visible ? volPctLabel.left : parent.right
+            anchors.leftMargin: Math.round(6 * Config.scale)
+            anchors.rightMargin: Math.round(8 * Config.scale)
+            anchors.verticalCenter: parent.verticalCenter
+            height: Math.round(16 * Config.scale)
+            visible: volHover.hovered
+            readonly property real frac: root.volume
 
-            // Frosted pill background — extends left of the icon to give padding
+            // Rail
             Rectangle {
-                anchors.left: parent.left
-                anchors.leftMargin: Math.round(-8 * Config.scale)
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: Math.round(3 * Config.scale)
                 radius: height / 2
-                color: Qt.rgba(0, 0, 0, 0.55)
-                border.color: Qt.rgba(1, 1, 1, 0.22)
-                border.width: 1
+                color: Qt.rgba(1, 1, 1, 0.22)
+            }
+            // Fill
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width * inlineVolTrack.frac
+                height: Math.round(3 * Config.scale)
+                radius: height / 2
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Config.colors.accent }
+                    GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                }
+                Behavior on width {
+                    enabled: volHover.hovered
+                    NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                }
+            }
+            // Thumb
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                x: inlineVolTrack.width * inlineVolTrack.frac - width / 2
+                width: Math.round(9 * Config.scale)
+                height: width
+                radius: width / 2
+                color: "white"
+                Behavior on x {
+                    enabled: volHover.hovered
+                    NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
+                }
             }
 
-            // Icon — left inside pill, zero left margin so it sits exactly on top of volIconBare
-            IconImage {
-                id: volIconInline
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: Config.font.sizeLg
-                source: volIconBare.source
-            }
-
-            // Percentage — right inside pill
-            Text {
-                id: volPctLabel
-                anchors.right: parent.right
-                anchors.rightMargin: Math.round(12 * Config.scale)
-                anchors.verticalCenter: parent.verticalCenter
-                text: Math.round(root.volume * 100) + "%"
-                color: Qt.rgba(1, 1, 1, 0.85)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeSm
-            }
-
-            // Slider track — between icon and percentage
-            Item {
-                id: inlineVolTrack
-                anchors.left: volIconInline.right
-                anchors.right: volPctLabel.left
-                anchors.leftMargin: Math.round(6 * Config.scale)
-                anchors.rightMargin: Math.round(8 * Config.scale)
-                anchors.verticalCenter: parent.verticalCenter
-                height: Math.round(16 * Config.scale)
-                readonly property real frac: root.volume
-
-                // Rail
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    height: Math.round(3 * Config.scale)
-                    radius: height / 2
-                    color: Qt.rgba(1, 1, 1, 0.22)
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.SizeHorCursor
+                function applyX(mx) {
+                    if (!root.player || !root.player.volumeSupported)
+                        return;
+                    root.player.volume = Math.max(0, Math.min(1, mx / inlineVolTrack.width));
                 }
-                // Fill
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width * inlineVolTrack.frac
-                    height: Math.round(3 * Config.scale)
-                    radius: height / 2
-                    gradient: Gradient {
-                        orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: Config.colors.accent }
-                        GradientStop { position: 1.0; color: Config.colors.accentAlt }
-                    }
-                    Behavior on width {
-                        enabled: volHover.hovered
-                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
-                    }
-                }
-                // Thumb
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: inlineVolTrack.width * inlineVolTrack.frac - width / 2
-                    width: Math.round(9 * Config.scale)
-                    height: width
-                    radius: width / 2
-                    color: "white"
-                    Behavior on x {
-                        enabled: volHover.hovered
-                        NumberAnimation { duration: 60; easing.type: Easing.OutQuart }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.SizeHorCursor
-                    function applyX(mx) {
-                        if (!root.player || !root.player.volumeSupported)
-                            return;
-                        root.player.volume = Math.max(0, Math.min(1, mx / inlineVolTrack.width));
-                    }
-                    onPressed: mouse => applyX(mouse.x)
-                    onPositionChanged: mouse => { if (pressed) applyX(mouse.x); }
-                    onWheel: wheel => {
-                        if (!root.player || !root.player.volumeSupported)
-                            return;
-                        root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200));
-                    }
+                onPressed: mouse => applyX(mouse.x)
+                onPositionChanged: mouse => { if (pressed) applyX(mouse.x); }
+                onWheel: wheel => {
+                    if (!root.player || !root.player.volumeSupported)
+                        return;
+                    root.player.volume = Math.max(0, Math.min(1, root.player.volume + wheel.angleDelta.y / 1200));
                 }
             }
         }
