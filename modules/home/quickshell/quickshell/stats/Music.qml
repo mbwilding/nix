@@ -18,11 +18,17 @@ Item {
 
     layer.enabled: true
     layer.effect: OpacityMask {
-        maskSource: Rectangle {
-            width: root.width
-            height: root.height
-            radius: Math.round(Config.stats.radius * Config.scale)
-        }
+        maskSource: roundMask
+    }
+
+    // Mask shape — must be a real scene item (not inline) for OpacityMask to work.
+    // Placed outside the layer so it exists as an independent item in the scene.
+    Rectangle {
+        id: roundMask
+        width: root.width
+        height: root.height
+        radius: Math.round(Config.stats.radius * Config.scale)
+        visible: false
     }
 
     // ── Player selection ──────────────────────────────────────────────────────

@@ -159,17 +159,53 @@ Scope {
                 spacing: 0
 
                 // ── Tab bar ───────────────────────────────────────────────────
-                Rectangle {
+                Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: drawer.tabBarHeight
-                    color: Qt.rgba(0, 0, 0, 0.20)
 
-                    // Tabs spread evenly across the bar
-                    RowLayout {
+                    // Subtle dark background
+                    Rectangle {
                         anchors.fill: parent
-                        anchors.leftMargin: Math.round(8 * Config.scale)
-                        anchors.rightMargin: Math.round(8 * Config.scale)
+                        color: Qt.rgba(0, 0, 0, 0.28)
+                    }
+
+                    // Bottom separator line
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: 1
+                        color: Qt.rgba(1, 1, 1, 0.08)
+                    }
+
+                    // Sliding accent underline indicator
+                    Rectangle {
+                        id: tabIndicator
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 0
+                        height: Math.round(2 * Config.scale)
+                        width: tabRow.itemWidth
+                        x: drawer.activeTab * tabRow.itemWidth
+                        radius: height / 2
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: Config.colors.accent }
+                            GradientStop { position: 1.0; color: Config.colors.accentAlt }
+                        }
+                        Behavior on x {
+                            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                        }
+                    }
+
+                    RowLayout {
+                        id: tabRow
+                        anchors.fill: parent
+                        anchors.leftMargin: 0
+                        anchors.rightMargin: 0
                         spacing: 0
+
+                        // Width per tab slot (excludes pin button)
+                        readonly property real itemWidth: (width - pinTabBtn.implicitWidth) / 5
 
                         TabIcon {
                             Layout.fillWidth: true
@@ -202,36 +238,18 @@ Scope {
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "network-wired-symbolic"
-                            label: "Network"
+                            label: "Net"
                             active: drawer.activeTab === 4
                             onHovered: drawer.activeTab = 4
                         }
 
-                        // Vertical divider before pin button
-                        Rectangle {
-                            Layout.alignment: Qt.AlignVCenter
-                            width: 1
-                            height: Math.round(20 * Config.scale)
-                            color: Config.colors.border
-                            opacity: 0.5
-                        }
-
-                        // Pin button — toggles the stats drawer's pinned state
+                        // Pin button — right edge, no separator
                         PinTabButton {
+                            id: pinTabBtn
                             Layout.alignment: Qt.AlignVCenter
                             pinned: root.pinned
                             onClicked: root.toggle()
                         }
-                    }
-
-                    // Bottom separator
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        height: 1
-                        color: Config.colors.border
-                        opacity: 0.5
                     }
                 }
 
@@ -344,7 +362,7 @@ Scope {
             anchors.fill: parent
             anchors.margins: Math.round(4 * Config.scale)
             radius: Math.round(7 * Config.scale)
-            color: tabIcon.active ? Qt.rgba(Config.colors.accent.r, Config.colors.accent.g, Config.colors.accent.b, 0.22) : tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            color: tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
             Behavior on color {
                 ColorAnimation {
                     duration: 100
