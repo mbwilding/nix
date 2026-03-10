@@ -316,15 +316,13 @@ BarSectionItem {
                                 security
                             };
                         } else if (!active && !prev.active) {
-                            // For available networks, keep the highest-signal entry but
-                            // prefer a higher band (5/6 GHz) when signals are within 10 dB,
-                            // since APs broadcasting the same SSID on both 2.4 and 5 GHz
-                            // should be shown as 5 GHz capable.
+                            // For available networks, always prefer the highest band
+                            // (6 > 5 > 2.4) so the popup shows the best capability of
+                            // the AP. Fall back to signal strength when bands are equal.
                             const bandRank = b => b === "6" ? 3 : b === "5" ? 2 : b === "2.4" ? 1 : 0;
                             const newRank = bandRank(band);
                             const prevRank = bandRank(prev.band);
-                            const signalDiff = signal - prev.signal;
-                            if (signalDiff > 10 || (newRank > prevRank && signalDiff >= -10))
+                            if (newRank > prevRank || (newRank === prevRank && signal > prev.signal))
                                 nets[existing] = {
                                     ssid: ssid_,
                                     signal,
