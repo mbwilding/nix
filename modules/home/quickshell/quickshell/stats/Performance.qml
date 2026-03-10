@@ -151,7 +151,7 @@ Item {
             Layout.fillWidth: true
             spacing: Math.round(4 * Config.scale)
 
-            // ── Label row: CPU XX%  ·  XX°C  ·  Profile ─────────────────────
+            // ── Label row: CPU XX%  ·  Profile  ·  XX°C ─────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Math.round(6 * Config.scale)
@@ -175,28 +175,24 @@ Item {
                 Item { Layout.fillWidth: true }
 
                 Text {
-                    text: root.cpuTempC + "°C"
-                    color: root.tempColor
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeMd
-                    font.weight: Font.Medium
-                    visible: root.cpuTempC > 0
-                    Behavior on color { ColorAnimation { duration: 400 } }
-                }
-                Text {
-                    text: "·"
-                    color: Config.colors.textMuted
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeMd
-                    visible: root.cpuTempC > 0 && root.powerProfile !== ""
-                }
-                Text {
                     text: root.powerProfile
                     color: root.profileColor
                     font.family: Config.font.family
                     font.pixelSize: Config.font.sizeMd
                     font.capitalization: Font.Capitalize
                     visible: root.powerProfile !== ""
+                    Behavior on color { ColorAnimation { duration: 400 } }
+                }
+
+                Item { Layout.fillWidth: true }
+
+                Text {
+                    text: root.cpuTempC + "°C"
+                    color: root.tempColor
+                    font.family: Config.font.family
+                    font.pixelSize: Config.font.sizeMd
+                    font.weight: Font.Medium
+                    visible: root.cpuTempC > 0
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
             }
