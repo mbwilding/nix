@@ -384,16 +384,12 @@ Item {
             NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
         }
 
-        // Collapsed: bare icon, fades out on vol hover
+        // Collapsed: bare icon, always visible
         IconImage {
             id: volIconBare
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             implicitSize: Config.font.sizeLg
-            opacity: volHover.hovered ? 0.0 : 1.0
-            Behavior on opacity {
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-            }
             source: {
                 const v = root.volume;
                 if (!root.player || v <= 0)   return Quickshell.iconPath("audio-volume-muted-symbolic");
@@ -407,7 +403,6 @@ Item {
         Item {
             id: inlineVol
             anchors.fill: parent
-            visible: volHover.hovered
             opacity: volHover.hovered ? 1.0 : 0.0
             Behavior on opacity {
                 NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
