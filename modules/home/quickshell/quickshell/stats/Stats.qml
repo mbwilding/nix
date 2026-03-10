@@ -112,7 +112,7 @@ Scope {
             id: drawer
 
             // Tab bar runs across the top; content fills below.
-            readonly property int tabBarHeight: Math.round(44 * Config.scale)
+            readonly property int tabBarHeight: Math.round(36 * Config.scale)
             readonly property int drawerWidth: Math.round(400 * Config.scale)
 
             // 0=Media  1=CPU  2=RAM  3=GPU  4=Network
@@ -209,36 +209,31 @@ Scope {
 
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "audio-x-generic-symbolic"
-                            label: "Media"
+                            iconName: "audio-headphones-symbolic"
                             active: drawer.activeTab === 0
                             onHovered: drawer.activeTab = 0
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "computer-symbolic"
-                            label: "CPU"
+                            iconName: "preferences-devices-cpu"
                             active: drawer.activeTab === 1
                             onHovered: drawer.activeTab = 1
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "drive-harddisk-symbolic"
-                            label: "RAM"
+                            iconName: "dialog-memory-symbolic"
                             active: drawer.activeTab === 2
                             onHovered: drawer.activeTab = 2
                         }
                         TabIcon {
                             Layout.fillWidth: true
-                            iconName: "video-display-symbolic"
-                            label: "GPU"
+                            iconName: "video-card-inactive-symbolic"
                             active: drawer.activeTab === 3
                             onHovered: drawer.activeTab = 3
                         }
                         TabIcon {
                             Layout.fillWidth: true
                             iconName: "network-wired-symbolic"
-                            label: "Net"
                             active: drawer.activeTab === 4
                             onHovered: drawer.activeTab = 4
                         }
@@ -361,50 +356,31 @@ Scope {
     component TabIcon: Item {
         id: tabIcon
         property string iconName: ""
-        property string label: ""
         property bool active: false
         signal hovered
 
-        implicitHeight: Math.round(44 * Config.scale)
+        implicitHeight: Math.round(36 * Config.scale)
 
         Rectangle {
             anchors.fill: parent
             anchors.margins: Math.round(4 * Config.scale)
-            radius: Math.round(7 * Config.scale)
+            radius: Math.round(6 * Config.scale)
             color: tabHover.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
             Behavior on color {
-                ColorAnimation {
-                    duration: 100
-                }
+                ColorAnimation { duration: 100 }
             }
         }
 
-        ColumnLayout {
+        IconImage {
             anchors.centerIn: parent
-            spacing: Math.round(2 * Config.scale)
-
-            IconImage {
-                Layout.alignment: Qt.AlignHCenter
-                implicitSize: Math.round(14 * Config.scale)
-                source: Quickshell.iconPath(tabIcon.iconName)
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
-                }
-            }
-
-            Text {
-                Layout.alignment: Qt.AlignHCenter
-                text: tabIcon.label
-                color: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.55)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeXxs
-                font.weight: tabIcon.active ? Font.Medium : Font.Normal
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 100
-                    }
+            implicitSize: Math.round(16 * Config.scale)
+            source: Quickshell.iconPath(tabIcon.iconName)
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                colorization: 1.0
+                colorizationColor: tabIcon.active ? Config.colors.accent : Qt.rgba(1, 1, 1, 0.50)
+                Behavior on colorizationColor {
+                    ColorAnimation { duration: 120 }
                 }
             }
         }
@@ -425,7 +401,7 @@ Scope {
         signal clicked
 
         implicitWidth: Math.round(32 * Config.scale)
-        implicitHeight: Math.round(32 * Config.scale)
+        implicitHeight: Math.round(36 * Config.scale)
 
         // Circular hover/pinned background — subtle, not boxy
         Rectangle {
