@@ -11,16 +11,10 @@ import ".."
 import "../components"
 
 // Music/media section for the top menu drawer.
-// Album art fills the card background, clipped to rounded corners via
-// layer.enabled on this Rectangle root. Track info and controls sit over
-// a dark gradient scrim at the bottom.
-Rectangle {
+// Fills the content area edge-to-edge. Clipping and rounding are handled
+// by the drawer's own layer.enabled in Stats.qml.
+Item {
     id: root
-    radius: Math.round(10 * Config.scale)
-    color: Config.colors.surfaceAlt
-    // layer.enabled composites children into an offscreen texture so the
-    // rounded radius actually clips the album art image.
-    layer.enabled: true
 
     // ── Player selection ─────────────────────────────────────────────────────
     readonly property MprisPlayer player: {
@@ -437,16 +431,5 @@ Rectangle {
                 }
             }
         }
-    }
-
-    // ── Border overlay — drawn last so it sits on top of the art and matches
-    //    the other cards. The parent Rectangle uses layer.enabled for clipping
-    //    but that hides its own border, so we redraw it here.
-    Rectangle {
-        anchors.fill: parent
-        radius: Math.round(10 * Config.scale)
-        color: "transparent"
-        border.color: Config.colors.border
-        border.width: 1
     }
 }

@@ -110,10 +110,11 @@ Scope {
         Rectangle {
             id: drawer
 
-            readonly property int drawerWidth: Math.min(
-                win.implicitWidth - Math.round(40 * Config.scale),
-                Math.round(Config.stats.maxWidth * Config.scale)
-            )
+            // Content area is square: height = drawerHeight - 2*drawerPad.
+            // Total width  = tabStripWidth + drawerPad + squareSize + drawerPad
+            readonly property int tabStripWidth: Math.round(44 * Config.scale)
+            readonly property int squareSize: root.drawerHeight - 2 * root.drawerPad
+            readonly property int drawerWidth: tabStripWidth + root.drawerPad + squareSize + root.drawerPad
 
             // Active tab index: 0 = Media, 1 = Performance
             property int activeTab: 0
@@ -198,21 +199,20 @@ Scope {
                     }
                 }
 
-                // ── Content area ──────────────────────────────────────────────
+                // ── Content area — fills flush, no padding ────────────────────
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    // Media tab
+                    // Media tab — edge-to-edge, drawer layer clips the corners
                     Music {
                         anchors.fill: parent
-                        anchors.margins: root.drawerPad
                         visible: drawer.activeTab === 0
                         opacity: drawer.activeTab === 0 ? 1 : 0
                         Behavior on opacity { NumberAnimation { duration: 120 } }
                     }
 
-                    // Performance tab
+                    // Performance tab — padded inside since it's text/bars not art
                     Item {
                         anchors.fill: parent
                         anchors.margins: root.drawerPad
