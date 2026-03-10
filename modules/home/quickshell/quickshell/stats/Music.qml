@@ -220,19 +220,23 @@ Item {
         }
 
         // ── Time display + inline seek — bottom-right corner ─────────────────
+        // Single frosted pill always present: label-sized when collapsed, full
+        // width on hover. Mirrors the volume pill approach — no cross-fade.
         Item {
             id: timeArea
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.rightMargin: Math.round(14 * Config.scale)
             anchors.bottomMargin: Math.round(8 * Config.scale)
-            width: timeHover.hovered ? Math.round(200 * Config.scale) : timeLabelCollapsed.implicitWidth
-            height: Math.max(timeLabelCollapsed.implicitHeight, Math.round(28 * Config.scale))
+            readonly property real pillPad: Math.round(12 * Config.scale)
+            width: timeHover.hovered ? Math.round(200 * Config.scale) : timeLabelCollapsed.implicitWidth + pillPad * 2
+            height: Math.round(28 * Config.scale)
 
             HoverHandler {
                 id: timeHover
             }
 
+            // Snap open; animate closed
             Behavior on width {
                 enabled: !timeHover.hovered
                 NumberAnimation {
@@ -241,161 +245,155 @@ Item {
                 }
             }
 
-            // Collapsed state: plain "0:00 / 3:45" label
-            Text {
-                id: timeLabelCollapsed
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
-                color: Qt.rgba(1, 1, 1, 0.55)
-                font.family: Config.font.family
-                font.pixelSize: Config.font.sizeLg
-                opacity: timeHover.hovered ? 0.0 : 1.0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.OutCubic
-                    }
+            // Spring-in on card hover, from the right edge
+            scale: (cardHover.hovered || timeHover.hovered) ? 1.0 : 0.72
+            opacity: (cardHover.hovered || timeHover.hovered) ? 1.0 : 0.0
+            transformOrigin: Item.Right
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 320
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.4
                 }
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#cc000000"
-                    shadowBlur: 0.7
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 2
+            }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
                 }
             }
 
-            // Expanded state: frosted pill with current time + seek bar side by side
-            Item {
-                id: inlineSeek
+            // Frosted pill — always rendered, just wider on hover
+            Rectangle {
                 anchors.fill: parent
+                radius: height / 2
+                color: Qt.rgba(0, 0, 0, 0.55)
+                border.color: Qt.rgba(1, 1, 1, 0.22)
+                border.width: 1
+            }
+
+            // Collapsed label — right-aligned inside pill, hidden when expanded
+            Text {
+                id: timeLabelCollapsed
+                anchors.right: parent.right
+                anchors.rightMargin: timeArea.pillPad
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.formatTime(root.livePosition) + " / " + root.formatTime(root.trackLength)
+                color: Qt.rgba(1, 1, 1, 0.85)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                visible: !timeHover.hovered
+            }
+
+            // Current time label — left side inside pill, only when expanded
+            Text {
+                id: timeLabelInline
+                anchors.left: parent.left
+                anchors.leftMargin: timeArea.pillPad
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.formatTime(root.livePosition)
+                color: Qt.rgba(1, 1, 1, 0.85)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
                 visible: timeHover.hovered
-                opacity: timeHover.hovered ? 1.0 : 0.0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.OutCubic
-                    }
-                }
+            }
 
-                // Frosted pill background
+            // Total time label — right side inside pill, only when expanded
+            Text {
+                id: timeLabelTotal
+                anchors.right: parent.right
+                anchors.rightMargin: timeArea.pillPad
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.formatTime(root.trackLength)
+                color: Qt.rgba(1, 1, 1, 0.85)
+                font.family: Config.font.family
+                font.pixelSize: Config.font.sizeSm
+                visible: timeHover.hovered
+            }
+
+            // Seek track — fills space between the two time labels
+            Item {
+                id: inlineSeekTrack
+                anchors.left: timeLabelInline.right
+                anchors.right: timeLabelTotal.left
+                anchors.leftMargin: Math.round(8 * Config.scale)
+                anchors.rightMargin: Math.round(8 * Config.scale)
+                anchors.verticalCenter: parent.verticalCenter
+                height: Math.round(16 * Config.scale)
+                visible: timeHover.hovered
+                readonly property real frac: root.progress
+
+                // Rail
                 Rectangle {
-                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    height: Math.round(3 * Config.scale)
                     radius: height / 2
-                    color: Qt.rgba(0, 0, 0, 0.55)
-                    border.color: Qt.rgba(1, 1, 1, 0.22)
-                    border.width: 1
+                    color: Qt.rgba(1, 1, 1, 0.22)
                 }
-
-                // Current time label — left side inside pill
-                Text {
-                    id: timeLabelInline
-                    anchors.left: parent.left
-                    anchors.leftMargin: Math.round(12 * Config.scale)
+                // Fill
+                Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.formatTime(root.livePosition)
-                    color: Qt.rgba(1, 1, 1, 0.85)
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                }
-
-                // Total time label — right side inside pill
-                Text {
-                    id: timeLabelTotal
-                    anchors.right: parent.right
-                    anchors.rightMargin: Math.round(12 * Config.scale)
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.formatTime(root.trackLength)
-                    color: Qt.rgba(1, 1, 1, 0.85)
-                    font.family: Config.font.family
-                    font.pixelSize: Config.font.sizeSm
-                }
-
-                // Seek track — fills space between the two time labels
-                Item {
-                    id: inlineSeekTrack
-                    anchors.left: timeLabelInline.right
-                    anchors.right: timeLabelTotal.left
-                    anchors.leftMargin: Math.round(8 * Config.scale)
-                    anchors.rightMargin: Math.round(8 * Config.scale)
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: Math.round(16 * Config.scale)
-                    readonly property real frac: root.progress
-
-                    // Rail
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width
-                        height: Math.round(3 * Config.scale)
-                        radius: height / 2
-                        color: Qt.rgba(1, 1, 1, 0.22)
-                    }
-                    // Fill
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * inlineSeekTrack.frac
-                        height: Math.round(3 * Config.scale)
-                        radius: height / 2
-                        gradient: Gradient {
-                            orientation: Gradient.Horizontal
-                            GradientStop {
-                                position: 0.0
-                                color: Config.colors.accent
-                            }
-                            GradientStop {
-                                position: 1.0
-                                color: Config.colors.accentAlt
-                            }
+                    width: parent.width * inlineSeekTrack.frac
+                    height: Math.round(3 * Config.scale)
+                    radius: height / 2
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+                        GradientStop {
+                            position: 0.0
+                            color: Config.colors.accent
                         }
-                        Behavior on width {
-                            enabled: timeHover.hovered
-                            NumberAnimation {
-                                duration: 80
-                                easing.type: Easing.OutQuart
-                            }
+                        GradientStop {
+                            position: 1.0
+                            color: Config.colors.accentAlt
                         }
                     }
-                    // Thumb
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: inlineSeekTrack.width * inlineSeekTrack.frac - width / 2
-                        width: Math.round(9 * Config.scale)
-                        height: width
-                        radius: width / 2
-                        color: "white"
-                        Behavior on x {
-                            enabled: timeHover.hovered
-                            NumberAnimation {
-                                duration: 80
-                                easing.type: Easing.OutQuart
-                            }
+                    Behavior on width {
+                        enabled: timeHover.hovered
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutQuart
                         }
                     }
+                }
+                // Thumb
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: inlineSeekTrack.width * inlineSeekTrack.frac - width / 2
+                    width: Math.round(9 * Config.scale)
+                    height: width
+                    radius: width / 2
+                    color: "white"
+                    Behavior on x {
+                        enabled: timeHover.hovered
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutQuart
+                        }
+                    }
+                }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.SizeHorCursor
-                        function applyX(mx) {
-                            if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
-                                return;
-                            const t = Math.max(0, Math.min(1, mx / inlineSeekTrack.width)) * root.trackLength;
-                            root.player.position = t;
-                            root.livePosition = t;
-                        }
-                        onPressed: mouse => applyX(mouse.x)
-                        onPositionChanged: mouse => {
-                            if (pressed)
-                                applyX(mouse.x);
-                        }
-                        onWheel: wheel => {
-                            if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
-                                return;
-                            const t = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5));
-                            root.player.position = t;
-                            root.livePosition = t;
-                        }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.SizeHorCursor
+                    function applyX(mx) {
+                        if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
+                            return;
+                        const t = Math.max(0, Math.min(1, mx / inlineSeekTrack.width)) * root.trackLength;
+                        root.player.position = t;
+                        root.livePosition = t;
+                    }
+                    onPressed: mouse => applyX(mouse.x)
+                    onPositionChanged: mouse => {
+                        if (pressed)
+                            applyX(mouse.x);
+                    }
+                    onWheel: wheel => {
+                        if (!root.player || !root.player.positionSupported || root.trackLength <= 0)
+                            return;
+                        const t = Math.max(0, Math.min(root.trackLength, root.livePosition + wheel.angleDelta.y / 120 * 5));
+                        root.player.position = t;
+                        root.livePosition = t;
                     }
                 }
             }
