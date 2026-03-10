@@ -24,7 +24,8 @@ QtObject {
         readonly property int sizeMd: Math.round(12 * root.fontSize)
         readonly property int sizeLg: Math.round(13 * root.fontSize)
         readonly property int sizeXl: Math.round(15 * root.fontSize)
-        readonly property int sizeXxl: Math.round(20 * root.fontSize)
+        readonly property int sizeXxl: Math.round(17 * root.fontSize)
+        readonly property int sizeXxxl: Math.round(20 * root.fontSize)
     }
 
     readonly property QtObject colors: QtObject {
