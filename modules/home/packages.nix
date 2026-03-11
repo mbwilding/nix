@@ -19,6 +19,7 @@ in
 {
   home = {
     packages = with pkgs; [
+      pkgsStable.bun
       open-ecc
       power-platform-toolbox
       # BROKEN python314Packages.cfn-lint
@@ -28,11 +29,11 @@ in
       _1password-gui
       asciiquarium
       atuin
+      azure-cli
       bash-language-server
       bashdb
       bat
       brightnessctl
-      pkgsStable.bun
       cameractrls-gtk4
       cargo
       cfn-nag
