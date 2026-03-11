@@ -11,10 +11,8 @@ in
 {
   imports = [
     ./fonts.nix
+    ./kernel-testing.nix
   ];
-
-  # TODO: Remove when 7 is released
-  boot.kernelPackages = pkgs.linuxPackages_testing;
 
   services = {
     ucodenix.enable = true;
