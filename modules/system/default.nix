@@ -13,8 +13,6 @@ in
     ./fonts.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_testing;
-
   services = {
     ucodenix.enable = true;
     blueman.enable = true;
