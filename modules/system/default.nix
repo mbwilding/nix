@@ -13,6 +13,9 @@ in
     ./fonts.nix
   ];
 
+  # TODO: Remove when 7 is released
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   services = {
     ucodenix.enable = true;
     blueman.enable = true;
