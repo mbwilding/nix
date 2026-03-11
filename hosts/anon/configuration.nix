@@ -162,9 +162,5 @@
     };
   };
 
-  nix.settings = {
-    download-buffer-size = 5 * 1024 * 1024 * 1024; # GB
-  };
-
   system.stateVersion = "25.11";
 }

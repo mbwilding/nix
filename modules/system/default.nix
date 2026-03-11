@@ -11,8 +11,9 @@ in
 {
   imports = [
     ./fonts.nix
-    ./kernel-testing.nix
   ];
+
+  boot.kernelPackages = pkgs.linuxPackages_testing;
 
   services = {
     ucodenix.enable = true;
@@ -205,5 +206,9 @@ in
       enable = true;
       channel = "https://nixos.org/channels/nixos-unstable";
     };
+  };
+
+  nix.settings = {
+    download-buffer-size = 5 * 1024 * 1024 * 1024; # GB
   };
 }
