@@ -14,7 +14,7 @@ in
   ];
 
   # TODO: Remove when 7 is released
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_testing;
 
   services = {
     ucodenix.enable = true;
