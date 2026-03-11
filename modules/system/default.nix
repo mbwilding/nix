@@ -108,9 +108,12 @@ in
     };
   };
 
-  hardware.bluetooth = {
-    enable = true;
-    package = pkgs.bluez;
+  hardware = {
+    enableRedistributableFirmware = true;
+    bluetooth = {
+      enable = true;
+      package = pkgs.bluez;
+    };
   };
 
   users.users.anon = {
