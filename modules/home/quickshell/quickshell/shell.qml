@@ -19,7 +19,7 @@ ShellRoot {
         onDismissAllNotifs: notifs.dismissAll()
     }
 
-    Stats {}
+    // Stats {}
 
     Osd {}
 
