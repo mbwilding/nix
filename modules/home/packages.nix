@@ -75,7 +75,6 @@ in
       kdePackages.kdegraphics-thumbnailers
       kdePackages.kimageformats
       kdePackages.kio-extras
-      qt6.qtdeclarative # qmlls
       killall
       kubectl
       kubernetes-helm
@@ -100,6 +99,7 @@ in
       pavucontrol
       php85Packages.php-cs-fixer
       phpactor
+      postgresql
       powershell
       powershell-editor-services
       prettierd
@@ -107,6 +107,7 @@ in
       pyright
       python314
       python314Packages.debugpy
+      qt6.qtdeclarative # qmlls
       reaper
       ripgrep
       roslyn-ls
