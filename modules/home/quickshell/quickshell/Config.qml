@@ -17,7 +17,7 @@ QtObject {
     }
 
     readonly property QtObject font: QtObject {
-        readonly property string family: "NeoSpleen Nerd Font"
+        readonly property string family: "JetBrainsMono Nerd Font Mono"
         readonly property int sizeXxs: Math.round(8 * root.fontSize)
         readonly property int sizeSm: Math.round(10 * root.fontSize)
         readonly property int sizeXs: Math.round(11 * root.fontSize)
