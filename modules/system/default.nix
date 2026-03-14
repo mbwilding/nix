@@ -9,7 +9,9 @@ let
   ];
 in
 {
-  # imports = [];
+  imports = [
+    ./fonts/fonts.nix
+  ];
 
   services = {
     ucodenix.enable = true;
