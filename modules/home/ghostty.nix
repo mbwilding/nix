@@ -36,7 +36,7 @@ in
         font-synthetic-style = true;
         adjust-cell-height = "12%";
         adjust-cursor-height = "12%";
-        adjust-underline-position = 4;
+        adjust-underline-position = 16;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
         clipboard-read = "allow";
