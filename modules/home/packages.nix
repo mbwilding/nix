@@ -74,6 +74,7 @@ in
       kdePackages.ffmpegthumbs
       kdePackages.gwenview
       kdePackages.kdegraphics-thumbnailers
+      kdePackages.kfontview
       kdePackages.kimageformats
       kdePackages.kio-extras
       killall
