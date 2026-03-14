@@ -30,8 +30,8 @@ in
           (lib.optionals shaders.trail [ "shaders/cursor_smear.glsl" ])
           ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
         adjust-cell-height = "12%";
-        adjust-cell-width = "-8%";
-        adjust-cursor-height = "12%";
+        # adjust-cell-width = "-8%";
+        # adjust-cursor-height = "12%";
         adjust-underline-position = 4;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
@@ -49,7 +49,7 @@ in
         cursor-style = "block";
         cursor-style-blink = true;
         focus-follows-mouse = true;
-        font-family = "NeoSpleen Nerd Font";
+        font-family = "MDSystemMono Nerd Font Mono";
         font-size = if hostname == "anon" then 24 else 21;
         # font-synthetic-style = true;
         gtk-tabs-location = "top";
