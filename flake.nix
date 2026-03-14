@@ -72,7 +72,14 @@
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit inputs secrets pkgsStable; };
+          specialArgs = {
+            inherit
+              inputs
+              pkgsStable
+              secrets
+              font
+              ;
+          };
 
           modules = [
             { nixpkgs.pkgs = pkgs; }
