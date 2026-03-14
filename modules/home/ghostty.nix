@@ -2,6 +2,7 @@
   lib,
   config,
   hostname,
+  font,
   ...
 }:
 
@@ -30,14 +31,9 @@ in
           (lib.optionals shaders.trail [ "shaders/cursor_smear.glsl" ])
           ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
 
-        # font-family = "NeoSpleen Nerd Font";
-        # adjust-cell-width = "-8%";
-        # font-size = if hostname == "anon" then 24 else 21;
-
-        # JetBrains
+        font-family = font;
         font-size = if hostname == "anon" then 18 else 16;
-
-        # font-synthetic-style = true;
+        font-synthetic-style = true;
         adjust-cell-height = "12%";
         adjust-cursor-height = "12%";
         adjust-underline-position = 4;
@@ -51,8 +47,8 @@ in
         cursor-click-to-move = true;
         # selection-foreground="cell-background";
         # selection-background="cell-foreground";
-        cursor-color="cell-foreground";
-        cursor-text="cell-background";
+        cursor-color = "cell-foreground";
+        cursor-text = "cell-background";
         cursor-opacity = 1.0;
         cursor-style = "block";
         cursor-style-blink = true;
