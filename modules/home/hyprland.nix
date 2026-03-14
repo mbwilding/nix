@@ -590,10 +590,10 @@ in
   gtk = {
     enable = true;
 
-    font = {
-      name = font;
-      size = 10;
-    };
+    # font = {
+    #   name = font;
+    #   size = 10;
+    # };
 
     theme = {
       package = pkgs.kdePackages.breeze-gtk;
@@ -658,17 +658,17 @@ in
         height = "30%";
         width = "20%";
       };
-      style = ''
-        * {
-            font-family: "${font}";
-            font-size: 22px;
-        }
-
-        image {
-            margin-left: 0.5em;
-            margin-right: 0.5em;
-        }
-      '';
+      # style = ''
+      #   * {
+      #       font-family: "${font}";
+      #       font-size: 22px;
+      #   }
+      #
+      #   image {
+      #       margin-left: 0.5em;
+      #       margin-right: 0.5em;
+      #   }
+      # '';
     };
   };
 }
