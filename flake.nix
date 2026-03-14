@@ -42,8 +42,8 @@
         "nona"
         "vm"
       ];
-
       secrets = import ./modules/system/secrets.nix;
+      font = "JetBrainsMono Nerd Font";
 
       pkgs = import inputs.nixpkgs {
         inherit system;
@@ -88,9 +88,10 @@
               home-manager.extraSpecialArgs = {
                 inherit
                   inputs
+                  pkgsStable
                   hostname
                   secrets
-                  pkgsStable
+                  font
                   ;
               };
               home-manager.users.anon = {
@@ -115,9 +116,10 @@
           extraSpecialArgs = {
             inherit
               inputs
+              pkgsStable
               hostname
               secrets
-              pkgsStable
+              font
               ;
           };
 

@@ -1,9 +1,5 @@
-{ ... }:
+{ font, ... }:
 
-let
-  font = "JetBrainsMono Nerd Font Mono";
-  # font = "NeoSpleen Nerd Font";
-in
 {
   programs = {
     wofi = {
