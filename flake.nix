@@ -37,13 +37,17 @@
     { ... }@inputs:
     let
       system = "x86_64-linux";
+
       hosts = [
         "anon"
         "nona"
         "vm"
       ];
+
       secrets = import ./modules/system/secrets.nix;
-      font = "JetBrainsMono Nerd Font";
+
+      # font = "JetBrainsMono Nerd Font";
+      font = "Iosevka Nerd Font";
 
       pkgs = import inputs.nixpkgs {
         inherit system;
