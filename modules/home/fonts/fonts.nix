@@ -11,7 +11,9 @@ in
       neospleen-nerdfont
       jetbrains-mono
       nerd-fonts.jetbrains-mono
-      spleen
+      iosevka
+      nerd-fonts.iosevka
+      # spleen
     ];
   }
   // (

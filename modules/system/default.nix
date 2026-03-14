@@ -9,9 +9,7 @@ let
   ];
 in
 {
-  imports = [
-    ./fonts/fonts.nix
-  ];
+  # imports = [];
 
   services = {
     ucodenix.enable = true;
@@ -28,7 +26,7 @@ in
   };
 
   # 32x64 16x32 12x24 8x16 6x12 5x8
-  console.font = "${pkgs.spleen}/share/consolefonts/spleen-16x32.psfu";
+  # console.font = "${pkgs.spleen}/share/consolefonts/spleen-16x32.psfu";
 
   boot = {
     loader = {
