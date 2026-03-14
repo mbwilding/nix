@@ -49,6 +49,7 @@ in
       docker-language-server
       eslint_d
       eza
+      fastfetch
       fd
       file
       fuse3
