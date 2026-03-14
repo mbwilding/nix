@@ -32,9 +32,11 @@ in
 
         # font-family = "NeoSpleen Nerd Font";
         # adjust-cell-width = "-8%";
+        # font-size = if hostname == "anon" then 24 else 21;
 
-        font-family = "JetBrainsMono Nerd Font Mono";
-        font-size = if hostname == "anon" then 24 else 21;
+        # JetBrains
+        font-size = if hostname == "anon" then 18 else 18;
+
         # font-synthetic-style = true;
         adjust-cell-height = "12%";
         adjust-cursor-height = "12%";

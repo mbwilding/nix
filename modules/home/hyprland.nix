@@ -5,7 +5,8 @@
 }:
 
 let
-  font = "NeoSpleen Nerd Font";
+  # font = "NeoSpleen Nerd Font";
+  font = "JetBrainsMono Nerd Font Mono";
   anim_speed = 2.0;
   gaps = 10.0;
 
