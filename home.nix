@@ -15,7 +15,6 @@
     ./modules/home/discord.nix
     ./modules/home/dotnet.nix
     ./modules/home/files.nix
-    ./modules/home/fonts/fonts.nix
     ./modules/home/fzf.nix
     ./modules/home/gh.nix
     ./modules/home/ghostty.nix
