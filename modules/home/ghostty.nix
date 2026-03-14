@@ -32,11 +32,11 @@ in
           ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
 
         font-family = font;
-        font-size = if hostname == "anon" then 18 else 16;
+        font-size = if hostname == "anon" then 18 else 17;
         font-synthetic-style = true;
-        adjust-cell-height = "12%";
-        adjust-cursor-height = "12%";
-        adjust-underline-position = 16;
+        # adjust-cell-height = "12%";
+        # adjust-cursor-height = "12%";
+        adjust-underline-position = 12;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
         clipboard-read = "allow";
