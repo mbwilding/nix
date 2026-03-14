@@ -35,7 +35,7 @@ in
         # font-size = if hostname == "anon" then 24 else 21;
 
         # JetBrains
-        font-size = if hostname == "anon" then 18 else 18;
+        font-size = if hostname == "anon" then 18 else 16;
 
         # font-synthetic-style = true;
         adjust-cell-height = "12%";
