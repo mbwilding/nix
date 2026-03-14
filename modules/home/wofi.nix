@@ -1,7 +1,8 @@
 { ... }:
 
 let
-  font = "NeoSpleen Nerd Font";
+  font = "JetBrainsMono Nerd Font Mono";
+  # font = "NeoSpleen Nerd Font";
 in
 {
   programs = {
