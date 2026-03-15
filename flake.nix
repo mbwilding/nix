@@ -3,6 +3,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgsStable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ucodenix.url = "github:e-tho/ucodenix";
 
     plasma-manager = {
@@ -18,11 +23,6 @@
 
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    caelestia-shell = {
-      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -51,9 +51,11 @@
 
       pkgs = import inputs.nixpkgs {
         inherit system;
+
         config = {
           allowUnfree = true;
         };
+
         overlays = [
           inputs.neovim-nightly-overlay.overlays.default
           (final: prev: {
@@ -109,7 +111,6 @@
                 imports = [
                   ./home.nix
                   inputs.plasma-manager.homeModules.plasma-manager
-                  inputs.caelestia-shell.homeManagerModules.default
                 ];
               };
             }
@@ -118,6 +119,15 @@
     in
     {
       nixosConfigurations = inputs.nixpkgs.lib.genAttrs hosts mkHost;
+
+      nixOnDroidConfiguration.default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+        pkgs = import inputs.nixpkgs { system = "aarch64-linux"; };
+        modules = [
+          { nixpkgs.pkgs = pkgs; }
+
+          ./hosts/phone/configuration.nix
+        ];
+      };
 
       homeConfigurations = inputs.nixpkgs.lib.genAttrs hosts (
         hostname:
@@ -137,7 +147,6 @@
           modules = [
             ./home.nix
             inputs.plasma-manager.homeModules.plasma-manager
-            inputs.caelestia-shell.homeManagerModules.default
           ];
         }
       );
