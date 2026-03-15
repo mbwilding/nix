@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   hostname,
   font,
@@ -503,7 +502,7 @@ in
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
-        "HYPRSHOT_DIR,${config.home.homeDirectory}/Pictures/Screenshots"
+        "HYPRSHOT_DIR,/home/anon/Pictures/Screenshots"
       ];
 
       scrolling = {

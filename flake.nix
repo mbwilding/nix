@@ -3,15 +3,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    # https://github.com/nix-community/nix-on-droid/issues/495
-    nixpkgs-unstable-droid.url = "github:NixOS/nixpkgs/88d3861";
-
-    nix-on-droid = {
-      url = "github:nix-community/nix-on-droid";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
     ucodenix.url = "github:e-tho/ucodenix";
 
     plasma-manager = {
@@ -41,30 +32,13 @@
     { ... }@inputs:
     let
       system = "x86_64-linux";
-
       hosts = [
         "anon"
         "nona"
         "vm"
-        "nix-on-droid"
       ];
 
-      homeDirectoryDesktop = "/home/anon";
-      homeDirectoryPhone = "/data/data/com.termux.nix/files/home";
-      usernameDesktop = "anon";
-      usernamePhone = "nix-on-droid";
-
-      mkSecrets =
-        isDesktop:
-        import ./modules/system/secrets.nix {
-          home = if isDesktop then homeDirectoryDesktop else homeDirectoryPhone;
-        };
-
-      secrets = mkSecrets true;
-
-      font = "CaskaydiaMono Nerd Font Mono";
-      # font = "JetBrainsMonoNL Nerd Font";
-      # font = "Iosevka Nerd Font";
+      secrets = import ./modules/system/secrets.nix;
 
       pkgs = import inputs.nixpkgs {
         inherit system;
@@ -83,24 +57,12 @@
         ];
       };
 
+      font = "CaskaydiaMono Nerd Font Mono";
+      # font = "JetBrainsMonoNL Nerd Font";
+      # font = "Iosevka Nerd Font";
+
       pkgsStable = import inputs.nixpkgs-stable {
         inherit system;
-        config = {
-          allowUnfree = true;
-        };
-      };
-
-      pkgsPhone = import inputs.nixpkgs {
-        system = "aarch64-linux";
-
-        config = {
-          allowUnfree = true;
-        };
-      };
-
-      pkgsStablePhone = import inputs.nixpkgs-stable {
-        system = "aarch64-linux";
-
         config = {
           allowUnfree = true;
         };
@@ -126,6 +88,7 @@
             ./hosts/${hostname}/configuration.nix
 
             inputs.ucodenix.nixosModules.default
+
             inputs.home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -139,11 +102,8 @@
                   secrets
                   font
                   ;
-
-                isDesktop = true;
-                homeDirectory = homeDirectoryDesktop;
-                username = usernameDesktop;
               };
+
               home-manager.users.anon = {
                 imports = [
                   ./home.nix
@@ -157,37 +117,9 @@
     {
       nixosConfigurations = inputs.nixpkgs.lib.genAttrs hosts mkHost;
 
-      nixOnDroidConfigurations.default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import inputs.nixpkgs-unstable-droid {
-          system = "aarch64-linux";
-
-          config = {
-            allowUnfree = true;
-          };
-        };
-
-        extraSpecialArgs = {
-          inherit
-            inputs
-            pkgsPhone
-            pkgsStablePhone
-            font
-            ;
-
-          secrets = mkSecrets false;
-          hostname = "phone";
-          isDesktop = false;
-          homeDirectory = homeDirectoryPhone;
-          username = usernamePhone;
-        };
-
-        modules = [
-          ./hosts/phone/configuration.nix
-        ];
-      };
-
       homeConfigurations = inputs.nixpkgs.lib.genAttrs hosts (
         hostname:
+
         inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
 
@@ -199,14 +131,11 @@
               secrets
               font
               ;
-
-            isDesktop = hostname != "nix-on-droid";
-            homeDirectory = if hostname == "nix-on-droid" then homeDirectoryPhone else homeDirectoryDesktop;
-            username = if hostname == "nix-on-droid" then usernamePhone else usernameDesktop;
           };
 
           modules = [
             ./home.nix
+
             inputs.plasma-manager.homeModules.plasma-manager
           ];
         }

@@ -102,10 +102,7 @@ in
     };
     firewall = {
       enable = true;
-      allowedTCPPorts = [
-        22
-        8080 # Local web server
-      ];
+      allowedTCPPorts = [ 22 ];
     };
   };
 
