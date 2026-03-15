@@ -1,4 +1,4 @@
-{ lib, isDesktop, ... }:
+{ ... }:
 
 {
   programs = {
@@ -103,17 +103,15 @@
         #       end
         #     end
         #   '';
-        # }
-        // lib.optionalAttrs isDesktop {
-          wifi-connect = {
-            description = "Connect to a WiFi network via nmcli";
-            body = ''
-              read -P "Enter SSID: " ssid
-              read -sP "Enter Password: " password
-              echo
-              nmcli device wifi connect $ssid password $password
-            '';
-          };
+        # };
+        wifi-connect = {
+          description = "Connect to a WiFi network via nmcli";
+          body = ''
+            read -P "Enter SSID: " ssid
+            read -sP "Enter Password: " password
+            echo
+            nmcli device wifi connect $ssid password $password
+          '';
         };
       };
     };
