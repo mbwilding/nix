@@ -1,9 +1,4 @@
-{
-  pkgsStable,
-  secrets,
-  font,
-  ...
-}:
+{ ... }:
 
 {
   imports = [
@@ -31,17 +26,6 @@
       MANWIDTH = "999";
       RUST_LOG = "info";
       PULUMI_CONFIG_PASSPHRASE = "";
-    };
-
-    useGlobalPkgs = true;
-    useUserPackages = true;
-
-    extraSpecialArgs = {
-      inherit
-        pkgsStable
-        secrets
-        font
-        ;
     };
 
     file.".hushlogin".text = "";
