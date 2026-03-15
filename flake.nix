@@ -48,9 +48,11 @@
         "vm"
       ];
 
-      mkSecrets = isDesktop: import ./modules/system/secrets.nix {
-        home = if isDesktop then "/home/anon" else "/data/data/com.termux.nix/files/home";
-      };
+      mkSecrets =
+        isDesktop:
+        import ./modules/system/secrets.nix {
+          home = if isDesktop then "/home/anon" else "/data/data/com.termux.nix/files/home";
+        };
 
       secrets = mkSecrets true;
 
@@ -81,8 +83,17 @@
         };
       };
 
+      pkgsPhone = import inputs.nixpkgs {
+        system = "aarch64-linux";
+
+        config = {
+          allowUnfree = true;
+        };
+      };
+
       pkgsStablePhone = import inputs.nixpkgs-stable {
         system = "aarch64-linux";
+
         config = {
           allowUnfree = true;
         };
@@ -152,6 +163,7 @@
             font
             ;
 
+          pkgs = pkgsPhone;
           pkgsStable = pkgsStablePhone;
           secrets = mkSecrets false;
           hostname = "phone";
