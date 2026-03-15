@@ -1,4 +1,5 @@
-{ secrets, ... }:
+{ config, secrets, ... }:
+
 {
   services = {
     gpg-agent = {
@@ -20,7 +21,7 @@
         gpg = {
           format = "ssh";
           "ssh" = {
-            allowedSignersFile = "/home/anon/.config/git/allowed_signers";
+            allowedSignersFile = "${config.home.homeDirectory}/.config/git/allowed_signers";
           };
         };
         commit.gpgsign = true;

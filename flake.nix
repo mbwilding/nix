@@ -48,7 +48,11 @@
         "vm"
       ];
 
-      secrets = import ./modules/system/secrets.nix;
+      mkSecrets = isDesktop: import ./modules/system/secrets.nix {
+        home = if isDesktop then "/home/anon" else "/data/data/com.termux.nix/files/home";
+      };
+
+      secrets = mkSecrets true;
 
       # font = "JetBrainsMono Nerd Font";
       font = "Iosevka Nerd Font";
@@ -110,6 +114,8 @@
                   secrets
                   font
                   ;
+
+                isDesktop = true;
               };
               home-manager.users.anon = {
                 imports = [
@@ -137,9 +143,12 @@
           inherit
             inputs
             pkgsStable
-            secrets
             font
             ;
+
+          secrets = mkSecrets false;
+          hostname = "phone";
+          isDesktop = false;
         };
 
         modules = [
@@ -160,6 +169,8 @@
               secrets
               font
               ;
+
+            isDesktop = true;
           };
 
           modules = [
