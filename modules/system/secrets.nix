@@ -1,6 +1,6 @@
-let
-  home = builtins.getEnv "HOME";
+{ home, ... }:
 
+let
   readSecret =
     path:
     if builtins.pathExists path then builtins.readFile path else throw "Secret file not found: ${path}";
