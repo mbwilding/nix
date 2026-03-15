@@ -46,6 +46,7 @@
         "anon"
         "nona"
         "vm"
+        "nix-on-droid"
       ];
 
       homeDirectoryDesktop = "/home/anon";
@@ -198,9 +199,9 @@
               font
               ;
 
-            isDesktop = true;
-            homeDirectory = homeDirectoryDesktop;
-            username = usernameDesktop;
+            isDesktop = hostname != "nix-on-droid";
+            homeDirectory = if hostname == "nix-on-droid" then homeDirectoryPhone else homeDirectoryDesktop;
+            username = if hostname == "nix-on-droid" then usernamePhone else usernameDesktop;
           };
 
           modules = [
