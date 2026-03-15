@@ -1,4 +1,10 @@
-{ pkgs, secrets, font, inputs, ... }:
+{
+  pkgs,
+  secrets,
+  font,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -14,13 +20,6 @@
 
   nix = {
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
   };
 
   environment.packages = with pkgs; [
