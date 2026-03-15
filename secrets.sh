@@ -57,7 +57,7 @@ for entry in "${secrets[@]}"; do
   fi
 done
 
-NIXPKGS_ALLOW_UNFREE=1 nix-shell -p coreutils _1password-cli --run "
+NIXPKGS_ALLOW_UNFREE=1 nix-shell --extra-experimental-features flakes -p coreutils _1password-cli --run "
   export OP_SERVICE_ACCOUNT_TOKEN='$OP_SERVICE_ACCOUNT_TOKEN';
   $op_commands
 "
