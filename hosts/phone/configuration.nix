@@ -18,12 +18,12 @@
     vim
   ];
 
-  home-manager = {
-    config = ./home.nix;
-    extraSpecialArgs = {
-      inherit secrets font inputs;
-    };
-  };
+  # home-manager = {
+  #   config = ./home.nix;
+  #   extraSpecialArgs = {
+  #     inherit secrets font inputs;
+  #   };
+  # };
 
   system.stateVersion = "24.05";
 }

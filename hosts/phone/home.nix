@@ -23,6 +23,7 @@
       MANPAGER = "nvim +Man!";
       MANWIDTH = "999";
       RUST_LOG = "info";
+      NIX_PATH = "nixpkgs=flake:nixpkgs";
     };
 
     file.".hushlogin".text = "";
