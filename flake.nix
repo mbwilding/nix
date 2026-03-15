@@ -48,8 +48,6 @@
         "vm"
       ];
 
-      home = builtins.getEnv "HOME";
-
       secrets = import ./modules/system/secrets.nix;
 
       # font = "JetBrainsMono Nerd Font";
@@ -87,7 +85,6 @@
           specialArgs = {
             inherit
               inputs
-              home
               pkgsStable
               secrets
               font
@@ -139,7 +136,6 @@
         extraSpecialArgs = {
           inherit
             inputs
-            home
             pkgsStable
             secrets
             font
@@ -159,7 +155,6 @@
           extraSpecialArgs = {
             inherit
               inputs
-              home
               pkgsStable
               hostname
               secrets
