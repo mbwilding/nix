@@ -50,6 +50,8 @@
 
       homeDirectoryDesktop = "/home/anon";
       homeDirectoryPhone = "/data/data/com.termux.nix/files/home";
+      usernameDesktop = "anon";
+      usernamePhone = "nix-on-droid";
 
       mkSecrets =
         isDesktop:
@@ -138,6 +140,7 @@
 
                 isDesktop = true;
                 homeDirectory = homeDirectoryDesktop;
+                username = usernameDesktop;
               };
               home-manager.users.anon = {
                 imports = [
@@ -161,19 +164,20 @@
           };
         };
 
-          extraSpecialArgs = {
-            inherit
-              inputs
-              pkgsPhone
-              pkgsStablePhone
-              font
-              ;
+        extraSpecialArgs = {
+          inherit
+            inputs
+            pkgsPhone
+            pkgsStablePhone
+            font
+            ;
 
-            secrets = mkSecrets false;
-            hostname = "phone";
-            isDesktop = false;
-            homeDirectory = homeDirectoryPhone;
-          };
+          secrets = mkSecrets false;
+          hostname = "phone";
+          isDesktop = false;
+          homeDirectory = homeDirectoryPhone;
+          username = usernamePhone;
+        };
 
         modules = [
           ./hosts/phone/configuration.nix
@@ -196,6 +200,7 @@
 
             isDesktop = true;
             homeDirectory = homeDirectoryDesktop;
+            username = usernameDesktop;
           };
 
           modules = [
