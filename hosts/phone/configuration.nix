@@ -13,9 +13,13 @@
   ];
 
   environment.packages = with pkgs; [
-    vim
     git
+    neovim
+    vim
   ];
+
+  # TODO: Enable
+  # home-manager.config = ../../home.nix;
 
   system.stateVersion = "24.05";
 }

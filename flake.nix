@@ -9,6 +9,7 @@
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     ucodenix.url = "github:e-tho/ucodenix";
@@ -132,9 +133,16 @@
           };
         };
 
-        modules = [
-          # { nixpkgs.pkgs = pkgs; }
+        extraSpecialArgs = {
+          inherit
+            inputs
+            pkgsStable
+            secrets
+            font
+            ;
+        };
 
+        modules = [
           ./hosts/phone/configuration.nix
         ];
       };
