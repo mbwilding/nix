@@ -160,11 +160,11 @@
         extraSpecialArgs = {
           inherit
             inputs
+            pkgsPhone
+            pkgsStablePhone
             font
             ;
 
-          pkgsPhone = pkgsPhone;
-          pkgsStable = pkgsStablePhone;
           secrets = mkSecrets false;
           hostname = "phone";
           isDesktop = false;
