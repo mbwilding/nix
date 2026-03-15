@@ -12,7 +12,21 @@
     # ../../modules/system/appimage.nix
   ];
 
-  nix.nixPath = [ "nixpkgs=flake:nixpkgs" ];
+  nix = {
+    nixPath = [ "nixpkgs=flake:nixpkgs" ];
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+  };
 
   environment.packages = with pkgs; [
     git
