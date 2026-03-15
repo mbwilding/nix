@@ -144,6 +144,27 @@
 
         modules = [
           ./hosts/phone/configuration.nix
+
+          inputs.home-manager.homeManagerModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = {
+              inherit
+                inputs
+                pkgsStable
+                secrets
+                font
+                ;
+            };
+            home-manager.users.anon = {
+              imports = [
+                ./home.nix
+                inputs.plasma-manager.homeModules.plasma-manager
+              ];
+            };
+          }
         ];
       };
 
