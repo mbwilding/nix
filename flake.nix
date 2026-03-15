@@ -81,6 +81,13 @@
         };
       };
 
+      pkgsStablePhone = import inputs.nixpkgs-stable {
+        system = "aarch64-linux";
+        config = {
+          allowUnfree = true;
+        };
+      };
+
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
@@ -142,10 +149,10 @@
         extraSpecialArgs = {
           inherit
             inputs
-            pkgsStable
             font
             ;
 
+          pkgsStable = pkgsStablePhone;
           secrets = mkSecrets false;
           hostname = "phone";
           isDesktop = false;
