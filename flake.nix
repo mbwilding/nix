@@ -133,15 +133,6 @@
           };
         };
 
-        specialArgs = {
-          inherit
-            inputs
-            pkgsStable
-            secrets
-            font
-            ;
-        };
-
         extraSpecialArgs = {
           inherit
             inputs
