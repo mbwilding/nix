@@ -14,6 +14,7 @@
 
   environment.packages = with pkgs; [
     vim
+    git
   ];
 
   system.stateVersion = "24.05";
