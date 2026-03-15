@@ -12,6 +12,8 @@
     ../../modules/home/ssh.nix
     ../../modules/home/yazi.nix
     ../../modules/home/zoxide.nix
+
+    ../../modules/home/packages.nix
   ];
 
   news.display = "silent";
@@ -23,6 +25,7 @@
       MANPAGER = "nvim +Man!";
       MANWIDTH = "999";
       RUST_LOG = "info";
+      PULUMI_CONFIG_PASSPHRASE = "";
     };
 
     file.".hushlogin".text = "";
