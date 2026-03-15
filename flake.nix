@@ -121,7 +121,6 @@
       nixosConfigurations = inputs.nixpkgs.lib.genAttrs hosts mkHost;
 
       nixOnDroidConfigurations.default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        system = "aarch64-linux";
         pkgs = import inputs.nixpkgs { system = "aarch64-linux"; };
         modules = [
           { nixpkgs.pkgs = pkgs; }
