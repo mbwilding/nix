@@ -5,6 +5,7 @@
     packages = with pkgs; [
       proxychains-ng
     ];
+
     file.".config/proxychains/proxychains.conf".text = ''
       strict_chain
       proxy_dns
