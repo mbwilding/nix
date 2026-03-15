@@ -1,5 +1,8 @@
-{ font, ... }:
+{ ... }:
 
+let
+  font = "NeoSpleen Nerd Font";
+in
 {
   programs = {
     wofi = {
