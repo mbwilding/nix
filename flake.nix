@@ -2,6 +2,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+
+    # https://github.com/nix-community/nix-on-droid/issues/495
     nixpkgs-unstable-droid.url = "github:NixOS/nixpkgs/88d3861";
 
     nix-on-droid = {
