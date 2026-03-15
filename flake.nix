@@ -57,7 +57,7 @@
         ];
       };
 
-      font = "CaskaydiaMono Nerd Font Mono";
+      font = "CaskaydiaMono Nerd Font";
       # font = "JetBrainsMonoNL Nerd Font";
       # font = "Iosevka Nerd Font";
 
