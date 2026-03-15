@@ -1,10 +1,4 @@
-{
-  pkgs,
-  secrets,
-  font,
-  inputs,
-  ...
-}:
+{ pkgs, secrets, font, inputs, ... }:
 
 {
   imports = [
@@ -17,6 +11,14 @@
     # ../../modules/system/wireshark.nix
     # ../../modules/system/appimage.nix
   ];
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      # PermitRootLogin = "yes";
+      PasswordAuthentication = true;
+    };
+  };
 
   nix = {
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
