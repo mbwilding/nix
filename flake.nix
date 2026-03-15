@@ -163,7 +163,7 @@
             font
             ;
 
-          pkgs = pkgsPhone;
+          pkgsPhone = pkgsPhone;
           pkgsStable = pkgsStablePhone;
           secrets = mkSecrets false;
           hostname = "phone";
