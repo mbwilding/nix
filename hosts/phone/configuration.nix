@@ -1,6 +1,7 @@
 {
   pkgs,
-  pkgsStable,
+  pkgsPhone,
+  pkgsStablePhone,
   secrets,
   font,
   inputs,
@@ -21,9 +22,9 @@
 
   home-manager = {
     config = ../../home.nix;
+
     extraSpecialArgs = {
       inherit
-        pkgsStable
         secrets
         font
         inputs
@@ -31,6 +32,8 @@
         ;
 
       isDesktop = false;
+      pkgs = pkgsPhone;
+      pkgsStable = pkgsStablePhone;
     };
   };
 
