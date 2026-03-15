@@ -1,7 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgsStable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable-droid.url = "github:NixOS/nixpkgs/88d3861";
 
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid";
@@ -66,7 +67,7 @@
         ];
       };
 
-      pkgsStable = import inputs.nixpkgsStable {
+      pkgsStable = import inputs.nixpkgs-stable {
         inherit system;
         config = {
           allowUnfree = true;
@@ -121,7 +122,7 @@
       nixosConfigurations = inputs.nixpkgs.lib.genAttrs hosts mkHost;
 
       nixOnDroidConfigurations.default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import inputs.nixpkgs {
+        pkgs = import inputs.nixpkgs-unstable-droid {
           system = "aarch64-linux";
 
           config = {
