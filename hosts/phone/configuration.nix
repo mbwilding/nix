@@ -3,21 +3,11 @@
   secrets,
   font,
   inputs,
+  hostname,
   ...
 }:
 
 {
-  imports = [
-    # ../../modules/system/kde.nix
-    # ../../modules/system/hyprland.nix
-
-    # ../../modules/system/default.nix
-    # ../../modules/system/podman.nix
-    # ../../modules/system/docker.nix
-    # ../../modules/system/wireshark.nix
-    # ../../modules/system/appimage.nix
-  ];
-
   nix = {
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
   };
@@ -29,9 +19,16 @@
   ];
 
   home-manager = {
-    config = ./home.nix;
+    config = ../../home.nix;
     extraSpecialArgs = {
-      inherit secrets font inputs;
+      inherit
+        secrets
+        font
+        inputs
+        hostname
+        ;
+
+      isDesktop = false;
     };
   };
 
