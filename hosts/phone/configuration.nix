@@ -14,11 +14,11 @@
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
   };
 
-  environment.packages = with pkgs; [
-    git
-    neovim
-    vim
-  ];
+  # environment.packages = with pkgs; [
+  #   git
+  #   neovim
+  #   vim
+  # ];
 
   home-manager = {
     config = ../../home.nix;
