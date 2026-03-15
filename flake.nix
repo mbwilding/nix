@@ -62,8 +62,9 @@
 
       secrets = mkSecrets true;
 
-      # font = "JetBrainsMono Nerd Font";
-      font = "Iosevka Nerd Font";
+      font = "CaskaydiaMono Nerd Font Mono";
+      # font = "JetBrainsMonoNL Nerd Font";
+      # font = "Iosevka Nerd Font";
 
       pkgs = import inputs.nixpkgs {
         inherit system;

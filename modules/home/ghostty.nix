@@ -34,9 +34,10 @@ in
         font-family = font;
         font-size = if hostname == "anon" then 18 else 17;
         font-synthetic-style = true;
-        # adjust-cell-height = "12%";
+        adjust-cell-width = "-5%";
+        adjust-cell-height = "15%";
         # adjust-cursor-height = "12%";
-        adjust-underline-position = 12;
+        adjust-underline-position = 4;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
         clipboard-read = "allow";
