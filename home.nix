@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
   imports = [
@@ -35,8 +35,8 @@
   news.display = "silent";
 
   home = {
-    username = "anon";
-    homeDirectory = "/home/anon";
+    username = lib.mkDefault "anon";
+    homeDirectory = lib.mkDefault "/home/anon";
 
     sessionVariables = {
       EDITOR = "nvim";
