@@ -64,6 +64,7 @@ in
         go
         gopls
         home-manager
+        hostname
         imagemagick
         jdk
         jfrog-cli
