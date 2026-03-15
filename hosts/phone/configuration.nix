@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgsStable,
   secrets,
   font,
   inputs,
@@ -22,6 +23,7 @@
     config = ../../home.nix;
     extraSpecialArgs = {
       inherit
+        pkgsStable
         secrets
         font
         inputs
