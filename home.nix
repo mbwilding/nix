@@ -2,6 +2,7 @@
   lib,
   isDesktop,
   homeDirectory,
+  username,
   ...
 }:
 {
@@ -42,6 +43,8 @@
   news.display = "silent";
 
   home = {
+    inherit username homeDirectory;
+
     sessionVariables = {
       EDITOR = "nvim";
       XDG_CONFIG_HOME = "$HOME/.config";
@@ -62,11 +65,5 @@
     file.".hushlogin".text = "";
 
     stateVersion = "25.11";
-  }
-  // lib.optionalAttrs isDesktop {
-    username = "anon";
-  }
-  // {
-    inherit homeDirectory;
   };
 }

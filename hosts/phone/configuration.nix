@@ -6,6 +6,7 @@
   inputs,
   hostname,
   homeDirectory,
+  username,
   ...
 }:
 
@@ -30,6 +31,7 @@
         inputs
         hostname
         homeDirectory
+        username
         ;
 
       isDesktop = false;
