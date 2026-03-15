@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euox pipefail
+set -euo pipefail
 
 read -s -p "Enter service account token: " OP_SERVICE_ACCOUNT_TOKEN
 echo
