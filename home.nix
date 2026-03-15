@@ -1,4 +1,4 @@
-{ lib, isDesktop, homeDirectory, ... }:
+{ lib, pkgs, isDesktop, homeDirectory, ... }:
 {
   imports =
     lib.optionals isDesktop [
@@ -51,6 +51,7 @@
     // lib.optionalAttrs (!isDesktop) {
       TERM = "xterm-256color";
       COLORTERM = "truecolor";
+      TERMINFO_DIRS = "${pkgs.ncurses}/share/terminfo";
     };
 
     keyboard = lib.mkIf isDesktop {
