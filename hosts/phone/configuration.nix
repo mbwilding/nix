@@ -1,5 +1,4 @@
 {
-  pkgs,
   pkgsPhone,
   pkgsStablePhone,
   secrets,
