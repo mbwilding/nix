@@ -1,18 +1,19 @@
 { pkgs, ... }:
 
 let
-  neospleen = pkgs.callPackage ./neospleen.nix { };
+  # neospleen = pkgs.callPackage ./neospleen.nix { };
   neospleen-nerdfont = pkgs.callPackage ./neospleen-nerdfont.nix { };
 in
 {
   fonts = {
     packages = with pkgs; [
-      neospleen
+      # neospleen
       neospleen-nerdfont
-      jetbrains-mono
+      # jetbrains-mono
       nerd-fonts.jetbrains-mono
-      iosevka
+      # iosevka
       nerd-fonts.iosevka
+      nerd-fonts.caskaydia-mono
       # spleen
     ];
   }
