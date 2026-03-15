@@ -48,10 +48,13 @@
         "vm"
       ];
 
+      homeDirectoryDesktop = "/home/anon";
+      homeDirectoryPhone = "/data/data/com.termux.nix/files/home";
+
       mkSecrets =
         isDesktop:
         import ./modules/system/secrets.nix {
-          home = if isDesktop then "/home/anon" else "/data/data/com.termux.nix/files/home";
+          home = if isDesktop then homeDirectoryDesktop else homeDirectoryPhone;
         };
 
       secrets = mkSecrets true;
@@ -134,6 +137,7 @@
                   ;
 
                 isDesktop = true;
+                homeDirectory = homeDirectoryDesktop;
               };
               home-manager.users.anon = {
                 imports = [
@@ -157,18 +161,19 @@
           };
         };
 
-        extraSpecialArgs = {
-          inherit
-            inputs
-            pkgsPhone
-            pkgsStablePhone
-            font
-            ;
+          extraSpecialArgs = {
+            inherit
+              inputs
+              pkgsPhone
+              pkgsStablePhone
+              font
+              ;
 
-          secrets = mkSecrets false;
-          hostname = "phone";
-          isDesktop = false;
-        };
+            secrets = mkSecrets false;
+            hostname = "phone";
+            isDesktop = false;
+            homeDirectory = homeDirectoryPhone;
+          };
 
         modules = [
           ./hosts/phone/configuration.nix
@@ -190,6 +195,7 @@
               ;
 
             isDesktop = true;
+            homeDirectory = homeDirectoryDesktop;
           };
 
           modules = [
