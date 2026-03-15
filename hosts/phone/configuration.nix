@@ -12,6 +12,8 @@
     # ../../modules/system/appimage.nix
   ];
 
+  nix.nixPath = [ "nixpkgs=flake:nixpkgs" ];
+
   environment.packages = with pkgs; [
     git
     neovim
