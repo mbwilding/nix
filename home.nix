@@ -1,4 +1,4 @@
-{ lib, isDesktop, ... }:
+{ lib, isDesktop, homeDirectory, ... }:
 {
   imports =
     lib.optionals isDesktop [
@@ -60,6 +60,8 @@
   }
   // lib.optionalAttrs isDesktop {
     username = "anon";
-    homeDirectory = "/home/anon";
+  }
+  // {
+    inherit homeDirectory;
   };
 }

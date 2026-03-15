@@ -5,6 +5,7 @@
   font,
   inputs,
   hostname,
+  homeDirectory,
   ...
 }:
 
@@ -28,6 +29,7 @@
         font
         inputs
         hostname
+        homeDirectory
         ;
 
       isDesktop = false;
