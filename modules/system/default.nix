@@ -186,6 +186,7 @@ in
       # SDL_VIDEODRIVER = "wayland";
       # QT_QPA_PLATFORM = "wayland";
       ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+      NIXPKGS_ALLOW_UNFREE = 1;
       PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
     };
   };
