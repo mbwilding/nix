@@ -47,6 +47,10 @@
     }
     // lib.optionalAttrs isDesktop {
       NIXOS_OZONE_WL = "1";
+    }
+    // lib.optionalAttrs (!isDesktop) {
+      TERM = "xterm-256color";
+      COLORTERM = "truecolor";
     };
 
     keyboard = lib.mkIf isDesktop {
