@@ -1,4 +1,9 @@
-{ pkgsStable, secrets, font, ... }:
+{
+  pkgsStable,
+  secrets,
+  font,
+  ...
+}:
 
 {
   imports = [
@@ -30,7 +35,7 @@
 
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "backup";
+
     extraSpecialArgs = {
       inherit
         pkgsStable
