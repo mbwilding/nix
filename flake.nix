@@ -143,6 +143,8 @@
         };
 
         modules = [
+          { nixpkgs.pkgs = pkgs; }
+
           ./hosts/phone/configuration.nix
         ];
       };
