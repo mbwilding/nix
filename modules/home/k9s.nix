@@ -59,16 +59,44 @@
         };
       };
       views = {
-        "v1/pods" = {
+        "v1/pods@.*-(rwwa)" = {
           columns = [
             "NAMESPACE"
             "NAME"
             "SQUAD:.metadata.labels.squad"
+            "VERSION:.metadata.labels.version"
             "STATUS"
             "READY"
             "AGE"
+            "RESTARTS"
+            "CPU"
+            "%CPU/R"
+            "%CPU/L"
+            "MEM"
+            "%MEM/R"
+            "%MEM/L"
             "IP"
-            "NODE"
+            "NODE|S"
+            "PF"
+          ];
+        };
+        "v1/pods" = {
+          columns = [
+            "NAMESPACE"
+            "NAME"
+            "STATUS"
+            "READY"
+            "AGE"
+            "RESTARTS"
+            "CPU"
+            "%CPU/R"
+            "%CPU/L"
+            "MEM"
+            "%MEM/R"
+            "%MEM/L"
+            "IP"
+            "NODE|S"
+            "PF"
           ];
         };
       };
