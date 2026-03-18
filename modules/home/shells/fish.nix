@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   programs = {
@@ -111,6 +111,28 @@
             read -sP "Enter Password: " password
             echo
             nmcli device wifi connect $ssid password $password
+          '';
+        };
+        ghcp = {
+          description = "Clone GitHub Personal";
+          body = ''
+            if test (count $argv) -gt 0
+              set repo $argv[1]
+            else
+              read -P "Repo Name: " repo
+            end
+            git clone --recursive "git@github.com/mbwilding/$repo"
+          '';
+        };
+        ghcw = {
+          description = "Clone GitHub Personal";
+          body = ''
+            if test (count $argv) -gt 0
+              set repo $argv[1]
+            else
+              read -P "Repo Name: " repo
+            end
+            git clone --recursive "git@github.com/${secrets.workName}/$repo"
           '';
         };
       };
