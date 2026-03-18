@@ -63,12 +63,19 @@
           columns = [
             "NAMESPACE"
             "NAME"
-            "SQUAD:.metadata.labels.squad"
             "STATUS"
             "READY"
             "AGE"
+            "RESTARTS"
+            "CPU"
+            "%CPU/R"
+            "%CPU/L"
+            "MEM"
+            "%MEM/R"
+            "%MEM/L"
             "IP"
-            "NODE"
+            "NODE|S"
+            "PF"
           ];
         };
       };
