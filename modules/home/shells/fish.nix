@@ -121,7 +121,9 @@
             else
               read -P "Repo Name: " repo
             end
-            git clone --recursive "git@github.com/mbwilding/$repo"
+            set dest_dir ~/dev/$repo
+            git clone --recursive git@github.com/mbwilding/$repo $dest_dir
+            cd $dest_dir
           '';
         };
         ghcw = {
@@ -132,7 +134,9 @@
             else
               read -P "Repo Name: " repo
             end
-            git clone --recursive "git@github.com/${secrets.workName}/$repo"
+            set dest_dir ~/dev/$repo
+            git clone --recursive git@github.com/${secrets.workName}/$repo
+            cd $dest_dir
           '';
         };
       };
