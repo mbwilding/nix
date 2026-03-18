@@ -31,7 +31,7 @@
           cl = "clone --recursive";
           co = "checkout";
           di = "diff";
-          lo = "log --oneline --graph --decorate=full";
+          lo = "log --oneline --graph --decorate=full --format='%C(auto)%h %C(bold blue)%an %C(reset)%s'";
           ll = "log -1 HEAD";
           me = "merge";
           pu = "pull";
