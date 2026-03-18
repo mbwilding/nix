@@ -15,6 +15,7 @@
       ignores = [
         "*~"
         "*.swp"
+        "*.idea/"
       ];
       settings = {
         gpg = {
@@ -25,12 +26,22 @@
         };
         commit.gpgsign = true;
         alias = {
-          c = "clone --recursive";
-          cd = "clone --recursive --depth";
-          m = "merge";
-          p = "pull";
+          am = "commit --amend";
+          br = "branch";
+          cl = "clone --recursive";
+          co = "checkout";
+          di = "diff";
+          lo = "log --oneline --graph --decorate=full";
+          ll = "log -1 HEAD";
+          me = "merge";
+          pu = "pull";
+          pa = "format-patch";
           pr = "pull --rebase";
-          r = "reset --hard";
+          re = "reset --hard";
+          rb = "rebase";
+          st = "status";
+          sw = "switch";
+          un = "reset --soft HEAD~1";
           wta = "worktree add";
           wtl = "worktree list";
           wtr = "worktree remove";
