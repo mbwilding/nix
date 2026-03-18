@@ -68,7 +68,6 @@ in
       jdk
       jfrog-cli
       jq
-      k9s
       kdePackages.baloo
       kdePackages.baloo-widgets
       kdePackages.dolphin
