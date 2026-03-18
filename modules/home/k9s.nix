@@ -80,7 +80,6 @@
         };
         "v1/pods@.*-(${secrets.workName})" = {
           columns = [
-            "NAMESPACE"
             "NAME"
             "SQUAD:.metadata.labels.squad"
             "VERSION:.metadata.labels.version"
