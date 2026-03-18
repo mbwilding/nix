@@ -113,30 +113,46 @@
             nmcli device wifi connect $ssid password $password
           '';
         };
+        ghc = {
+          description = "Clone GitHub";
+          body = ''
+            if test (count $argv) -ge 3
+              set owner $argv[1]
+              set repo $argv[2]
+              set path $argv[3]
+            else if test (count $argv) -eq 2
+              set owner $argv[1]
+              set repo $argv[2]
+              set path ~/dev/misc
+            else if test (count $argv) -eq 1
+              set owner $argv[1]
+              set path ~/dev/misc
+              read -P "Repo: " repo
+            else
+              read -P "Owner: " owner
+              read -P "Repo: " repo
+            end
+            mkdir -p "$path"
+            set dest_dir $path/$repo
+            if test -d $dest_dir
+              echo "Already cloned, swapping to directory"
+              cd $dest_dir
+            else
+              git clone --recursive "git@github.com:$owner/$repo" $dest_dir
+              cd $dest_dir
+            end
+          '';
+        };
         ghcp = {
           description = "Clone GitHub Personal";
           body = ''
-            if test (count $argv) -gt 0
-              set repo $argv[1]
-            else
-              read -P "Repo Name: " repo
-            end
-            set dest_dir ~/dev/personal/$repo
-            git clone --recursive "git@github.com:mbwilding/$repo" $dest_dir
-            cd $dest_dir
+            ghc mbwilding $argv[1] ~/dev/personal
           '';
         };
         ghcw = {
           description = "Clone GitHub Personal";
           body = ''
-            if test (count $argv) -gt 0
-              set repo $argv[1]
-            else
-              read -P "Repo Name: " repo
-            end
-            set dest_dir ~/dev/work/$repo
-            git clone --recursive "git@github.com:${secrets.workName}/$repo" $dest_dir
-            cd $dest_dir
+            ghc ${secrets.workName} $argv[1] ~/dev/work
           '';
         };
       };
