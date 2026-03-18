@@ -25,7 +25,11 @@
         };
         commit.gpgsign = true;
         alias = {
-          c = "clone --recursive --depth 1";
+          c = "clone --recursive";
+          cd = "clone --recursive --depth";
+          m = "merge";
+          p = "pull";
+          pr = "pull --rebase";
           r = "reset --hard";
           wta = "worktree add";
           wtl = "worktree list";
