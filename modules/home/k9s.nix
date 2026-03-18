@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   programs = {
@@ -59,12 +59,10 @@
         };
       };
       views = {
-        "v1/pods@.*-(rwwa)" = {
+        "v1/pods" = {
           columns = [
             "NAMESPACE"
             "NAME"
-            "SQUAD:.metadata.labels.squad"
-            "VERSION:.metadata.labels.version"
             "STATUS"
             "READY"
             "AGE"
@@ -80,10 +78,12 @@
             "PF"
           ];
         };
-        "v1/pods" = {
+        "v1/pods@.*-(${secrets.workName})" = {
           columns = [
             "NAMESPACE"
             "NAME"
+            "SQUAD:.metadata.labels.squad"
+            "VERSION:.metadata.labels.version"
             "STATUS"
             "READY"
             "AGE"
