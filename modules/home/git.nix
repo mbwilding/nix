@@ -27,6 +27,10 @@
         commit.gpgsign = true;
         alias = {
           am = "commit --amend";
+          bc = "git branch --create";
+          bcf = "git branch --force-create";
+          bd = "git branch --delete";
+          bdf = "git branch --delete --force";
           br = "branch";
           cl = "clone --recursive";
           co = "checkout";
