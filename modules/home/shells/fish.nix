@@ -121,8 +121,8 @@
             else
               read -P "Repo Name: " repo
             end
-            set dest_dir ~/dev/$repo
-            git clone --recursive git@github.com/mbwilding/$repo $dest_dir
+            set dest_dir ~/dev/personal/$repo
+            git clone --recursive "git@github.com:mbwilding/$repo" $dest_dir
             cd $dest_dir
           '';
         };
@@ -134,8 +134,8 @@
             else
               read -P "Repo Name: " repo
             end
-            set dest_dir ~/dev/$repo
-            git clone --recursive git@github.com/${secrets.workName}/$repo
+            set dest_dir ~/dev/work/$repo
+            git clone --recursive "git@github.com:${secrets.workName}/$repo" $dest_dir
             cd $dest_dir
           '';
         };
