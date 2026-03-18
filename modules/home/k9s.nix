@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   programs = {
@@ -63,6 +63,27 @@
           columns = [
             "NAMESPACE"
             "NAME"
+            "STATUS"
+            "READY"
+            "AGE"
+            "RESTARTS"
+            "CPU"
+            "%CPU/R"
+            "%CPU/L"
+            "MEM"
+            "%MEM/R"
+            "%MEM/L"
+            "IP"
+            "NODE|S"
+            "PF"
+          ];
+        };
+        "v1/pods@.*-(${secrets.workName})" = {
+          columns = [
+            "NAMESPACE"
+            "NAME"
+            "SQUAD:.metadata.labels.squad"
+            "VERSION:.metadata.labels.version"
             "STATUS"
             "READY"
             "AGE"
