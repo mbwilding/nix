@@ -20,6 +20,7 @@
     ./modules/home/ghostty.nix
     ./modules/home/git.nix
     ./modules/home/jetbrains.nix
+    ./modules/home/k9s.nix
     ./modules/home/lazygit.nix
     ./modules/home/lazysql.nix
     ./modules/home/mpv.nix
