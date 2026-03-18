@@ -47,7 +47,7 @@
             };
           };
           ui = {
-            enableMouse = true;
+            enableMouse = false;
             # Hide header
             headless = false;
             logoless = true;
