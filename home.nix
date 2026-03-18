@@ -24,6 +24,7 @@
     ./modules/home/lazysql.nix
     ./modules/home/mpv.nix
     ./modules/home/packages.nix
+    ./modules/home/proxy.nix
     ./modules/home/proxychains.nix
     ./modules/home/shells
     ./modules/home/ssh.nix
