@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-mbwilding.url = "github:mbwilding/nixpkgs/master";
 
     ucodenix.url = "github:e-tho/ucodenix";
 
@@ -20,6 +21,13 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # hyprland.url = "github:hyprwm/Hyprland";
+
+    # hyprland-plugins = {
+    #   url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
 
     # NOTE: Remove once PR is merged: https://github.com/pwr-Solaar/Solaar/pull/3132
     solaar = {
@@ -68,6 +76,13 @@
         };
       };
 
+      pkgsMbwilding = import inputs.nixpkgs-mbwilding {
+        inherit system;
+        config = {
+          allowUnfree = true;
+        };
+      };
+
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
@@ -77,6 +92,7 @@
             inherit
               inputs
               pkgsStable
+              pkgsMbwilding
               secrets
               font
               ;
@@ -98,6 +114,7 @@
                 inherit
                   inputs
                   pkgsStable
+                  pkgsMbwilding
                   hostname
                   secrets
                   font
@@ -127,6 +144,7 @@
             inherit
               inputs
               pkgsStable
+              pkgsMbwilding
               hostname
               secrets
               font

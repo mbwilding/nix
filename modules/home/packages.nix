@@ -1,4 +1,4 @@
-{ pkgs, pkgsStable, ... }:
+{ pkgs, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
@@ -19,7 +19,7 @@ in
 {
   home = {
     packages = with pkgs; [
-      pkgsStable.bun
+      bun
       open-ecc
       power-platform-toolbox
       # BROKEN python314Packages.cfn-lint
