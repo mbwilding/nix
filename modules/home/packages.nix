@@ -110,6 +110,7 @@ in
       python314
       python314Packages.debugpy
       qt6.qtdeclarative # qmlls
+      quicktype
       reaper
       ripgrep
       roslyn-ls
