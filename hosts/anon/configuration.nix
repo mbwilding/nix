@@ -41,6 +41,27 @@
   };
 
   services = {
+    sunshine = {
+      enable = true;
+      openFirewall = true;
+      autoStart = true;
+      capSysAdmin = true;
+      settings = {
+        sunshine_name = "anon";
+        audio_sink = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo";
+        install_steam_audio_drivers = "enabled"; # Allow host and remote audio
+        adapter_name = "/dev/dri/renderD128";
+        # output_name = 1;
+        # av1_mode = 3;
+        # hevc_mode = 3;
+        # min_threads = 2;
+        capture = "nvfbc";
+        encoder = "nvenc";
+        nvenc_preset = 1;
+        # nvenc_twopass = "disabled";
+      };
+    };
+
     hardware = {
       openrgb.enable = true;
     };
@@ -131,14 +152,18 @@
           };
         }
         {
-          matches = [ { "node.name" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; } ];
+          matches = [
+            { "node.name" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
+          ];
           actions.update-props = {
             "node.description" = "Babyface Pro";
             "node.nick" = "Babyface Pro Out";
           };
         }
         {
-          matches = [ { "node.name" = "alsa_input.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; } ];
+          matches = [
+            { "node.name" = "alsa_input.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
+          ];
           actions.update-props = {
             "node.description" = "Babyface Pro";
             "node.nick" = "Babyface Pro In";
