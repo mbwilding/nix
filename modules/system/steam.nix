@@ -29,4 +29,8 @@
       DXVK_HDR = 1;
     };
   };
+
+  system.activationScripts.steamtinkerlaunch = {
+    text = "steamtinkerlaunch compat add";
+  };
 }
