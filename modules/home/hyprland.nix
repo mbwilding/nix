@@ -229,7 +229,7 @@ in
       };
 
       general = {
-        layout = "scrolling"; # dwindle
+        layout = "master"; # scrolling, dwindle
 
         gaps_in = gaps;
         gaps_out = gaps * 2;
@@ -244,6 +244,15 @@ in
 
         # Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
         allow_tearing = false;
+      };
+
+      master = {
+        mfact = 0.5;
+        new_status = "master";
+        orientation = "center";
+        center_master_fallback = "right";
+        slave_count_for_center_master = 2;
+        smart_resizing = false;
       };
 
       dwindle = {
@@ -275,10 +284,6 @@ in
 
           vibrancy = 0.1696;
         };
-      };
-
-      master = {
-        new_status = "master";
       };
 
       misc = {
@@ -321,34 +326,34 @@ in
 
       "$mod" = "SUPER";
       bind = [
-        "$mod, B, exec, google-chrome"
-        "$mod, E, exec, dolphin"
-        "$mod, N, exec, neovide"
-        "$mod, P, exec, 1password"
-        "$mod, R, exec, wofi --show drun"
-        "$mod, T, exec, ghostty +new-window"
-        "$mod, C, exec, ghostty -e btop +new-window"
-        "$mod, S, exec, spotify"
-        "$mod, M, exec, teams-for-linux"
-        "$mod, D, exec, discord"
+        "$mod, b, exec, google-chrome"
+        "$mod, e, exec, dolphin"
+        "$mod, n, exec, neovide"
+        "$mod, p, exec, 1password"
+        "$mod, r, exec, wofi --show drun"
+        "$mod, t, exec, ghostty +new-window"
+        "$mod, c, exec, ghostty -e btop +new-window"
+        "$mod, s, exec, spotify"
+        "$mod, m, exec, teams-for-linux"
+        "$mod, d, exec, discord"
         "$mod, minus, exec, ecc toggle"
 
-        "$mod, F, togglefloating,"
-        "$mod, O, fullscreen,"
-        "$mod, Q, killactive,"
+        "$mod, f, togglefloating,"
+        "$mod, o, fullscreen,"
+        "$mod, q, killactive,"
         "$mod, grave, exit,"
 
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
-        # "$mod, Z, exec, hyprshot -m window -m active"
+        # "$mod, z, exec, hyprshot -m window -m active"
 
         # Quickshell
-        "$mod, Z, exec, qs ipc call lockscreen lock"
-        "$mod, N, exec, qs ipc call notifications dismiss"
-        "$mod, W, exec, qs ipc call bar toggle"
+        "$mod, z, exec, qs ipc call lockscreen lock"
+        "$mod, n, exec, qs ipc call notifications dismiss"
+        "$mod, w, exec, qs ipc call bar toggle"
         "$mod, escape, exec, qs ipc call notifications dismissAll"
-        "$mod, Y, exec, qs ipc call notifications invoke"
-        "$mod, X, exec, systemctl --user restart quickshell.service"
-        "$mod, G, exec, notify-send Title Message --app-name=App -A 'Action 1' -A 'Action 2'"
+        "$mod, y, exec, qs ipc call notifications invoke"
+        "$mod, x, exec, systemctl --user restart quickshell.service"
+        "$mod, g, exec, notify-send Title Message --app-name=App -A 'Action 1' -A 'Action 2'"
 
         # Switch window focus
         "$mod, h, movefocus, l"
@@ -371,6 +376,10 @@ in
         # Media keys
         ", XF86AudioMute,    exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
         ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+
+        # Master Layout
+        "$mod, n, layoutmsg, cyclenext"
+        "$mod, return, layoutmsg, swapwithmaster master"
 
         # Move active window to a workspace
       ]
