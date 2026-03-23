@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, font, ... }:
 
 let
   soundTheme = pkgs.sound-theme-freedesktop;
@@ -8,6 +8,7 @@ let
     pkgs.runCommand "quickshell-config"
       {
         inherit volumeSound;
+        inherit font;
       }
       ''
         mkdir -p $out
@@ -21,8 +22,8 @@ let
             cp "$dir"*.qml "$out/$subdir/" 2>/dev/null || true
           fi
         done
-        substituteInPlace $out/Sounds.qml \
-          --subst-var volumeSound
+        substituteInPlace $out/Config.qml --subst-var font
+        substituteInPlace $out/Sounds.qml --subst-var volumeSound
       '';
 
   qmlImportPaths = [
