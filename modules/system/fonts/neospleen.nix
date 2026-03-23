@@ -6,21 +6,21 @@
 
 stdenvNoCC.mkDerivation rec {
   pname = "neospleen";
-  version = "1.0.62";
+  version = "1.1.63";
 
   fontRegular = fetchurl {
     url = "https://github.com/mbwilding/NeoSpleen/releases/download/${version}/NeoSpleen-Regular.ttf";
-    sha256 = "4c4357ca7a9872f534a87581a33e8d471323599cecf310c11ffe5d2cc30d27ab";
+    sha256 = "ba139384344d608931c09fb86ec45abeb28a04bf952bec2eaa503192f160e894";
   };
 
   fontMedium = fetchurl {
     url = "https://github.com/mbwilding/NeoSpleen/releases/download/${version}/NeoSpleen-Medium.ttf";
-    sha256 = "a6df2b37792ceb164a289a47cae8e74fc0bf8dc5962de6f340ee263be321aacf";
+    sha256 = "2b7e15a91d1c349fc94111231fb8e96e2647a43dad8b08049aa1df988e8f1ba2";
   };
 
   fontBold = fetchurl {
     url = "https://github.com/mbwilding/NeoSpleen/releases/download/${version}/NeoSpleen-Bold.ttf";
-    sha256 = "4c8c3855770230f081890b71204a9b48a2755a72e17b3e9084b9a014d2e2afc5";
+    sha256 = "904fcac1cc28c13459a0968dc31e70d4dccc1f1cb1c25db8df1d25f3e7877ca4";
   };
 
   phases = [ "installPhase" ];

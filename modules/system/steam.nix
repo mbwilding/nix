@@ -31,7 +31,7 @@
   #   };
   # };
 
-  system.activationScripts.steamtinkerlaunch = {
-    text = "steamtinkerlaunch compat add";
-  };
+  # system.activationScripts.steamtinkerlaunch = {
+  #   text = "steamtinkerlaunch compat add";
+  # };
 }
