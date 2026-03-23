@@ -248,11 +248,11 @@ in
 
       master = {
         mfact = 0.5;
+        smart_resizing = false;
         new_status = "master";
-        orientation = "center";
+        orientation = "right"; # center
         center_master_fallback = "right";
         slave_count_for_center_master = 2;
-        smart_resizing = false;
       };
 
       dwindle = {
