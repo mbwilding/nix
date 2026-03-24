@@ -344,7 +344,7 @@ in
         "$mod, grave, exit,"
 
         "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
-        # "$mod, z, exec, hyprshot -m window -m active"
+        "$mod, apostrophe, exec, hyprshot -m region"
 
         # Quickshell
         "$mod, z, exec, qs ipc call lockscreen lock"
