@@ -17,13 +17,10 @@
     ../../modules/system/wireguard.nix
     ../../modules/system/wireshark.nix
     ../../modules/system/appimage.nix
+    ../../modules/system/waydroid.nix
   ];
 
   networking.hostName = "anon";
-
-  # Disable the integrated Radeon GPU (Raphael)
-  boot.kernelParams = [ "pci-stub.ids=1002:164e" ];
-  boot.kernelModules = [ "pci-stub" ];
 
   environment = {
     sessionVariables = {
