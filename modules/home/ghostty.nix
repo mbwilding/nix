@@ -32,11 +32,11 @@ in
           ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
 
         font-family = font;
+        # font-family = "JetBrains Mono Nerd Font";
         font-size = if hostname == "anon" then 18 else 17;
         font-synthetic-style = true;
         # adjust-cell-width = "-5%";
-        adjust-cell-height = "15%";
-        # adjust-cursor-height = "12%";
+        # adjust-cell-height = "15%";
         adjust-underline-position = 4;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
