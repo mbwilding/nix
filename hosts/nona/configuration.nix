@@ -20,6 +20,7 @@ in
     ../../modules/system/wireguard.nix
     ../../modules/system/wireshark.nix
     ../../modules/system/appimage.nix
+    ../../modules/system/waydroid.nix
   ];
 
   networking.hostName = "nona";

@@ -22,8 +22,17 @@
     "sd_mod"
   ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.kernelParams = [ "microcode.amd_sha_check=off" ];
+
+  # Disable the integrated Radeon GPU (Raphael) via PCI Stub
+  boot.kernelModules = [
+    "kvm-amd"
+    "pci-stub"
+  ];
+  boot.kernelParams = [
+    "microcode.amd_sha_check=off"
+    "pci-stub.ids=1002:164e"
+  ];
+
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
