@@ -35,8 +35,8 @@ in
         # font-family = "JetBrains Mono Nerd Font";
         font-size = if hostname == "anon" then 19 else 17;
         font-synthetic-style = true;
-        adjust-cell-width = "-5%";
-        adjust-cell-height = "10%";
+        # adjust-cell-width = "-5%";
+        adjust-cell-height = "15%";
         adjust-underline-position = 4;
         background-opacity = 0.85;
         clipboard-paste-protection = false;
