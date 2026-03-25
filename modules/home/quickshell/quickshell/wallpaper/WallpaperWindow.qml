@@ -59,8 +59,15 @@ PanelWindow {
 
         Behavior on opacity {
             NumberAnimation {
+                id: fadeAnim
                 duration: Config.wallpaper.fadeDuration
                 easing.type: Easing.InOutQuad
+                onStopped: {
+                    if (nextImg.opacity === 1.0) {
+                        currentImg.source = nextImg.source;
+                        nextImg.opacity = 0.0;
+                    }
+                }
             }
         }
     }
@@ -69,10 +76,13 @@ PanelWindow {
 
     function fillModeEnum(name) {
         switch (name) {
-            case "PreserveAspectFit":  return Image.PreserveAspectFit;
-            case "Stretch":            return Image.Stretch;
-            case "PreserveAspectCrop":
-            default:                   return Image.PreserveAspectCrop;
+        case "PreserveAspectFit":
+            return Image.PreserveAspectFit;
+        case "Stretch":
+            return Image.Stretch;
+        case "PreserveAspectCrop":
+        default:
+            return Image.PreserveAspectCrop;
         }
     }
 }
