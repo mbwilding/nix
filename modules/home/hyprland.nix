@@ -21,7 +21,7 @@ let
         position = "0x0";
         scale = 1.0;
         transform = 0;
-        vrr = 2;
+        vrr = 3;
         bitdepth = 10;
         supports_wide_color = 1;
         supports_hdr = 1;
@@ -33,7 +33,7 @@ let
         position = "3840x-720";
         scale = 1.0;
         transform = 1;
-        vrr = 2;
+        vrr = 3;
       }
       {
         output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
