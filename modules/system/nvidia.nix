@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   # Blacklist Nouveau
@@ -49,6 +49,10 @@
   };
 
   environment = {
+    systemPackages = with pkgs; [
+      nvidia-vaapi-driver
+    ];
+
     sessionVariables = {
       ENABLE_HDR_WSI = 1; # Generally not advised to be enabled globally
       GBM_BACKEND = "nvidia-drm";
