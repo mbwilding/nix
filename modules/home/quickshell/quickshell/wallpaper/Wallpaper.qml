@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 
+import ".."
 import "../services"
 
 // Spawns one WallpaperWindow per screen using Quickshell's Variants.
@@ -15,7 +16,7 @@ Scope {
     Variants {
         model: Quickshell.screens
 
-        delegate: WallpaperWindow {
+        WallpaperWindow {
             required property var modelData
             screen: modelData
         }
