@@ -1,13 +1,14 @@
 {
   pkgs,
   hostname,
-  inputs,
   ...
 }:
 
 let
   anim_speed = 2.0;
   gaps = 10.0;
+  cursor_size = if hostname == "anon" then 16 else 24;
+  cursor_size_str = builtins.toString cursor_size;
 
   anim_speed_str = builtins.toString anim_speed;
 
@@ -502,12 +503,12 @@ in
         "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         "GDK_BACKEND,wayland,x11,*"
         "GTK_THEME,Breeze-Dark"
-        "HYPRCURSOR_SIZE,24"
+        "HYPRCURSOR_SIZE,${cursor_size_str}"
         "QT_QPA_PLATFORM,wayland;xcb"
         "QT_QPA_PLATFORMTHEME,kde"
         "SDL_VIDEODRIVER,wayland"
         "GDK_SCALE,1"
-        "XCURSOR_SIZE,24"
+        "XCURSOR_SIZE,${cursor_size_str}"
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
@@ -616,20 +617,21 @@ in
 
     cursorTheme = {
       name = "Breeze";
-      size = 24;
+      size = cursor_size;
     };
 
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
 
+    gtk4.theme = null;
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
   };
 
   xdg = {
-    configFile."gtk-4.0/gtk.css".force = true;
+    # configFile."gtk-4.0/gtk.css".force = true;
 
     mimeApps = {
       enable = true;
@@ -652,7 +654,7 @@ in
       gtk-theme = "Breeze-Dark";
       icon-theme = "breeze-dark";
       cursor-theme = "Breeze";
-      cursor-size = 24;
+      cursor-size = cursor_size;
     };
   };
 
