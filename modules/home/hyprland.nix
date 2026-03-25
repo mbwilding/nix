@@ -7,30 +7,6 @@
 let
   anim_speed = 2.0;
 
-  wallpaperRotateScript = pkgs.writeShellScriptBin "wallpaper-rotate" ''
-    WALLPAPER_DIR="$HOME/nix/wallpapers"
-    if [ ! -d "$WALLPAPER_DIR" ]; then
-      echo "Wallpaper directory $WALLPAPER_DIR not found" >&2
-      exit 1
-    fi
-
-    # Pick a random image from the wallpapers directory
-    WALLPAPER=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( \
-      -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \
-      -o -iname "*.gif" -o -iname "*.webp" \) | shuf -n1)
-
-    if [ -z "$WALLPAPER" ]; then
-      echo "No wallpapers found in $WALLPAPER_DIR" >&2
-      exit 1
-    fi
-
-    # Preload and set on all active monitors
-    hyprctl hyprpaper preload "$WALLPAPER"
-    hyprctl monitors -j | ${pkgs.jq}/bin/jq -r '.[].name' | while read -r monitor; do
-      hyprctl hyprpaper wallpaper "$monitor,$WALLPAPER"
-    done
-    hyprctl hyprpaper unload unused
-  '';
   gaps = 10.0;
   cursor_size = if hostname == "anon" then 16 else 24;
   cursor_size_str = builtins.toString cursor_size;
@@ -118,7 +94,6 @@ in
   home = {
     packages = with pkgs; [
       hyprshot
-      hyprpaper
       jq
       # hyprnotify
       kdePackages.breeze
@@ -235,11 +210,6 @@ in
 
       [PreviewSettings]
       Plugins=appimagethumbnail,audiothumbnail,blenderthumbnail,comicbookthumbnail,cursorthumbnail,directorythumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,ffmpegthumbs,gsthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,mobithumbnail,opendocumentthumbnail,rawthumbnail,svgthumbnail,textthumbnail,windowsexethumbnail,windowsimagethumbnail
-    '';
-
-    file.".config/hypr/hyprpaper.conf".text = ''
-      splash = false
-      ipc = on
     '';
   };
 
@@ -713,34 +683,6 @@ in
       #       margin-right: 0.5em;
       #   }
       # '';
-    };
-  };
-
-  systemd.user = {
-    services.wallpaper-rotate = {
-      Unit = {
-        Description = "Rotate wallpaper from ~/wallpapers";
-        After = [ "graphical-session.target" ];
-        PartOf = [ "graphical-session.target" ];
-      };
-      Service = {
-        Type = "oneshot";
-        ExecStart = "${wallpaperRotateScript}/bin/wallpaper-rotate";
-      };
-    };
-
-    timers.wallpaper-rotate = {
-      Unit = {
-        Description = "Rotate wallpaper every 5 minutes";
-      };
-      Timer = {
-        OnActiveSec = "10";
-        OnUnitActiveSec = "5min";
-        Unit = "wallpaper-rotate.service";
-      };
-      Install = {
-        WantedBy = [ "timers.target" ];
-      };
     };
   };
 }
