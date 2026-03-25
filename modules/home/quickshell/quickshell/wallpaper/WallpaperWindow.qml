@@ -33,18 +33,16 @@ PanelWindow {
     // Pass all pointer input through to windows above
     mask: Region {}
 
-    // Both sources are tracked locally so we control exactly when they change.
-    // _current: the image currentImg shows — only updated while nextImg is fully opaque.
-    // _next:    the image nextImg shows — only cleared after nextImg is back at opacity 0.
     property string _current: WallpaperService.currentWallpaper
     property string _next: ""
 
-    // When a transition starts, latch the incoming path into _next.
     Connections {
         target: WallpaperService
         function onTransitioningChanged() {
-            if (WallpaperService.transitioning)
+            if (WallpaperService.transitioning) {
                 win._next = WallpaperService.nextWallpaper;
+                fadeIn.start();
+            }
         }
     }
 
@@ -58,9 +56,17 @@ PanelWindow {
         asynchronous: true
         cache: false
         smooth: true
+
+        onStatusChanged: {
+            if (status === Image.Ready && win._next !== "") {
+                win._next = "";
+                WallpaperService.completeTransition();
+                nextImg.opacity = 0.0;
+            }
+        }
     }
 
-    // ── Next wallpaper layer (fades in, then back out, during transition) ─────
+    // ── Next wallpaper layer ──────────────────────────────────────────────────
 
     Image {
         id: nextImg
@@ -70,21 +76,23 @@ PanelWindow {
         asynchronous: true
         cache: false
         smooth: true
-        opacity: WallpaperService.transitioning ? 1.0 : 0.0
+        opacity: 0.0
+    }
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: Config.wallpaper.fadeDuration
-                easing.type: Easing.InOutQuad
-                onFinished: {
-                    if (nextImg.opacity === 1.0) {
-                        // nextImg fully covers currentImg — swap the backing source
-                        win._current = win._next;
-                    } else {
-                        // nextImg has faded back to 0 — safe to clear its source
-                        win._next = "";
-                    }
-                }
+    NumberAnimation {
+        id: fadeIn
+        target: nextImg
+        property: "opacity"
+        from: 0.0
+        to: 1.0
+        duration: Config.wallpaper.fadeDuration
+        easing.type: Easing.InOutQuad
+        onFinished: {
+            win._current = win._next;
+            if (currentImg.status === Image.Ready) {
+                win._next = "";
+                WallpaperService.completeTransition();
+                nextImg.opacity = 0.0;
             }
         }
     }
