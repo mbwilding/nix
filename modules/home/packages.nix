@@ -6,14 +6,37 @@ let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
   power-platform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
 
-  google-chrome = pkgs.symlinkJoin {
-    name = "google-chrome";
-    paths = [ pkgs.google-chrome ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/google-chrome-stable \
-        --add-flags "--force-device-scale-factor=1.2"
-    '';
+  # google-chrome = pkgs.symlinkJoin {
+  #   name = "google-chrome";
+  #   paths = [ pkgs.google-chrome ];
+  #   buildInputs = [ pkgs.makeWrapper ];
+  #   postBuild = ''
+  #     wrapProgram $out/bin/google-chrome-stable \
+  #       --add-flags "--force-device-scale-factor=1.2"
+  #   '';
+  # };
+
+  google-chrome = pkgs.google-chrome.override {
+    commandLineArgs = [
+      "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
+      "--ozone-platform=wayland"
+      "--disable-features=UseChromeOSDirectVideoDecoder"
+      "--canvas-oop-rasterization"
+      "--disable-font-subpixel-positioning"
+      "--disable-gpu-driver-bug-workarounds"
+      "--disable-gpu-driver-workarounds"
+      "--disable-gpu-vsync"
+      "--disable-software-rasterizer"
+      "--enable-accelerated-mjpeg-decode"
+      "--enable-accelerated-video-decode"
+      "--enable-gpu-compositing"
+      "--enable-gpu-rasterization"
+      "--enable-oop-rasterization"
+      "--enable-raw-draw"
+      "--enable-zero-copy"
+      "--use-cmd-decoder=validating"
+      "--use-vulkan"
+    ];
   };
 in
 {
