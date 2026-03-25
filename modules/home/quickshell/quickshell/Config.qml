@@ -132,6 +132,19 @@ QtObject {
         readonly property int edgeHotspotSize: 4     // px tall strip at screen top that shows the stats drawer on hover
     }
 
+    readonly property QtObject wallpaper: QtObject {
+        readonly property bool enabled: true
+        readonly property string directory: "~/nix/wallpapers"
+        // Rotation interval in milliseconds (default: 5 minutes)
+        readonly property int rotateInterval: 5 * 60 * 1000
+        // Crossfade duration in milliseconds
+        readonly property int fadeDuration: 1000
+        // Supported image extensions (comma-separated, used in shell glob)
+        readonly property string extensions: "jpg,jpeg,png,webp"
+        // Fill mode: "PreserveAspectCrop" | "PreserveAspectFit" | "Stretch"
+        readonly property string fillMode: "PreserveAspectCrop"
+    }
+
     readonly property QtObject lockscreen: QtObject {
         readonly property int dvdCount: 3
         readonly property int orbCount: 2

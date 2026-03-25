@@ -99,7 +99,6 @@ in
       kdePackages.breeze
       kdePackages.plasma-integration
       pulseaudio
-      wallpaperRotateScript
     ];
 
     file.".config/kdeglobals".text = ''
