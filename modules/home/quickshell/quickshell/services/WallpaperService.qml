@@ -86,6 +86,15 @@ QtObject {
         }
     }
 
+    // ── IPC ───────────────────────────────────────────────────────────────────
+
+    property IpcHandler _ipc: IpcHandler {
+        target: "wallpaper"
+
+        function next() { root.advance(); }
+        function prev() { root.previous(); }
+    }
+
     // ── Public API ────────────────────────────────────────────────────────────
 
     function advance() {
