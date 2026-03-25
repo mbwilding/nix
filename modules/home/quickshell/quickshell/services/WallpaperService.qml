@@ -5,6 +5,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
+import ".."
+
 // Singleton wallpaper rotation service.
 // Scans Config.wallpaper.directory for image files, maintains an ordered list,
 // and advances the current index on a timer. WallpaperWindow instances observe

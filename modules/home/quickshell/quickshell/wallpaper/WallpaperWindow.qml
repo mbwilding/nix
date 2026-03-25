@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 
+import ".."
 import "../services"
 
 // A layer-shell PanelWindow that fills one screen with the current wallpaper.
@@ -14,20 +15,23 @@ PanelWindow {
 
     required property var screen
 
-    // Fill the entire output
-    anchors {
-        top: true
-        left: true
-        right: true
-        bottom: true
-    }
+    anchors.top: true
+    anchors.left: true
+    anchors.right: true
+    anchors.bottom: true
 
-    // Place behind all other surfaces
+    // Place behind all other surfaces; -1 means don't affect exclusive zones
     WlrLayershell.layer: WlrLayer.Background
-    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.exclusiveZone: -1
     WlrLayershell.namespace: "quickshell-wallpaper"
 
+    implicitWidth: win.screen ? win.screen.width : 1920
+    implicitHeight: win.screen ? win.screen.height : 1080
+
     color: "black"
+
+    // Pass all pointer input through to windows above
+    mask: Region {}
 
     // ── Current wallpaper layer ───────────────────────────────────────────────
 
@@ -35,7 +39,7 @@ PanelWindow {
         id: currentImg
         anchors.fill: parent
         source: WallpaperService.currentWallpaper ? ("file://" + WallpaperService.currentWallpaper) : ""
-        fillMode: fillModeEnum(Config.wallpaper.fillMode)
+        fillMode: win.fillModeEnum(Config.wallpaper.fillMode)
         asynchronous: true
         cache: false
         smooth: true
@@ -47,7 +51,7 @@ PanelWindow {
         id: nextImg
         anchors.fill: parent
         source: WallpaperService.nextWallpaper ? ("file://" + WallpaperService.nextWallpaper) : ""
-        fillMode: fillModeEnum(Config.wallpaper.fillMode)
+        fillMode: win.fillModeEnum(Config.wallpaper.fillMode)
         asynchronous: true
         cache: false
         smooth: true
