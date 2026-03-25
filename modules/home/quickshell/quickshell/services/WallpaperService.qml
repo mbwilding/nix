@@ -74,18 +74,6 @@ QtObject {
         onTriggered: root.advance()
     }
 
-    // ── Transition timer (clears transitioning flag after fade completes) ─────
-
-    property Timer _fadeTimer: Timer {
-        interval: Config.wallpaper.fadeDuration + 50
-        repeat: false
-        onTriggered: {
-            root.currentWallpaper = root.nextWallpaper;
-            root.nextWallpaper = "";
-            root.transitioning = false;
-        }
-    }
-
     // ── IPC ───────────────────────────────────────────────────────────────────
 
     property IpcHandler _ipc: IpcHandler {
@@ -104,7 +92,6 @@ QtObject {
         root._currentIndex = nextIndex;
         root.nextWallpaper = root._files[nextIndex];
         root.transitioning = true;
-        root._fadeTimer.restart();
     }
 
     function previous() {
@@ -114,7 +101,6 @@ QtObject {
         root._currentIndex = prevIndex;
         root.nextWallpaper = root._files[prevIndex];
         root.transitioning = true;
-        root._fadeTimer.restart();
     }
 
     function setIndex(index) {
@@ -123,6 +109,12 @@ QtObject {
         root._currentIndex = index;
         root.nextWallpaper = root._files[index];
         root.transitioning = true;
-        root._fadeTimer.restart();
+    }
+
+    // Called by WallpaperWindow once currentImg has finished loading the new image
+    function completeTransition() {
+        root.currentWallpaper = root.nextWallpaper;
+        root.nextWallpaper = "";
+        root.transitioning = false;
     }
 }
