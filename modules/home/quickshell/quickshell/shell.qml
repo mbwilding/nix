@@ -8,9 +8,12 @@ import "lockscreen"
 import "notifications"
 import "osd"
 import "stats"
+import "wallpaper"
 
 ShellRoot {
     id: root
+
+    Wallpaper {}
 
     Bar {
         id: bar
