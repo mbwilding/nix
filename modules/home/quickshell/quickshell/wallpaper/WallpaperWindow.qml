@@ -33,24 +33,39 @@ PanelWindow {
     // Pass all pointer input through to windows above
     mask: Region {}
 
+    // Both sources are tracked locally so we control exactly when they change.
+    // _current: the image currentImg shows — only updated while nextImg is fully opaque.
+    // _next:    the image nextImg shows — only cleared after nextImg is back at opacity 0.
+    property string _current: WallpaperService.currentWallpaper
+    property string _next: ""
+
+    // When a transition starts, latch the incoming path into _next.
+    Connections {
+        target: WallpaperService
+        function onTransitioningChanged() {
+            if (WallpaperService.transitioning)
+                win._next = WallpaperService.nextWallpaper;
+        }
+    }
+
     // ── Current wallpaper layer ───────────────────────────────────────────────
 
     Image {
         id: currentImg
         anchors.fill: parent
-        source: WallpaperService.currentWallpaper ? ("file://" + WallpaperService.currentWallpaper) : ""
+        source: win._current ? ("file://" + win._current) : ""
         fillMode: win.fillModeEnum(Config.wallpaper.fillMode)
         asynchronous: true
         cache: false
         smooth: true
     }
 
-    // ── Next wallpaper layer (fades in during transition) ─────────────────────
+    // ── Next wallpaper layer (fades in, then back out, during transition) ─────
 
     Image {
         id: nextImg
         anchors.fill: parent
-        source: WallpaperService.nextWallpaper ? ("file://" + WallpaperService.nextWallpaper) : ""
+        source: win._next ? ("file://" + win._next) : ""
         fillMode: win.fillModeEnum(Config.wallpaper.fillMode)
         asynchronous: true
         cache: false
@@ -59,13 +74,15 @@ PanelWindow {
 
         Behavior on opacity {
             NumberAnimation {
-                id: fadeAnim
                 duration: Config.wallpaper.fadeDuration
                 easing.type: Easing.InOutQuad
-                onStopped: {
+                onFinished: {
                     if (nextImg.opacity === 1.0) {
-                        currentImg.source = nextImg.source;
-                        nextImg.opacity = 0.0;
+                        // nextImg fully covers currentImg — swap the backing source
+                        win._current = win._next;
+                    } else {
+                        // nextImg has faded back to 0 — safe to clear its source
+                        win._next = "";
                     }
                 }
             }
@@ -76,13 +93,10 @@ PanelWindow {
 
     function fillModeEnum(name) {
         switch (name) {
-        case "PreserveAspectFit":
-            return Image.PreserveAspectFit;
-        case "Stretch":
-            return Image.Stretch;
-        case "PreserveAspectCrop":
-        default:
-            return Image.PreserveAspectCrop;
+            case "PreserveAspectFit":  return Image.PreserveAspectFit;
+            case "Stretch":            return Image.Stretch;
+            case "PreserveAspectCrop":
+            default:                   return Image.PreserveAspectCrop;
         }
     }
 }
