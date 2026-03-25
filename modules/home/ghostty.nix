@@ -38,7 +38,7 @@ in
         # adjust-cell-width = "-5%";
         adjust-cell-height = "15%";
         adjust-underline-position = 4;
-        background-opacity = 0.85;
+        background-opacity = 0.9;
         clipboard-paste-protection = false;
         clipboard-read = "allow";
         clipboard-trim-trailing-spaces = true;
