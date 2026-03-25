@@ -73,8 +73,8 @@ in
         theme = "gronk";
         window-decoration = "server";
         window-padding-balance = false;
-        window-padding-x = 0;
-        window-padding-y = 0;
+        window-padding-x = 5;
+        window-padding-y = 5;
         window-theme = "ghostty";
         # quick-terminal-position = "top";
         # quick-terminal-size = "30%";
