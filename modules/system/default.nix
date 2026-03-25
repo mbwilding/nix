@@ -140,6 +140,8 @@ in
       coreutils
       icu
       kdePackages.partitionmanager
+      libva
+      libva-utils
       libxkbcommon
       lm_sensors
       openssl
