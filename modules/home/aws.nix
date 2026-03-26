@@ -186,8 +186,8 @@ in
         ];
       }
       // mkProfile {
-        name = "fs";
-        account_id = s.accounts.fs;
+        name = "fn";
+        account_id = s.accounts.fn;
         default_role = s.roles.read;
         roles = [
           "power-elevated"
