@@ -9,7 +9,6 @@ QtObject {
     readonly property real scale: 1.0
     readonly property real fontSize: 1.4
     readonly property bool soundEnabled: true
-    readonly property int monitor: 0
 
     readonly property QtObject panelBorder: QtObject {
         readonly property int width: 2

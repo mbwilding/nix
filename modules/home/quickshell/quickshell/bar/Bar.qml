@@ -17,6 +17,7 @@ import "../services"
 Scope {
     id: root
 
+    property var screen: null
     property Item activeTrayMenuPopup: null
     property bool pillHovered: false
     property bool popupHovered: false
@@ -174,7 +175,7 @@ Scope {
 
     PanelWindow {
         id: passwordWin
-        screen: Quickshell.screens[Config.monitor]
+        screen: root.screen
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
@@ -432,7 +433,7 @@ Scope {
     PanelWindow {
         id: win
 
-        screen: Quickshell.screens[Config.monitor]
+        screen: root.screen
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
         anchors.bottom: true

@@ -16,6 +16,7 @@ import "../components"
 Scope {
     id: root
 
+    property var screen: null
     property bool visible_: false
     property bool pinned: false
 
@@ -68,7 +69,7 @@ Scope {
     PanelWindow {
         id: win
 
-        screen: Quickshell.screens[Config.monitor]
+        screen: root.screen
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
         anchors.left: true

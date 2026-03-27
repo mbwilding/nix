@@ -14,6 +14,7 @@ import "../services"
 Scope {
     id: root
 
+    property var screen: null
     property bool _kbdFirstRead: true
     property bool _screenFirstRead: true
     property string activeRow: ""   // "volume" | "screen" | "kbd" | ""
@@ -131,7 +132,7 @@ Scope {
     }
 
     PanelWindow {
-        screen: Quickshell.screens[Config.monitor]
+        screen: root.screen
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.bottom: true
         margins.bottom: Math.round(screen.height / 6)

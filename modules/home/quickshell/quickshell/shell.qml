@@ -15,31 +15,46 @@ ShellRoot {
 
     Wallpaper {}
 
-    Bar {
-        id: bar
-        notifHistory: notifs.notifHistory
-        onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
-        onDismissAllNotifs: notifs.dismissAll()
-    }
+    Variants {
+        model: Quickshell.screens
 
-    // Stats {}
+        Scope {
+            id: perScreen
+            required property var modelData
 
-    Osd {}
+            Bar {
+                id: bar
+                screen: perScreen.modelData
+                notifHistory: notifs.notifHistory
+                onRemoveHistoryEntry: entryId => notifs.removeHistoryEntry(entryId)
+                onDismissAllNotifs: notifs.dismissAll()
+            }
 
-    Notifications {
-        id: notifs
+            // Stats {
+            //     screen: perScreen.modelData
+            // }
+
+            Osd {
+                screen: perScreen.modelData
+            }
+
+            Notifications {
+                id: notifs
+                screen: perScreen.modelData
+            }
+
+            Connections {
+                target: notifs
+
+                function onAnimateOutHistoryEntry(snapId) {
+                    bar.animateOutHistoryEntry(snapId);
+                }
+            }
+        }
     }
 
     LockScreen {
         id: lockScreen
-        notifHistory: notifs.notifHistory
-    }
-
-    Connections {
-        target: notifs
-
-        function onAnimateOutHistoryEntry(snapId) {
-            bar.animateOutHistoryEntry(snapId);
-        }
+        notifHistory: []
     }
 }

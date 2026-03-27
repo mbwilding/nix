@@ -14,6 +14,7 @@ import ".."
 Scope {
     id: root
 
+    property var screen: null
     property UPowerDevice battery: UPower.displayDevice
     property bool batteryReady: false
     property bool initialPercentageHandled: false
@@ -248,7 +249,7 @@ Scope {
     }
 
     PanelWindow {
-        screen: Quickshell.screens[Config.monitor]
+        screen: root.screen
         WlrLayershell.layer: WlrLayer.Overlay
         anchors.top: true
         anchors.right: true
