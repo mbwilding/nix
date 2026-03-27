@@ -35,6 +35,7 @@ in
   atlassianRovo = readSecret /home/anon/.secrets/atlassian-rovo;
   deepSeekKey = readSecret /home/anon/.secrets/deepseek;
   elevenLabsKey = readSecret /home/anon/.secrets/elevenlabs;
+  lucidKey = readSecret /home/anon/.secrets/lucid;
   openAiKey = readSecret /home/anon/.secrets/openai;
   weatherKey = readSecret /home/anon/.secrets/weather;
 
