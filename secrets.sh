@@ -6,16 +6,9 @@ read -s -p "Enter service account token: " OP_SERVICE_ACCOUNT_TOKEN
 echo
 
 secrets=(
-  "personal|public key|$HOME/.ssh/authorized_keys"
-  "personal|private key|$HOME/.ssh/personal"
-  "personal|public key|$HOME/.ssh/personal.pub"
-  "work|private key|$HOME/.ssh/work"
-  "work|public key|$HOME/.ssh/work.pub"
-  "aur|private key|$HOME/.ssh/aur"
-  "aur|public key|$HOME/.ssh/aur.pub"
-  "Kubectl|file|$HOME/.kube/config"
   "AWS|json|$HOME/.secrets/aws.json"
   "Anthropic|credential|$HOME/.secrets/anthropic"
+  "Atlassian|credential|$HOME/.secrets/atlassian"
   "Cargo|credential|$HOME/.secrets/cargo"
   "DeepSeek|credential|$HOME/.secrets/deepseek"
   "ElevenLabs|credential|$HOME/.secrets/elevenlabs"
@@ -27,6 +20,7 @@ secrets=(
   "Home|wireguardEndpoint|$HOME/.secrets/home-wireguard-endpoint"
   "Home|wireguardPrivateKey|$HOME/.secrets/home-wireguard-private-key"
   "Home|wireguardPublicKey|$HOME/.secrets/home-wireguard-public-key"
+  "Kubectl|file|$HOME/.kube/config"
   "OpenAI|credential|$HOME/.secrets/openai"
   "Password|credential|$HOME/.secrets/password"
   "Pulumi|credential|$HOME/.secrets/pulumi"
@@ -40,6 +34,13 @@ secrets=(
   "Work Info|emailName|$HOME/.secrets/work-email-name"
   "Work Info|id|$HOME/.secrets/work-id"
   "Work Info|name|$HOME/.secrets/work-name"
+  "aur|private key|$HOME/.ssh/aur"
+  "aur|public key|$HOME/.ssh/aur.pub"
+  "personal|private key|$HOME/.ssh/personal"
+  "personal|public key|$HOME/.ssh/authorized_keys"
+  "personal|public key|$HOME/.ssh/personal.pub"
+  "work|private key|$HOME/.ssh/work"
+  "work|public key|$HOME/.ssh/work.pub"
 )
 
 for entry in "${secrets[@]}"; do

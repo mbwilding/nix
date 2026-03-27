@@ -64,7 +64,6 @@ in
       clang-tools
       clippy
       cmake
-      copilot-cli
       curl
       dapr-cli
       delta
@@ -119,8 +118,6 @@ in
       nix-diff
       nmap
       nodejs
-      opencode
-      opencode-desktop
       openssh
       pavucontrol
       php85Packages.php-cs-fixer

@@ -26,6 +26,9 @@ in
   # GitLab
   gitlabWorkToken = readSecret /home/anon/.secrets/gitlab-work;
 
+  # Atlassian
+  atlassianToken = readSecret /home/anon/.secrets/atlassian;
+
   # Cargo
   cargoToken = readSecret /home/anon/.secrets/cargo;
 
