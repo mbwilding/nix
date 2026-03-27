@@ -32,6 +32,7 @@ in
   # API keys
   anthropicKey = readSecret /home/anon/.secrets/anthropic;
   atlassianKey = readSecret /home/anon/.secrets/atlassian;
+  atlassianRovo = readSecret /home/anon/.secrets/atlassian-rovo;
   deepSeekKey = readSecret /home/anon/.secrets/deepseek;
   elevenLabsKey = readSecret /home/anon/.secrets/elevenlabs;
   openAiKey = readSecret /home/anon/.secrets/openai;
