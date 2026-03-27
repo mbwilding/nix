@@ -23,6 +23,13 @@ in
             Authorization = "Bearer ${secrets.githubWorkToken}";
           };
         };
+        lucid = {
+          type = "http";
+          url = "https://mcp.lucid.app/mcp";
+          headers = {
+            Authorization = "Bearer ${secrets.lucidKey}";
+          };
+        };
       };
     };
   };

@@ -22,6 +22,7 @@ secrets=(
   "Home|wireguardPrivateKey|$HOME/.secrets/home-wireguard-private-key"
   "Home|wireguardPublicKey|$HOME/.secrets/home-wireguard-public-key"
   "Kubectl|file|$HOME/.kube/config"
+  "Lucid|credential|$HOME/.secrets/lucid"
   "OpenAI|credential|$HOME/.secrets/openai"
   "Password|credential|$HOME/.secrets/password"
   "Pulumi|credential|$HOME/.secrets/pulumi"
