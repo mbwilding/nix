@@ -64,6 +64,7 @@ in
       clang-tools
       clippy
       cmake
+      copilot-cli
       curl
       dapr-cli
       delta
