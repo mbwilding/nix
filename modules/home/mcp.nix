@@ -2,7 +2,7 @@
 
 let
   base64 = import ../helpers/base64.nix { inherit lib; };
-  atlassian = base64.toBase64 "${secrets.workEmailId}:${secrets.atlassianRovo}";
+  atlassian = base64.toBase64 "${secrets.workEmailId}:${secrets.atlassianKey}";
 in
 {
   programs = {
