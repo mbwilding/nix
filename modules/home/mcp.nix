@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   programs = {
@@ -8,13 +8,13 @@
         atlassian = {
           url = "https://api.atlassian.com";
           headers = {
-            ATLASSIAN_API_TOKEN = "{env:ATLASSIAN_API_TOKEN}";
+            ATLASSIAN_API_TOKEN = secrets.atlassianKey;
           };
         };
         github = {
           url = "https://api.github.com";
           headers = {
-            GITHUB_TOKEN = "{env:GITHUB_TOKEN}";
+            GITHUB_TOKEN = secrets.githubWorkToken;
           };
         };
       };
