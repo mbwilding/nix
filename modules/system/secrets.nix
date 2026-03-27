@@ -26,17 +26,15 @@ in
   # GitLab
   gitlabWorkToken = readSecret /home/anon/.secrets/gitlab-work;
 
-  # Atlassian
-  atlassianToken = readSecret /home/anon/.secrets/atlassian;
-
   # Cargo
   cargoToken = readSecret /home/anon/.secrets/cargo;
 
   # API keys
   anthropicKey = readSecret /home/anon/.secrets/anthropic;
+  atlassianKey = readSecret /home/anon/.secrets/atlassian;
   deepSeekKey = readSecret /home/anon/.secrets/deepseek;
-  openAiKey = readSecret /home/anon/.secrets/openai;
   elevenLabsKey = readSecret /home/anon/.secrets/elevenlabs;
+  openAiKey = readSecret /home/anon/.secrets/openai;
   weatherKey = readSecret /home/anon/.secrets/weather;
 
   # Networks
