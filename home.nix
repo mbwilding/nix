@@ -23,7 +23,9 @@
     ./modules/home/k9s.nix
     ./modules/home/lazygit.nix
     ./modules/home/lazysql.nix
+    ./modules/home/mcp.nix
     ./modules/home/mpv.nix
+    ./modules/home/opencode.nix
     ./modules/home/packages.nix
     ./modules/home/proxy.nix
     ./modules/home/proxychains.nix
