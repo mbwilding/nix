@@ -1,5 +1,9 @@
-{ secrets, ... }:
+{ lib, secrets, ... }:
 
+let
+  base64 = import ../helpers/base64.nix { inherit lib; };
+  atlassian = base64.toBase64 "${secrets.workEmailId}:${secrets.atlassianKey}";
+in
 {
   programs = {
     mcp = {
@@ -9,7 +13,7 @@
           type = "http";
           url = "https://mcp.atlassian.com/v1/mcp";
           headers = {
-            Authorization = "Bearer ${secrets.atlassianKey}";
+            Authorization = "Basic ${atlassian}";
           };
         };
         github = {
