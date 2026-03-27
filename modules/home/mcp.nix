@@ -6,15 +6,17 @@
       enable = true;
       servers = {
         atlassian = {
-          url = "https://api.atlassian.com";
+          type = "http";
+          url = "https://mcp.atlassian.com/v1/mcp";
           headers = {
-            ATLASSIAN_API_TOKEN = secrets.atlassianKey;
+            Authorization = "Bearer ${secrets.atlassianKey}";
           };
         };
         github = {
-          url = "https://api.github.com";
+          type = "http";
+          url = "https://api.githubcopilot.com/mcp/";
           headers = {
-            GITHUB_TOKEN = secrets.githubWorkToken;
+            Authorization = "Bearer ${secrets.githubWorkToken}";
           };
         };
       };
