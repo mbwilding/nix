@@ -9,27 +9,34 @@ in
     mcp = {
       enable = true;
       servers = {
-        atlassian = {
-          type = "http";
-          url = "https://mcp.atlassian.com/v1/mcp";
-          headers = {
-            Authorization = "Basic ${atlassian}";
-          };
-        };
-        github = {
+        github-work = {
           type = "http";
           url = "https://api.githubcopilot.com/mcp/";
           headers = {
             Authorization = "Bearer ${secrets.githubWorkToken}";
           };
         };
-        lucid = {
+        github-personal = {
           type = "http";
-          url = "https://mcp.lucid.app/mcp";
+          url = "https://api.githubcopilot.com/mcp/";
           headers = {
-            Authorization = "Bearer ${secrets.lucidKey}";
+            Authorization = "Bearer ${secrets.githubPersonalToken}";
           };
         };
+        # atlassian = {
+        #   type = "http";
+        #   url = "https://mcp.atlassian.com/v1/mcp";
+        #   headers = {
+        #     Authorization = "Basic ${atlassian}";
+        #   };
+        # };
+        # lucid = {
+        #   type = "http";
+        #   url = "https://mcp.lucid.app/mcp";
+        #   headers = {
+        #     Authorization = "Bearer ${secrets.lucidKey}";
+        #   };
+        # };
       };
     };
   };
