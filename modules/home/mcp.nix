@@ -27,7 +27,7 @@ in
           type = "http";
           url = "https://mcp.figma.com/mcp";
           headers = {
-            Authorization = "Basic ${secrets.figmaKey}";
+            Authorization = "Bearer ${secrets.figmaKey}";
           };
         };
         # atlassian = {
