@@ -13,6 +13,7 @@ secrets=(
   "Cargo|credential|$HOME/.secrets/cargo"
   "DeepSeek|credential|$HOME/.secrets/deepseek"
   "ElevenLabs|credential|$HOME/.secrets/elevenlabs"
+  "Figma|credential|$HOME/.secrets/figma"
   "GitHub Personal|credential|$HOME/.secrets/github-personal"
   "GitHub Work|credential|$HOME/.secrets/github-work"
   "GitHub Work|username|$HOME/.secrets/github-work-username"
