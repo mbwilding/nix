@@ -23,13 +23,13 @@ in
             Authorization = "Bearer ${secrets.githubPersonalToken}";
           };
         };
-        figma = {
-          type = "http";
-          url = "https://mcp.figma.com/mcp";
-          headers = {
-            Authorization = "Bearer ${secrets.figmaKey}";
-          };
-        };
+        # figma = {
+        #   type = "http";
+        #   url = "https://mcp.figma.com/mcp";
+        #   headers = {
+        #     Authorization = "Bearer ${secrets.figmaKey}";
+        #   };
+        # };
         # atlassian = {
         #   type = "http";
         #   url = "https://mcp.atlassian.com/v1/mcp";
