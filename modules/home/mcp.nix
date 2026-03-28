@@ -11,16 +11,23 @@ in
       servers = {
         github-work = {
           type = "http";
-          url = "https://api.githubcopilot.com/mcp/";
+          url = "https://api.githubcopilot.com/mcp";
           headers = {
             Authorization = "Bearer ${secrets.githubWorkToken}";
           };
         };
         github-personal = {
           type = "http";
-          url = "https://api.githubcopilot.com/mcp/";
+          url = "https://api.githubcopilot.com/mcp";
           headers = {
             Authorization = "Bearer ${secrets.githubPersonalToken}";
+          };
+        };
+        figma = {
+          type = "http";
+          url = "https://mcp.figma.com/mcp";
+          headers = {
+            Authorization = "Basic ${secrets.figmaKey}";
           };
         };
         # atlassian = {
