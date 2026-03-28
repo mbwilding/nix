@@ -17,20 +17,21 @@
           - Check for security vulnerabilities
           - Ensure code follows best practices
           - Suggest improvements for readability and performance
+          - Make sure all outputs are in Australian English spelling
         '';
       };
       commands = {
+        # fix-issue = ./commands/fix-issue.md;
         changelog = ''
           # Update Changelog Command
 
           Update CHANGELOG.md with a new entry for the specified version.
           Usage: /changelog [version] [change-type] [message]
         '';
-        # fix-issue = ./commands/fix-issue.md;
         commit = ''
           # Commit Command
 
-          Create a git commit with proper message formatting.
+          Create a git commit with proper message formatting in Australian English.
           Usage: /commit [message]
         '';
       };
