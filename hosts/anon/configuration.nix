@@ -11,7 +11,6 @@
     ../../modules/system/default.nix
     ../../modules/system/mounts.nix
     ../../modules/system/obs.nix
-    ../../modules/system/elgato.nix
     ../../modules/system/podman.nix
     # ../../modules/system/docker.nix
     ../../modules/system/steam.nix
