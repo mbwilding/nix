@@ -18,7 +18,6 @@
     ../../modules/system/wireshark.nix
     ../../modules/system/appimage.nix
     ../../modules/system/waydroid.nix
-    ../../modules/system/elgato.nix
   ];
 
   networking.hostName = "anon";
