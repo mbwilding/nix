@@ -12,6 +12,7 @@ let
 
     V4L2CTL="${pkgs.v4l-utils}/bin/v4l2-ctl"
     FFMPEG="${pkgs.ffmpeg}/bin/ffmpeg"
+    AWK="${pkgs.gawk}/bin/awk"
 
     # --- find devices by name ---
     DEVICES=$("$V4L2CTL" --list-devices)
@@ -19,21 +20,21 @@ let
     find_device() {
       local name="$1"
       # The device path follows the block starting with $name
-      echo "$DEVICES" | awk -v name="$name" '
+      echo "$DEVICES" | "$AWK" -v name="$name" '
         $0 ~ name { found=1; next }
         found && /^\t/ { gsub(/\t/, ""); print; exit }
       '
     }
 
     ELGATO=$(find_device "Cam Link 4K: Cam Link 4K")
-    DUMMY=$(find_device "Dummy video device (0x0000)")
+    DUMMY=$(find_device "Elgato Cam")
 
     if [ -z "$ELGATO" ]; then
       echo "ERROR: Elgato Cam Link 4K not found" >&2
       exit 1
     fi
     if [ -z "$DUMMY" ]; then
-      echo "ERROR: Dummy v4l2loopback device not found" >&2
+      echo "ERROR: Elgato Cam v4l2loopback device not found" >&2
       exit 1
     fi
 
@@ -43,9 +44,9 @@ let
     # --- query resolution and fps from the active format ---
     FORMATS=$("$V4L2CTL" --list-formats-ext -d "$ELGATO")
 
-    WIDTH=$(echo "$FORMATS" | awk '/Size: Discrete/ { match($0, /([0-9]+)x([0-9]+)/, a); print a[1]; exit }')
-    HEIGHT=$(echo "$FORMATS" | awk '/Size: Discrete/ { match($0, /([0-9]+)x([0-9]+)/, a); print a[2]; exit }')
-    FPS=$(echo "$FORMATS" | awk '/Interval: Discrete/ { match($0, /\(([0-9.]+) fps\)/, a); print a[1]; exit }')
+    WIDTH=$(echo "$FORMATS" | "$AWK" '/Size: Discrete/ { match($0, /([0-9]+)x([0-9]+)/, a); print a[1]; exit }')
+    HEIGHT=$(echo "$FORMATS" | "$AWK" '/Size: Discrete/ { match($0, /([0-9]+)x([0-9]+)/, a); print a[2]; exit }')
+    FPS=$(echo "$FORMATS" | "$AWK" '/Interval: Discrete/ { match($0, /\(([0-9.]+) fps\)/, a); print a[1]; exit }')
 
     echo "Detected: ''${WIDTH}x''${HEIGHT} @ ''${FPS} fps"
 
