@@ -8,6 +8,7 @@
       enable = true;
       enable32Bit = true;
     };
+
     nvidia = {
       package = config.boot.kernelPackages.nvidiaPackages.stable;
       open = true;
@@ -15,6 +16,7 @@
       nvidiaSettings = true;
 
       # Laptop
+
       # powerManagement = {
       #   enable = true;
       #   finegrained = true;
