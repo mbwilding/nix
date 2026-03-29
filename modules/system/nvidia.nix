@@ -9,18 +9,26 @@
       enable32Bit = true;
     };
     nvidia = {
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
       open = true;
-
       modesetting.enable = true;
-
-      powerManagement = {
-        enable = true;
-        finegrained = true;
-      };
-
       nvidiaSettings = true;
 
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      # Laptop
+      # powerManagement = {
+      #   enable = true;
+      #   finegrained = true;
+      # };
+      #
+      # prime = {
+      #   # Make prime offloading work
+      #   offload.enable = true;
+      #
+      #   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+      #   intelBusId = "PCI:0:2:0";
+      #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+      #   nvidiaBusId = "PCI:1:0:0";
+      # };
     };
   };
 
