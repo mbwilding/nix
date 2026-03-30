@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ./actions-languageserver.nix
+    ./gh-actions-language-server.nix
   ];
 }
