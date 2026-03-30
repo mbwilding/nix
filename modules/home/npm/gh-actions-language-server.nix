@@ -3,9 +3,13 @@
 let
   gh-actions-language-server = pkgs.stdenv.mkDerivation {
     pname = "gh-actions-language-server";
-    version = "latest";
+    version = "0.0.3";
 
-    src = builtins.fetchTarball "https://registry.npmjs.org/gh-actions-language-server/-/gh-actions-language-server-latest.tgz";
+    # To update: nix-prefetch-url --type sha256 https://registry.npmjs.org/gh-actions-language-server/-/gh-actions-language-server-<version>.tgz
+    src = pkgs.fetchurl {
+      url = "https://registry.npmjs.org/gh-actions-language-server/-/gh-actions-language-server-0.0.3.tgz";
+      hash = "sha256-lgisfGIWGT/WCGqOfm/rqSXVeDWqSge2YJ+ZiBMmS48=";
+    };
 
     nativeBuildInputs = [ pkgs.makeWrapper ];
 
