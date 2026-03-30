@@ -42,12 +42,6 @@ in
 {
   home = {
     packages = with pkgs; [
-      bun
-      google-chrome
-      open-ecc
-      power-platform-toolbox
-      # FIND vscode-bash-debug
-      # PROJECT gcc-arm-embedded
       _1password-gui
       asciiquarium
       atuin
@@ -56,6 +50,7 @@ in
       bashdb
       bat
       brightnessctl
+      bun
       cameractrls-gtk4
       cargo
       cfn-nag
@@ -65,6 +60,7 @@ in
       cmake
       curl
       dapr-cli
+      davinci-resolve-studio
       delta
       delve
       docker-compose-language-service
@@ -83,6 +79,7 @@ in
       gnumake
       gnupg
       go
+      google-chrome
       gopls
       home-manager
       hostname
@@ -117,18 +114,19 @@ in
       nix-diff
       nmap
       nodejs
+      open-ecc
       openssh
       pavucontrol
       php85Packages.php-cs-fixer
       phpactor
       postgresql
+      power-platform-toolbox
       powershell
       powershell-editor-services
       prettierd
       pulumi-bin
       pyright
       python314
-      # python314Packages.cfn-lint
       python314Packages.debugpy
       qt6.qtdeclarative # qmlls
       quicktype
@@ -163,6 +161,9 @@ in
       zls
       zoxide
 
+      # FIND vscode-bash-debug
+      # PROJECT gcc-arm-embedded
+      # BROKEN python314Packages.cfn-lint
       # vscode-extensions.ms-vscode.powershell
       # vscode-extensions.llvm-vs-code-extensions.lldb-dap
     ];
