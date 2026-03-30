@@ -26,6 +26,7 @@
     ./modules/home/mcp.nix
     ./modules/home/mpv.nix
     ./modules/home/opencode.nix
+    ./modules/home/npm
     ./modules/home/packages.nix
     ./modules/home/proxy.nix
     ./modules/home/proxychains.nix
