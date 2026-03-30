@@ -16,7 +16,7 @@ let
       mkdir -p $out/lib/actions-languageserver $out/bin
       cp -r dist bin $out/lib/actions-languageserver/
 
-      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/actions-languageserver \
+      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/gh-actions-language-server \
         --add-flags "$out/lib/actions-languageserver/bin/actions-languageserver"
     '';
 
@@ -24,7 +24,7 @@ let
       description = "Language server for GitHub Actions";
       homepage = "https://github.com/actions/languageservices";
       license = pkgs.lib.licenses.mit;
-      mainProgram = "actions-languageserver";
+      mainProgram = "gh-actions-language-server";
     };
   };
 in
