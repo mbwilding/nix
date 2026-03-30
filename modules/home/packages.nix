@@ -43,10 +43,9 @@ in
   home = {
     packages = with pkgs; [
       bun
+      google-chrome
       open-ecc
       power-platform-toolbox
-      # BROKEN python314Packages.cfn-lint
-      # FIND ada-language-server
       # FIND vscode-bash-debug
       # PROJECT gcc-arm-embedded
       _1password-gui
@@ -78,12 +77,12 @@ in
       fuse3
       fzf
       gcc
+      gh-enhance
       git
       gnugrep
       gnumake
       gnupg
       go
-      google-chrome
       gopls
       home-manager
       hostname
@@ -129,6 +128,7 @@ in
       pulumi-bin
       pyright
       python314
+      # python314Packages.cfn-lint
       python314Packages.debugpy
       qt6.qtdeclarative # qmlls
       quicktype
