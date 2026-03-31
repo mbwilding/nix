@@ -1,9 +1,10 @@
-{ pkgs, pkgsMaster, pkgsUnstable, pkgsStable, ... }:
+{ pkgs, pkgsMaster, pkgsUnstable, pkgsStable, pkgsCustom, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
+  roslyn-ls = pkgs.callPackage ./roslyn-ls.nix { };
   powerplatform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
   google-chrome = pkgs.google-chrome.override {
     commandLineArgs = [
@@ -37,6 +38,7 @@ in
       google-chrome
       open-ecc
       powerplatform-toolbox
+      roslyn-ls
 
       # Unstable
       _1password-gui
@@ -125,7 +127,6 @@ in
       quicktype
       reaper
       ripgrep
-      roslyn-ls
       ruby
       ruff
       rust-analyzer
