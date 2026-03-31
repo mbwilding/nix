@@ -59,7 +59,6 @@ in
       cmake
       curl
       dapr-cli
-      davinci-resolve-studio
       delta
       delve
       docker-compose-language-service
