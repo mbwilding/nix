@@ -327,16 +327,28 @@ Item {
                         }
                         return result;
                     } else {
-                        // Live card: snapshot C++ Action objects into plain JS with a bound invoke.
+                        // Live card: snapshot C++ Action objects into plain JS.
+                        // Capture the identifier string (not the C++ pointer) and
+                        // look it up via root.notification at invoke-time to avoid
+                        // calling into a potentially-freed Action*.
                         const notif = root.notification;
                         const rawActions = notif?.actions ?? [];
                         const result = [];
                         for (let i = 0; i < rawActions.length; i++) {
                             const a = rawActions[i];
+                            const id = a.identifier ?? "";
                             result.push({
-                                identifier: a.identifier ?? "",
+                                identifier: id,
                                 text: a.text ?? "",
-                                invoke: (() => a.invoke())
+                                invoke: (() => {
+                                    const acts = root.notification?.actions ?? [];
+                                    for (let j = 0; j < acts.length; j++) {
+                                        if (acts[j].identifier === id) {
+                                            acts[j].invoke();
+                                            break;
+                                        }
+                                    }
+                                })
                             });
                         }
                         return result;

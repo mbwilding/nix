@@ -40,7 +40,10 @@ Scope {
     }
 
     function dismissAll() {
-        root.activeCards.filter(c => c.visible_).forEach(c => c.animateOut());
+        // Snapshot visible cards before iterating — animateOut() mutates activeCards
+        // via Component.onDestruction, which causes forEach to skip entries.
+        const visible = root.activeCards.filter(c => c.visible_);
+        visible.forEach(c => c.animateOut());
         dismissAllTimer.restart();
     }
 
@@ -118,6 +121,9 @@ Scope {
                 return;
             }
 
+            if (!root.battery)
+                return;
+
             const state = root.battery.state;
 
             const pct = Math.round(root.battery.percentage * 100);
@@ -137,6 +143,9 @@ Scope {
 
         function onPercentageChanged() {
             if (!root.batteryReady)
+                return;
+
+            if (!root.battery)
                 return;
 
             if (!root.initialPercentageHandled) {
@@ -187,7 +196,7 @@ Scope {
             if (!n)
                 return;
             // Iterate via index to avoid QV4 sequence-wrapping the C++ QList.
-            const rawActions = n.actions;
+            const rawActions = n.actions ?? [];
             let def = null;
             for (let i = 0; i < rawActions.length; i++) {
                 if (rawActions[i].identifier === "default") {
