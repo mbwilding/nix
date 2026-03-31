@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgsUnstable, pkgsMaster, pkgsStable, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
@@ -42,6 +42,14 @@ in
 {
   home = {
     packages = with pkgs; [
+      pkgsMaster.neovim-unwrapped
+
+      # Custom
+      google-chrome
+      open-ecc
+      power-platform-toolbox
+
+      # Unstable
       _1password-gui
       asciiquarium
       atuin
@@ -79,7 +87,6 @@ in
       gnumake
       gnupg
       go
-      google-chrome
       gopls
       home-manager
       hostname
@@ -108,19 +115,16 @@ in
       markdownlint-cli2
       marksman
       mpv
-      neovim
       netcoredbg
       nil
       nix-diff
       nmap
       nodejs
-      open-ecc
       openssh
       pavucontrol
       php85Packages.php-cs-fixer
       phpactor
       postgresql
-      power-platform-toolbox
       powershell
       powershell-editor-services
       prettierd
