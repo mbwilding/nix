@@ -1,21 +1,10 @@
-{ pkgs, pkgsUnstable, pkgsMaster, pkgsStable, ... }:
+{ pkgs, pkgsMaster, pkgsUnstable, pkgsStable, ... }:
 
 # https://search.nixos.org/packages?channel=unstable
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
-  power-platform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
-
-  # google-chrome = pkgs.symlinkJoin {
-  #   name = "google-chrome";
-  #   paths = [ pkgs.google-chrome ];
-  #   buildInputs = [ pkgs.makeWrapper ];
-  #   postBuild = ''
-  #     wrapProgram $out/bin/google-chrome-stable \
-  #       --add-flags "--force-device-scale-factor=1.2"
-  #   '';
-  # };
-
+  powerplatform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
   google-chrome = pkgs.google-chrome.override {
     commandLineArgs = [
       "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
@@ -47,7 +36,7 @@ in
       # Custom
       google-chrome
       open-ecc
-      power-platform-toolbox
+      powerplatform-toolbox
 
       # Unstable
       _1password-gui

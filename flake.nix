@@ -3,7 +3,6 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixpkgs-mbwilding.url = "github:mbwilding/nixpkgs/master";
 
     ucodenix.url = "github:e-tho/ucodenix";
 
@@ -85,13 +84,6 @@
         };
       };
 
-      pkgsMbwilding = import inputs.nixpkgs-mbwilding {
-        inherit system;
-        config = {
-          allowUnfree = true;
-        };
-      };
-
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
@@ -102,7 +94,6 @@
               inputs
               pkgsMaster
               pkgsStable
-              pkgsMbwilding
               secrets
               font
               ;
@@ -125,7 +116,6 @@
                   inputs
                   pkgsMaster
                   pkgsStable
-                  pkgsMbwilding
                   hostname
                   secrets
                   font
@@ -156,7 +146,6 @@
               inputs
               pkgsMaster
               pkgsStable
-              pkgsMbwilding
               hostname
               secrets
               font
