@@ -69,22 +69,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-mbwilding": {
-      "locked": {
-        "lastModified": 1773900056,
-        "narHash": "sha256-arQzHt3PyKm9if/2hyDV3tkWai2HRtmsdPX62j5uFNU=",
-        "owner": "mbwilding",
-        "repo": "nixpkgs",
-        "rev": "776bdb06fc2b36f60f2c15616fdf32075ba511f5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mbwilding",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1774799055,
@@ -129,7 +113,6 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-master": "nixpkgs-master",
-        "nixpkgs-mbwilding": "nixpkgs-mbwilding",
         "nixpkgs-stable": "nixpkgs-stable",
         "plasma-manager": "plasma-manager",
         "solaar": "solaar",
