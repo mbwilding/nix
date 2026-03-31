@@ -53,13 +53,29 @@
         "type": "github"
       }
     },
+    "nixpkgs-custom": {
+      "locked": {
+        "lastModified": 1773902768,
+        "narHash": "sha256-5dsQ6L7Thb61CWO0KClwql21vut8VcdZT0KmWUPS5VA=",
+        "owner": "mbwilding",
+        "repo": "nixpkgs",
+        "rev": "9125043887d91e45d377124bd548f98bdc6851d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "ref": "typescript-go",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1774963348,
-        "narHash": "sha256-y/xLcHUzCtHml6GCswRfz+Q6irbxgPJ4AW9PG2EYAiU=",
+        "lastModified": 1774966283,
+        "narHash": "sha256-6Qqm9ginlrTSL60AjL9TDXS1khO81WpNJm4EcaEFnHY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "dda03e9d549fb90c78912b7a50dfbbf1dccbc4dc",
+        "rev": "57c19073fff32a68349e713149f8182e0aacb732",
         "type": "github"
       },
       "original": {
@@ -112,6 +128,7 @@
       "inputs": {
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-custom": "nixpkgs-custom",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-stable": "nixpkgs-stable",
         "plasma-manager": "plasma-manager",

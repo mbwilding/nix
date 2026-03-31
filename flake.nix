@@ -3,6 +3,7 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-custom.url = "github:mbwilding/nixpkgs/typescript-go";
 
     ucodenix.url = "github:e-tho/ucodenix";
 
@@ -84,6 +85,13 @@
         };
       };
 
+      pkgsCustom = import inputs.nixpkgs-custom {
+        inherit system;
+        config = {
+          allowUnfree = true;
+        };
+      };
+
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
@@ -116,6 +124,7 @@
                   inputs
                   pkgsMaster
                   pkgsStable
+                  pkgsCustom
                   hostname
                   secrets
                   font
@@ -146,6 +155,7 @@
               inputs
               pkgsMaster
               pkgsStable
+              pkgsCustom
               hostname
               secrets
               font
