@@ -4,7 +4,7 @@
 
 let
   open-ecc = pkgs.callPackage ./open-ecc.nix { };
-  roslyn-ls = pkgs.callPackage ./roslyn-ls.nix { };
+  # roslyn-ls = pkgs.callPackage ./roslyn-ls.nix { };
   powerplatform-toolbox = pkgs.callPackage ./power-platform-toolbox.nix { };
   google-chrome = pkgs.google-chrome.override {
     commandLineArgs = [
