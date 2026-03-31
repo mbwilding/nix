@@ -1,5 +1,6 @@
 {
   inputs = {
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-mbwilding.url = "github:mbwilding/nixpkgs/master";
@@ -17,10 +18,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # neovim-nightly-overlay = {
+    #   url = "github:nix-community/neovim-nightly-overlay";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # hyprland.url = "github:hyprwm/Hyprland";
 
@@ -56,7 +57,7 @@
         };
 
         overlays = [
-          inputs.neovim-nightly-overlay.overlays.default
+          # inputs.neovim-nightly-overlay.overlays.default
           (final: prev: {
             solaar = prev.solaar.overrideAttrs (_: {
               src = inputs.solaar;
@@ -69,6 +70,13 @@
       # font = "CaskaydiaMono Nerd Font";
       # font = "JetBrainsMonoNL Nerd Font";
       # font = "Iosevka Nerd Font";
+
+      pkgsMaster = import inputs.nixpkgs-master {
+        inherit system;
+        config = {
+          allowUnfree = true;
+        };
+      };
 
       pkgsStable = import inputs.nixpkgs-stable {
         inherit system;
@@ -92,6 +100,7 @@
           specialArgs = {
             inherit
               inputs
+              pkgsMaster
               pkgsStable
               pkgsMbwilding
               secrets
@@ -114,6 +123,7 @@
               home-manager.extraSpecialArgs = {
                 inherit
                   inputs
+                  pkgsMaster
                   pkgsStable
                   pkgsMbwilding
                   hostname
@@ -144,6 +154,7 @@
           extraSpecialArgs = {
             inherit
               inputs
+              pkgsMaster
               pkgsStable
               pkgsMbwilding
               hostname
