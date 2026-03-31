@@ -27,6 +27,7 @@
       WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
     };
     systemPackages = with pkgs; [
+      davinci-resolve-studio
       solaar
     ];
   };
