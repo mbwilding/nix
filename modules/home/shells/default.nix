@@ -17,7 +17,7 @@
       CARGO_REGISTRY_TOKEN = secrets.cargoToken;
       DEEPSEEK_API_KEY = secrets.deepSeekKey;
       ELEVENLABS_API_KEY = secrets.elevenLabsKey;
-      GITHUB_TOKEN = secrets.githubWorkToken;
+      # GITHUB_TOKEN = secrets.githubWorkToken;
       GITHUB_TOKEN_PERSONAL = secrets.githubPersonalToken;
       GITHUB_TOKEN_WORK = secrets.githubWorkToken;
       GITLAB_TOKEN = secrets.gitlabWorkToken;
