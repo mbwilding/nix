@@ -73,6 +73,7 @@ in
       gcc
       gh-enhance
       git
+      github-copilot-cli
       gnugrep
       gnumake
       gnupg
