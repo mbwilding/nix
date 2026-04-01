@@ -31,10 +31,10 @@ in
           type = "http";
           url = "https://mcp.lucid.app/mcp";
         };
-        figma = {
-          type = "http";
-          url = "https://mcp.figma.com/mcp";
-        };
+        # figma = {
+        #   type = "http";
+        #   url = "https://mcp.figma.com/mcp";
+        # };
       };
     };
   };
