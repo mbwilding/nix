@@ -39,6 +39,6 @@ in
     servers = mcpServers;
   };
 
-  home.file.".config/.copilot/mcp-config.json".text =
+  home.file.".copilot/mcp-config.json".text =
     builtins.toJSON { mcpServers = mcpServers; };
 }
