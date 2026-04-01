@@ -23,27 +23,18 @@ in
             Authorization = "Bearer ${secrets.githubPersonalToken}";
           };
         };
-        # figma = {
-        #   type = "http";
-        #   url = "https://mcp.figma.com/mcp";
-        #   headers = {
-        #     Authorization = "Bearer ${secrets.figmaKey}";
-        #   };
-        # };
-        # atlassian = {
-        #   type = "http";
-        #   url = "https://mcp.atlassian.com/v1/mcp";
-        #   headers = {
-        #     Authorization = "Basic ${atlassian}";
-        #   };
-        # };
-        # lucid = {
-        #   type = "http";
-        #   url = "https://mcp.lucid.app/mcp";
-        #   headers = {
-        #     Authorization = "Bearer ${secrets.lucidKey}";
-        #   };
-        # };
+        atlassian = {
+          type = "http";
+          url = "https://mcp.atlassian.com/v1/mcp";
+        };
+        lucid = {
+          type = "http";
+          url = "https://mcp.lucid.app/mcp";
+        };
+        figma = {
+          type = "http";
+          url = "https://mcp.figma.com/mcp";
+        };
       };
     };
   };
