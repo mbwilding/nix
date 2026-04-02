@@ -1,5 +1,3 @@
-{
-  lib,
   fetchFromGitHub,
   buildDotnetModule,
   dotnetCorePackages,
@@ -156,7 +154,7 @@ buildDotnetModule (finalAttrs: {
         no-sdk = with-sdk null;
         version = testers.testVersion { package = finalAttrs.finalPackage; };
       };
-    updateScript = ./update.sh;
+    updateScript = ./roslyn-ls.sh;
   };
 
   meta = {
