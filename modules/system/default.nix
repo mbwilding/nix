@@ -132,6 +132,19 @@ in
   environment = {
     sessionVariables = {
       NIXOS_OZONE_WL = "1";
+      # SDL_VIDEODRIVER = "wayland";
+      # QT_QPA_PLATFORM = "wayland";
+      ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+      NIXPKGS_ALLOW_UNFREE = 1;
+      PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
+    };
+    etc = {
+      "1password/custom_allowed_browsers" = {
+        text = ''
+          google-chrome
+        '';
+        mode = "0755";
+      };
     };
     systemPackages = with pkgs; [
       _1password-cli
@@ -168,25 +181,6 @@ in
     nix-ld = {
       enable = true;
       libraries = with pkgs; [ icu ];
-    };
-  };
-
-  environment.etc = {
-    "1password/custom_allowed_browsers" = {
-      text = ''
-        google-chrome
-      '';
-      mode = "0755";
-    };
-  };
-
-  environment = {
-    sessionVariables = {
-      # SDL_VIDEODRIVER = "wayland";
-      # QT_QPA_PLATFORM = "wayland";
-      ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-      NIXPKGS_ALLOW_UNFREE = 1;
-      PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
     };
   };
 
