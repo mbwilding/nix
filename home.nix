@@ -3,7 +3,7 @@
 {
   imports = [
     # ./modules/home/kde.nix
-    ./modules/home/hyprland.nix
+    # ./modules/home/hyprland.nix
 
     # ./modules/home/neovim.nix
 

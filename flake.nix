@@ -5,6 +5,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-custom.url = "github:mbwilding/nixpkgs/typescript-go";
 
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+
     ucodenix.url = "github:e-tho/ucodenix";
 
     plasma-manager = {
@@ -45,6 +47,7 @@
         "anon"
         "nona"
         "vm"
+        "wsl"
       ];
 
       secrets = import ./modules/system/secrets.nix;
@@ -137,6 +140,14 @@
                   inputs.plasma-manager.homeModules.plasma-manager
                 ];
               };
+            }
+          ]
+          ++ inputs.nixpkgs.lib.optionals (hostname == "wsl") [
+            inputs.nixos-wsl.nixosModules.default
+            {
+              system.stateVersion = "25.05";
+              wsl.enable = true;
+              wsl.defaultUser = "anon";
             }
           ];
         };
