@@ -136,8 +136,14 @@
 
               home-manager.users.anon = {
                 imports = [
+                  # ./modules/home/kde.nix
+                  # ./modules/home/hyprland.nix
                   ./home.nix
                   inputs.plasma-manager.homeModules.plasma-manager
+                ]
+                ++ inputs.nixpkgs.lib.optionals (hostname != "wsl") [
+                  # ./modules/home/kde.nix
+                  ./modules/home/hyprland.nix
                 ];
               };
             }
