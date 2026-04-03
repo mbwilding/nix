@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.git =
-    { secrets, ... }:
+    { secrets, config, ... }:
 
     {
       services = {
@@ -26,7 +26,7 @@
             gpg = {
               format = "ssh";
               "ssh" = {
-                allowedSignersFile = "/home/anon/.config/git/allowed_signers";
+                allowedSignersFile = "${config.home.homeDirectory}/.config/git/allowed_signers";
               };
             };
             commit.gpgsign = true;
