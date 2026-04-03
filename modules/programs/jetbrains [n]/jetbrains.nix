@@ -2,7 +2,12 @@
 
 {
   flake.modules.homeManager.jetbrains =
-    { lib, pkgs, config, ... }:
+    {
+      lib,
+      pkgs,
+      config,
+      ...
+    }:
 
     let
       dotnet = config.custom.dotnet.sdk;

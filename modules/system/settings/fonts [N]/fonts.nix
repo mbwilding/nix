@@ -6,8 +6,8 @@
     let
       neospleen = pkgs.callPackage ./_neospleen.nix { };
       neospleen-nerdfont = pkgs.callPackage ./_neospleen-nerdfont.nix { };
-      neospleen-local = pkgs.callPackage ./_neospleen-local.nix { };
-      neospleen-nerdfont-local = pkgs.callPackage ./_neospleen-nerdfont-local.nix { };
+      # neospleen-local = pkgs.callPackage ./_neospleen-local.nix { };
+      # neospleen-nerdfont-local = pkgs.callPackage ./_neospleen-nerdfont-local.nix { };
     in
     {
       fonts = {
