@@ -1,5 +1,5 @@
 let
-  read = f: builtins.readFile /home/anon/.secrets/${f};
+  read = f: builtins.readFile "${builtins.getEnv "HOME"}/.secrets/${f}";
   readJSON = f: builtins.fromJSON (read f);
 in
 {
