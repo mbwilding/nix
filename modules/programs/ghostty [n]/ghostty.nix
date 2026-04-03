@@ -10,7 +10,6 @@
     }:
 
     let
-      font = "NeoSpleen Nerd Font";
       mod = "super+shift+ctrl+alt";
       shaders = {
         color = "vec4(0.35, 0.25375, 0.05635, 1.0)";
@@ -35,7 +34,7 @@
               (lib.optionals shaders.trail [ "shaders/cursor_smear.glsl" ])
               ++ (lib.optionals shaders.blaze [ "shaders/cursor_blaze.glsl" ]);
 
-            font-family = font;
+            font-family = "NeoSpleen Nerd Font";
             # font-family = "JetBrains Mono Nerd Font";
             font-size = if hostname == "anon" then 19 else 17;
             font-synthetic-style = true;

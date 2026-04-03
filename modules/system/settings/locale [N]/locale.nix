@@ -1,4 +1,5 @@
 { ... }:
+
 {
   flake.modules.nixos.locale = {
     time.timeZone = "Australia/Perth";

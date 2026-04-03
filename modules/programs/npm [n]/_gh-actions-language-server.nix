@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
-# Plain HM module — imported by npm.nix, NOT a registered flake.modules feature.
-
 let
   gh-actions-language-server = pkgs.buildNpmPackage {
     pname = "gh-actions-language-server";

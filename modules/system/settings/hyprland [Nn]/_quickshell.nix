@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
-# Plain HM module — imported by hyprland-home.nix, NOT a registered flake.modules feature.
-
 let
   font = "NeoSpleen Nerd Font";
   soundTheme = pkgs.sound-theme-freedesktop;
