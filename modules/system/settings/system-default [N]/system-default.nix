@@ -32,7 +32,11 @@
         };
       };
 
-      networking.networkmanager.enable = true;
+      networking.networkmanager = {
+        enable = true;
+        # NOTE: Prevents wifi sleeping when lid is shut
+        wifi.powersave = false;
+      };
 
       programs = {
         bazecor.enable = true;
