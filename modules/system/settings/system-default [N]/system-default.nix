@@ -10,6 +10,7 @@
     {
       imports = with inputs.self.modules.nixos; [
         system-base
+        fonts
         ucodenix
       ];
 
