@@ -85,7 +85,7 @@
           aws = readJSON "aws.json";
         };
       in
-      system: name: {
+      system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};
           extraSpecialArgs = { hostname = name; };
@@ -95,7 +95,7 @@
               nixpkgs.config.allowUnfree = true;
               _module.args.secrets = secrets;
             }
-          ];
+          ] ++ extraModules;
         };
       };
 
