@@ -1,104 +1,106 @@
 { ... }:
 
 {
-  flake.modules.homeManager.k9s = { secrets, ... }: {
-    programs = {
-      k9s = {
-        enable = true;
-        settings = {
-          k9s = {
-            apiServerTimeout = "15s";
-            defaultView = "";
-            disablePodCounting = false;
-            keepMissingClusters = false;
-            liveViewAutoRefresh = false;
-            maxConnRetry = 15;
-            noExitOnCtrlC = false;
-            noIcons = false;
-            portForwardAddress = "localhost";
-            readOnly = false;
-            refreshRate = 2;
-            screenDumpDir = "/tmp/k9s";
-            skipLatestRevCheck = true;
-            logger = {
-              tail = 100;
-              buffer = 5000;
-              sinceSeconds = -1;
-              fullScreen = true;
-              textWrap = true;
-              showTime = true;
-            };
-            shellPod = {
-              image = "busybox";
-              namespace = "default";
-              limits = {
-                cpu = "100m";
-                memory = "100Mi";
-              };
-              tty = true;
-            };
-            thresholds = {
-              cpu = {
-                critical = 90;
-                warn = 70;
-              };
-              memory = {
-                critical = 90;
-                warn = 70;
-              };
-            };
-            ui = {
-              enableMouse = false;
-              headless = false;
-              logoless = true;
-              crumbsless = false;
-              reactive = false;
+  flake.modules.homeManager.k9s =
+    { secrets, ... }:
+    {
+      programs = {
+        k9s = {
+          enable = true;
+          settings = {
+            k9s = {
+              apiServerTimeout = "15s";
+              defaultView = "";
+              disablePodCounting = false;
+              keepMissingClusters = false;
+              liveViewAutoRefresh = false;
+              maxConnRetry = 15;
+              noExitOnCtrlC = false;
               noIcons = false;
+              portForwardAddress = "localhost";
+              readOnly = false;
+              refreshRate = 2;
+              screenDumpDir = "/tmp/k9s";
+              skipLatestRevCheck = true;
+              logger = {
+                tail = 100;
+                buffer = 5000;
+                sinceSeconds = -1;
+                fullScreen = true;
+                textWrap = true;
+                showTime = true;
+              };
+              shellPod = {
+                image = "busybox";
+                namespace = "default";
+                limits = {
+                  cpu = "100m";
+                  memory = "100Mi";
+                };
+                tty = true;
+              };
+              thresholds = {
+                cpu = {
+                  critical = 90;
+                  warn = 70;
+                };
+                memory = {
+                  critical = 90;
+                  warn = 70;
+                };
+              };
+              ui = {
+                enableMouse = false;
+                headless = false;
+                logoless = true;
+                crumbsless = false;
+                reactive = false;
+                noIcons = false;
+              };
             };
           };
-        };
-        views = {
-          "v1/pods" = {
-            columns = [
-              "NAMESPACE"
-              "NAME"
-              "STATUS"
-              "READY"
-              "AGE"
-              "RESTARTS"
-              "CPU"
-              "%CPU/R"
-              "%CPU/L"
-              "MEM"
-              "%MEM/R"
-              "%MEM/L"
-              "IP"
-              "NODE|S"
-              "PF"
-            ];
-          };
-          "v1/pods@.*-(${secrets.workName})" = {
-            columns = [
-              "NAME"
-              "SQUAD:.metadata.labels.squad"
-              "VERSION:.metadata.labels.version"
-              "STATUS"
-              "READY"
-              "AGE"
-              "RESTARTS"
-              "CPU"
-              "%CPU/R"
-              "%CPU/L"
-              "MEM"
-              "%MEM/R"
-              "%MEM/L"
-              "IP"
-              "NODE|S"
-              "PF"
-            ];
+          views = {
+            "v1/pods" = {
+              columns = [
+                "NAMESPACE"
+                "NAME"
+                "STATUS"
+                "READY"
+                "AGE"
+                "RESTARTS"
+                "CPU"
+                "%CPU/R"
+                "%CPU/L"
+                "MEM"
+                "%MEM/R"
+                "%MEM/L"
+                "IP"
+                "NODE|S"
+                "PF"
+              ];
+            };
+            "v1/pods@.*-(${secrets.workName})" = {
+              columns = [
+                "NAME"
+                "SQUAD:.metadata.labels.squad"
+                "VERSION:.metadata.labels.version"
+                "STATUS"
+                "READY"
+                "AGE"
+                "RESTARTS"
+                "CPU"
+                "%CPU/R"
+                "%CPU/L"
+                "MEM"
+                "%MEM/R"
+                "%MEM/L"
+                "IP"
+                "NODE|S"
+                "PF"
+              ];
+            };
           };
         };
       };
     };
-  };
 }

@@ -4,8 +4,6 @@
   ...
 }:
 {
-  # Helper functions for creating NixOS and Home-Manager configurations.
-
   options.flake.lib = lib.mkOption {
     type = lib.types.attrsOf lib.types.unspecified;
     default = { };
@@ -88,7 +86,9 @@
       system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = { hostname = name; };
+          extraSpecialArgs = {
+            hostname = name;
+          };
           modules = [
             inputs.self.modules.homeManager.anon
             {
@@ -96,9 +96,9 @@
               _module.args.secrets = secrets;
               _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
             }
-          ] ++ extraModules;
+          ]
+          ++ extraModules;
         };
       };
-
   };
 }

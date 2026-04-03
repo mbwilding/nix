@@ -1,6 +1,5 @@
-# Plain NixOS module (no flake.modules wrapper) — imported directly via path.
-# Adds wireplumber rules to rename the OBS loopback device nodes.
 { ... }:
+
 {
   services.pipewire.wireplumber.extraConfig."99-rename-obs-loopback" = {
     "monitor.alsa.rules" = [

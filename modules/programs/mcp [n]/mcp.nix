@@ -1,7 +1,8 @@
 { ... }:
 
 {
-  flake.modules.homeManager.mcp = { secrets, ... }:
+  flake.modules.homeManager.mcp =
+    { secrets, ... }:
 
     let
       mcpServers = {
@@ -39,7 +40,6 @@
         servers = mcpServers;
       };
 
-      home.file.".copilot/mcp-config.json".text =
-        builtins.toJSON { mcpServers = mcpServers; };
+      home.file.".copilot/mcp-config.json".text = builtins.toJSON { mcpServers = mcpServers; };
     };
 }

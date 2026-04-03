@@ -1,9 +1,6 @@
 { ... }:
 
 {
-  # Breeze Dark visual theme for GTK applications and GNOME compatibility layer.
-  # Use this on any host running GUI apps without a full KDE desktop — KDE manages
-  # its own theming and should NOT import this feature.
   flake.modules.homeManager.theme =
     { pkgs, hostname, ... }:
     let

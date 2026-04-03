@@ -1,22 +1,24 @@
 { ... }:
 
 {
-  flake.modules.homeManager.proxychains = { pkgs, ... }: {
-    home = {
-      packages = with pkgs; [
-        proxychains-ng
-      ];
+  flake.modules.homeManager.proxychains =
+    { pkgs, ... }:
+    {
+      home = {
+        packages = with pkgs; [
+          proxychains-ng
+        ];
 
-      file.".config/proxychains/proxychains.conf".text = ''
-        strict_chain
-        proxy_dns
-        remote_dns_subnet 224
-        tcp_read_time_out 15000
-        tcp_connect_time_out 8000
+        file.".config/proxychains/proxychains.conf".text = ''
+          strict_chain
+          proxy_dns
+          remote_dns_subnet 224
+          tcp_read_time_out 15000
+          tcp_connect_time_out 8000
 
-        [ProxyList]
-        socks5 127.0.0.1 1080
-      '';
+          [ProxyList]
+          socks5 127.0.0.1 1080
+        '';
+      };
     };
-  };
 }

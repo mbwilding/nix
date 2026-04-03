@@ -2,9 +2,8 @@
   inputs,
   ...
 }:
-{
-  # Desktop system defaults. Composes system-base and adds desktop-only config.
 
+{
   flake.modules.nixos.system-default =
     { pkgs, ... }:
     {
