@@ -94,6 +94,7 @@
             {
               nixpkgs.config.allowUnfree = true;
               _module.args.secrets = secrets;
+              _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
             }
           ] ++ extraModules;
         };
