@@ -3,11 +3,14 @@
   stdenvNoCC,
 }:
 
+let
+  home = import ../../../nix/_home.nix;
+in
 stdenvNoCC.mkDerivation {
   pname = "neospleen-local";
   version = "local";
 
-  src = /home/anon/dev/personal/neospleen/fonts;
+  src = "${home}/dev/personal/neospleen/fonts";
 
   phases = [ "installPhase" ];
 

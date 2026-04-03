@@ -10,4 +10,4 @@ fi
 
 HOST="${HOST// /}"
 
-sudo nixos-rebuild switch --impure --flake "/home/anon/nix#$HOST"
+sudo nixos-rebuild switch --impure --flake "$HOME/nix#$HOST"

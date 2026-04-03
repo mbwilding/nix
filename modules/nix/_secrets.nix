@@ -1,11 +1,12 @@
 let
-  read = f: builtins.readFile "/home/anon/.secrets/${f}";
+  home = import ./_home.nix;
+  read = f: builtins.readFile "${home}/.secrets/${f}";
   readJSON = f: builtins.fromJSON (read f);
 in
 {
   # SSH keys
-  personalPublicKey = builtins.readFile /home/anon/.ssh/personal.pub;
-  workPublicKey = builtins.readFile /home/anon/.ssh/work.pub;
+  personalPublicKey = builtins.readFile "${home}/.ssh/personal.pub";
+  workPublicKey = builtins.readFile "${home}/.ssh/work.pub";
 
   # Work identity
   workName = read "work-name";
