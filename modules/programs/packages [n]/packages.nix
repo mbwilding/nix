@@ -78,7 +78,6 @@
           fuse3
           fzf
           gcc
-          gh-enhance
           git
           github-copilot-cli
           gnugrep
