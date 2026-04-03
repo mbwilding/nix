@@ -24,7 +24,11 @@ in
         ../_wireplumber-loopback.nix
       ];
 
-      networking.hostName = "nona";
+      networking = {
+        hostName = "nona";
+        # NOTE: Allows for lid shut WiFi
+        networkmanager.wifi.powersave = false;
+      };
 
       console.keyMap = keymap;
       services.xserver.xkb.variant = keymap;
