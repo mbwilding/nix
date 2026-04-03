@@ -39,7 +39,7 @@
 
       home = {
         username = "anon";
-        homeDirectory = "/home/anon";
+        homeDirectory = import ../../nix/_home.nix;
 
         sessionVariables = {
           EDITOR = "nvim";
