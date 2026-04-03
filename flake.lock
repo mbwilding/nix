@@ -137,6 +137,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1775198400,
+        "narHash": "sha256-BISH4n4I4Xjdp8kElmuccRsZBGfUKEdau60ST5Mb1jg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "330d78e84a77fa5a8682a10b1ec4a4d39bade6c0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1774709303,
@@ -183,6 +199,7 @@
         "import-tree": "import-tree",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-master": "nixpkgs-master",
         "plasma-manager": "plasma-manager",
         "solaar": "solaar",
         "ucodenix": "ucodenix"
