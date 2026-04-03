@@ -3,38 +3,44 @@
 # https://search.nixos.org/packages?channel=unstable
 
 {
-  flake.modules.homeManager.packages = { pkgs, ... }: {
-    home = {
-      packages =
-        let
-          open-ecc = pkgs.callPackage ./_open-ecc.nix { };
-          powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
-          google-chrome = pkgs.google-chrome.override {
-            commandLineArgs = [
-              "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
-              "--ozone-platform=wayland"
-              "--disable-features=UseChromeOSDirectVideoDecoder"
-              "--canvas-oop-rasterization"
-              "--disable-font-subpixel-positioning"
-              "--disable-gpu-driver-bug-workarounds"
-              "--disable-gpu-driver-workarounds"
-              "--disable-gpu-vsync"
-              "--disable-software-rasterizer"
-              "--enable-accelerated-mjpeg-decode"
-              "--enable-accelerated-video-decode"
-              "--enable-gpu-compositing"
-              "--enable-gpu-rasterization"
-              "--enable-oop-rasterization"
-              "--enable-raw-draw"
-              "--enable-zero-copy"
-              "--use-cmd-decoder=validating"
-              "--use-vulkan"
-            ];
-          };
-        in
-        with pkgs;
-        [
-          neovim-unwrapped
+  flake.modules.homeManager.packages =
+    {
+      pkgs,
+      pkgsMaster ? pkgs,
+      ...
+    }:
+    {
+      home = {
+        packages =
+          let
+            open-ecc = pkgs.callPackage ./_open-ecc.nix { };
+            powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
+            google-chrome = pkgs.google-chrome.override {
+              commandLineArgs = [
+                "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
+                "--ozone-platform=wayland"
+                "--disable-features=UseChromeOSDirectVideoDecoder"
+                "--canvas-oop-rasterization"
+                "--disable-font-subpixel-positioning"
+                "--disable-gpu-driver-bug-workarounds"
+                "--disable-gpu-driver-workarounds"
+                "--disable-gpu-vsync"
+                "--disable-software-rasterizer"
+                "--enable-accelerated-mjpeg-decode"
+                "--enable-accelerated-video-decode"
+                "--enable-gpu-compositing"
+                "--enable-gpu-rasterization"
+                "--enable-oop-rasterization"
+                "--enable-raw-draw"
+                "--enable-zero-copy"
+                "--use-cmd-decoder=validating"
+                "--use-vulkan"
+              ];
+            };
+          in
+          with pkgs;
+          [
+          pkgsMaster.neovim-unwrapped
 
           # Custom
           google-chrome
@@ -161,7 +167,8 @@
           # BROKEN python314Packages.cfn-lint
           # vscode-extensions.ms-vscode.powershell
           # vscode-extensions.llvm-vs-code-extensions.lldb-dap
-        ];
+          ];
+      };
     };
-  };
 }
+
