@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.nixos.droid =
+  flake.modules.nixOnDroid.droid =
     { pkgs, ... }:
     {
       environment.packages = with pkgs; [
