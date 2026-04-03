@@ -5,10 +5,14 @@
   # Used by both:
   #   - NixOS (embedded via home-manager.users.anon.imports)
   #   - hm-switch (standalone via flake.homeConfigurations)
+  # NOTE: Desktop-environment modules (hyprland, kde, theme) are NOT imported
+  # here. On the NixOS path they are injected by the system feature modules via
+  # home-manager.sharedModules (nixos.hyprland / nixos.kde). On the standalone
+  # HM path they are passed as extraModules via mkHomeManager in lib.nix.
   flake.modules.homeManager.anon =
-    { pkgs, hostname, ... }:
+    { pkgs, ... }:
     {
-      imports = with inputs.self.modules.homeManager; [
+      imports = (with inputs.self.modules.homeManager; [
         atuin
         aws
         btop
@@ -37,7 +41,7 @@
         wine
         yazi
         zoxide
-      ];
+      ]);
 
       news.display = "silent";
 
@@ -55,10 +59,10 @@
           NIXOS_OZONE_WL = "1";
         };
 
-        keyboard = {
-          layout = "us";
-          variant = "dvorak";
-        };
+        # Keyboard layout is managed by the compositor (Hyprland) and NixOS
+        # xkb config. Setting home.keyboard here would cause hm-switch to run
+        # setxkbmap and override the compositor's layout mid-session.
+        keyboard = null;
 
         file.".hushlogin".text = "";
 
