@@ -31,7 +31,7 @@
 
     mkNixOnDroid = name: {
       ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import inputs.nixpkgs { system = "aarch64-linux"; };
+        pkgs = import inputs.nixpkgs-droid { system = "aarch64-linux"; };
         modules = [ inputs.self.modules.nixOnDroid.${name} ];
         extraSpecialArgs = { inherit inputs; };
       };
