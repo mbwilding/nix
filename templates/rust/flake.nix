@@ -1,15 +1,14 @@
-{ stdenv, ... }:
-
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
     { nixpkgs, ... }:
     let
-      pkgs = nixpkgs.legacyPackages.${stdenv.hostPlatform.system};
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      devShells.${stdenv.hostPlatform.system}.default = pkgs.mkShell {
+      devShells.${system}.default = pkgs.mkShell {
         nativeBuildInputs = with pkgs; [
           pkg-config
           rustc
