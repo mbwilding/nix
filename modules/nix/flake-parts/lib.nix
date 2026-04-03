@@ -14,6 +14,11 @@
     default = { };
   };
 
+  options.flake.nixOnDroidConfigurations = lib.mkOption {
+    type = lib.types.attrsOf lib.types.unspecified;
+    default = { };
+  };
+
   config.flake.lib = {
     mkNixos = system: name: {
       ${name} = inputs.nixpkgs.lib.nixosSystem {
@@ -21,6 +26,14 @@
           inputs.self.modules.nixos.${name}
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
+      };
+    };
+
+    mkNixOnDroid = name: {
+      ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+        pkgs = import inputs.nixpkgs { system = "aarch64-linux"; };
+        modules = [ inputs.self.modules.nixos.${name} ];
+        extraSpecialArgs = { inherit inputs; };
       };
     };
 
