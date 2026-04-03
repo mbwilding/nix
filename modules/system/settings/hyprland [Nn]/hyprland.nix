@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 
 {
   flake.modules.nixos.hyprland =
@@ -310,7 +310,6 @@
             # "nm-applet"
             "hyprpaper"
             # "hyprpanel"
-            # "hypridle"
           ]
           ++ (
             if hostname == "anon" then
@@ -408,6 +407,11 @@
           bindm = [
             "$mod, mouse:272, movewindow"
             "$mod, mouse:273, resizewindow"
+          ];
+
+          bindl = lib.optionals (hostname == "nona") [
+            ", switch:on:Lid Switch, exec, hyprctl dispatch dpms off eDP-1"
+            ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on eDP-1"
           ];
 
           animations = {
@@ -601,6 +605,28 @@
               margin-right: 0.5em;
           }
         '';
+      };
+
+      services.hypridle = {
+        enable = true;
+        settings = {
+          general = {
+            after_sleep_cmd = "hyprctl dispatch dpms on";
+            ignore_dbus_inhibit = false;
+            lock_cmd = "qs ipc call lockscreen lock";
+          };
+          listener = [
+            {
+              timeout = 300;
+              on-timeout = "qs ipc call lockscreen lock";
+            }
+            {
+              timeout = 360;
+              on-timeout = "hyprctl dispatch dpms off";
+              on-resume = "hyprctl dispatch dpms on";
+            }
+          ];
+        };
       };
     };
 }
