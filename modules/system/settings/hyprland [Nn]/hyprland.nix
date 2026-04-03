@@ -409,8 +409,8 @@
             "$mod, mouse:273, resizewindow"
           ];
 
-          bindl = lib.optionals (hostname == "nona") [
-            ", switch:on:Lid Switch, exec, hyprctl dispatch dpms off eDP-1"
+          bindl = [
+            ", switch:on:Lid Switch, exec, qs ipc call lockscreen lock && hyprctl dispatch dpms off eDP-1 && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
             ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on eDP-1"
           ];
 
