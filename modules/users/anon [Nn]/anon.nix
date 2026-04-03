@@ -1,14 +1,6 @@
 { inputs, ... }:
 
 {
-  # Standalone Home Manager configuration for "anon".
-  # Used by both:
-  #   - NixOS (embedded via home-manager.users.anon.imports)
-  #   - hm-switch (standalone via flake.homeConfigurations)
-  # NOTE: Desktop-environment modules (hyprland, kde, theme) are NOT imported
-  # here. On the NixOS path they are injected by the system feature modules via
-  # home-manager.sharedModules (nixos.hyprland / nixos.kde). On the standalone
-  # HM path they are passed as extraModules via mkHomeManager in lib.nix.
   flake.modules.homeManager.anon =
     { pkgs, ... }:
     {
