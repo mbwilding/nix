@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixOnDroid.droid =
@@ -16,6 +16,17 @@
       nix.extraOptions = ''
         experimental-features = nix-command flakes
       '';
+
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        backupFileExtension = "backup";
+        config = inputs.self.modules.homeManager.droid;
+        extraSpecialArgs = {
+          secrets = import ../../nix/_secrets.nix;
+          hostname = "droid";
+        };
+      };
 
       system.stateVersion = "24.05";
     };
