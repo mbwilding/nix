@@ -11,12 +11,12 @@
         dapr
         direnv
         fzf
-        git
         gh
+        git
         lazygit
         mcp
         npm
-        opencode
+        # opencode
         shells
         ssh
         yazi
