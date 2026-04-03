@@ -13,7 +13,7 @@ Project-specific dev shells live in `templates/`. To bootstrap a new project:
 # Rust project with openssl (e.g. microkit)
 cd ~/personal/myproject
 nix flake init -t ~/nix#microkit
-direnv allow   # if using direnv — activates automatically on cd
+direnv allow # if using direnv - activates automatically on cd
 ```
 
 The `microkit` template provides: `cargo`, `rustc`, `rustfmt`, `clippy`,
@@ -24,6 +24,3 @@ To enter the shell manually without direnv:
 ```bash
 nix develop
 ```
-
-## Quickshell Todos
-
