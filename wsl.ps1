@@ -12,7 +12,7 @@ wsl --install --from-file nixos.wsl
 wsl -d NixOS
 
 ## TODO
-# nix shell --extra-experimental-features "nix-command flakes" nixpkgs#git
+# nix shell --extra-experimental-features "nix-command flakes" nixpkgs#git nixpkgs#neovim
 # git clone https://github.com/mbwilding/nix
 # cd nix
 # sudo nixos-rebuild boot --impure --flake .#wsl
