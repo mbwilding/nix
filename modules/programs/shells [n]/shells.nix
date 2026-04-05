@@ -89,6 +89,12 @@
             set -g __fish_git_prompt_char_upstream_behind "󰁅 "
             set -g __fish_git_prompt_char_upstream_equal "󰸞 "
             set -g __fish_git_prompt_char_upstream_diverged "󱐊 "
+
+            # Windows
+            set -Ux fish_user_paths /mnt/c/Windows/System32 \
+                /mnt/c/Windows \
+                /mnt/c/Windows/System32/WindowsPowerShell/v1.0 \
+                $fish_user_paths
           '';
           functions = {
             fish_prompt = {
