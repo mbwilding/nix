@@ -51,11 +51,6 @@
           NIXOS_OZONE_WL = "1";
         };
 
-        # Keyboard layout is managed by the compositor (Hyprland) and NixOS
-        # xkb config. Setting home.keyboard here would cause hm-switch to run
-        # setxkbmap and override the compositor's layout mid-session.
-        keyboard = null;
-
         file.".hushlogin".text = "";
 
         stateVersion = "25.11";
