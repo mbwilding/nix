@@ -2,7 +2,12 @@
 
 {
   flake.modules.homeManager.theme =
-    { pkgs, lib, hostname, ... }:
+    {
+      pkgs,
+      lib,
+      hostname,
+      ...
+    }:
     let
       cursor_size = if hostname == "anon" then 16 else 24;
     in
@@ -35,13 +40,16 @@
         };
       };
 
-      dconf.settings = lib.mkIf (hostname != "wsl") {
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-          gtk-theme = "Breeze-Dark";
-          icon-theme = "breeze-dark";
-          cursor-theme = "Breeze";
-          cursor-size = cursor_size;
+      dconf = {
+        enable = hostname != "wsl";
+        settings = {
+          "org/gnome/desktop/interface" = {
+            color-scheme = "prefer-dark";
+            gtk-theme = "Breeze-Dark";
+            icon-theme = "breeze-dark";
+            cursor-theme = "Breeze";
+            cursor-size = cursor_size;
+          };
         };
       };
 
