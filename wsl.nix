@@ -4,19 +4,26 @@
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, ... }: {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-	system = "x86_64-linux";
-	modules = [
-	  nixos-wsl.nixosModules.default
-	  {
-	    system.stateVersion = "25.05";
-	    wsl.enable = true;
-	    wsl.defaultUser = "anon";
-	  }
-	];
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-wsl,
+      ...
+    }:
+    {
+      nixosConfigurations = {
+        nixos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            nixos-wsl.nixosModules.default
+            {
+              system.stateVersion = "25.05";
+              wsl.enable = true;
+              wsl.defaultUser = "anon";
+            }
+          ];
+        };
       };
     };
-  };
 }

@@ -118,7 +118,6 @@
 
             surface = {
               hostname = "192.168.11.253";
-              user = secrets.workId;
               identitiesOnly = true;
               identityFile = [ "~/.ssh/personal" ];
             };
