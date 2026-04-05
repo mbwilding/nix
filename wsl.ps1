@@ -11,7 +11,7 @@ Invoke-WebRequest $url -OutFile nixos.wsl
 wsl --install --from-file nixos.wsl
 wsl -d NixOS
 
-## Comment out home manager in the mkHost section
+## TODO
 # nix shell --extra-experimental-features "nix-command flakes"  nixpkgs#git
 # git clone https://github.com/mbwilding/nix
 # cd nix
@@ -19,6 +19,5 @@ wsl -d NixOS
 # wsl -t NixOS
 # wsl -d NixOS --user root exit
 # wsl -t NixOS
-## Open NixOS
-## Un-comment initial thing
+# wsl -d NixOS
 # sudo nixos-rebuild switch --impure --flake .#wsl
