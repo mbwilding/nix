@@ -118,7 +118,6 @@
 
             surface = {
               hostname = "192.168.11.253";
-              user = "tabmaw";
               identitiesOnly = true;
               identityFile = [ "~/.ssh/personal" ];
             };
