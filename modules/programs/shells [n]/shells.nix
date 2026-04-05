@@ -90,8 +90,6 @@
             set -g __fish_git_prompt_char_upstream_equal "󰸞 "
             set -g __fish_git_prompt_char_upstream_diverged "󱐊 "
           '';
-          # shellAliases = {
-          # };
           functions = {
             fish_prompt = {
               description = "Custom prompt";
@@ -208,6 +206,67 @@
               body = ''
                 ghc ${secrets.workName} $argv[1] ~/dev/work
               '';
+            };
+          };
+        };
+
+        zsh = {
+          enable = true;
+          autocd = true;
+          autosuggestion.enable = true;
+          enableCompletion = true;
+          syntaxHighlighting.enable = true;
+          history.size = 10000;
+          oh-my-zsh = {
+            enable = true;
+            plugins = [
+              "aws"
+              "command-not-found"
+              "git"
+              "kubectl"
+              "kubectx"
+              "sudo"
+            ];
+          };
+          initContent = ''
+            wifi-connect() {
+              echo -n "Enter SSID: "
+              read ssid
+              echo -n "Enter Password: "
+              read -s password
+              echo
+              nmcli device wifi connect "$ssid" password "$password"
+            }
+          '';
+        };
+
+        starship = {
+          enable = true;
+          enableFishIntegration = false;
+          enableZshIntegration = true;
+          settings = {
+            add_newline = true;
+            character.success_symbol = "[❯](bold green)";
+            battery = {
+              full_symbol = "󰁹 ";
+              charging_symbol = "󰂄 ";
+              discharging_symbol = "󰂃 ";
+              unknown_symbol = "󰁽 ";
+              empty_symbol = "󰂎 ";
+              display = [
+                {
+                  threshold = 20;
+                  style = "bold red";
+                }
+                {
+                  threshold = 40;
+                  style = "bold yellow";
+                }
+                {
+                  threshold = 60;
+                  style = "bold green";
+                }
+              ];
             };
           };
         };
