@@ -4,7 +4,6 @@
     { pkgs, ... }:
     {
       programs = {
-        fish.enable = true;
         mtr.enable = true;
         nano.enable = false;
         _1password.enable = true;
