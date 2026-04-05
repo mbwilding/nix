@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.theme =
-    { pkgs, hostname, ... }:
+    { pkgs, lib, hostname, ... }:
     let
       cursor_size = if hostname == "anon" then 16 else 24;
     in
@@ -35,7 +35,7 @@
         };
       };
 
-      dconf.settings = {
+      dconf.settings = lib.mkIf (hostname != "wsl") {
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
           gtk-theme = "Breeze-Dark";
