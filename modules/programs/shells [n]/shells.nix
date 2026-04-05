@@ -32,8 +32,12 @@
           bios = "systemctl reboot --firmware-setup";
           c = "clear";
           g = "git";
+          ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
+          ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
           grep = "grep --color";
+          hm-build = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
           hm-expire = "home-manager expire-generations -days";
+          hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
           lg = "lazygit";
           ll = "eza -lhg";
           lla = "eza -alhg";
@@ -41,6 +45,9 @@
           n = "nvim";
           nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
           nix-clean = "sudo nix-collect-garbage -d";
+          nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
+          nix-update = "nix flake update --flake ~/nix";
+          nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
           nmr = "nmcli radio wifi off && nmcli radio wifi on";
           oc = "opencode";
           power-b = "powerprofilesctl set balanced";
@@ -83,15 +90,8 @@
             set -g __fish_git_prompt_char_upstream_equal "󰸞 "
             set -g __fish_git_prompt_char_upstream_diverged "󱐊 "
           '';
-          shellAliases = {
-            ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
-            ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
-            hm-build = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
-            hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
-            nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
-            nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
-            nix-update = "nix flake update --flake ~/nix";
-          };
+          # shellAliases = {
+          # };
           functions = {
             fish_prompt = {
               description = "Custom prompt";
