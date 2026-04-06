@@ -22,6 +22,7 @@
         steam-run
         steamtinkerlaunch
         vulkan-tools
+        yad
       ];
     };
 }
