@@ -16,11 +16,13 @@
         Unit = {
           Description = "SOCKS5 proxy via SSH tunnel to surface";
           After = [ "network.target" ];
+          StartLimitIntervalSec = 300;
+          StartLimitBurst = 10;
         };
         Service = {
           ExecStart = "${pkgs.openssh}/bin/ssh -N -D 127.0.0.1:1080 -o ServerAliveInterval=60 -o ServerAliveCountMax=3 surface";
           Restart = "on-failure";
-          RestartSec = 5;
+          RestartSec = 30;
         };
         Install = {
           WantedBy = [ "default.target" ];
@@ -32,11 +34,13 @@
           Description = "HTTP proxy via Privoxy forwarding to SOCKS5";
           After = [ "network.target" "ProxySocks5.service" ];
           Wants = [ "ProxySocks5.service" ];
+          StartLimitIntervalSec = 300;
+          StartLimitBurst = 10;
         };
         Service = {
           ExecStart = "${pkgs.privoxy}/bin/privoxy --no-daemon %h/.config/privoxy/config";
           Restart = "on-failure";
-          RestartSec = 5;
+          RestartSec = 30;
         };
         Install = {
           WantedBy = [ "default.target" ];
