@@ -5,9 +5,9 @@
     { pkgs, ... }:
     {
       environment.packages = with pkgs; [
-        git
-        neovim
         curl
+        git
+        neovim-unwrapped
         wget
       ];
 
