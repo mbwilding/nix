@@ -7,7 +7,7 @@
     ];
 
     home.file.".config/privoxy/config".text = ''
-      listen-address  0.0.0.0:8080
+      listen-address    127.0.0.1:8080
       forward-socks5t / 127.0.0.1:1080 .
     '';
 
