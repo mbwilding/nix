@@ -40,8 +40,6 @@
           in
           with pkgs;
           [
-          pkgsMaster.neovim-unwrapped
-
           # Custom
           google-chrome
           open-ecc
@@ -112,6 +110,7 @@
           markdownlint-cli2
           marksman
           mpv
+          neovim-unwrapped
           netcoredbg
           nil
           nix-diff
