@@ -102,6 +102,7 @@
           kubectl
           kubernetes-helm
           lemminx
+          lens
           lld
           lldb
           lua-language-server
