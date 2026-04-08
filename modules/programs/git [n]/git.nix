@@ -85,6 +85,9 @@
               "git@${secrets.workName}.github.com:${secrets.workName}/" = {
                 insteadOf = "git@github.com:${secrets.workName}/";
               };
+              "git@${secrets.workName}.gitlab.com:${secrets.workName}/" = {
+                insteadOf = "git@gitlab.com:${secrets.workName}/";
+              };
             };
             includeIf = {
               "gitdir:**" = {

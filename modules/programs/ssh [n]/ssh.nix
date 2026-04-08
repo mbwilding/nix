@@ -113,6 +113,13 @@
               hostname = "gitlab.com";
               user = "git";
               identitiesOnly = true;
+              identityFile = [ "~/.ssh/personal" ];
+            };
+
+            "${secrets.workName}.gitlab.com" = {
+              hostname = "github.com";
+              user = "git";
+              identitiesOnly = true;
               identityFile = [ "~/.ssh/work" ];
             };
 
