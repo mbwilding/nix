@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.git =
-    { secrets, config, ... }:
+    { secrets, config, lib, ... }:
 
     {
       services = {
@@ -76,32 +76,28 @@
             difftool.prompt = false;
             merge.tool = "vscode-diff";
             "mergetool \"vscode-diff\"".cmd = "nvim \"$MERGED\" -c 'CodeDiff merge \"$MERGED\"'";
-            "filter \"lfs\"" = {
-              process = "git-lfs filter-process";
-              required = true;
-              clean = "git-lfs clean -- %f";
-              smudge = "git-lfs smudge -- %f";
-            };
+            # "filter \"lfs\"" = {
+            #   process = "git-lfs filter-process";
+            #   required = true;
+            #   clean = "git-lfs clean -- %f";
+            #   smudge = "git-lfs smudge -- %f";
+            # };
             url = {
               "git@${secrets.workName}.github.com:${secrets.workName}/" = {
                 insteadOf = "git@github.com:${secrets.workName}/";
               };
             };
             includeIf = {
-              "hasconfig:remote.*.url:**" = {
+              "gitdir:**" = {
                 path = "~/.config/git/config-personal";
               };
               "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
                 path = "~/.config/git/config-work";
               };
-              # NOTE: May need work to be upper
-              "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${secrets.workName}/**" = {
-                path = "~/.config/git/config-work";
-              };
               "hasconfig:remote.*.url:git@github.com:${secrets.workName}/**" = {
                 path = "~/.config/git/config-work";
               };
-              "hasconfig:remote.*.url:git@${secrets.workName}.github.com:${secrets.workName}/**" = {
+              "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${lib.toUpper secrets.workName}/**" = {
                 path = "~/.config/git/config-work";
               };
             };

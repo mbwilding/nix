@@ -86,6 +86,7 @@
           home-manager
           hostname
           imagemagick
+          imhex
           jdk
           jfrog-cli
           jq
