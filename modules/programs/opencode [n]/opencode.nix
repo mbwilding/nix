@@ -30,20 +30,33 @@
               - github-work
               - atlassian
 
-              ## Agent
+              ## Jira Story Template
 
+              ```markdown
+              ## Overview
 
-              ## Skill
+              {{FEATURE_DESCRIPTION}}
 
+              ## Story
+
+              **As a** {{PERSONA}}
+              **I want** {{GOAL}}
+              **So that** {{BENEFIT}}
+
+              ## Acceptance Criteria
+
+              {{ACCEPTANCE_CRITERIA}}
+
+              ## Key Technical Notes
+
+              {{KEY_TECHNICAL_NOTES}}
+              ```
 
               ## How to Use This Agent
 
               Plan mode is used until the user has confirmed the plan, then we action.
 
-              Use the agent `feature-design.agent.md` as your additional system prompt.
-
-              Use the `create-feature-design/Skill.md` skill to carry out the full creation workflow. The skill
-              contains detailed step-by-step instructions.
+              Use the `Jira Story Template` to create the story.
 
               Ask questions using your built in question logic to ask for more info or if you don't understand something.
 
