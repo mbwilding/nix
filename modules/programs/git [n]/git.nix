@@ -2,7 +2,12 @@
 
 {
   flake.modules.homeManager.git =
-    { secrets, config, lib, ... }:
+    {
+      secrets,
+      config,
+      lib,
+      ...
+    }:
 
     {
       services = {
@@ -76,12 +81,6 @@
             difftool.prompt = false;
             merge.tool = "vscode-diff";
             "mergetool \"vscode-diff\"".cmd = "nvim \"$MERGED\" -c 'CodeDiff merge \"$MERGED\"'";
-            # "filter \"lfs\"" = {
-            #   process = "git-lfs filter-process";
-            #   required = true;
-            #   clean = "git-lfs clean -- %f";
-            #   smudge = "git-lfs smudge -- %f";
-            # };
             url = {
               "git@${secrets.workName}.github.com:${secrets.workName}/" = {
                 insteadOf = "git@github.com:${secrets.workName}/";
