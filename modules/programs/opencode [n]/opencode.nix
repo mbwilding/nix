@@ -36,6 +36,7 @@
               - Include a "Technical Notes" section for implementation details or breakdowns.
               - Add an "Acceptance Criteria" section with clear, testable outcomes.
               - Ensure stories are concise, testable, and aligned with sprint and product goals.
+              - Do not implement code, create PRs or do anything a developer should do.
               - Use Australian English spelling in all outputs.
 
               ## Example
