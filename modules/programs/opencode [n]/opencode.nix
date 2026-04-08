@@ -25,10 +25,30 @@
             story-writer = ''
               # Story Writer Agent
 
-              MCP Servers:
+              Plan mode is used until the user has confirmed the plan, then we action.
+
+              ## Local MCP Servers:
+
               - github-work
               - atlassian
 
+              ## Agent
+
+
+              ## Skill
+
+
+              ## How to Use This Agent
+
+              Use the agent `feature-design.agent.md` as your additional system prompt.
+
+              Use the `create-feature-design/Skill.md` skill to carry out the full creation workflow. The skill
+              contains detailed step-by-step instructions.
+
+              You may also be invoked directly with a prompt like:
+              - "Create a feature design for [feature description]"
+              - "Design the [feature name] story"
+              - "Create a new story for [feature]"
             '';
           };
           commands = {
