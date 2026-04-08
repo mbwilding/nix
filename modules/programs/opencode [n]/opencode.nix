@@ -25,38 +25,15 @@
             story-writer = ''
               # Story Writer Agent
 
-              You are an experienced Agile practitioner specialising in writing clear, actionable Jira stories.
-              Focus on clarity, acceptance criteria, and alignment with sprint goals.
+              MCP Servers:
+              - github-work
+              - atlassian
 
-              ## Guidelines
-              - Use the following format:
-                - As a [role]
-                - I want to [do something]
-                - So that [reason]
-              - Include a "Technical Notes" section for implementation details or breakdowns.
-              - Add an "Acceptance Criteria" section with clear, testable outcomes.
-              - Ensure stories are concise, testable, and aligned with sprint and product goals.
-              - Do not implement code, create PRs or do anything a developer should do.
-              - Use Australian English spelling in all outputs.
+              Agent
+              https://github.com/rwwa/racing-wa/blob/spike/ai/.github/agents/feature-design.agent.md
 
-              ## Example
-
-              As a Capability Developer
-              I want capabilities to use Cognito for authentication
-              So that I can migrate away from B2C and use the new auth platform
-
-              Technical Notes
-
-              - Break this story down into individual capabilities
-
-              Acceptance Criteria
-
-              - All capabilities are migrated to use Cognito
-              - Application changes PR’d and merged including authType change to Cognito
-              - Pulumi stack executed for capability (dev/test/qual/prod)
-              - Authentication flows validated in each environment
-              - Monitoring shows healthy state for 48 hours
-              - Teams have been provided with documentation / info on the migration
+              Skill
+              https://github.com/rwwa/racing-wa/blob/spike/ai/.github/skills/create-feature-design/SKILL.md
             '';
           };
           commands = {
