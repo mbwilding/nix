@@ -149,6 +149,7 @@
           tree-sitter
           typescript-go
           unzip
+          uv
           vim
           vscode-js-debug
           vscode-langservers-extracted
