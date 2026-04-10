@@ -51,8 +51,8 @@
               pu = "pull";
               pa = "format-patch";
               pr = "pull --rebase";
-              re = "reset --hard";
               rb = "rebase";
+              rh = "reset --hard";
               st = "status";
               sw = "switch";
               un = "reset --soft HEAD~1";
