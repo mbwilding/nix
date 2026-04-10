@@ -16,4 +16,6 @@ QtObject {
     readonly property int separator: 3
     // Pin button — toggles the bar's pinned (always-visible) state
     readonly property int pin: 4
+    // Session button — opens shutdown/reboot/logout popup
+    readonly property int session: 5
 }

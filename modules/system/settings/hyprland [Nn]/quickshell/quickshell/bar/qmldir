@@ -9,6 +9,7 @@ ClockSection 1.0 ClockSection.qml
 NotifSection 1.0 NotifSection.qml
 PinSection 1.0 PinSection.qml
 PowerSection 1.0 PowerSection.qml
+SessionSection 1.0 SessionSection.qml
 singleton SystemItems 1.0 SystemItems.qml
 TrayItem 1.0 TrayItem.qml
 VolumeSection 1.0 VolumeSection.qml
