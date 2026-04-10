@@ -486,6 +486,10 @@ Scope {
                 item: root.activeTrayMenuPopup
                 intersection: Intersection.Combine
             }
+            Region {
+                item: root.activePopup === "session" ? sessionSection.popup : null
+                intersection: Intersection.Combine
+            }
         }
 
         // Hotspot strip at the middle third of the bottom edge — always in the mask,
@@ -682,6 +686,16 @@ Scope {
                 onTogglePinReq: root.toggle()
             }
 
+            SessionSection {
+                id: sessionSection
+                visible: false
+                activePopup: root.activePopup
+                onOpenPopupReq: name => root.openPopup(name)
+                onKeepPopupReq: root.keepPopup()
+                onExitPopupReq: root.exitPopup()
+                onClosePopupReq: root.closePopup()
+            }
+
             // ----------------------------------------------------------------
             // Top-level bar layout — driven by Config.bar.layout
             // ----------------------------------------------------------------
@@ -717,6 +731,8 @@ Scope {
                                 return barSeparatorComponent;
                             case BarItems.pin:
                                 return pinComponent;
+                            case BarItems.session:
+                                return sessionComponent;
                             default:
                                 return null;
                             }
@@ -945,6 +961,24 @@ Scope {
                     Component.onDestruction: {
                         pinSection.visible = false;
                         pinSection.parent = pill;
+                    }
+                }
+            }
+
+            // Session button proxy — reparents sessionSection into the layout
+            Component {
+                id: sessionComponent
+                Item {
+                    id: sessionProxy
+                    implicitWidth: sessionSection.implicitWidth
+                    implicitHeight: sessionSection.implicitHeight
+                    Component.onCompleted: {
+                        sessionSection.parent = sessionProxy;
+                        sessionSection.visible = true;
+                    }
+                    Component.onDestruction: {
+                        sessionSection.visible = false;
+                        sessionSection.parent = pill;
                     }
                 }
             }
