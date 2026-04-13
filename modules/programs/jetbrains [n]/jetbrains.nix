@@ -5,6 +5,7 @@
     {
       lib,
       pkgs,
+      pkgsMaster,
       config,
       ...
     }:
@@ -13,7 +14,7 @@
       dotnet = config.custom.dotnet.sdk;
 
       rider =
-        (pkgs.jetbrains.rider.override {
+        (pkgsMaster.jetbrains.rider.override {
           forceWayland = true;
         }).overrideAttrs
           (old: {
@@ -39,7 +40,7 @@
     in
     {
       home.packages = [
-        (pkgs.jetbrains.datagrip.override { forceWayland = true; })
+        (pkgsMaster.jetbrains.datagrip.override { forceWayland = true; })
         rider
       ];
     };
