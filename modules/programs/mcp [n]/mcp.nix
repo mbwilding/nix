@@ -20,6 +20,10 @@
             Authorization = "Bearer ${secrets.githubPersonalToken}";
           };
         };
+        gitlab = {
+          type = "http";
+          url = "https://gitlab.com/api/v4/mcp";
+        };
         atlassian = {
           type = "http";
           url = "https://mcp.atlassian.com/v1/mcp";
