@@ -133,6 +133,7 @@
           quicktype
           reaper
           ripgrep
+          roslyn-ls
           ruby
           ruff
           rust-analyzer
