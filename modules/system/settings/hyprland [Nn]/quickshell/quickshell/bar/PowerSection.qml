@@ -105,6 +105,7 @@ BarSectionItem {
     Text {
         id: powerGlyphText
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -3
         visible: !powerSection.hasBattery
         text: powerSection.activeProfile.glyph
         font.family: Config.font.family
