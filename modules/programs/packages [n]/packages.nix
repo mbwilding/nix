@@ -129,6 +129,7 @@
           pyright
           python314
           python314Packages.debugpy
+          qbittorrent
           qt6.qtdeclarative # qmlls
           quicktype
           reaper
