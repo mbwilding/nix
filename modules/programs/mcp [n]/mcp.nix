@@ -38,7 +38,7 @@
         #   type = "http";
         #   url = "https://mcp.figma.com/mcp";
         # };
-        nvim-mcp = {
+        neovim = {
           type = "stdio";
           command = "${nvim-mcp}/bin/nvim-mcp";
         };
