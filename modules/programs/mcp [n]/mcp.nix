@@ -2,9 +2,11 @@
 
 {
   flake.modules.homeManager.mcp =
-    { secrets, ... }:
+    { pkgs, secrets, ... }:
 
     let
+      nvim-mcp = pkgs.callPackage ./_nvim-mcp.nix { };
+
       mcpServers = {
         github-work = {
           type = "http";
@@ -36,6 +38,10 @@
         #   type = "http";
         #   url = "https://mcp.figma.com/mcp";
         # };
+        nvim-mcp = {
+          type = "stdio";
+          command = "${nvim-mcp}/bin/nvim-mcp";
+        };
       };
     in
     {
