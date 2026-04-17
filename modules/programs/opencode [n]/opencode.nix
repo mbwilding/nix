@@ -8,6 +8,10 @@
         opencode = {
           enable = true;
           enableMcpIntegration = true;
+          context = builtins.readFile (builtins.fetchurl {
+            url = "https://raw.githubusercontent.com/paulburgess1357/nvim-mcp/refs/heads/master/config/AGENTS-EXAMPLE.md";
+            sha256 = "0fxg9f9mxmdgzwmyk2xqmc2fgvaa2v4dswhwzvdqpl0h27gw700k";
+          });
           agents = {
             code-reviewer = ''
               # Code Reviewer Agent
