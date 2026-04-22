@@ -29,12 +29,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # NOTE: Remove once PR is merged: https://github.com/pwr-Solaar/Solaar/pull/3132
-    solaar = {
-      url = "github:caioquirino/Solaar/feat/pro-x-2-superstrike";
-      flake = false;
-    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
