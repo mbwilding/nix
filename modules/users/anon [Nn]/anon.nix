@@ -73,6 +73,7 @@
           "video"
           "wheel"
           "dialout"
+          "libvirtd"
         ];
         isNormalUser = true;
         shell = pkgs.fish;

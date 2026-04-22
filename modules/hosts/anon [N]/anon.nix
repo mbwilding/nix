@@ -16,6 +16,7 @@
         wireshark
         appimage
         waydroid
+        qemu
         user-anon
       ] ++ [
         ./_hardware-configuration.nix
