@@ -17,6 +17,7 @@
         gh
         ghostty
         git
+        hytale-launcher
         jetbrains
         k9s
         lazygit
