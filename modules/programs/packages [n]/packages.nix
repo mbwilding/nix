@@ -125,6 +125,7 @@
           powershell
           powershell-editor-services
           prettierd
+          prismlauncher
           pulumi-bin
           pyright
           python314
