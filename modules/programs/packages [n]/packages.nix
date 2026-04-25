@@ -73,6 +73,7 @@
           fastfetch
           fd
           file
+          firefox
           fuse3
           fzf
           gcc
