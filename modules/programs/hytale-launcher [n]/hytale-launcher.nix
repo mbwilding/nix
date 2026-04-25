@@ -24,6 +24,8 @@
         name = "hytale-launcher";
 
         targetPkgs = pkgs: runtimeDeps ++ (with pkgs; [
+          wayland
+          wayland-protocols
           libxkbcommon
           mesa
           vulkan-loader
