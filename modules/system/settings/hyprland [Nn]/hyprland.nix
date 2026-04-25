@@ -327,7 +327,7 @@
 
           "$mod" = "SUPER";
           bind = [
-            "$mod, b, exec, google-chrome"
+            "$mod, b, exec, firefox"
             "$mod, e, exec, dolphin"
             "$mod, n, exec, neovide"
             "$mod, p, exec, 1password"
