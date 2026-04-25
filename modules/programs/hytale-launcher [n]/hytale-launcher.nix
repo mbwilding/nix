@@ -26,6 +26,11 @@
         targetPkgs = pkgs: runtimeDeps ++ (with pkgs; [
           wayland
           wayland-protocols
+          libx11
+          libxcursor
+          libxrandr
+          libxi
+          libxcb
           libxkbcommon
           mesa
           vulkan-loader
@@ -45,6 +50,7 @@
 
         profile = ''
           export GDK_BACKEND=wayland
+          export SDL_VIDEODRIVER=wayland
           export XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS"
           # Keep TMPDIR on the same filesystem as the install dir so the launcher
           # can rename() patch archives without hitting a cross-device link error.
