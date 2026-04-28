@@ -10,8 +10,8 @@
           enableMcpIntegration = true;
           context = builtins.replaceStrings ["nvim-mcp"] ["neovim"] (
             builtins.readFile (builtins.fetchurl {
-              url = "https://raw.githubusercontent.com/paulburgess1357/nvim-mcp/refs/heads/master/config/AGENTS-EXAMPLE.md";
-              sha256 = "0fxg9f9mxmdgzwmyk2xqmc2fgvaa2v4dswhwzvdqpl0h27gw700k";
+              url = "https://raw.githubusercontent.com/paulburgess1357/nvim-mcp/89608e1fe6ea82a5e5f2da825934b726e6a97d4c/config/AGENTS-EXAMPLE.md";
+              sha256 = "0609hz0v87vs487nqj23rcj28bmakndja25fvkai426bc92vprlv";
             })
           );
           agents = {
