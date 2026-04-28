@@ -237,7 +237,7 @@
           };
 
           general = {
-            layout = "master";
+            layout = "scrolling"; # master
 
             gaps_in = gaps;
             gaps_out = gaps * 2;
