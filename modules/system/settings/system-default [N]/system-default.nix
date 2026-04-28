@@ -7,11 +7,17 @@
   flake.modules.nixos.system-default =
     { pkgs, ... }:
     {
-      imports = with inputs.self.modules.nixos; [
-        system-base
-        fonts
-        ucodenix
-      ];
+      imports =
+        (with inputs.self.modules.nixos; [
+          system-base
+          fonts
+          ucodenix
+        ])
+        ++ [
+          inputs.nix-flatpak.nixosModules.nix-flatpak
+        ];
+
+      services.flatpak.enable = true;
 
       boot = {
         kernelPackages = pkgs.linuxPackages_7_0;

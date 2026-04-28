@@ -8,6 +8,7 @@
         system-default
         nvidia
         hyprland
+        flatpak
         mounts
         obs
         podman

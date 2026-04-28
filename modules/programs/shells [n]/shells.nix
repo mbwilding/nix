@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.shells =
-    { hostname, secrets, ... }:
+    { hostname, secrets, config, ... }:
     {
       home = {
         sessionPath = [ "$HOME/.cargo/bin" ];
@@ -226,6 +226,7 @@
 
         zsh = {
           enable = true;
+          dotDir = "${config.xdg.configHome}/zsh";
           autocd = true;
           autosuggestion.enable = true;
           enableCompletion = true;

@@ -11,6 +11,7 @@ in
         system-default
         amd
         hyprland
+        flatpak
         mounts
         podman
         steam

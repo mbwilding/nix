@@ -2,39 +2,41 @@
 
 {
   flake.modules.homeManager.anon =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     {
-      imports = (with inputs.self.modules.homeManager; [
-        atuin
-        aws
-        btop
-        dapr
-        direnv
-        discord
-        dotnet
-        files
-        fzf
-        gh
-        ghostty
-        git
-        hytale-launcher
-        jetbrains
-        k9s
-        lazygit
-        lazysql
-        mcp
-        mpv
-        npm
-        opencode
-        packages
-        proxy
-        proxychains
-        shells
-        ssh
-        wine
-        yazi
-        zoxide
-      ]);
+      imports = (
+        with inputs.self.modules.homeManager;
+        [
+          atuin
+          aws
+          btop
+          dapr
+          direnv
+          discord
+          dotnet
+          files
+          fzf
+          gh
+          ghostty
+          git
+          jetbrains
+          k9s
+          lazygit
+          lazysql
+          mcp
+          mpv
+          npm
+          opencode
+          packages
+          proxy
+          proxychains
+          shells
+          ssh
+          wine
+          yazi
+          zoxide
+        ]
+      );
 
       news.display = "silent";
 
@@ -44,7 +46,7 @@
 
         sessionVariables = {
           EDITOR = "nvim";
-          XDG_CONFIG_HOME = "$HOME/.config";
+          XDG_CONFIG_HOME = lib.mkForce "$HOME/.config";
           MANPAGER = "nvim +Man!";
           MANWIDTH = "999";
           RUST_LOG = "info";
@@ -87,7 +89,8 @@
         # the HM sub-module system automatically — they must be re-injected here.
         _module.args.hostname = config.networking.hostName;
         _module.args.secrets = config._module.args.secrets;
-        _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
+        _module.args.pkgsMaster =
+          inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 }
