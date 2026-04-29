@@ -106,6 +106,7 @@
           lemminx
           lld
           lldb
+          lshw
           lua-language-server
           luajit
           luajitPackages.luarocks-nix
