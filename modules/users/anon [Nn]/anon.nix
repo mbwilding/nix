@@ -27,6 +27,7 @@
           mpv
           npm
           opencode
+          package-managers
           packages
           proxy
           proxychains
