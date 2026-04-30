@@ -20,7 +20,7 @@
       services.flatpak.enable = true;
 
       boot = {
-        kernelPackages = pkgs.linuxPackages_7_0;
+        kernelPackages = pkgs.linuxPackages_latest;
         loader = {
           systemd-boot.enable = true;
           efi.canTouchEfiVariables = true;

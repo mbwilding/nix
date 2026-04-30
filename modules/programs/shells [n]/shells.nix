@@ -48,7 +48,6 @@
           nix-clean = "sudo nix-collect-garbage -d";
           nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
           nix-update = "nix flake update --flake ~/nix";
-          nix-upgrade = "sudo nixos-rebuild switch --upgrade --impure --flake ~/nix";
           nmr = "nmcli radio wifi off && nmcli radio wifi on";
           oc = "opencode";
           power-b = "powerprofilesctl set balanced";
