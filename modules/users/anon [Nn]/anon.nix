@@ -34,6 +34,7 @@
           shells
           ssh
           wine
+          yabridge
           yazi
           zoxide
         ]
