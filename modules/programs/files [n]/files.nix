@@ -277,24 +277,6 @@
            line-length: disable
         '';
 
-        file.".vst/yabridge/yabridge.toml".text = ''
-          ["*"]
-          group = "all"
-          editor_force_dnd = true
-        '';
-
-        file.".vst3/yabridge/yabridge.toml".text = ''
-          ["*"]
-          group = "all"
-          editor_force_dnd = true
-        '';
-
-        file.".clap/yabridge/yabridge.toml".text = ''
-          ["*"]
-          group = "all"
-          editor_force_dnd = true
-        '';
-
         file.".config/spotify-launcher.conf".text = ''
           --enable-features=UseOzonePlatform
           --ozone-platform=wayland
