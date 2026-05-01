@@ -22,7 +22,6 @@
         wireshark
       ] ++ [
         ./_hardware-configuration.nix
-        ../_wireplumber-loopback.nix
       ];
 
       networking.hostName = "anon";
