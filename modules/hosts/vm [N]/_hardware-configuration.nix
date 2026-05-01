@@ -1,4 +1,4 @@
-{ lib, modulesPath, ... }:
+{ modulesPath, ... }:
 
 {
   imports = [
@@ -31,6 +31,4 @@
   };
 
   swapDevices = [ ];
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

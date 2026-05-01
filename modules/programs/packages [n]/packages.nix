@@ -48,7 +48,6 @@
           # Packages
           _1password-gui
           asciiquarium
-          atuin
           azure-cli
           bash-language-server
           bashdb
@@ -75,9 +74,7 @@
           file
           firefox
           fuse3
-          fzf
           gcc
-          git
           github-copilot-cli
           gnugrep
           gnumake
@@ -112,7 +109,6 @@
           luajitPackages.luarocks-nix
           markdownlint-cli2
           marksman
-          mpv
           neovim-unwrapped
           netcoredbg
           nil
@@ -165,7 +161,6 @@
           yamllint
           zip
           zls
-          zoxide
 
           # FIND vscode-bash-debug
           # PROJECT gcc-arm-embedded

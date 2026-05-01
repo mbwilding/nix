@@ -16,6 +16,7 @@
           # GITHUB_TOKEN = secrets.githubWorkToken;
           GITHUB_TOKEN_PERSONAL = secrets.githubPersonalToken;
           GITHUB_TOKEN_WORK = secrets.githubWorkToken;
+          # TODO: add secrets.gitlabPersonalToken ("gitlab-personal") and point GITLAB_TOKEN to it
           GITLAB_TOKEN = secrets.gitlabWorkToken;
           GITLAB_TOKEN_WORK = secrets.gitlabWorkToken;
           OPENAI_API_KEY = secrets.openAiKey;
