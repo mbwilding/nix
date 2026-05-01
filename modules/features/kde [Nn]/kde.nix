@@ -51,6 +51,7 @@
       programs.plasma = {
         enable = true;
         immutableByDefault = true;
+        overrideConfig = true;
 
         powerdevil = {
           AC = {
@@ -61,15 +62,11 @@
 
         configFile.kdeglobals = {
           General = {
-            ColorScheme.value = "BreezeDark";
             Name.value = "Breeze Dark";
             shadeSortColumn.value = true;
-            widgetStyle.value = "Breeze";
             TerminalApplication.value = "ghostty";
             TerminalService.value = "com.mitchellh.ghostty.desktop";
           };
-          Icons.Theme.value = "breeze-dark";
-          KDE.LookAndFeelPackage.value = "org.kde.breezedark.desktop";
           # "Colors:View" = {
           #   BackgroundAlternate.value = "49,54,59";
           #   BackgroundNormal.value = "35,38,41";
@@ -213,6 +210,7 @@
                   "applications:systemsettings.desktop"
                   "applications:org.kde.dolphin.desktop"
                   "applications:google-chrome.desktop"
+                  "applications:firefox.desktop"
                   "applications:com.mitchellh.ghostty.desktop"
                   "applications:discord.desktop"
                   "applications:steam.desktop"
