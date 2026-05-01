@@ -30,4 +30,6 @@
 
       system.stateVersion = "24.05";
     };
+
+  flake.nixOnDroidConfigurations = inputs.self.lib.mkNixOnDroid "droid";
 }
