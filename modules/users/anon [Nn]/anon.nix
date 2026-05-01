@@ -1,6 +1,37 @@
 { inputs, ... }:
 
 {
+  # NixOS user definition for "anon".
+  # Desktop-environment-specific HM features (hyprland, kde) are injected by
+  # their system features via home-manager.sharedModules (hyprland [Nn] / kde [Nn]).
+  flake.modules.nixos.user-anon =
+    { config, pkgs, ... }:
+    {
+      users.users.anon = {
+        description = "anon";
+        extraGroups = [
+          "audio"
+          "docker"
+          "networkmanager"
+          "render"
+          "video"
+          "wheel"
+          "dialout"
+          "libvirtd"
+        ];
+        isNormalUser = true;
+        shell = pkgs.fish;
+      };
+
+      home-manager.users.anon = {
+        imports = [ inputs.self.modules.homeManager.anon ];
+        _module.args.hostname = config.networking.hostName;
+        _module.args.secrets = config._module.args.secrets;
+        _module.args.pkgsMaster =
+          inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
+      };
+    };
+
   flake.modules.homeManager.anon =
     { pkgs, lib, ... }:
     {
@@ -59,40 +90,6 @@
         file.".hushlogin".text = "";
 
         stateVersion = "25.11";
-      };
-    };
-
-  # NixOS user definition for "anon".
-  # Desktop-environment-specific HM features (hyprland, kde) are injected by
-  # their system features via home-manager.sharedModules (hyprland [Nn] / kde [Nn]).
-  flake.modules.nixos.user-anon =
-    { config, pkgs, ... }:
-    {
-      users.users.anon = {
-        description = "anon";
-        extraGroups = [
-          "audio"
-          "docker"
-          "networkmanager"
-          "render"
-          "video"
-          "wheel"
-          "dialout"
-          "libvirtd"
-        ];
-        isNormalUser = true;
-        shell = pkgs.fish;
-      };
-
-      home-manager.users.anon = {
-        imports = [ inputs.self.modules.homeManager.anon ];
-        # Inject hostname, secrets, and pkgsMaster into HM module args.
-        # These live in the NixOS _module.args and do not flow into
-        # the HM sub-module system automatically — they must be re-injected here.
-        _module.args.hostname = config.networking.hostName;
-        _module.args.secrets = config._module.args.secrets;
-        _module.args.pkgsMaster =
-          inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 }
