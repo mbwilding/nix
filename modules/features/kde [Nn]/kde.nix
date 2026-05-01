@@ -35,7 +35,6 @@
         plasma6.excludePackages = with pkgs.kdePackages; [
           oxygen
           kate
-          krohnkite
           konsole
           discover
         ];
@@ -193,6 +192,8 @@
           };
         };
 
+        configFile."kwinrc"."Plugins"."krohnkiteEnabled".value = true;
+
         # https://github.com/nix-community/plasma-manager/blob/trunk/modules/panels.nix
         panels = [
           {
@@ -272,6 +273,24 @@
           kwin = {
             "Window Fullscreen" = "Meta+O";
             "Window Close" = "Meta+Q";
+            # Krohnkite
+            "Krohnkite: Focus Next Window" = "Meta+.";
+            "Krohnkite: Focus Previous Window" = "Meta+,";
+            "Krohnkite: Focus Down" = "Meta+J";
+            "Krohnkite: Focus Up" = "Meta+K";
+            "Krohnkite: Focus Left" = "Meta+H";
+            "Krohnkite: Focus Right" = "Meta+L";
+            "Krohnkite: Move Window Down/Next" = "Meta+Shift+J";
+            "Krohnkite: Move Window Up/Previous" = "Meta+Shift+K";
+            "Krohnkite: Move Window Left" = "Meta+Shift+H";
+            "Krohnkite: Move Window Right" = "Meta+Shift+L";
+            "Krohnkite: Increase Window Width" = "Meta+I";
+            "Krohnkite: Decrease Window Width" = "Meta+D";
+            "Krohnkite: Toggle Float" = "Meta+F";
+            "Krohnkite: Next Layout" = "Meta+\\";
+            "Krohnkite: Previous Layout" = "Meta+|";
+            "Krohnkite: Set as Master" = "Meta+Return";
+            "Krohnkite: Use Monocle Layout" = "Meta+Shift+M";
           };
 
           "com.mitchellh.ghostty.desktop" = {
@@ -280,7 +299,7 @@
 
           "google-chrome.desktop" = {
             "new-window" = "Meta+B";
-            "new-private-window" = "Meta+I";
+            "new-private-window" = [];
           };
 
           "teams-for-linux.desktop" = {
