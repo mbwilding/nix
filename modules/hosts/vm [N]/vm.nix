@@ -6,8 +6,10 @@
     {
       imports = with inputs.self.modules.nixos; [
         system-default
-        kde
         user-anon
+
+        # hyprland
+        kde
       ] ++ [ ./_hardware-configuration.nix ];
 
       networking.hostName = "vm";
