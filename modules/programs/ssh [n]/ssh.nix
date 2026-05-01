@@ -3,6 +3,16 @@
 {
   flake.modules.homeManager.ssh =
     { secrets, ... }:
+    let
+      personal = {
+        identitiesOnly = true;
+        identityFile = [ "~/.ssh/personal" ];
+      };
+      work = {
+        identitiesOnly = true;
+        identityFile = [ "~/.ssh/work" ];
+      };
+    in
     {
       programs = {
         ssh = {
@@ -21,59 +31,45 @@
               };
             };
 
-            desktop = {
+            desktop = personal // {
               hostname = "192.168.11.254";
               user = "anon";
               forwardAgent = true;
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            vm = {
+            vm = personal // {
               hostname = "192.168.122.130";
               user = "anon";
               forwardAgent = true;
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            nona = {
+            nona = personal // {
               hostname = "192.168.11.60";
               user = "anon";
               forwardAgent = true;
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            truenas = {
+            truenas = personal // {
               hostname = "192.168.11.10";
               user = "root";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            arch = {
+            arch = personal // {
               hostname = "192.168.11.10";
               port = 2222;
               user = "anon";
               forwardAgent = true;
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            nix = {
+            nix = personal // {
               hostname = "192.168.11.14";
               user = "anon";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            phone = {
+            phone = personal // {
               hostname = "192.168.11.41";
               port = 8022;
               user = "root";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
             "aur.archlinux.org" = {
@@ -82,43 +78,31 @@
               identityFile = [ "~/.ssh/aur" ];
             };
 
-            "github.com" = {
+            "github.com" = personal // {
               user = "git";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            "${secrets.workName}.github.com" = {
+            "${secrets.workName}.github.com" = work // {
               hostname = "github.com";
               user = "git";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/work" ];
             };
 
-            "gitlab.com" = {
+            "gitlab.com" = personal // {
               hostname = "gitlab.com";
               user = "git";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            "${secrets.workName}.gitlab.com" = {
+            "${secrets.workName}.gitlab.com" = work // {
               hostname = "gitlab.com";
               user = "git";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/work" ];
             };
 
-            surface = {
+            surface = personal // {
               hostname = "192.168.11.253";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
             };
 
-            "ssh.dev.azure.com" = {
+            "ssh.dev.azure.com" = work // {
               user = "git";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/work" ];
               extraOptions = {
                 PubkeyAcceptedKeyTypes = "+ssh-rsa";
                 PasswordAuthentication = "no";
