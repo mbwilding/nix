@@ -54,6 +54,7 @@
         resetFiles = [
           "kglobalshortcutsrc"
           "kdeglobals"
+          "plasmashellrc"
         ];
 
         powerdevil = {
