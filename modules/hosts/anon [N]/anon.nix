@@ -7,7 +7,6 @@
       imports = with inputs.self.modules.nixos; [
         appimage
         flatpak
-        hyprland
         mounts
         nvidia
         obs
@@ -20,6 +19,9 @@
         user-anon
         waydroid
         wireshark
+
+        # hyprland
+        kde
       ] ++ [
         ./_hardware-configuration.nix
       ];

@@ -11,7 +11,6 @@ in
         amd
         appimage
         flatpak
-        hyprland
         mounts
         podman
         qemu
@@ -22,6 +21,9 @@ in
         waydroid
         wireguard-nona
         wireshark
+
+        # hyprland
+        kde
       ] ++ [
         ./_hardware-configuration.nix
       ];
