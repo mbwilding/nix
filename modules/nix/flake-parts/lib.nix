@@ -47,9 +47,6 @@
       system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = {
-            hostname = name;
-          };
           modules = [
             inputs.self.modules.homeManager.anon
             {
