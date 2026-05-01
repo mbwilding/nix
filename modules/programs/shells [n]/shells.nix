@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.shells =
-    { hostname, secrets, config, ... }:
+    { secrets, config, ... }:
     {
       home = {
         sessionPath = [ "$HOME/.cargo/bin" ];
@@ -89,21 +89,7 @@
             set -g __fish_git_prompt_char_upstream_behind "󰁅 "
             set -g __fish_git_prompt_char_upstream_equal "󰸞 "
             set -g __fish_git_prompt_char_upstream_diverged "󱐊 "
-          ''
-          + (
-            if hostname == "wsl" then
-              ''
-                # Windows paths (WSL)
-                set -Ux fish_user_paths \
-                    /mnt/c/Windows \
-                    /mnt/c/Windows/System32 \
-                    /mnt/c/Program\ Files/PowerShell/7 \
-                    /mnt/c/Windows/System32/WindowsPowerShell/v1.0 \
-                    $fish_user_paths
-              ''
-            else
-              ""
-          );
+          '';
           functions = {
             fish_prompt = {
               description = "Custom prompt";

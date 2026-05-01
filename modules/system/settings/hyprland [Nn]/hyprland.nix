@@ -110,88 +110,16 @@
     };
 
   flake.modules.homeManager.hyprland =
-    { pkgs, hostname, ... }:
+    { pkgs, ... }:
 
     let
       anim_speed = 2.0;
 
       gaps = 10.0;
-      cursor_size = if hostname == "anon" then 16 else 24;
+      cursor_size = 24;
       cursor_size_str = builtins.toString cursor_size;
 
       anim_speed_str = builtins.toString anim_speed;
-
-      monitors = {
-        anon = [
-          {
-            output = "desc:LG Electronics LG TV SSCR2 0x01010101";
-            mode = "3840x2160@119.88";
-            position = "0x0";
-            scale = 1.0;
-            transform = 0;
-            vrr = 3;
-            bitdepth = 10;
-            supports_wide_color = 1;
-            supports_hdr = 1;
-            cm = "wide";
-          }
-          {
-            output = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
-            mode = "3440x1440@120";
-            position = "3840x-720";
-            scale = 1.0;
-            transform = 1;
-            vrr = 3;
-          }
-          {
-            output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
-            mode = "2560x1080@60";
-            position = "-1080x0";
-            scale = 1.0;
-            transform = 3;
-          }
-        ];
-
-        nona = [
-          # Internal
-          {
-            output = "desc:Lenovo Group Limited 0x8AC2";
-            mode = "2944x1840@90";
-            position = "0x0";
-            scale = 1.33;
-            transform = 0;
-            bitdepth = 10;
-            supports_wide_color = 1;
-            supports_hdr = 1;
-          }
-          # Home
-          {
-            output = "HDMI-A-1";
-            mode = "3840x2160@120.00";
-            position = "1080x-1080";
-            scale = 2.0;
-            transform = 0;
-            bitdepth = 10;
-            supports_wide_color = 1;
-            supports_hdr = 1;
-          }
-          # Work
-          {
-            output = "DP-7";
-            mode = "2560x1440@74.97";
-            position = "-1280x-1440";
-            scale = 1.0;
-            transform = 0;
-          }
-          {
-            output = "DP-6";
-            mode = "2560x1440@74.97";
-            position = "1280x-1440";
-            scale = 1.0;
-            transform = 0;
-          }
-        ];
-      };
     in
     {
       imports = [
@@ -310,20 +238,7 @@
             # "nm-applet"
             "hyprpaper"
             # "hyprpanel"
-          ]
-          ++ (
-            if hostname == "anon" then
-              [
-                "hyprctl dispatch workspace name:social"
-                "hyprctl dispatch workspace name:spare"
-                "hyprctl dispatch workspace name:main"
-              ]
-            else
-              [
-                "hyprctl dispatch workspace main"
-                "brightnessctl set --device=platform::micmute 0"
-              ]
-          );
+          ];
 
           "$mod" = "SUPER";
           bind = [
@@ -432,7 +347,7 @@
             force_zero_scaling = true;
           };
 
-          monitorv2 = monitors.${hostname} or [ ];
+          monitorv2 = [ ];
 
           input = {
             kb_layout = "us";
@@ -500,37 +415,20 @@
             "ELECTRON_OZONE_PLATFORM_HINT,wayland"
             "GDK_BACKEND,wayland,x11,*"
             "GTK_THEME,Breeze-Dark"
-            "HYPRCURSOR_SIZE,${cursor_size_str}"
             "QT_QPA_PLATFORM,wayland;xcb"
             "QT_QPA_PLATFORMTHEME,kde"
             "SDL_VIDEODRIVER,wayland"
             "GDK_SCALE,1"
-            "XCURSOR_SIZE,${cursor_size_str}"
             "XDG_CURRENT_DESKTOP,Hyprland"
             "XDG_SESSION_DESKTOP,Hyprland"
             "XDG_SESSION_TYPE,wayland"
             "HYPRSHOT_DIR,${import ../../../nix/_home.nix}/Pictures/Screenshots"
+            # Cursor size — override in host _hyprland.nix if needed
+            "HYPRCURSOR_SIZE,${cursor_size_str}"
+            "XCURSOR_SIZE,${cursor_size_str}"
           ];
 
-          scrolling = {
-            fullscreen_on_one_column = true;
-            follow_focus = true;
-            direction = "right";
-          };
-
-          workspace =
-            if hostname == "anon" then
-              [
-                "name:main, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, default:true, layoutopt:direction:right, persistent:true"
-                "name:social, monitor:desc:Dell Inc. Dell AW3418DW, default:true, layoutopt:direction:down, persistent:true"
-                "name:spare, monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
-              ]
-            else if hostname == "nona" then
-              [
-                "name:main, monitor:desc:Lenovo Group Limited 0x8AC2, default:true, layoutopt:direction:right, persistent:true"
-              ]
-            else
-              [ ];
+          workspace = [ ];
 
           windowrule = [
             {
@@ -541,29 +439,13 @@
               "match:class" = "^(UnrealEditor)$";
               "match:title" = "^\w*$";
             }
-          ]
-          ++ (
-            if hostname == "anon" then
-              [
-                {
-                  name = "Teams";
-                  workspace = "name:social";
-                  "match:class" = "teams-for-linux";
-                }
-                {
-                  name = "Spotify";
-                  workspace = "name:social";
-                  "match:class" = "spotify";
-                }
-                {
-                  name = "Discord";
-                  workspace = "name:social";
-                  "match:class" = "discord";
-                }
-              ]
-            else
-              [ ]
-          );
+          ];
+
+          scrolling = {
+            fullscreen_on_one_column = true;
+            follow_focus = true;
+            direction = "right";
+          };
 
         };
       };
