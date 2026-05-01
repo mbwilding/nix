@@ -32,5 +32,7 @@
         enable = true;
         inherit cpuModelId;
       };
+
+      boot.kernelParams = lib.mkIf isAmd (lib.mkAfter [ "microcode.amd_sha_check=off" ]);
     };
 }
