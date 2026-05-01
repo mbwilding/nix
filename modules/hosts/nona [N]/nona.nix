@@ -188,4 +188,12 @@ in
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos "x86_64-linux" "nona";
+
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "nona" (
+    with inputs.self.modules.homeManager;
+    [
+      hyprland
+      theme
+    ]
+  );
 }
