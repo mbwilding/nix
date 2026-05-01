@@ -33,6 +33,7 @@
       };
 
       hardware = {
+        keyboard.zsa.enable = true;
         enableRedistributableFirmware = true;
         bluetooth = {
           enable = true;

@@ -97,6 +97,7 @@
           kdePackages.kdegraphics-thumbnailers
           kdePackages.kimageformats
           kdePackages.kio-extras
+          keymapp
           killall
           kubectl
           kubernetes-helm
