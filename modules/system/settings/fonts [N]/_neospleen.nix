@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation rec {
 
   meta = with lib; {
     homepage = "https://github.com/mbwilding";
-    description = "NeoSpleen Nerd Font";
+    description = "NeoSpleen";
     license = licenses.ofl;
     platforms = platforms.all;
     maintainers = with maintainers; [ mbwilding ];

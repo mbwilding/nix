@@ -25,10 +25,8 @@
     "kvm-amd"
     "pci-stub"
   ];
-  boot.kernelParams = [
-    "microcode.amd_sha_check=off"
-    "pci-stub.ids=1002:164e"
-  ];
+
+  boot.kernelParams = [ "pci-stub.ids=1002:164e" ];
 
   boot.extraModulePackages = [ ];
 
@@ -82,6 +80,5 @@
 
   swapDevices = [ ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
