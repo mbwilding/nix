@@ -51,7 +51,7 @@
             hostname = name;
           };
           modules = [
-            inputs.self.modules.homeManager.${name}
+            inputs.self.modules.homeManager.anon
             {
               nixpkgs.config.allowUnfree = true;
               _module.args.secrets = secrets;
