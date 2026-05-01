@@ -7,7 +7,7 @@ in
   # Apply kscreen monitor layout on login.
   # Layout (vertical | horizontal | vertical):
   #   - LG Ultrawide 2560x1080 (DP-1): rotated CW (right), positioned left of TV at 0,0
-  #   - LG TV 3840x2160 (HDMI-A-1): normal, at 1080,0
+  #   - LG TV 3840x2160 (HDMI-A-1): normal, 120Hz, HDR, at 1080,0
   #   - Dell AW3418DW 3440x1440 (DP-2): rotated CCW (left), at 4920,0
   # kscreen rotation values: 1=normal, 2=left/CCW, 4=inverted, 8=right/CW
   systemd.user.services.kscreen-layout = {
@@ -24,6 +24,8 @@ in
           output.DP-1.rotation.right \
           output.HDMI-A-1.position.1080,0 \
           output.HDMI-A-1.rotation.none \
+          output.HDMI-A-1.mode.11 \
+          output.HDMI-A-1.hdr.enable \
           output.DP-2.position.4920,-640 \
           output.DP-2.rotation.left
       '';
