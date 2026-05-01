@@ -51,11 +51,6 @@
       programs.plasma = {
         enable = true;
         immutableByDefault = true;
-        resetFiles = [
-          "kglobalshortcutsrc"
-          "kdeglobals"
-          "plasmashellrc"
-        ];
 
         powerdevil = {
           AC = {
@@ -204,7 +199,7 @@
         panels = [
           {
             location = "bottom";
-            height = 44;
+            height = 48;
             lengthMode = "fit";
             alignment = "center";
             hiding = "autohide";
