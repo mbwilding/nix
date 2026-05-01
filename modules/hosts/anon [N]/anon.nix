@@ -5,20 +5,21 @@
     { pkgs, ... }:
     {
       imports = with inputs.self.modules.nixos; [
-        system-default
-        nvidia
-        hyprland
+        appimage
         flatpak
+        hyprland
         mounts
+        nvidia
         obs
         podman
+        qemu
         solaar
         steam
-        wireshark
-        appimage
-        waydroid
-        qemu
+        system-default
+        ucodenix
         user-anon
+        waydroid
+        wireshark
       ] ++ [
         ./_hardware-configuration.nix
         ../_wireplumber-loopback.nix

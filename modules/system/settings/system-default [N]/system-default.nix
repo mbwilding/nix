@@ -11,7 +11,6 @@
         (with inputs.self.modules.nixos; [
           system-base
           fonts
-          ucodenix
         ])
         ++ [
           inputs.nix-flatpak.nixosModules.nix-flatpak

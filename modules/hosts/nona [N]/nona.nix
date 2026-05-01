@@ -8,19 +8,20 @@ in
     { pkgs, ... }:
     {
       imports = with inputs.self.modules.nixos; [
-        system-default
         amd
-        hyprland
+        appimage
         flatpak
+        hyprland
         mounts
         podman
+        qemu
         steam
+        system-default
+        ucodenix
+        user-anon
+        waydroid
         wireguard-nona
         wireshark
-        appimage
-        waydroid
-        qemu
-        user-anon
       ] ++ [
         ./_hardware-configuration.nix
         ../_wireplumber-loopback.nix
