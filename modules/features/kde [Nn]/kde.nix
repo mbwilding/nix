@@ -29,8 +29,9 @@
       };
 
       environment = {
-        systemPackages = with pkgs.kdePackages; [
-          plasma-keyboard
+        systemPackages = with pkgs; [
+          kdePackages.plasma-keyboard
+          klassy
         ];
         plasma6.excludePackages = with pkgs.kdePackages; [
           oxygen
@@ -49,7 +50,10 @@
       programs.plasma = {
         enable = true;
         immutableByDefault = true;
-        resetFiles = [ "kglobalshortcutsrc" "kdeglobals" ];
+        resetFiles = [
+          "kglobalshortcutsrc"
+          "kdeglobals"
+        ];
 
         powerdevil = {
           AC = {
@@ -69,90 +73,90 @@
           };
           Icons.Theme.value = "breeze-dark";
           KDE.LookAndFeelPackage.value = "org.kde.breezedark.desktop";
-          "Colors:View" = {
-            BackgroundAlternate.value = "49,54,59";
-            BackgroundNormal.value = "35,38,41";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "61,174,233";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "29,153,243";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "239,240,241";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
-          "Colors:Window" = {
-            BackgroundAlternate.value = "49,54,59";
-            BackgroundNormal.value = "49,54,59";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "61,174,233";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "29,153,243";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "239,240,241";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
-          "Colors:Button" = {
-            BackgroundAlternate.value = "49,54,59";
-            BackgroundNormal.value = "49,54,59";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "61,174,233";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "29,153,243";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "239,240,241";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
-          "Colors:Selection" = {
-            BackgroundAlternate.value = "29,153,243";
-            BackgroundNormal.value = "61,174,233";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "252,252,252";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "253,188,75";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "252,252,252";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
-          "Colors:Tooltip" = {
-            BackgroundAlternate.value = "49,54,59";
-            BackgroundNormal.value = "49,54,59";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "61,174,233";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "29,153,243";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "239,240,241";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
-          "Colors:Complementary" = {
-            BackgroundAlternate.value = "49,54,59";
-            BackgroundNormal.value = "42,46,50";
-            DecorationFocus.value = "61,174,233";
-            DecorationHover.value = "61,174,233";
-            ForegroundActive.value = "61,174,233";
-            ForegroundInactive.value = "161,169,177";
-            ForegroundLink.value = "29,153,243";
-            ForegroundNegative.value = "218,68,83";
-            ForegroundNeutral.value = "246,116,0";
-            ForegroundNormal.value = "239,240,241";
-            ForegroundPositive.value = "39,174,96";
-            ForegroundVisited.value = "155,89,182";
-          };
+          # "Colors:View" = {
+          #   BackgroundAlternate.value = "49,54,59";
+          #   BackgroundNormal.value = "35,38,41";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "61,174,233";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "29,153,243";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "239,240,241";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
+          # "Colors:Window" = {
+          #   BackgroundAlternate.value = "49,54,59";
+          #   BackgroundNormal.value = "49,54,59";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "61,174,233";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "29,153,243";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "239,240,241";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
+          # "Colors:Button" = {
+          #   BackgroundAlternate.value = "49,54,59";
+          #   BackgroundNormal.value = "49,54,59";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "61,174,233";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "29,153,243";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "239,240,241";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
+          # "Colors:Selection" = {
+          #   BackgroundAlternate.value = "29,153,243";
+          #   BackgroundNormal.value = "61,174,233";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "252,252,252";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "253,188,75";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "252,252,252";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
+          # "Colors:Tooltip" = {
+          #   BackgroundAlternate.value = "49,54,59";
+          #   BackgroundNormal.value = "49,54,59";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "61,174,233";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "29,153,243";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "239,240,241";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
+          # "Colors:Complementary" = {
+          #   BackgroundAlternate.value = "49,54,59";
+          #   BackgroundNormal.value = "42,46,50";
+          #   DecorationFocus.value = "61,174,233";
+          #   DecorationHover.value = "61,174,233";
+          #   ForegroundActive.value = "61,174,233";
+          #   ForegroundInactive.value = "161,169,177";
+          #   ForegroundLink.value = "29,153,243";
+          #   ForegroundNegative.value = "218,68,83";
+          #   ForegroundNeutral.value = "246,116,0";
+          #   ForegroundNormal.value = "239,240,241";
+          #   ForegroundPositive.value = "39,174,96";
+          #   ForegroundVisited.value = "155,89,182";
+          # };
         };
 
         # https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix
@@ -161,8 +165,8 @@
           wallpaperPlainColor = "0,0,0";
           colorScheme = "BreezeDark";
           windowDecorations = {
-            library = "org.kde.breeze";
-            theme = "Breeze";
+            library = "org.kde.klassy";
+            theme = "Klassy";
           };
           cursor = {
             theme = "breeze_cursors";
@@ -299,7 +303,7 @@
 
           "google-chrome.desktop" = {
             "new-window" = "Meta+B";
-            "new-private-window" = [];
+            "new-private-window" = [ ];
           };
 
           "teams-for-linux.desktop" = {
