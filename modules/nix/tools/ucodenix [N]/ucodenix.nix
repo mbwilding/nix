@@ -7,12 +7,6 @@
   flake.modules.nixos.ucodenix =
     { pkgs, lib, ... }:
     let
-      isAmd =
-        let
-          cpuinfo = builtins.readFile "/proc/cpuinfo";
-        in
-        lib.hasInfix "AuthenticAMD" cpuinfo;
-
       cpuModelId = lib.removeSuffix "\n" (
         builtins.readFile (
           pkgs.runCommand "cpuid-model" { buildInputs = [ pkgs.cpuid ]; } ''
@@ -26,11 +20,11 @@
         inputs.ucodenix.nixosModules.default
       ];
 
-      services.ucodenix = lib.mkIf isAmd {
+      services.ucodenix = {
         enable = true;
         inherit cpuModelId;
       };
 
-      boot.kernelParams = lib.mkIf isAmd (lib.mkAfter [ "microcode.amd_sha_check=off" ]);
+      boot.kernelParams = lib.mkAfter [ "microcode.amd_sha_check=off" ];
     };
 }
