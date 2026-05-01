@@ -5,11 +5,10 @@
     {
       pkgs,
       lib,
-      hostname,
       ...
     }:
     let
-      cursor_size = if hostname == "anon" then 16 else 24;
+      cursor_size = 24;
     in
     {
       gtk = {
@@ -41,7 +40,7 @@
       };
 
       dconf = {
-        enable = hostname != "wsl";
+        enable = lib.mkDefault true;
         settings = {
           "org/gnome/desktop/interface" = {
             color-scheme = "prefer-dark";

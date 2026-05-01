@@ -24,6 +24,8 @@
         ./_hardware-configuration.nix
       ];
 
+      home-manager.sharedModules = [ ./_hyprland.nix ./_ghostty.nix ];
+
       networking.hostName = "anon";
 
       environment = {
@@ -171,6 +173,8 @@
     [
       hyprland
       theme
+      ./_hyprland.nix
+      ./_ghostty.nix
     ]
   );
 }

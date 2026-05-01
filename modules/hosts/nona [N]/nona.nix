@@ -26,6 +26,8 @@ in
         ./_hardware-configuration.nix
       ];
 
+      home-manager.sharedModules = [ ./_hyprland.nix ];
+
       networking.hostName = "nona";
 
       console.keyMap = keymap;
@@ -193,6 +195,7 @@ in
     [
       hyprland
       theme
+      ./_hyprland.nix
     ]
   );
 }

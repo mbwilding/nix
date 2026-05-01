@@ -12,7 +12,10 @@
         inputs.nixos-wsl.nixosModules.default
       ];
 
-      home-manager.sharedModules = [ inputs.self.modules.homeManager.theme ];
+      home-manager.sharedModules = [
+        inputs.self.modules.homeManager.theme
+        ./_shells.nix
+      ];
 
       wsl.enable = true;
       wsl.defaultUser = "anon";
@@ -30,5 +33,6 @@
 
   flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "wsl" [
     inputs.self.modules.homeManager.theme
+    ./_shells.nix
   ];
 }
