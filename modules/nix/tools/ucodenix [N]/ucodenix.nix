@@ -9,11 +9,9 @@
     let
       isAmd =
         let
-          vendorLine = lib.findFirst (lib.hasPrefix "vendor_id") "" (
-            lib.splitString "\n" (builtins.readFile "/proc/cpuinfo")
-          );
+          cpuinfo = builtins.readFile "/proc/cpuinfo";
         in
-        lib.hasSuffix "AuthenticAMD" vendorLine;
+        lib.hasInfix "AuthenticAMD" cpuinfo;
 
       cpuModelId = lib.removeSuffix "\n" (
         builtins.readFile (
