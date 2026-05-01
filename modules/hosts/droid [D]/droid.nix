@@ -24,7 +24,6 @@
         config = inputs.self.modules.homeManager.droid;
         extraSpecialArgs = {
           secrets = import ../../nix/_secrets.nix;
-          hostname = "droid";
         };
       };
 
