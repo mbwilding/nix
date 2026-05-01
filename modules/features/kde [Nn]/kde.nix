@@ -31,6 +31,7 @@
       environment = {
         systemPackages = with pkgs; [
           kdePackages.plasma-keyboard
+          kdePackages.krohnkite
           klassy
         ];
         plasma6.excludePackages = with pkgs.kdePackages; [
