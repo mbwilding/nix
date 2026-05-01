@@ -8,6 +8,7 @@
         opencode = {
           enable = true;
           enableMcpIntegration = true;
+          context = "Always use Australian English and don't use em dashes";
           # context = builtins.replaceStrings ["nvim-mcp"] ["neovim"] (
           #   builtins.readFile (builtins.fetchurl {
           #     url = "https://raw.githubusercontent.com/paulburgess1357/nvim-mcp/89608e1fe6ea82a5e5f2da825934b726e6a97d4c/config/AGENTS-EXAMPLE.md";
