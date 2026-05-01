@@ -22,15 +22,14 @@ in
         wireguard-nona
         wireshark
 
-        # hyprland
-        kde
+        hyprland
+        # kde
       ] ++ [
         ./_hardware-configuration.nix
       ];
 
       home-manager.sharedModules = [
-        # ./_hyprland.nix
-        ./_kde.nix
+        ./_hyprland.nix
       ];
 
       networking.hostName = "nona";
