@@ -25,7 +25,6 @@
 
       home-manager.users.anon = {
         imports = [ inputs.self.modules.homeManager.anon ];
-        _module.args.hostname = config.networking.hostName;
         _module.args.secrets = config._module.args.secrets;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
