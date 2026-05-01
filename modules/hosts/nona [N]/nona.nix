@@ -28,7 +28,10 @@ in
         ./_hardware-configuration.nix
       ];
 
-      home-manager.sharedModules = [ ./_hyprland.nix ];
+      home-manager.sharedModules = [
+        # ./_hyprland.nix
+        ./_kde.nix
+      ];
 
       networking.hostName = "nona";
 

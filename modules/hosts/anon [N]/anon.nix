@@ -26,7 +26,12 @@
         ./_hardware-configuration.nix
       ];
 
-      home-manager.sharedModules = [ ./_hyprland.nix ./_ghostty.nix ];
+      home-manager.sharedModules = [
+        ./_ghostty.nix
+
+        # ./_hyprland.nix
+        ./_kde.nix
+      ];
 
       networking.hostName = "anon";
 
@@ -173,10 +178,13 @@
   flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "anon" (
     with inputs.self.modules.homeManager;
     [
-      hyprland
-      theme
-      ./_hyprland.nix
       ./_ghostty.nix
+
+      # ./_hyprland.nix
+
+      # hyprland
+      # theme
+      kde
     ]
   );
 }
