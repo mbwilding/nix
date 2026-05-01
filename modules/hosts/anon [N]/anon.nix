@@ -166,4 +166,12 @@
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos "x86_64-linux" "anon";
+
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "anon" (
+    with inputs.self.modules.homeManager;
+    [
+      hyprland
+      theme
+    ]
+  );
 }
