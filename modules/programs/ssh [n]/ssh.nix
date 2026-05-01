@@ -45,20 +45,6 @@
               identityFile = [ "~/.ssh/personal" ];
             };
 
-            sara = {
-              hostname = "192.168.11.218";
-              user = "sara";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
-            };
-
-            sara-root = {
-              hostname = "192.168.11.218";
-              user = "root";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/personal" ];
-            };
-
             truenas = {
               hostname = "192.168.11.10";
               user = "root";
@@ -117,7 +103,7 @@
             };
 
             "${secrets.workName}.gitlab.com" = {
-              hostname = "github.com";
+              hostname = "gitlab.com";
               user = "git";
               identitiesOnly = true;
               identityFile = [ "~/.ssh/work" ];
