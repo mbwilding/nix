@@ -12,6 +12,7 @@ in
         appimage
         flatpak
         mounts
+        mpv
         podman
         qemu
         steam
