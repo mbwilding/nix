@@ -8,6 +8,7 @@
         appimage
         flatpak
         mounts
+        mpv
         nvidia
         obs
         podman

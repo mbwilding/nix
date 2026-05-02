@@ -54,7 +54,6 @@
           lazygit
           lazysql
           mcp
-          mpv
           npm
           opencode
           package-managers
