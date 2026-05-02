@@ -422,7 +422,7 @@
             "XDG_CURRENT_DESKTOP,Hyprland"
             "XDG_SESSION_DESKTOP,Hyprland"
             "XDG_SESSION_TYPE,wayland"
-            "HYPRSHOT_DIR,${import ../../../nix/_home.nix}/Pictures/Screenshots"
+            "HYPRSHOT_DIR,${import ../../nix/_home.nix}/Pictures/Screenshots"
             # Cursor size — override in host _hyprland.nix if needed
             "HYPRCURSOR_SIZE,${cursor_size_str}"
             "XCURSOR_SIZE,${cursor_size_str}"
