@@ -4,16 +4,6 @@
   flake.modules.homeManager.mpv =
     { ... }:
     {
-      # Avoid building rusty-v8/deno from source until Hydra catches up.
-      # yt-dlp gained a deno dependency for YouTube JS support (2025-11-12);
-      # disable it until the new deno version is available in the binary cache.
-      nixpkgs.overlays = [
-        (_final: prev: {
-          yt-dlp = prev.yt-dlp.override { javascriptSupport = false; };
-        })
-      ];
-
-
       programs.mpv = {
         enable = true;
         config = {
