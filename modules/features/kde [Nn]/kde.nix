@@ -45,9 +45,10 @@
 
   # https://nix-community.github.io/plasma-manager/options.xhtml
   flake.modules.homeManager.kde =
-    { ... }:
+    { lib, ... }:
     {
       imports = [ inputs.self.modules.homeManager.plasma-manager ];
+
       programs.plasma = {
         enable = true;
         immutableByDefault = true;
@@ -314,5 +315,56 @@
           };
         };
       };
+
+      home.file.".config/klassy/klassyrc".text = ''
+        [Exceptions]
+        BorderSize=Tiny
+        ExceptionBorder=true
+        ExceptionWindowPropertyPattern=.*
+        ExceptionWindowPropertyType=ExceptionWindowTitle
+        HideTitleBar=true
+        OpaqueTitleBar=true
+
+        [Global]
+        LookAndFeelSet=org.kde.klassydarkleftpanel.desktop
+
+        [TitleBarSpacing]
+        PercentMaximizedTopBottomMargins=0
+        TitleBarBottomMargin=0
+        TitleBarTopMargin=0
+        TitleSidePadding=30
+
+        [Windeco]
+        AnimationsEnabled=false
+        AnimationsSpeedRelativeSystem=6
+        ButtonIconStyle=StyleKite
+        ButtonShape=ShapeFullHeightRoundedRectangle
+        CornerRadius=6
+        DrawBorderOnMaximizedWindows=true
+        RoundBottomCornersWhenNoBorders=true
+
+        [Windeco Exception 0]
+        BorderSize=2
+        Enabled=true
+        ExceptionBorder=true
+        ExceptionPreset=
+        ExceptionProgramNamePattern=
+        ExceptionWindowPropertyPattern=.*
+        ExceptionWindowPropertyType=1
+        HideTitleBar=true
+        OpaqueTitleBar=true
+        PreventApplyOpacityToHeader=false
+
+        [WindowOutlineStyle]
+        LockThinWindowOutlineCustomColorActiveInactive=false
+        ThinWindowOutlineCustomColorActive=193,145,255
+        ThinWindowOutlineCustomColorInactive=90,90,90
+        ThinWindowOutlineStyleActive=WindowOutlineCustomColor
+        ThinWindowOutlineStyleInactive=WindowOutlineCustomColor
+        ThinWindowOutlineThickness=4
+        WindowOutlineAccentWithContrastOpacityInactive=61
+        WindowOutlineCustomColorOpacityActive=100
+        WindowOutlineCustomColorOpacityInactive=100
+      '';
     };
 }
