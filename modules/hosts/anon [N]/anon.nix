@@ -6,6 +6,7 @@
     {
       imports = with inputs.self.modules.nixos; [
         appimage
+        fastfetch
         flatpak
         lutris
         mounts
