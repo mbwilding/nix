@@ -39,7 +39,7 @@
         [
           atuin
           aws
-          baresip
+          linphone
           btop
           dapr
           direnv
