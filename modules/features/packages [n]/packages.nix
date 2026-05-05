@@ -6,7 +6,8 @@
   flake.modules.homeManager.packages =
     {
       pkgs,
-      pkgsMaster ? pkgs,
+      pkgsStable,
+      pkgsMaster,
       ...
     }:
     {
@@ -108,7 +109,6 @@
           lua-language-server
           luajit
           luajitPackages.luarocks-nix
-          lutris
           markdownlint-cli2
           marksman
           neovim-unwrapped

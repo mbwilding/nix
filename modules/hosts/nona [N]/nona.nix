@@ -11,6 +11,7 @@ in
         amd
         appimage
         flatpak
+        lutris
         mounts
         mpv
         podman

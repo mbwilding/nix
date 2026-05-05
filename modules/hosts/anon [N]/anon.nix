@@ -7,6 +7,7 @@
       imports = with inputs.self.modules.nixos; [
         appimage
         flatpak
+        lutris
         mounts
         mpv
         nvidia
