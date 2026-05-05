@@ -41,75 +41,67 @@
           in
           with pkgs;
           [
-          # Custom
-          google-chrome
-          open-ecc
-          powerplatform-toolbox
+            # Custom
+            google-chrome
+            open-ecc
+            powerplatform-toolbox
 
-          # Packages
-          _1password-gui
-          asciiquarium
-          azure-cli
-          bat
-          brightnessctl
-          bun
-          cameractrls-gtk4
-          cifs-utils
-          curl
-          dapr-cli
-          eza
-          fd
-          file
-          firefox
-          fuse3
-          gnugrep
-          gnupg
-          home-manager
-          hostname
-          imagemagick
-          imhex
-          jq
-          kdePackages.baloo
-          kdePackages.baloo-widgets
-          kdePackages.dolphin
-          kdePackages.dolphin-plugins
-          kdePackages.ffmpegthumbs
-          kdePackages.gwenview
-          kdePackages.kdegraphics-thumbnailers
-          kdePackages.kimageformats
-          kdePackages.kio-extras
-          keymapp
-          killall
-          kubectl
-          kubernetes-helm
-          lld
-          lshw
-          nix-diff
-          nmap
-          openssh
-          pavucontrol
-          postgresql
-          prismlauncher
-          pulumi-bin
-          qbittorrent
-          quicktype
-          reaper
-          ripgrep
-          sl
-          spotify
-          sshfs
-          teams-for-linux
-          tlrc
-          unzip
-          wev
-          wget
-          zip
-
-          # FIND vscode-bash-debug
-          # PROJECT gcc-arm-embedded
-          # BROKEN python314Packages.cfn-lint
-          # vscode-extensions.ms-vscode.powershell
-          # vscode-extensions.llvm-vs-code-extensions.lldb-dap
+            # Packages
+            _1password-gui
+            asciiquarium
+            azure-cli
+            bat
+            brightnessctl
+            cameractrls-gtk4
+            cifs-utils
+            curl
+            dapr-cli
+            eza
+            fd
+            file
+            firefox
+            fuse3
+            gnugrep
+            gnupg
+            home-manager
+            hostname
+            imagemagick
+            imhex
+            jq
+            kdePackages.baloo
+            kdePackages.baloo-widgets
+            kdePackages.dolphin
+            kdePackages.dolphin-plugins
+            kdePackages.ffmpegthumbs
+            kdePackages.gwenview
+            kdePackages.kdegraphics-thumbnailers
+            kdePackages.kimageformats
+            kdePackages.kio-extras
+            keymapp
+            killall
+            kubectl
+            kubernetes-helm
+            lld
+            lshw
+            nix-diff
+            nmap
+            openssh
+            pavucontrol
+            postgresql
+            prismlauncher
+            pulumi-bin
+            qbittorrent
+            reaper
+            ripgrep
+            sl
+            spotify
+            sshfs
+            teams-for-linux
+            tlrc
+            unzip
+            wev
+            wget
+            zip
           ];
       };
     };
