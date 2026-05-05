@@ -39,6 +39,7 @@
         [
           atuin
           aws
+          baresip
           btop
           dapr
           direnv
