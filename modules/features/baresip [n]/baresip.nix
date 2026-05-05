@@ -7,8 +7,6 @@
     {
       home.packages = [ pkgs.baresip ];
 
-      # Account format per upstream docs:
-      # <sip:user@domain>;auth_pass=password
       home.file.".baresip/accounts".text = ''
         <sip:${secrets.voipUsername}@sip1.superloop.com>;auth_pass=${secrets.voipPassword};regint=3600;audio_codecs=PCMA/8000/1,PCMU/8000/1
       '';
@@ -38,8 +36,9 @@
         # Module path (nixpkgs puts modules here)
         module_path             ${pkgs.baresip}/lib/baresip/modules
 
-        # UI (headless - no GTK)
+        # UI
         module                  stdio.so
+        module_app              gtk.so
 
         # Audio codecs
         module                  g711.so
@@ -66,7 +65,7 @@
       systemd.user.services.baresip = {
         Unit = {
           Description = "baresip SIP client";
-          After = [ "network.target" ];
+          After = [ "network.target" "graphical-session.target" ];
           StartLimitIntervalSec = 0;
         };
         Service = {
@@ -74,7 +73,7 @@
           Restart = "always";
           RestartSec = 5;
         };
-        Install.WantedBy = [ "default.target" ];
+        Install.WantedBy = [ "graphical-session.target" ];
       };
     };
 }
