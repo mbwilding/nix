@@ -38,9 +38,8 @@
         # Module path (nixpkgs puts modules here)
         module_path             ${pkgs.baresip}/lib/baresip/modules
 
-        # UI
+        # UI (headless - no GTK)
         module                  stdio.so
-        module_app              gtk.so
 
         # Audio codecs
         module                  g711.so
@@ -63,5 +62,19 @@
         module_app              debug_cmd.so
         module_app              netroam.so
       '';
+
+      systemd.user.services.baresip = {
+        Unit = {
+          Description = "baresip SIP client";
+          After = [ "network.target" ];
+          StartLimitIntervalSec = 0;
+        };
+        Service = {
+          ExecStart = "${pkgs.baresip}/bin/baresip -f %h/.baresip";
+          Restart = "always";
+          RestartSec = 5;
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
     };
 }
