@@ -52,7 +52,7 @@ in
       {
         name = "Teams";
         workspace = "name:social";
-        "match:class" = "teams-for-linux";
+        "match:title" = ".*Microsoft Teams.*";
       }
       {
         name = "Spotify";
@@ -68,37 +68,43 @@ in
         name = "Steam";
         workspace = "name:main";
         float = "on";
+        suppress_event = "fullscreen maximize";
         "match:class" = "^(steam)$";
       }
       {
         name = "Lutris";
         workspace = "name:main";
         float = "on";
+        suppress_event = "fullscreen maximize";
         "match:class" = "^(lutris)$";
       }
       {
         name = "BattleNet";
         workspace = "name:main";
         float = "on";
+        suppress_event = "fullscreen maximize";
         "match:class" = "^(battle.net|battlenet|Blizzard Battle.net)$";
       }
       {
         name = "WoW";
         workspace = "name:main";
         float = "on";
+        suppress_event = "fullscreen maximize";
         "match:class" = "^(World of Warcraft|wow)$";
       }
       {
         name = "WoWTitle";
         workspace = "name:main";
         float = "on";
+        suppress_event = "fullscreen maximize";
         "match:title" = "^(World of Warcraft)$";
       }
       {
         name = "GameWine";
         workspace = "name:main";
         float = "on";
-        "match:class" = "^(steam_app_.*)$";
+        suppress_event = "fullscreen maximize";
+        "match:class" = "^(steam_app.*)$";
       }
     ];
 
