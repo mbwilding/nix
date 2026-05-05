@@ -70,7 +70,6 @@
           docker-language-server
           eslint_d
           eza
-          fastfetch
           fd
           file
           firefox
