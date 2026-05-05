@@ -25,6 +25,7 @@
           github-copilot-cli
 
           # Language Tools
+          bun # js / ts
           cargo # rust
           clang-tools # c / c++
           cmake # c / c++
@@ -35,9 +36,9 @@
           luajit # lua
           luajitPackages.luarocks-nix # lua
           nodejs # js / ts
-          rustc # rust
           python314 # python
           ruby # ruby
+          rustc # rust
           uv # python
 
           # Language Servers
@@ -79,11 +80,20 @@
           markdownlint-cli2 # markdown
           ruff # python
           yamllint # yaml
+          python314Packages.cfn-lint # python (Could be broken)
 
           # Formatters
           rustfmt # rust
           prettierd # js / ts
           php85Packages.php-cs-fixer # php
+
+          # Misc
+          quicktype # json to lang
+
+          # TODO: Find these
+          # vscode-bash-debug
+          # vscode-extensions.ms-vscode.powershell
+          # vscode-extensions.llvm-vs-code-extensions.lldb-dap
         ];
       };
     };
