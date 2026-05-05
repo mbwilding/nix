@@ -123,11 +123,12 @@
     in
     {
       imports = [
-        ./_quickshell.nix
+        # ./_quickshell.nix
       ];
 
       home = {
         packages = with pkgs; [
+          wayle
           hyprshot
           jq
           # hyprnotify
@@ -238,6 +239,7 @@
             # "nm-applet"
             "hyprpaper"
             # "hyprpanel"
+            "wayle panel start"
           ];
 
           "$mod" = "SUPER";
