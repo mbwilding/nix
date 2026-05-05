@@ -70,6 +70,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(steam)$";
+        content = "game";
       }
       {
         name = "Lutris";
@@ -77,6 +78,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(lutris)$";
+        content = "game";
       }
       {
         name = "BattleNet";
@@ -84,6 +86,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(battle.net|battlenet|Blizzard Battle.net)$";
+        content = "game";
       }
       {
         name = "WoW";
@@ -91,6 +94,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(World of Warcraft|wow)$";
+        content = "game";
       }
       {
         name = "WoWTitle";
@@ -98,6 +102,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:title" = "^(World of Warcraft)$";
+        content = "game";
       }
       {
         name = "GameWine";
@@ -105,6 +110,7 @@ in
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(steam_app.*)$";
+        content = "game";
       }
     ];
 
