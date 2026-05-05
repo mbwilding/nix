@@ -44,6 +44,7 @@
           direnv
           discord
           dotnet
+          fastfetch
           files
           fzf
           gh
