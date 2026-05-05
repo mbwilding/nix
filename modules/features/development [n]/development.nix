@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.homeManager.packages =
+  flake.modules.homeManager.development =
     {
       pkgs,
       pkgsStable,
