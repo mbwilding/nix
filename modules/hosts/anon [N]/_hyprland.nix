@@ -64,6 +64,42 @@ in
         workspace = "name:social";
         "match:class" = "discord";
       }
+      {
+        name = "Steam";
+        workspace = "name:main";
+        float = "on";
+        "match:class" = "^(steam)$";
+      }
+      {
+        name = "Lutris";
+        workspace = "name:main";
+        float = "on";
+        "match:class" = "^(lutris)$";
+      }
+      {
+        name = "BattleNet";
+        workspace = "name:main";
+        float = "on";
+        "match:class" = "^(battle.net|battlenet|Blizzard Battle.net)$";
+      }
+      {
+        name = "WoW";
+        workspace = "name:main";
+        float = "on";
+        "match:class" = "^(World of Warcraft|wow)$";
+      }
+      {
+        name = "WoWTitle";
+        workspace = "name:main";
+        float = "on";
+        "match:title" = "^(World of Warcraft)$";
+      }
+      {
+        name = "GameWine";
+        workspace = "name:main";
+        float = "on";
+        "match:class" = "^(steam_app_.*)$";
+      }
     ];
 
     env = lib.mkForce [
