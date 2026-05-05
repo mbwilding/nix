@@ -21,8 +21,8 @@
         waydroid
         wireshark
 
-        # hyprland
-        kde
+        hyprland
+        # kde
       ] ++ [
         ./_hardware-configuration.nix
       ];
@@ -30,8 +30,8 @@
       home-manager.sharedModules = [
         ./_ghostty.nix
 
-        # ./_hyprland.nix
-        ./_kde.nix
+        ./_hyprland.nix
+        # ./_kde.nix
       ];
 
       networking.hostName = "anon";
@@ -181,11 +181,11 @@
     [
       ./_ghostty.nix
 
-      # ./_hyprland.nix
+      ./_hyprland.nix
+      hyprland
+      theme
 
-      # hyprland
-      # theme
-      kde
+      # kde
     ]
   );
 }
