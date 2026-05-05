@@ -25,125 +25,109 @@
             { type = "title"; }
             "break"
             {
-              type = "custom";
-              format = "\u001b[90m┌────────────────────── Operating System ──────────────────────┐";
-            }
-            {
               type = "os";
-              key = "󰨡 OS:";
+              key = "󰨡 OS";
               keyColor = "#FFC0CB";
             }
             {
               type = "kernel";
-              key = "│ Kernel:  ";
+              key = " Kernel";
               keyColor = "#FFC0CB";
             }
             {
               type = "shell";
-              key = "│ Shell:  ";
+              key = " Shell";
               keyColor = "#FFC0CB";
             }
             {
               type = "terminal";
-              key = "│ Terminal:  ";
+              key = " Terminal";
               keyColor = "#FFC0CB";
             }
             {
               type = "terminalfont";
-              key = "│ Terminal Font:  ";
+              key = " Terminal Font";
               keyColor = "#FFC0CB";
             }
             {
               type = "lm";
-              key = "│ DM: 󰌾 ";
+              key = "󰌾 DM";
               keyColor = "#FFC0CB";
             }
             {
               type = "de";
-              key = "│ DE:  ";
+              key = " DE";
               keyColor = "#FFC0CB";
             }
             {
               type = "wm";
-              key = "│ WM:  ";
+              key = " WM";
               keyColor = "#FFC0CB";
             }
             {
               type = "wmtheme";
-              key = "│ WM Theme: 󰃣 ";
+              key = "󰃣 WM Theme";
               keyColor = "#FFC0CB";
             }
             {
               type = "packages";
-              key = "└ Packages:  ";
+              key = " Packages";
               keyColor = "#FFC0CB";
             }
             {
-              type = "custom";
-              format = "\u001b[90m├────────────────────── Device ────────────────────────────────┤";
-            }
-            {
               type = "host";
-              key = "󰟀 Host:";
+              key = "󰟀 Host";
               keyColor = "yellow";
             }
             {
               type = "bios";
-              key = "│ BIOS:  ";
+              key = " BIOS";
               keyColor = "yellow";
             }
             {
               type = "memory";
-              key = "│ RAM Memory:  ";
+              key = " RAM";
               keyColor = "yellow";
             }
             {
               type = "swap";
-              key = "│ Swap: 󰾴 ";
+              key = "󰾴 Swap";
               keyColor = "yellow";
             }
             {
               type = "cpu";
-              key = "│ Processor: 󰍛 ";
+              key = "󰍛 CPU";
               keyColor = "yellow";
             }
             {
               type = "gpu";
-              key = "│ Videocard: 󰢮 ";
+              key = "󰢮 GPU";
               keyColor = "yellow";
             }
             {
               type = "disk";
-              key = "│ Storage:  ";
+              key = " SSD";
               keyColor = "yellow";
             }
             {
               type = "battery";
-              key = "└ Battery: 󰁹 ";
+              key = "󰁹 Battery";
               keyColor = "yellow";
             }
             {
-              type = "custom";
-              format = "\u001b[90m├────────────────────── Others Configurations ─────────────────┤";
-            }
-            {
               type = "uptime";
-              key = " Uptime:";
+              key = " Uptime";
               keyColor = "cyan";
             }
             {
               type = "datetime";
-              key = "│ DateTime:  ";
+              key = " DateTime";
               keyColor = "cyan";
             }
             {
               type = "locale";
-              key = "└ Locale: 󰇧 ";
+              key = "󰇧 Locale";
               keyColor = "cyan";
-            }
-            {
-              type = "custom";
-              format = "\u001b[90m└──────────────────────────────────────────────────────────────┘";
             }
             {
               type = "colors";
