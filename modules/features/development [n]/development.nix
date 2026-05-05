@@ -80,7 +80,9 @@
           markdownlint-cli2 # markdown
           ruff # python
           yamllint # yaml
-          python314Packages.cfn-lint # python (Could be broken)
+
+          # python314Packages.cfn-lint # python (broken)
+          # error: aws-sam-translator-1.106.0 not supported for interpreter python3.14
 
           # Formatters
           rustfmt # rust
