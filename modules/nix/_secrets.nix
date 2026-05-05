@@ -55,4 +55,8 @@ in
 
   # AWS
   aws = readJSON "aws.json";
+
+  # Voip
+  voipUsername = read "voip-username";
+  voipPassword = read "voip-password";
 }
