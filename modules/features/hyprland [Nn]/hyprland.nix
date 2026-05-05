@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.hyprland =
@@ -123,12 +123,12 @@
     in
     {
       imports = [
-        # ./_quickshell.nix
+        ./_quickshell.nix
       ];
 
       home = {
         packages = with pkgs; [
-          wayle
+          # wayle
           hyprshot
           jq
           # hyprnotify
@@ -239,7 +239,7 @@
             # "nm-applet"
             "hyprpaper"
             # "hyprpanel"
-            "wayle panel start"
+            # "wayle panel start"
           ];
 
           "$mod" = "SUPER";
@@ -512,5 +512,22 @@
           ];
         };
       };
+
+      # home.file.".config/wayle/config.toml".text = ''
+      #   # https://wayle.app/config
+      #
+      #   [bar]
+      #   location = "top"
+      #   scale = 1.0
+      #
+      #   [[bar.layout]]
+      #   monitor = "*"
+      #   left = ["dashboard", "idle-inhibit"]
+      #   center = ["clock"]
+      #   right = ["volume", "network", "bluetooth", "battery"]
+      #
+      #   [modules.clock]
+      #   format = "%H:%M"
+      # '';
     };
 }
