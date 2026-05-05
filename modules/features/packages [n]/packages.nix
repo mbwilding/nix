@@ -145,7 +145,7 @@
           sqls
           sshfs
           tailwindcss-language-server
-          taplo
+          # taplo
           teams-for-linux
           tlrc
           tombi
