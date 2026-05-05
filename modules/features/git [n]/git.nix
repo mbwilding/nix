@@ -6,6 +6,7 @@
       secrets,
       config,
       lib,
+      pkgs,
       ...
     }:
 
@@ -108,6 +109,10 @@
       };
 
       home = {
+        packages = with pkgs; [
+          delta
+        ];
+
         file.".config/git/config-personal".text = ''
           [user]
               name = Matthew Wilding
