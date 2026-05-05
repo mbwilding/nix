@@ -50,43 +50,24 @@
           _1password-gui
           asciiquarium
           azure-cli
-          bash-language-server
-          bashdb
           bat
           brightnessctl
           bun
           cameractrls-gtk4
-          cargo
-          cfn-nag
           cifs-utils
-          clang-tools
-          clippy
-          cmake
           curl
           dapr-cli
-          delta
-          delve
-          docker-compose-language-service
-          docker-language-server
-          eslint_d
           eza
           fd
           file
           firefox
           fuse3
-          gcc
-          github-copilot-cli
           gnugrep
-          gnumake
           gnupg
-          go
-          gopls
           home-manager
           hostname
           imagemagick
           imhex
-          jdk
-          jfrog-cli
           jq
           kdePackages.baloo
           kdePackages.baloo-widgets
@@ -101,67 +82,28 @@
           killall
           kubectl
           kubernetes-helm
-          lemminx
           lld
-          lldb
           lshw
-          lua-language-server
-          luajit
-          luajitPackages.luarocks-nix
-          markdownlint-cli2
-          marksman
-          neovim-unwrapped
-          netcoredbg
-          nil
           nix-diff
           nmap
-          nodejs
           openssh
           pavucontrol
-          php85Packages.php-cs-fixer
-          phpactor
           postgresql
-          powershell
-          powershell-editor-services
-          prettierd
           prismlauncher
           pulumi-bin
-          pyright
-          python314
-          python314Packages.debugpy
           qbittorrent
-          qt6.qtdeclarative # qmlls
           quicktype
           reaper
           ripgrep
-          roslyn-ls
-          ruby
-          ruff
-          rust-analyzer
-          rustc
-          rustfmt
           sl
           spotify
-          sqls
           sshfs
-          tailwindcss-language-server
           teams-for-linux
           tlrc
-          tombi
-          tree-sitter
-          typescript-go
           unzip
-          uv
-          vim
-          vscode-js-debug
-          vscode-langservers-extracted
-          vue-language-server
           wev
           wget
-          yaml-language-server
-          yamllint
           zip
-          zls
 
           # FIND vscode-bash-debug
           # PROJECT gcc-arm-embedded
@@ -172,4 +114,3 @@
       };
     };
 }
-
