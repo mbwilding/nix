@@ -12,6 +12,8 @@
     {
       fonts = {
         packages = with pkgs; [
+          corefonts
+          vista-fonts
           neospleen
           neospleen-nerdfont
           # neospleen-local
