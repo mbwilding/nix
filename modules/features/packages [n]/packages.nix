@@ -108,6 +108,7 @@
           lua-language-server
           luajit
           luajitPackages.luarocks-nix
+          lutris
           markdownlint-cli2
           marksman
           neovim-unwrapped
@@ -145,7 +146,6 @@
           sqls
           sshfs
           tailwindcss-language-server
-          # taplo
           teams-for-linux
           tlrc
           tombi
