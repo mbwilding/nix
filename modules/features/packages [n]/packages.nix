@@ -148,6 +148,7 @@
           taplo
           teams-for-linux
           tlrc
+          tombi
           tree-sitter
           typescript-go
           unzip
