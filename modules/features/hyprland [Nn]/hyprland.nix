@@ -115,7 +115,7 @@
     let
       anim_speed = 2.0;
 
-      gaps = 10.0;
+      gaps = 0.0; # 10.0
       cursor_size = 24;
       cursor_size_str = builtins.toString cursor_size;
 
@@ -199,10 +199,10 @@
           };
 
           decoration = {
-            rounding = 10;
+            rounding = 0; # 10
 
             active_opacity = 1.0;
-            inactive_opacity = 0.96;
+            inactive_opacity = 1.0; # 0.96
 
             shadow = {
               enabled = false;
