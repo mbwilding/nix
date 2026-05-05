@@ -28,6 +28,8 @@ secrets=(
   "Password|credential|$HOME/.secrets/password"
   "Pulumi|credential|$HOME/.secrets/pulumi"
   "Steam|credential|$HOME/.secrets/steam"
+  "Voip|password|$HOME/.secrets/voip-password"
+  "Voip|username|$HOME/.secrets/voip-username"
   "Weather|credential|$HOME/.secrets/weather"
   "Wifi Home|network name|$HOME/.secrets/wifi-home-ssid"
   "Wifi Home|wireless network password|$HOME/.secrets/wifi-home-password"
