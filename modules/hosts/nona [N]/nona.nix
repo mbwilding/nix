@@ -11,8 +11,6 @@ in
         amd
         appimage
         flatpak
-        # lutris
-        mounts
         mpv
         podman
         qemu
@@ -23,6 +21,8 @@ in
         waydroid
         wireguard-nona
         wireshark
+        # lutris
+        # mounts
 
         hyprland
         # kde
