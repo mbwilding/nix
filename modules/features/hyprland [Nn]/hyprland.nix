@@ -110,7 +110,7 @@
     };
 
   flake.modules.homeManager.hyprland =
-    { lib, pkgs, ... }:
+    { lib, pkgs, config, ... }:
 
     let
       anim_speed = 2.0;
@@ -122,6 +122,12 @@
       anim_speed_str = builtins.toString anim_speed;
     in
     {
+      options.noctalia.monitors = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Monitor names to use for noctalia lock screen, notifications, and OSD.";
+      };
+
       home = {
         packages = with pkgs; [
           # hyprnotify
@@ -918,9 +924,7 @@
           lockScreenAnimations = false;
           lockScreenBlur = 0;
           lockScreenCountdownDuration = 10000;
-          lockScreenMonitors = [
-            "HDMI-A-1"
-          ];
+          lockScreenMonitors = config.noctalia.monitors;
           lockScreenTint = 0;
           passwordChars = false;
           radiusRatio = 1;
@@ -1014,9 +1018,7 @@
           enabled = true;
           location = "top_right";
           lowUrgencyDuration = 3;
-          monitors = [
-            "HDMI-A-1"
-          ];
+          monitors = config.noctalia.monitors;
           normalUrgencyDuration = 8;
           overlayLayer = true;
           respectExpireTimeout = false;
@@ -1045,9 +1047,7 @@
             2
           ];
           location = "top_right";
-          monitors = [
-            "HDMI-A-1"
-          ];
+          monitors = config.noctalia.monitors;
           overlayLayer = true;
         };
         plugins = {
