@@ -611,7 +611,7 @@
             mouseWheelAction = "none";
             mouseWheelWrap = true;
             outerCorners = true;
-            position = "top";
+            position = "bottom";
             reverseScroll = false;
             rightClickAction = "controlCenter";
             rightClickCommand = "";
@@ -866,7 +866,7 @@
             deadOpacity = 0.6;
             displayMode = "auto_hide";
             dockType = "floating";
-            enabled = true;
+            enabled = false;
             floatingRatio = 1;
             groupApps = false;
             groupClickAction = "cycle";
@@ -884,7 +884,7 @@
             onlySameOutput = true;
             pinnedApps = [ ];
             pinnedStatic = false;
-            position = "bottom";
+            position = "top";
             showDockIndicator = false;
             showLauncherIcon = false;
             sitOnFrame = false;
