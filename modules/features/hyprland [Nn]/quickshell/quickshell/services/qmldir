@@ -1,3 +1,0 @@
-module services
-singleton BrightnessService 1.0 BrightnessService.qml
-singleton WallpaperService 1.0 WallpaperService.qml
