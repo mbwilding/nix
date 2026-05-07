@@ -1,8 +1,6 @@
 { lib, ... }:
 
 {
-  noctalia.monitors = [ "eDP-1" ];
-
   wayland.windowManager.hyprland.settings = {
     monitorv2 = [
       # Internal

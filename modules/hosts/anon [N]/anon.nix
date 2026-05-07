@@ -2,7 +2,7 @@
 
 {
   flake.modules.nixos.anon =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     {
       imports = with inputs.self.modules.nixos; [
         appimage
@@ -37,9 +37,11 @@
 
       networking.hostName = "anon";
 
+      host.primaryMonitor = "HDMI-A-1";
+
       environment = {
         sessionVariables = {
-          WAYLANDDRV_PRIMARY_MONITOR = "HDMI-A-1";
+          WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
         systemPackages = with pkgs; [
           davinci-resolve-studio

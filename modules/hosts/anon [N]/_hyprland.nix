@@ -5,8 +5,6 @@ let
   home = import ../../nix/_home.nix;
 in
 {
-  noctalia.monitors = [ "HDMI-A-1" ];
-
   wayland.windowManager.hyprland.settings = {
     monitorv2 = [
       {
