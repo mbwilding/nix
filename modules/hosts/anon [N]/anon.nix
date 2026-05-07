@@ -183,7 +183,6 @@
       ./_ghostty.nix
 
       ./_hyprland.nix
-      hyprland-options
       hyprland
       theme
 
