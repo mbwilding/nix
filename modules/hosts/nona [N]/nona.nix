@@ -5,7 +5,7 @@ let
 in
 {
   flake.modules.nixos.nona =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     {
       imports = with inputs.self.modules.nixos; [
         amd
@@ -185,9 +185,11 @@ in
         };
       };
 
+      host.primaryMonitor = "eDP-1";
+
       environment = {
         sessionVariables = {
-          WAYLANDDRV_PRIMARY_MONITOR = "eDP-1";
+          WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
       };
 
