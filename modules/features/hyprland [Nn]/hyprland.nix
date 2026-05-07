@@ -1,10 +1,21 @@
 { inputs, ... }:
 
 {
+  flake.modules.homeManager.hyprland-options =
+    { lib, ... }:
+    {
+      options.noctalia.monitors = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Monitor names to use for noctalia lock screen, notifications, and OSD.";
+      };
+    };
+
   flake.modules.nixos.hyprland =
     { pkgs, lib, ... }:
     {
       home-manager.sharedModules = [
+        inputs.self.modules.homeManager.hyprland-options
         inputs.self.modules.homeManager.hyprland
         inputs.self.modules.homeManager.theme
       ];
@@ -110,7 +121,12 @@
     };
 
   flake.modules.homeManager.hyprland =
-    { lib, pkgs, config, ... }:
+    {
+      lib,
+      pkgs,
+      config,
+      ...
+    }:
 
     let
       anim_speed = 2.0;
@@ -122,12 +138,6 @@
       anim_speed_str = builtins.toString anim_speed;
     in
     {
-      options.noctalia.monitors = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = "Monitor names to use for noctalia lock screen, notifications, and OSD.";
-      };
-
       home = {
         packages = with pkgs; [
           # hyprnotify
