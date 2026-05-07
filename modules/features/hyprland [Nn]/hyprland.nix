@@ -137,6 +137,7 @@
       anim_speed_str = builtins.toString anim_speed;
 
       monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
+      noctalia = "noctalia-shell ipc call";
     in
     {
       home = {
@@ -261,16 +262,17 @@
             "$mod" = "SUPER";
             bind = [
               "$mod, b, exec, firefox"
+              "$mod, c, exec, ghostty -e btop +new-window"
+              "$mod, d, exec, discord"
               "$mod, e, exec, dolphin"
+              "$mod, m, exec, teams-for-linux"
               "$mod, n, exec, neovide"
               "$mod, p, exec, 1password"
-              "$mod, r, exec, qs ipc call applauncher open"
-              "$mod, z, exec, qs ipc call lockscreen lock"
-              "$mod, t, exec, ghostty +new-window"
-              "$mod, c, exec, ghostty -e btop +new-window"
+              "$mod, r, exec, noctalia-shell ipc call launcher toggle"
               "$mod, s, exec, spotify"
-              "$mod, m, exec, teams-for-linux"
-              "$mod, d, exec, discord"
+              "$mod, t, exec, ghostty +new-window"
+              "$mod, z, exec, noctalia-shell ipc call lockScreen lock"
+              "$mod, comma, exec, noctalia-shell ipc call settings toggle"
               "$mod, minus, exec, ecc toggle"
 
               "$mod, f, togglefloating,"
@@ -335,8 +337,8 @@
             ];
 
             bindl = [
-              ", switch:on:Lid Switch, exec, qs ipc call lockscreen lock && hyprctl dispatch dpms off eDP-1 && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
-              ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on eDP-1"
+              ", switch:on:Lid Switch, exec, noctalia-shell ipc call lockScreen lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
+              ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on ${primaryMonitor}"
             ];
 
             animations = {
