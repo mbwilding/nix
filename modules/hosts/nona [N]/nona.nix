@@ -201,6 +201,8 @@ in
   flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "nona" (
     with inputs.self.modules.homeManager;
     [
+      { _module.args.primaryMonitor = "eDP-1"; }
+
       hyprland
       theme
       ./_hyprland.nix
