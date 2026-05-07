@@ -14,6 +14,7 @@
         home-manager.sharedModules = [
           inputs.self.modules.homeManager.hyprland
           inputs.self.modules.homeManager.theme
+          { _module.args.primaryMonitor = config.host.primaryMonitor; }
         ];
 
       programs = {
@@ -122,16 +123,20 @@
       lib,
       pkgs,
       osConfig ? null,
+      primaryMonitor ? (if osConfig != null then osConfig.host.primaryMonitor else ""),
       ...
     }:
 
     let
-      monitors = if osConfig != null then [ osConfig.host.primaryMonitor ] else [ ];
       anim_speed = 2.0;
+
       gaps = 0.0; # 10.0
       cursor_size = 24;
       cursor_size_str = builtins.toString cursor_size;
+
       anim_speed_str = builtins.toString anim_speed;
+
+      monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
     in
     {
       home = {
@@ -510,7 +515,7 @@
         #   format = "%H:%M"
         # '';
 
-        home.file.".config/noctalia/colors.json".text = lib.generators.toJSON { } {
+        home.file.".config/noctalia/colors.json".text = builtins.toJSON {
           mPrimary = "#39bae6";
           mSecondary = "#aad94c";
           mTertiary = "#e6b450";
@@ -529,7 +534,7 @@
           mSurfaceVariant = "#1e222a";
         };
 
-        home.file.".config/noctalia/plugins.json".text = lib.generators.toJSON { } {
+        home.file.".config/noctalia/plugins.json".text = builtins.toJSON {
           sources = [
             {
               enabled = true;
@@ -541,7 +546,7 @@
           version = 2;
         };
 
-        home.file.".config/noctalia/settings.json".text = lib.generators.toJSON { } {
+        home.file.".config/noctalia/settings.json".text = builtins.toJSON {
           appLauncher = {
             autoPasteClipboard = false;
             clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
