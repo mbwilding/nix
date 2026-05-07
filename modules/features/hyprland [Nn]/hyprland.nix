@@ -2,12 +2,19 @@
 
 {
   flake.modules.nixos.hyprland =
-    { pkgs, lib, ... }:
+    { pkgs, lib, config, ... }:
     {
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.hyprland
-        inputs.self.modules.homeManager.theme
-      ];
+      options.host.primaryMonitor = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "Primary monitor output name for this host (e.g. HDMI-A-1, eDP-1).";
+      };
+
+      config = {
+        home-manager.sharedModules = [
+          inputs.self.modules.homeManager.hyprland
+          inputs.self.modules.homeManager.theme
+        ];
 
       programs = {
         hyprland = {
@@ -108,33 +115,26 @@
         ];
       };
     };
+  };
 
   flake.modules.homeManager.hyprland =
     {
       lib,
       pkgs,
-      config,
+      osConfig ? null,
       ...
     }:
 
     let
+      monitors = if osConfig != null then [ osConfig.host.primaryMonitor ] else [ ];
       anim_speed = 2.0;
-
       gaps = 0.0; # 10.0
       cursor_size = 24;
       cursor_size_str = builtins.toString cursor_size;
-
       anim_speed_str = builtins.toString anim_speed;
     in
     {
-      options.noctalia.monitors = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = "Monitor names to use for noctalia lock screen, notifications, and OSD.";
-      };
-
-      config = {
-        home = {
+      home = {
           packages = with pkgs; [
             # hyprnotify
             # wayle
@@ -930,7 +930,7 @@
             lockScreenAnimations = false;
             lockScreenBlur = 0;
             lockScreenCountdownDuration = 10000;
-            lockScreenMonitors = config.noctalia.monitors;
+            lockScreenMonitors = monitors;
             lockScreenTint = 0;
             passwordChars = false;
             radiusRatio = 1;
@@ -1024,7 +1024,7 @@
             enabled = true;
             location = "top_right";
             lowUrgencyDuration = 3;
-            monitors = config.noctalia.monitors;
+            monitors = monitors;
             normalUrgencyDuration = 8;
             overlayLayer = true;
             respectExpireTimeout = false;
@@ -1053,7 +1053,7 @@
               2
             ];
             location = "top_right";
-            monitors = config.noctalia.monitors;
+            monitors = monitors;
             overlayLayer = true;
           };
           plugins = {
@@ -1217,6 +1217,5 @@
             wallpaperChangeMode = "random";
           };
         };
-      };
     };
 }
