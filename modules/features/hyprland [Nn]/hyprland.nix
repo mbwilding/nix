@@ -247,7 +247,8 @@
             "$mod, e, exec, dolphin"
             "$mod, n, exec, neovide"
             "$mod, p, exec, 1password"
-            "$mod, r, exec, wofi --show drun"
+            "$mod, r, exec, qs ipc call applauncher open"
+            "$mod, z, exec, qs ipc call lockscreen lock"
             "$mod, t, exec, ghostty +new-window"
             "$mod, c, exec, ghostty -e btop +new-window"
             "$mod, s, exec, spotify"
@@ -456,29 +457,6 @@
             "image/x-icon" = "org.kde.gwenview.desktop";
           };
         };
-      };
-
-      programs.wofi = {
-        enable = true;
-        settings = {
-          mode = "drun";
-          allow_images = true;
-          prompt = "Search";
-          location = "top_center";
-          height = "30%";
-          width = "20%";
-        };
-        style = ''
-          * {
-              font-family: "NeoSpleen Nerd Font";
-              font-size: 22px;
-          }
-
-          image {
-              margin-left: 0.5em;
-              margin-right: 0.5em;
-          }
-        '';
       };
 
       services.hypridle = {
