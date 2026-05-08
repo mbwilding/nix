@@ -1192,7 +1192,7 @@
             overviewTint = 0.6;
             panelPosition = "follow_bar";
             randomIntervalSec = 300;
-            setWallpaperOnAllMonitors = true;
+            setWallpaperOnAllMonitors = false;
             showHiddenFiles = false;
             skipStartupTransition = false;
             solidColor = "#1a1a2e";
