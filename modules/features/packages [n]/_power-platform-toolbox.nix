@@ -5,13 +5,13 @@
 }:
 
 let
-  version = "1.2.0";
+  version = "1.2.1";
   pname = "powerplatform-toolbox";
   repo = "https://github.com/PowerPlatformToolBox/desktop-app";
 
   src = fetchurl {
     url = "${repo}/releases/download/v${version}/Power-Platform-ToolBox-${version}-x86_64-linux.AppImage";
-    hash = "sha256-+faKmYJalSlarhP9vSbL3MutrBkHZ38UEQMrSjxTn+A=";
+    hash = "sha256-++dcczsI+dUWmG7TZJasPdsEreiUDqBpxZ5VnHRHimU=";
   };
 
   appimageContents = appimageTools.extractType1 {
