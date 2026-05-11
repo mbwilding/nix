@@ -411,8 +411,8 @@
       '';
 
       home.file.".config/steamtinkerlaunch/gamecfgs/customvars/global-custom-vars.conf".text = ''
-        PROTON_ENABLE_WAYLAND="1"
-        PROTON_ENABLE_HDR="1"
+        PROTON_ENABLE_WAYLAND=1
+        PROTON_ENABLE_HDR=1
       '';
 
       home.activation.steamtinkerlaunchGamecfgs = lib.hm.dag.entryAfter [ "writeBoundary" ] (
