@@ -1,6 +1,12 @@
 { ... }:
 
 {
+  flake.modules.nixos.wine =
+    { ... }:
+    {
+      boot.kernelModules = [ "ntsync" ];
+    };
+
   flake.modules.homeManager.wine =
     { pkgs, ... }:
     {

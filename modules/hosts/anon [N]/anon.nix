@@ -19,6 +19,7 @@
         ucodenix
         user-anon
         waydroid
+        wine
         wireshark
         # mounts
 
