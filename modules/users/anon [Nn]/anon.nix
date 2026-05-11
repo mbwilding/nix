@@ -64,6 +64,7 @@
           proxychains
           shells
           ssh
+          steam
           wine
           yabridge
           yazi
