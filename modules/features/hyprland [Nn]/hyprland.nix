@@ -640,7 +640,7 @@
           rightClickFollowMouse = true;
           screenOverrides = [ ];
           showCapsule = false;
-          showOnWorkspaceSwitch = true;
+          showOnWorkspaceSwitch = false;
           showOutline = false;
           useSeparateOpacity = false;
           widgetSpacing = 6;
