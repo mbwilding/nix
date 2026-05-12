@@ -1154,7 +1154,7 @@
         };
         wallpaper = {
           automationEnabled = true;
-          directory = "/home/anon/nix/wallpapers";
+          directory = "/home/anon/nix/wallpapers/dark";
           enableMultiMonitorDirectories = false;
           enabled = true;
           favorites = [ ];
