@@ -142,7 +142,6 @@
       anim_speed_str = builtins.toString anim_speed;
 
       monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
-      noctalia = "noctalia-shell ipc call";
     in
     {
       home = {
@@ -211,7 +210,7 @@
           };
 
           dwindle = {
-            pseudotile = true;
+            # pseudotile = true; # TODO: Find replacement in 0.55
             preserve_split = true;
           };
 
@@ -243,13 +242,13 @@
             disable_hyprland_logo = true;
             disable_splash_rendering = true;
             background_color = "0x000000";
-            vfr = true;
+            # vfr = true; # TODO: Find replacement in 0.55
           };
 
           render = {
             send_content_type = true;
             direct_scanout = 1;
-            cm_fs_passthrough = 2;
+            # cm_fs_passthrough = 2; # TODO: Find replacement in 0.55
             cm_auto_hdr = 2;
             new_render_scheduling = false;
           };
@@ -522,6 +521,19 @@
       #   format = "%H:%M"
       # '';
 
+      home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
+        workspace = {
+          library = [
+            "/usr/share/hypr/stubs"
+          ];
+        };
+        diganostics = {
+          globals = [
+            "hl"
+          ];
+        };
+      };
+
       home.file.".config/noctalia/colors.json".text = builtins.toJSON {
         mPrimary = "#39bae6";
         mSecondary = "#aad94c";
@@ -539,19 +551,6 @@
         mShadow = "#000000";
         mSurface = "#0b0e14";
         mSurfaceVariant = "#1e222a";
-      };
-
-      home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
-        workspace = {
-          library = [
-            "/usr/share/hypr/stubs"
-          ];
-        };
-        diganostics = {
-          globals = [
-            "hl"
-          ];
-        };
       };
 
       home.file.".config/noctalia/plugins.json".text = builtins.toJSON {
