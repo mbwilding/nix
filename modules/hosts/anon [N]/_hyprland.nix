@@ -37,11 +37,11 @@ in
     ];
 
     workspace = [
-      "1, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  default:true, layoutopt:direction:right, persistent:true"
-      "2, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
-      "3, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
-      "4, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
-      "5, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
+      "1, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, layoutopt:direction:right, persistent:true, default:true"
+      "2, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, layoutopt:direction:right, persistent:true"
+      "3, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, layoutopt:direction:right, persistent:true"
+      "4, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, layoutopt:direction:right, persistent:true"
+      "5, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, layoutopt:direction:right, persistent:true"
       "name:social, monitor:desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd,  default:true, layoutopt:direction:down, persistent:true"
       "name:spare,  monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
     ];
@@ -117,25 +117,5 @@ in
         content = "game";
       }
     ];
-
-    env = lib.mkForce [
-      "CLUTTER_BACKEND,wayland"
-      "ELECTRON_OZONE_PLATFORM_HINT,wayland"
-      "GDK_BACKEND,wayland,x11,*"
-      "GTK_THEME,Breeze-Dark"
-      "QT_QPA_PLATFORM,wayland;xcb"
-      "QT_QPA_PLATFORMTHEME,kde"
-      "SDL_VIDEODRIVER,wayland"
-      "GDK_SCALE,1"
-      "XDG_CURRENT_DESKTOP,Hyprland"
-      "XDG_SESSION_DESKTOP,Hyprland"
-      "XDG_SESSION_TYPE,wayland"
-      "HYPRSHOT_DIR,${home}/Pictures/Screenshots"
-      "HYPRCURSOR_SIZE,${cursor_size}"
-      "XCURSOR_SIZE,${cursor_size}"
-    ];
   };
-
-  gtk.cursorTheme.size = lib.mkForce 16;
-  dconf.settings."org/gnome/desktop/interface".cursor-size = lib.mkForce 16;
 }
