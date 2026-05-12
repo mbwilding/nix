@@ -313,18 +313,17 @@
             "$mod, n, layoutmsg, cyclenext"
             "$mod, return, layoutmsg, swapwithmaster master"
           ]
-          ++ (builtins.concatLists (
-            builtins.genList (
-              i:
-              let
-                ws = i + 1;
-              in
-              [
-                "$mod, ${toString ws}, workspace, ${toString ws}"
-                "$mod SHIFT, ${toString ws}, movetoworkspace, ${toString ws}"
-              ]
-            ) 5
-          )) ++ [
+          ++ [
+            "$mod CTRL, h, workspace, 1"
+            "$mod CTRL, t, workspace, 2"
+            "$mod CTRL, n, workspace, 3"
+            "$mod CTRL, s, workspace, 4"
+            "$mod CTRL, minus, workspace, 5"
+            "$mod CTRL SHIFT, h, movetoworkspace, 1"
+            "$mod CTRL SHIFT, t, movetoworkspace, 2"
+            "$mod CTRL SHIFT, n, movetoworkspace, 3"
+            "$mod CTRL SHIFT, s, movetoworkspace, 4"
+            "$mod CTRL SHIFT, minus, movetoworkspace, 5"
             "$mod, 6, workspace, name:social"
             "$mod, 7, workspace, name:spare"
             "$mod SHIFT, 6, movetoworkspace, name:social"
