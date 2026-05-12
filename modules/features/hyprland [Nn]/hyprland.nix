@@ -353,12 +353,12 @@
           animations = {
             enabled = true;
             animation = [
+              "workspaces, 0, 0.0, default"
               "windows, 1, ${anim_speed_str}, default"
               "layers, 1, ${anim_speed_str}, default"
               "fade, 1, ${anim_speed_str}, default"
               "border, 1, ${anim_speed_str}, default"
               "borderangle, 1, ${anim_speed_str}, default"
-              "workspaces, 1, ${anim_speed_str}, default"
               "zoomFactor, 1, ${anim_speed_str}, default"
               "monitorAdded, 1, ${anim_speed_str}, default"
             ];
