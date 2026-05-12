@@ -31,6 +31,8 @@
     };
 
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+
+    hyprland.url = "github:hyprwm/Hyprland";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
