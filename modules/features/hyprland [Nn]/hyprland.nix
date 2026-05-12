@@ -320,11 +320,16 @@
                 ws = i + 1;
               in
               [
-                "$mod, code:1${toString i}, workspace, ${toString ws}"
-                "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+                "$mod, ${toString ws}, workspace, ${toString ws}"
+                "$mod SHIFT, ${toString ws}, movetoworkspace, ${toString ws}"
               ]
-            ) 9
-          ));
+            ) 5
+          )) ++ [
+            "$mod, 6, workspace, name:social"
+            "$mod, 7, workspace, name:spare"
+            "$mod SHIFT, 6, movetoworkspace, name:social"
+            "$mod SHIFT, 7, movetoworkspace, name:spare"
+          ];
 
           binde = [
             ", XF86AudioLowerVolume,  exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"

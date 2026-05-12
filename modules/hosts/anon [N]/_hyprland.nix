@@ -37,15 +37,19 @@ in
     ];
 
     workspace = [
-      "name:main, monitor:desc:LG Electronics LG TV SSCR2 0x01010101, default:true, layoutopt:direction:right, persistent:true"
-      "name:social, monitor:desc:Dell Inc. Dell AW3418DW, default:true, layoutopt:direction:down, persistent:true"
-      "name:spare, monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
+      "1, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  default:true, layoutopt:direction:right, persistent:true"
+      "2, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
+      "3, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
+      "4, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
+      "5, monitor:desc:LG Electronics LG TV SSCR2 0x01010101,  layoutopt:direction:right, persistent:true"
+      "name:social, monitor:desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd,  default:true, layoutopt:direction:down, persistent:true"
+      "name:spare,  monitor:desc:LG Electronics LG ULTRAWIDE 0x01010101, default:true, layoutopt:direction:down, persistent:true"
     ];
 
     exec-once = lib.mkAfter [
       "hyprctl dispatch workspace name:social"
       "hyprctl dispatch workspace name:spare"
-      "hyprctl dispatch workspace name:main"
+      "hyprctl dispatch workspace 1"
     ];
 
     windowrule = lib.mkAfter [
@@ -66,7 +70,7 @@ in
       }
       {
         name = "Steam";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(steam)$";
@@ -74,7 +78,7 @@ in
       }
       {
         name = "Lutris";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(lutris)$";
@@ -82,7 +86,7 @@ in
       }
       {
         name = "BattleNet";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(battle.net|battlenet|Blizzard Battle.net)$";
@@ -90,7 +94,7 @@ in
       }
       {
         name = "WoW";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(World of Warcraft|wow)$";
@@ -98,7 +102,7 @@ in
       }
       {
         name = "WoWTitle";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:title" = "^(World of Warcraft)$";
@@ -106,7 +110,7 @@ in
       }
       {
         name = "GameWine";
-        workspace = "name:main";
+        workspace = "1";
         float = "on";
         suppress_event = "fullscreen maximize";
         "match:class" = "^(steam_app.*)$";
