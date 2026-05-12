@@ -270,7 +270,7 @@
             "$mod, d, exec, discord"
             "$mod, e, exec, dolphin"
             "$mod, m, exec, teams-for-linux"
-            "$mod, n, exec, neovide"
+            # "$mod, n, exec, neovide"
             "$mod, p, exec, 1password"
             "$mod, r, exec, noctalia-shell ipc call launcher toggle"
             "$mod, s, exec, spotify"
