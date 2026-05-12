@@ -26,11 +26,6 @@
           inputs.self.modules.nixos.${name}
           {
             nixpkgs.hostPlatform = lib.mkDefault system;
-            nixpkgs.overlays = [
-              (final: prev: {
-                hyprland = inputs.hyprland.packages.${system}.hyprland;
-              })
-            ];
             _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
           }
         ];
@@ -56,11 +51,6 @@
             inputs.self.modules.homeManager.anon
             {
               nixpkgs.config.allowUnfree = true;
-              nixpkgs.overlays = [
-                (final: prev: {
-                  hyprland = inputs.hyprland.packages.${system}.hyprland;
-                })
-              ];
               _module.args.secrets = secrets;
               _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
             }
