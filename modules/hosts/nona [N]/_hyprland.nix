@@ -43,12 +43,16 @@
     ];
 
     workspace = [
-      "name:main, monitor:desc:Lenovo Group Limited 0x8AC2, default:true, layoutopt:direction:right, persistent:true"
+      "1, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true, default:true"
+      "2, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
+      "3, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
+      "4, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
+      "5, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
     ];
 
     exec-once = lib.mkAfter [
-      "hyprctl dispatch workspace main"
       "brightnessctl set --device=platform::micmute 0"
+      "hyprctl dispatch workspace 1"
     ];
   };
 }

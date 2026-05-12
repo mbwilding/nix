@@ -133,21 +133,14 @@
     }:
 
     let
-      anim_speed = 2.0;
-
       gaps = 0.0; # 10.0
-      cursor_size = 24;
-      cursor_size_str = builtins.toString cursor_size;
-
+      anim_speed = 2.0;
       anim_speed_str = builtins.toString anim_speed;
-
       monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
     in
     {
       home = {
         packages = with pkgs; [
-          # hyprnotify
-          # wayle
           hyprshot
           jq
           kdePackages.breeze
@@ -256,11 +249,6 @@
           exec-once = [
             "noctalia-shell"
             "systemctl --user start hyprpolkitagent"
-            # "hyprnotify"
-            # "hyprpanel"
-            # "hyprpaper"
-            # "nm-applet"
-            # "wayle panel start"
           ];
 
           "$mod" = "SUPER";
@@ -443,9 +431,6 @@
             "XDG_SESSION_DESKTOP,Hyprland"
             "XDG_SESSION_TYPE,wayland"
             "HYPRSHOT_DIR,${import ../../nix/_home.nix}/Pictures/Screenshots"
-            # Cursor size — override in host _hyprland.nix if needed
-            "HYPRCURSOR_SIZE,${cursor_size_str}"
-            "XCURSOR_SIZE,${cursor_size_str}"
           ];
 
           workspace = [ ];
@@ -504,36 +489,6 @@
               on-timeout = "hyprctl dispatch dpms off";
               on-resume = "hyprctl dispatch dpms on";
             }
-          ];
-        };
-      };
-
-      # home.file.".config/wayle/config.toml".text = ''
-      #   # https://wayle.app/config
-      #
-      #   [bar]
-      #   location = "top"
-      #   scale = 1.0
-      #
-      #   [[bar.layout]]
-      #   monitor = "*"
-      #   left = ["dashboard", "idle-inhibit"]
-      #   center = ["clock"]
-      #   right = ["volume", "network", "bluetooth", "battery"]
-      #
-      #   [modules.clock]
-      #   format = "%H:%M"
-      # '';
-
-      home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
-        workspace = {
-          library = [
-            "${pkgs.hyprland}/share/hypr/stubs"
-          ];
-        };
-        diganostics = {
-          globals = [
-            "hl"
           ];
         };
       };
@@ -1243,6 +1198,19 @@
           wallhavenResolutionWidth = "";
           wallhavenSorting = "relevance";
           wallpaperChangeMode = "random";
+        };
+      };
+
+      home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
+        workspace = {
+          library = [
+            "${pkgs.hyprland}/share/hypr/stubs"
+          ];
+        };
+        diganostics = {
+          globals = [
+            "hl"
+          ];
         };
       };
     };
