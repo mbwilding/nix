@@ -524,7 +524,7 @@
       home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
         workspace = {
           library = [
-            "/usr/share/hypr/stubs"
+            "${pkgs.hyprland}/share/hypr/stubs"
           ];
         };
         diganostics = {
