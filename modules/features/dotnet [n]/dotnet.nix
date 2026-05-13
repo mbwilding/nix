@@ -12,23 +12,14 @@
     {
       options.custom.dotnet.sdk = lib.mkOption {
         type = lib.types.package;
-        default = pkgs.symlinkJoin {
-          name = "dotnet-combined";
-          paths = [
-            # pkgs.dotnet-sdk_11
-            # pkgs.dotnet-sdk_10
-            # pkgs.dotnet-sdk_8
-            pkgs.dotnet-sdk_9
-            # pkgs.dotnet-aspnetcore_11
-            # pkgs.dotnet-aspnetcore_10
-            # pkgs.dotnet-aspnetcore_8
-            pkgs.dotnet-aspnetcore_9
-            # pkgs.dotnet-runtime_11
-            # pkgs.dotnet-runtime_10
-            # pkgs.dotnet-runtime_8
-            pkgs.dotnet-runtime_9
-          ];
-        };
+        # Use combinePackages with -bin variants to fetch pre-built Microsoft
+        # binaries and avoid rebuilding dotnet-vmr from source.
+        default = pkgs.dotnetCorePackages.combinePackages [
+          # pkgs.dotnetCorePackages.sdk_8_0-bin
+          pkgs.dotnetCorePackages.sdk_9_0-bin
+          # pkgs.dotnetCorePackages.sdk_10_0-bin
+          # pkgs.dotnetCorePackages.sdk_11_0-bin
+        ];
         description = "Combined .NET SDK package shared across all modules.";
       };
 
