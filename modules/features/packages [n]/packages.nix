@@ -83,12 +83,14 @@
             kubernetes-helm
             lld
             lshw
+            lsof
             nix-diff
             nmap
             openssh
             pavucontrol
             postgresql
             prismlauncher
+            psmisc
             pulumi-bin
             qbittorrent
             reaper
