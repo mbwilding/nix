@@ -2,12 +2,35 @@
 
 {
   flake.modules.homeManager.jetbrains =
-    { pkgsMaster, ... }:
+    {
+      lib,
+      pkgs,
+      pkgsMaster,
+      config,
+      ...
+    }:
 
+    let
+      dotnet = config.custom.dotnet.sdk;
+      riderPkg = pkgsMaster.jetbrains.rider.override { forceWayland = true; };
+
+      # Wrap via symlinkJoin so Rider's own derivation hash is untouched --
+      # only this thin wrapper rebuilds when dotnet changes.
+      rider = pkgs.symlinkJoin {
+        name = "rider-wrapped";
+        paths = [ riderPkg ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/rider/bin/rider \
+            --set DOTNET_ROOT "${dotnet}/share/dotnet" \
+            --prefix PATH : "${lib.makeBinPath [ dotnet pkgs.mono pkgs.msbuild ]}"
+        '';
+      };
+    in
     {
       home.packages = [
         (pkgsMaster.jetbrains.datagrip.override { forceWayland = true; })
-        (pkgsMaster.jetbrains.rider.override { forceWayland = true; })
+        rider
       ];
     };
 }
