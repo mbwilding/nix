@@ -5,14 +5,13 @@
     {
       lib,
       pkgs,
-      pkgsMaster,
       config,
       ...
     }:
 
     let
       dotnet = config.custom.dotnet.sdk;
-      riderPkg = pkgsMaster.jetbrains.rider.override { forceWayland = true; };
+      riderPkg = pkgs.jetbrains.rider.override { forceWayland = true; };
       rider = pkgs.symlinkJoin {
         name = "rider-wrapped";
         paths = [ riderPkg ];
@@ -32,7 +31,7 @@
     in
     {
       home.packages = [
-        (pkgsMaster.jetbrains.datagrip.override { forceWayland = true; })
+        (pkgs.jetbrains.datagrip.override { forceWayland = true; })
         rider
       ];
     };
