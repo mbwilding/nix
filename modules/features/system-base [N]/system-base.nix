@@ -2,13 +2,14 @@
 {
   flake.modules.nixos.system-base = {
     imports = with inputs.self.modules.nixos; [
-      home-manager
-      secrets
-      nix-settings
-      locale
-      openssh
       core-packages
       core-programs
+      dotnet
+      home-manager
+      locale
+      nix-settings
+      openssh
+      secrets
     ];
   };
 }

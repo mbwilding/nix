@@ -1,6 +1,13 @@
 { ... }:
 
 {
+  flake.modules.nixos.dotnet = {
+    nixpkgs.config.permittedInsecurePackages = [
+      "dotnet-sdk-6.0.428"
+      "dotnet-sdk-7.0.410"
+    ];
+  };
+
   flake.modules.homeManager.dotnet =
     {
       lib,
@@ -15,6 +22,8 @@
         # Use combinePackages with -bin variants to fetch pre-built Microsoft
         # binaries and avoid rebuilding dotnet-vmr from source.
         default = pkgs.dotnetCorePackages.combinePackages [
+          pkgs.dotnetCorePackages.sdk_6_0-bin
+          pkgs.dotnetCorePackages.sdk_7_0-bin
           pkgs.dotnetCorePackages.sdk_8_0-bin
           pkgs.dotnetCorePackages.sdk_9_0-bin
           pkgs.dotnetCorePackages.sdk_10_0-bin
