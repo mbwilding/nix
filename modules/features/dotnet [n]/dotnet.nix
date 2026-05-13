@@ -15,12 +15,12 @@
         # Use combinePackages with -bin variants to fetch pre-built Microsoft
         # binaries and avoid rebuilding dotnet-vmr from source.
         default = pkgs.dotnetCorePackages.combinePackages [
-          # pkgs.dotnetCorePackages.sdk_8_0-bin
+          pkgs.dotnetCorePackages.sdk_8_0-bin
           pkgs.dotnetCorePackages.sdk_9_0-bin
-          # pkgs.dotnetCorePackages.sdk_10_0-bin
-          # pkgs.dotnetCorePackages.sdk_11_0-bin
+          pkgs.dotnetCorePackages.sdk_10_0-bin
+          pkgs.dotnetCorePackages.sdk_11_0-bin
         ];
-        description = "Combined .NET SDK package shared across all modules.";
+        description = "Combined .NET SDK package shared across all modules";
       };
 
       config.home = {
