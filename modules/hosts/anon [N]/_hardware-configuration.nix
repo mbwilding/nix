@@ -47,11 +47,6 @@
     ];
   };
 
-  fileSystems."/mnt/spare" = {
-    device = "/dev/disk/by-uuid/e817a40e-2882-48a7-a659-70052710a6dd";
-    fsType = "ext4";
-  };
-
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-uuid/3450BB1850BADFB2";
     fsType = "ntfs";
