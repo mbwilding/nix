@@ -9,10 +9,8 @@
           enable = true;
           enableMcpIntegration = true;
           context = ''
-            Use Australian English at all times and avoid em dashes.
-            For all paths, use the github-personal mcp server unless the path contains '/work/'.
-            If the path includes 'work', use the github-work mcp server instead.
-            When writing Markdown files, don't add --- as separators.
+            Use Australian English at all times and avoid em dashes
+            When writing Markdown files, don't add --- as separators
           '';
           # context = builtins.replaceStrings ["nvim-mcp"] ["neovim"] (
           #   builtins.readFile (builtins.fetchurl {
