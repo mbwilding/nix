@@ -7,7 +7,7 @@
     let
       # nvim-mcp = pkgs.callPackage ./_nvim-mcp.nix { };
 
-      mcpServers = {
+      servers = {
         github-work = {
           type = "http";
           url = "https://api.githubcopilot.com/mcp";
@@ -21,10 +21,6 @@
           headers = {
             Authorization = "Bearer ${secrets.githubPersonalToken}";
           };
-        };
-        gitlab = {
-          type = "http";
-          url = "https://gitlab.com/api/v4/mcp";
         };
         atlassian = {
           type = "http";
@@ -47,9 +43,9 @@
     {
       programs.mcp = {
         enable = true;
-        servers = mcpServers;
+        servers = servers;
       };
 
-      home.file.".copilot/mcp-config.json".text = builtins.toJSON { mcpServers = mcpServers; };
+      home.file.".copilot/mcp-config.json".text = builtins.toJSON { mcpServers = servers; };
     };
 }
