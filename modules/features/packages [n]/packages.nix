@@ -103,6 +103,7 @@
             unzip
             wev
             wget
+            xdg-user-dirs
             zip
           ];
       };
