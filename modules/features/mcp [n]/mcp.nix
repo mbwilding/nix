@@ -5,7 +5,7 @@
     { pkgs, secrets, ... }:
 
     let
-      nvim-mcp = pkgs.callPackage ./_nvim-mcp.nix { };
+      # nvim-mcp = pkgs.callPackage ./_nvim-mcp.nix { };
 
       mcpServers = {
         github-work = {

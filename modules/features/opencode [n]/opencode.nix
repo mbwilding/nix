@@ -2,11 +2,12 @@
 
 {
   flake.modules.homeManager.opencode =
-    { ... }:
+    { pkgsMaster, ... }:
     {
       programs = {
         opencode = {
           enable = true;
+          package = pkgsMaster.opencode;
           enableMcpIntegration = true;
           context = ''
             Use Australian English at all times and avoid em dashes
