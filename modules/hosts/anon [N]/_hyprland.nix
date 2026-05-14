@@ -1,9 +1,5 @@
 { lib, ... }:
 
-let
-  cursor_size = "16";
-  home = import ../../nix/_home.nix;
-in
 {
   wayland.windowManager.hyprland.settings = {
     monitorv2 = [
