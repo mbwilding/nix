@@ -28,6 +28,8 @@
             libxfixes # libXfixes
             libxrandr # libXrandr
             libgbm # libgbm
+            wayland # wayland display protocol
+            wayland-protocols
             expat # libexpat
             libxcb # libxcb
             libxkbcommon # libxkbcommon
