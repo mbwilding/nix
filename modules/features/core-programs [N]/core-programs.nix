@@ -27,7 +27,7 @@
             libxext # libXext
             libxfixes # libXfixes
             libxrandr # libXrandr
-            mesa # libgbm
+            libgbm # libgbm
             expat # libexpat
             libxcb # libxcb
             libxkbcommon # libxkbcommon
