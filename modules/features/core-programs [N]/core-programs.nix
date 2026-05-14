@@ -30,6 +30,7 @@
             libgbm # libgbm
             wayland # wayland display protocol
             wayland-protocols
+            libglvnd # libGL
             expat # libexpat
             libxcb # libxcb
             libxkbcommon # libxkbcommon
