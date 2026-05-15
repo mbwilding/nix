@@ -128,6 +128,7 @@
               actions.update-props = {
                 "device.description" = "HDMI";
                 "device.nick" = "Nvidia HDMI";
+                "device.disabled" = true;
               };
             }
             {
