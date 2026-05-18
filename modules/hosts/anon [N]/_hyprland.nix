@@ -50,6 +50,14 @@
 
     windowrule = lib.mkAfter [
       {
+        name = "UnrealEngine";
+        workspace = "1";
+        float = "on";
+        no_anim = "on";
+        no_initial_focus = "on";
+        "match:class" = "^(UnrealEditor)$";
+      }
+      {
         name = "Teams";
         workspace = "name:social";
         "match:title" = ".*Microsoft Teams.*";
