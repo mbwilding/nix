@@ -191,6 +191,9 @@ in
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
+        systemPackages = with pkgs; [
+          libreoffice
+        ];
       };
 
       system.stateVersion = "25.11";
