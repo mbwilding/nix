@@ -436,16 +436,7 @@
 
           workspace = [ ];
 
-          windowrule = [
-            {
-              name = "UnrealEngine";
-              workspace = "name:main";
-              no_anim = "on";
-              no_initial_focus = "on";
-              "match:class" = "^(UnrealEditor)$";
-              "match:title" = "^\w*$";
-            }
-          ];
+          windowrule = [ ];
 
           scrolling = {
             fullscreen_on_one_column = true;
