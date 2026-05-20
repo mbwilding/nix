@@ -29,14 +29,10 @@
               TCPKeepAlive = "yes";
             };
 
+            # Devices
+
             desktop = personal // {
               HostName = "192.168.11.254";
-              User = "anon";
-              ForwardAgent = true;
-            };
-
-            vm = personal // {
-              HostName = "192.168.122.130";
               User = "anon";
               ForwardAgent = true;
             };
@@ -52,29 +48,11 @@
               User = "root";
             };
 
-            arch = personal // {
-              HostName = "192.168.11.10";
-              Port = 2222;
-              User = "anon";
-              ForwardAgent = true;
+            surface = personal // {
+              HostName = "192.168.11.253";
             };
 
-            nix = personal // {
-              HostName = "192.168.11.14";
-              User = "anon";
-            };
-
-            phone = personal // {
-              HostName = "192.168.11.41";
-              Port = 8022;
-              User = "root";
-            };
-
-            "aur.archlinux.org" = {
-              User = "aur";
-              IdentitiesOnly = true;
-              IdentityFile = [ "~/.ssh/aur" ];
-            };
+            # Git
 
             "github.com" = personal // {
               User = "git";
@@ -95,16 +73,18 @@
               User = "git";
             };
 
-            surface = personal // {
-              HostName = "192.168.11.253";
-            };
-
             "ssh.dev.azure.com" = work // {
               User = "git";
               PubkeyAcceptedKeyTypes = "+ssh-rsa";
               PasswordAuthentication = "no";
               ChallengeResponseAuthentication = "no";
               WarnWeakCrypto = "no";
+            };
+
+            "aur.archlinux.org" = {
+              User = "aur";
+              IdentitiesOnly = true;
+              IdentityFile = [ "~/.ssh/aur" ];
             };
           };
         };
