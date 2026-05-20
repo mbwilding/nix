@@ -12,7 +12,6 @@
         systemPackages = with pkgs; [
           docker
           docker-compose
-          docker-desktop
           lazydocker
         ];
       };
