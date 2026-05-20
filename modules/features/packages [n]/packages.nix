@@ -67,6 +67,7 @@
             hostname
             imagemagick
             imhex
+            jfrog-cli
             jq
             kdePackages.baloo
             kdePackages.baloo-widgets
