@@ -20,27 +20,16 @@
           enableDefaultConfig = false;
 
           settings = {
-            "*" = {
-              Compression = true;
-              ControlMaster = "auto";
-              ControlPersist = "120";
-              ServerAliveCountMax = 10;
-              ServerAliveInterval = 20;
-              TCPKeepAlive = "yes";
-            };
-
             # Devices
 
             desktop = personal // {
               HostName = "192.168.11.254";
               User = "anon";
-              ForwardAgent = true;
             };
 
             nona = personal // {
               HostName = "192.168.11.60";
               User = "anon";
-              ForwardAgent = true;
             };
 
             truenas = personal // {
@@ -50,6 +39,9 @@
 
             surface = personal // {
               HostName = "192.168.11.253";
+              TCPKeepAlive = "yes";
+              ServerAliveCountMax = 10;
+              ServerAliveInterval = 20;
             };
 
             # Git
