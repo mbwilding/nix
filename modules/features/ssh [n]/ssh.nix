@@ -5,12 +5,12 @@
     { secrets, ... }:
     let
       personal = {
-        identitiesOnly = true;
-        identityFile = [ "~/.ssh/personal" ];
+        IdentitiesOnly = true;
+        IdentityFile = [ "~/.ssh/personal" ];
       };
       work = {
-        identitiesOnly = true;
-        identityFile = [ "~/.ssh/work" ];
+        IdentitiesOnly = true;
+        IdentityFile = [ "~/.ssh/work" ];
       };
     in
     {
@@ -19,96 +19,92 @@
           enable = true;
           enableDefaultConfig = false;
 
-          matchBlocks = {
+          settings = {
             "*" = {
-              compression = true;
-              controlMaster = "auto";
-              controlPersist = "120";
-              serverAliveCountMax = 10;
-              serverAliveInterval = 20;
-              extraOptions = {
-                TCPKeepAlive = "yes";
-              };
+              Compression = true;
+              ControlMaster = "auto";
+              ControlPersist = "120";
+              ServerAliveCountMax = 10;
+              ServerAliveInterval = 20;
+              TCPKeepAlive = "yes";
             };
 
             desktop = personal // {
-              hostname = "192.168.11.254";
-              user = "anon";
-              forwardAgent = true;
+              HostName = "192.168.11.254";
+              User = "anon";
+              ForwardAgent = true;
             };
 
             vm = personal // {
-              hostname = "192.168.122.130";
-              user = "anon";
-              forwardAgent = true;
+              HostName = "192.168.122.130";
+              User = "anon";
+              ForwardAgent = true;
             };
 
             nona = personal // {
-              hostname = "192.168.11.60";
-              user = "anon";
-              forwardAgent = true;
+              HostName = "192.168.11.60";
+              User = "anon";
+              ForwardAgent = true;
             };
 
             truenas = personal // {
-              hostname = "192.168.11.10";
-              user = "root";
+              HostName = "192.168.11.10";
+              User = "root";
             };
 
             arch = personal // {
-              hostname = "192.168.11.10";
-              port = 2222;
-              user = "anon";
-              forwardAgent = true;
+              HostName = "192.168.11.10";
+              Port = 2222;
+              User = "anon";
+              ForwardAgent = true;
             };
 
             nix = personal // {
-              hostname = "192.168.11.14";
-              user = "anon";
+              HostName = "192.168.11.14";
+              User = "anon";
             };
 
             phone = personal // {
-              hostname = "192.168.11.41";
-              port = 8022;
-              user = "root";
+              HostName = "192.168.11.41";
+              Port = 8022;
+              User = "root";
             };
 
             "aur.archlinux.org" = {
-              user = "aur";
-              identitiesOnly = true;
-              identityFile = [ "~/.ssh/aur" ];
+              User = "aur";
+              IdentitiesOnly = true;
+              IdentityFile = [ "~/.ssh/aur" ];
             };
 
             "github.com" = personal // {
-              user = "git";
+              User = "git";
             };
 
             "${secrets.workName}.github.com" = work // {
-              hostname = "github.com";
-              user = "git";
+              HostName = "github.com";
+              User = "git";
             };
 
             "gitlab.com" = personal // {
-              hostname = "gitlab.com";
-              user = "git";
+              HostName = "gitlab.com";
+              User = "git";
             };
 
             "${secrets.workName}.gitlab.com" = work // {
-              hostname = "gitlab.com";
-              user = "git";
+              HostName = "gitlab.com";
+              User = "git";
             };
 
             surface = personal // {
-              hostname = "192.168.11.253";
+              HostName = "192.168.11.253";
             };
 
             "ssh.dev.azure.com" = work // {
-              user = "git";
-              extraOptions = {
-                PubkeyAcceptedKeyTypes = "+ssh-rsa";
-                PasswordAuthentication = "no";
-                ChallengeResponseAuthentication = "no";
-                WarnWeakCrypto = "no";
-              };
+              User = "git";
+              PubkeyAcceptedKeyTypes = "+ssh-rsa";
+              PasswordAuthentication = "no";
+              ChallengeResponseAuthentication = "no";
+              WarnWeakCrypto = "no";
             };
           };
         };
