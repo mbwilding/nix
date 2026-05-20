@@ -12,6 +12,7 @@ secrets=(
   "Atlassian|rovo|$HOME/.secrets/atlassian-rovo"
   "Cargo|credential|$HOME/.secrets/cargo"
   "DeepSeek|credential|$HOME/.secrets/deepseek"
+  "Dynamics|credentials|$HOME/.secrets/dynamics.json"
   "ElevenLabs|credential|$HOME/.secrets/elevenlabs"
   "Figma|credential|$HOME/.secrets/figma"
   "GitHub Personal|credential|$HOME/.secrets/github-personal"

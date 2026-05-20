@@ -60,6 +60,7 @@
           opencode
           package-managers
           packages
+          power-platform-toolbox
           proxy
           proxychains
           shells
