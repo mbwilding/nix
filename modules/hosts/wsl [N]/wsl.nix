@@ -8,6 +8,7 @@
         system-base
         fonts
         user-anon
+        docker
       ] ++ [
         inputs.nixos-wsl.nixosModules.default
       ];
