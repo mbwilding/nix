@@ -59,4 +59,7 @@ in
   # Voip
   voipUsername = read "voip-username";
   voipPassword = read "voip-password";
+
+  # Dynamics
+  dynamicsCredentials = readJSON "dynamics.json";
 }
