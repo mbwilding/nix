@@ -65,6 +65,7 @@
           proxychains
           shells
           ssh
+          ssm-session-manager-plugin
           steam
           wine
           yabridge
