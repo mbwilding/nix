@@ -12,8 +12,6 @@
     {
       options.custom.dotnet.sdk = lib.mkOption {
         type = lib.types.package;
-        # Use combinePackages with -bin variants to fetch pre-built Microsoft
-        # binaries and avoid rebuilding dotnet-vmr from source.
         default = pkgs.dotnetCorePackages.combinePackages [
           pkgs.dotnetCorePackages.sdk_8_0-bin
           pkgs.dotnetCorePackages.sdk_9_0-bin
@@ -50,6 +48,11 @@
             # Install dotnet-ef if not already installed
             if ! "$dotnet_cmd" tool list --global | grep -q "^dotnet-ef"; then
               "$dotnet_cmd" tool install --global dotnet-ef
+            fi
+
+            # Install pac (Power Apps CLI) if not already installed
+            if ! "$dotnet_cmd" tool list --global | grep -q "^pac"; then
+              "$dotnet_cmd" tool install --global Microsoft.PowerApps.CLI.Tool
             fi
           '';
         };
