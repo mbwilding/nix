@@ -99,6 +99,7 @@
             sl
             spotify
             sshfs
+            ssm-session-manager-plugin
             teams-for-linux
             tlrc
             unzip
