@@ -44,9 +44,9 @@
           NIXPKGS_ALLOW_UNFREE = 1;
           PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
         };
-        variables = {
-          LD_LIBRARY_PATH = runtimeLibs;
-        };
+        extraInit = ''
+          export LD_LIBRARY_PATH="${builtins.concatStringsSep ":" runtimeLibs}:$LD_LIBRARY_PATH"
+        '';
         systemPackages = with pkgs; [
           cacert
           cifs-utils
