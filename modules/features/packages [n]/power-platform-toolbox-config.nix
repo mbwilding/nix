@@ -11,7 +11,7 @@
         autoUpdate = false;
         terminalFont = "NeoSpleen Nerd Font";
         notificationDuration = 5000;
-        showDebugMenu = false;
+        showDebugMenu = true;
         deprecatedToolsVisibility = "hide-all";
         connections = [ ];
         installedTools = [
