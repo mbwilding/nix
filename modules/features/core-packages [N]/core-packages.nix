@@ -43,7 +43,9 @@
           ELECTRON_OZONE_PLATFORM_HINT = "wayland";
           NIXPKGS_ALLOW_UNFREE = 1;
           PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
-          LD_LIBRARY_PATH = builtins.concatStringsSep ":" runtimeLibs;
+        };
+        variables = {
+          LD_LIBRARY_PATH = runtimeLibs;
         };
         systemPackages = with pkgs; [
           cacert
