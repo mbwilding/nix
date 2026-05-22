@@ -57,6 +57,7 @@
           lazysql
           mcp
           npm
+          obs
           opencode
           package-managers
           packages
