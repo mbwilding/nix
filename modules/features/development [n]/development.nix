@@ -36,6 +36,7 @@
           luajit # lua
           luajitPackages.luarocks-nix # lua
           nodejs # js / ts
+          pnpm # js / ts
           python314 # python
           ruby # ruby
           rustc # rust
