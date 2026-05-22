@@ -41,6 +41,7 @@
           ruby # ruby
           rustc # rust
           uv # python
+          yarn-berry # js / ts
 
           # Language Servers
           bash-language-server # bash
