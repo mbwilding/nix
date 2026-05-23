@@ -2,6 +2,7 @@
   lib,
   appimageTools,
   fetchurl,
+  makeWrapper,
 }:
 
 let
@@ -21,6 +22,8 @@ in
 appimageTools.wrapType2 rec {
   inherit pname version src;
 
+  nativeBuildInputs = [ makeWrapper ];
+
   extraInstallCommands = ''
     install -Dm444 ${appimageContents}/${pname}.desktop -T $out/share/applications/${pname}.desktop
     install -Dm444 ${appimageContents}/${pname}.png -T $out/share/icons/hicolor/512x512/apps/${pname}.png
@@ -28,6 +31,9 @@ appimageTools.wrapType2 rec {
     substituteInPlace $out/share/applications/${pname}.desktop \
       --replace-fail 'Exec=AppRun' 'Exec=${meta.mainProgram}' \
       --replace-fail 'Icon=powerplatform-toolbox' 'Icon=${pname}'
+
+    wrapProgram $out/bin/${pname} \
+      --set ELECTRON_OZONE_PLATFORM_HINT x11
   '';
 
   meta = {
