@@ -8,9 +8,11 @@ in
     { pkgs, config, ... }:
     {
       imports = with inputs.self.modules.nixos; [
+        # lutris
         amd
         appimage
         flatpak
+        mounts
         mpv
         podman
         qemu
@@ -21,8 +23,6 @@ in
         waydroid
         wireguard-nona
         wireshark
-        # lutris
-        # mounts
 
         hyprland
         # kde
