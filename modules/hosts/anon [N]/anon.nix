@@ -8,6 +8,7 @@
         appimage
         flatpak
         lutris
+        mounts
         mpv
         nvidia
         obs
@@ -21,7 +22,6 @@
         waydroid
         wine
         wireshark
-        # mounts
 
         hyprland
         # kde
