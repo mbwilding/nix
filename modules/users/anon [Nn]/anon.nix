@@ -70,6 +70,7 @@
           wine
           yabridge
           yazi
+          zellij
           zoxide
         ]
       );
