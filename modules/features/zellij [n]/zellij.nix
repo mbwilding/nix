@@ -6,8 +6,8 @@
     {
       programs.zellij = {
         enable = true;
-        enableZshIntegration = config.programs.zsh.enable;
-        enableFishIntegration = config.programs.fish.enable;
+        # enableZshIntegration = config.programs.zsh.enable;
+        # enableFishIntegration = config.programs.fish.enable;
       };
 
       xdg.configFile."zellij/config.kdl".text = ''
