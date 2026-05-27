@@ -47,6 +47,7 @@
               # Commit Command
 
               Create a git commit with proper message formatting in Australian English.
+              Check the latest 10 commits and follow suit.
               Usage: /commit [message]
             '';
           };
