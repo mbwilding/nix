@@ -14,6 +14,7 @@
       home = {
         packages =
           let
+            dtctl = pkgs.callPackage ./_dtctl.nix { };
             open-ecc = pkgs.callPackage ./_open-ecc.nix { };
             powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
             google-chrome = pkgs.google-chrome.override {
@@ -42,6 +43,7 @@
           with pkgs;
           [
             # Custom
+            dtctl
             google-chrome
             open-ecc
             powerplatform-toolbox
