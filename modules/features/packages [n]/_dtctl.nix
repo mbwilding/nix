@@ -21,9 +21,14 @@ stdenv.mkDerivation {
   dontBuild = true;
   dontConfigure = true;
 
+  sourceRoot = ".";
+
   installPhase = ''
     runHook preInstall
     install -Dm755 dtctl $out/bin/dtctl
+    install -Dm644 completions/dtctl.bash $out/share/bash-completion/completions/dtctl
+    install -Dm644 completions/dtctl.fish $out/share/fish/vendor_completions.d/dtctl.fish
+    install -Dm644 completions/dtctl.zsh $out/share/zsh/site-functions/_dtctl
     runHook postInstall
   '';
 
