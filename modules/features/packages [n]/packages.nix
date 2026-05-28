@@ -15,6 +15,7 @@
         packages =
           let
             dtctl = pkgs.callPackage ./_dtctl.nix { };
+            github-copilot = pkgs.callPackage ./_github-copilot.nix { };
             open-ecc = pkgs.callPackage ./_open-ecc.nix { };
             powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
             google-chrome = pkgs.google-chrome.override {
@@ -44,6 +45,7 @@
           [
             # Custom
             dtctl
+            github-copilot
             google-chrome
             open-ecc
             powerplatform-toolbox
