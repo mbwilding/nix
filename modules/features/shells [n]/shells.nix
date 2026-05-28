@@ -208,6 +208,10 @@
                 ghc ${secrets.workName} $argv[1] ~/dev/work
               '';
             };
+            nix-run = {
+              description = "Run a Nix package without installing";
+              body = "nix run nixpkgs#$argv[1]";
+            };
           };
         };
 
