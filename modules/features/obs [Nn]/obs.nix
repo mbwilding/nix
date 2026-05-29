@@ -52,6 +52,12 @@
 
   flake.modules.homeManager.obs =
     { pkgs, config, ... }:
+    let
+      obs-with-nvenc = pkgs.writeShellScriptBin "obs-studio" ''
+        export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+        exec ${config.programs.obs-studio.finalPackage}/bin/obs "$@"
+      '';
+    in
     {
       systemd.user.services.obs-virtual-mic-link = {
         Unit = {
@@ -78,7 +84,7 @@
 
       xdg.desktopEntries."com.obsproject.Studio" = {
         name = "OBS Studio";
-        exec = "${config.programs.obs-studio.finalPackage}/bin/obs --startvirtualcam --scene Camera %F";
+        exec = "${obs-with-nvenc}/bin/obs-studio --startvirtualcam --scene Camera %F";
         icon = "com.obsproject.Studio";
         terminal = false;
         categories = [
