@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "0.2.12";
+  version = "0.2.14";
   pname = "github-copilot";
   repo = "https://github.com/github/app";
 
