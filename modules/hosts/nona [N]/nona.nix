@@ -36,7 +36,7 @@ in
 
       networking.hostName = "nona";
 
-      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v4;
+      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
 
       console.keyMap = keymap;
       services.xserver.xkb.variant = keymap;

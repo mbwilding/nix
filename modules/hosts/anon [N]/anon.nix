@@ -40,7 +40,7 @@
 
       host.primaryMonitor = "HDMI-A-1";
 
-      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-zen4;
+      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
 
       environment = {
         sessionVariables = {
