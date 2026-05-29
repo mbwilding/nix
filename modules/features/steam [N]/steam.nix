@@ -15,15 +15,21 @@
         };
       };
 
-      environment.systemPackages = with pkgs; [
-        gamemode
-        gamescope
-        mangohud
-        steam-run
-        steamtinkerlaunch
-        vulkan-tools
-        yad
-      ];
+      environment = {
+        systemPackages = with pkgs; [
+          gamemode
+          gamescope
+          mangohud
+          steam-run
+          steamtinkerlaunch
+          vulkan-tools
+          yad
+        ];
+        sessionVariables = {
+          PROTON_ENABLE_WAYLAND = "1";
+          PROTON_ENABLE_HDR = "1";
+        };
+      };
     };
 
   flake.modules.homeManager.steam =
