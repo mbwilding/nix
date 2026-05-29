@@ -84,6 +84,7 @@
             kdePackages.kio-extras
             keymapp
             killall
+            kitty
             kubectl
             kubernetes-helm
             lld
