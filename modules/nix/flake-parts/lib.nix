@@ -26,6 +26,13 @@
           inputs.self.modules.nixos.${name}
           {
             nixpkgs.hostPlatform = lib.mkDefault system;
+            nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.default ];
+
+            nix.settings = {
+              substituters = [ "https://attic.xuyh0120.win/lantian" ];
+              trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+            };
+
             _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
           }
         ];
