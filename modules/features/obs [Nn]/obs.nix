@@ -29,22 +29,22 @@
           {
             matches = [ { "device.name" = "alsa_card.platform-snd_aloop.0"; } ];
             actions.update-props = {
-              "device.description" = "Loopback";
-              "device.nick" = "OBS Loopback";
+              "device.description" = "OBS";
+              "device.nick" = "OBS";
             };
           }
           {
             matches = [ { "node.name" = "alsa_output.platform-snd_aloop.0.analog-stereo"; } ];
             actions.update-props = {
-              "node.description" = "Loopback";
-              "node.nick" = "OBS Loopback";
+              "node.description" = "OBS";
+              "node.nick" = "OBS";
             };
           }
           {
             matches = [ { "node.name" = "alsa_input.platform-snd_aloop.0.analog-stereo"; } ];
             actions.update-props = {
-              "node.description" = "Loopback";
-              "node.nick" = "OBS Loopback (Monitor)";
+              "node.description" = "OBS";
+              "node.nick" = "OBS";
             };
           }
         ];
@@ -57,6 +57,14 @@
       programs.obs-studio = {
         enable = true;
         # plugins = [];
+      };
+
+      xdg.desktopEntries."com.obsproject.Studio" = {
+        name = "OBS Studio";
+        exec = "obs --startvirtualcam --scene Camera %F";
+        icon = "com.obsproject.Studio";
+        terminal = false;
+        categories = [ "AudioVideo" "Recorder" ];
       };
     };
 }
