@@ -78,7 +78,7 @@
 
       xdg.desktopEntries."com.obsproject.Studio" = {
         name = "OBS Studio";
-        exec = "obs --startvirtualcam --scene Camera %F";
+        exec = "${config.programs.obs-studio.finalPackage}/bin/obs --startvirtualcam --scene Camera %F";
         icon = "com.obsproject.Studio";
         terminal = false;
         categories = [
