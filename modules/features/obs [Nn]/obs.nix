@@ -74,7 +74,9 @@
 
       programs.obs-studio = {
         enable = true;
-        # plugins = [];
+        plugins = with pkgs.obs-studio-plugins; [
+          obs-vaapi
+        ];
       };
 
       xdg.desktopEntries."com.obsproject.Studio" = {
