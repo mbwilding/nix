@@ -19,7 +19,6 @@
       security.polkit.enable = true;
 
       environment.systemPackages = with pkgs; [
-        obs-studio
         v4l-utils
       ];
 
@@ -74,9 +73,7 @@
 
       programs.obs-studio = {
         enable = true;
-        plugins = with pkgs.obs-studio-plugins; [
-          obs-vaapi
-        ];
+        # plugins = [];
       };
 
       xdg.desktopEntries."com.obsproject.Studio" = {
