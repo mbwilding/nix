@@ -75,6 +75,10 @@
               User = "git";
             };
 
+            "git.mattwilding.com" = personal // {
+              User = "git";
+            };
+
             "ssh.dev.azure.com" = work // {
               User = "git";
               PubkeyAcceptedKeyTypes = "+ssh-rsa";
