@@ -5,7 +5,7 @@
 
 {
   flake.modules.nixos.system-default =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     {
       imports =
         (with inputs.self.modules.nixos; [
@@ -19,7 +19,7 @@
       services.flatpak.enable = true;
 
       boot = {
-        kernelPackages = pkgs.linuxPackages_latest;
+        kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
         loader = {
           systemd-boot.enable = true;
           efi.canTouchEfiVariables = true;

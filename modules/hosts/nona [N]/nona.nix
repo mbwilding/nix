@@ -36,6 +36,8 @@ in
 
       networking.hostName = "nona";
 
+      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v4;
+
       console.keyMap = keymap;
       services.xserver.xkb.variant = keymap;
 

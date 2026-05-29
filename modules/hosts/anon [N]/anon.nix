@@ -40,6 +40,8 @@
 
       host.primaryMonitor = "HDMI-A-1";
 
+      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-zen4;
+
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;

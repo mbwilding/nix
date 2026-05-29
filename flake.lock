@@ -1,5 +1,37 @@
 {
   "nodes": {
+    "cachyos-kernel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779781360,
+        "narHash": "sha256-02SR7VL4wc57NCVMhyVgz6/SVfyGv7mc4h+SmgR2I8g=",
+        "owner": "CachyOS",
+        "repo": "linux-cachyos",
+        "rev": "c7cb822e8ee91d993052becf2661b6f26f98eaa2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CachyOS",
+        "repo": "linux-cachyos",
+        "type": "github"
+      }
+    },
+    "cachyos-kernel-patches": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779618819,
+        "narHash": "sha256-/cGZZCyJZS1QATHi+/2Q32NkjrYN2N2PpgFP8Ak4FJc=",
+        "owner": "CachyOS",
+        "repo": "kernel-patches",
+        "rev": "668b466fb461409329425b50c4a9d8d2c022a739",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CachyOS",
+        "repo": "kernel-patches",
+        "type": "github"
+      }
+    },
     "cpu-microcodes": {
       "flake": false,
       "locked": {
@@ -22,6 +54,22 @@
       "locked": {
         "lastModified": 1767039857,
         "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "flake-compat_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767039857,
+        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
         "owner": "edolstra",
         "repo": "flake-compat",
         "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
@@ -36,6 +84,24 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1778716662,
+        "narHash": "sha256-m1Yf0wZ8j1OHjTc2UwHwyQRSnNeSgLJOd7q5Y45hzi4=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "f7c1a2d347e4c52d5fb8d10cb4d94b5884e546fb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_2": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
         "lastModified": 1778716662,
@@ -83,6 +149,29 @@
       "original": {
         "owner": "vic",
         "repo": "import-tree",
+        "type": "github"
+      }
+    },
+    "nix-cachyos-kernel": {
+      "inputs": {
+        "cachyos-kernel": "cachyos-kernel",
+        "cachyos-kernel-patches": "cachyos-kernel-patches",
+        "flake-compat": "flake-compat",
+        "flake-parts": "flake-parts_2",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1779910731,
+        "narHash": "sha256-BSu/X9EyAyAPOjXsuwED4j4IeduP/5KVjTwiQSLkdik=",
+        "owner": "xddxdd",
+        "repo": "nix-cachyos-kernel",
+        "rev": "a2cdbecf6abb1a1180bf9fe5c3028125416621f1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xddxdd",
+        "ref": "release",
+        "repo": "nix-cachyos-kernel",
         "type": "github"
       }
     },
@@ -156,8 +245,8 @@
     },
     "nixos-wsl": {
       "inputs": {
-        "flake-compat": "flake-compat",
-        "nixpkgs": "nixpkgs"
+        "flake-compat": "flake-compat_2",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1777732699,
@@ -176,16 +265,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1776169885,
-        "narHash": "sha256-l/iNYDZ4bGOAFQY2q8y5OAfBBtrDAaPuRQqWaFHVRXM=",
+        "lastModified": 1779894193,
+        "narHash": "sha256-2PixoQSj9hdtoXTu0ZxdI0cmAE6GUUjCODG+rtC1wDc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4bd9165a9165d7b5e33ae57f3eecbcb28fb231c9",
+        "rev": "a09ffe51cfdc37950f14286593605ce64f76cc93",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "ref": "nixos-unstable-small",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -253,13 +342,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-lib_2": {
+      "locked": {
+        "lastModified": 1777168982,
+        "narHash": "sha256-GOkGPcboWE9BmGCRMLX3worL4EMnsnG8MyKmXNeYuhQ=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "f5901329dade4a6ea039af1433fb087bd9c1fe14",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1780039923,
-        "narHash": "sha256-gYXeblNadZLuW6gg31k+M8l0OnB7JIteuU3wsO5YUxQ=",
+        "lastModified": 1780046097,
+        "narHash": "sha256-hheCpwCqeFh58lPMv4XHJ4anA3P2zKAasADwwKJcAFg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "24c75e99f2a1196dac0902151fee42cabe9a930d",
+        "rev": "6d215bfc5a74137fb7bf3be507a0065595140c8a",
         "type": "github"
       },
       "original": {
@@ -270,6 +374,22 @@
       }
     },
     "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1776169885,
+        "narHash": "sha256-l/iNYDZ4bGOAFQY2q8y5OAfBBtrDAaPuRQqWaFHVRXM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4bd9165a9165d7b5e33ae57f3eecbcb28fb231c9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1779560665,
         "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
@@ -351,10 +471,11 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nix-flatpak": "nix-flatpak",
         "nix-on-droid": "nix-on-droid",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-droid": "nixpkgs-droid",
         "nixpkgs-master": "nixpkgs-master",
         "plasma-manager": "plasma-manager",
