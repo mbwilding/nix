@@ -27,7 +27,7 @@
               User = "anon";
             };
 
-            nona = personal // {
+            laptop = personal // {
               HostName = "192.168.11.60";
               User = "anon";
             };
@@ -42,16 +42,6 @@
               TCPKeepAlive = "yes";
               ServerAliveCountMax = 10;
               ServerAliveInterval = 20;
-            };
-
-            proxmox = personal // {
-              HostName = "192.168.11.11";
-              User = "root";
-            };
-
-            portainer = personal // {
-              HostName = "192.168.11.12";
-              User = "root";
             };
 
             # Git
