@@ -9,7 +9,8 @@
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     # Pinned to last commit before nix 2.31.3 PTY regression (nix-on-droid#495)
-    nixpkgs-droid.url = "github:NixOS/nixpkgs/88d3861";
+    # nixpkgs-droid.url = "github:NixOS/nixpkgs/88d3861";
+    nixpkgs-droid.url = "github:NixOS/nixpkgs/master";
 
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid";
