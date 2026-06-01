@@ -3,7 +3,7 @@
 let
   npmDepsHashes = {
     "x86_64-linux" = "sha256-wh6oE5sRuZ8vJjmU5Tk37rvliibszLpxnzU7n+p5eAw=";
-    "aarch64-linux" = "sha256-IJXY12+x/HegeM4MfMRpTOYzCpRJ3eDXyywOLFqc9WY=";
+    "aarch64-linux" = pkgs.lib.fakeHash;
   };
 
   gh-actions-language-server = pkgs.buildNpmPackage {
