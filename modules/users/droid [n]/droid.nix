@@ -15,7 +15,6 @@
         git
         lazygit
         mcp
-        npm
         # opencode
         shells
         ssh
