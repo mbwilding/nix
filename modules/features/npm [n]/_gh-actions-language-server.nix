@@ -1,18 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
-  npmDepsHashes = {
-    "x86_64-linux" = "sha256-wh6oE5sRuZ8vJjmU5Tk37rvliibszLpxnzU7n+p5eAw=";
-    "aarch64-linux" = "sha256-IJXY12+x/HegeM4MfMRpTOYzCpRJ3eDXyywOLFqc9WY=";
-  };
-
   gh-actions-language-server = pkgs.buildNpmPackage {
     pname = "gh-actions-language-server";
     version = "0.0.3";
 
     src = pkgs.fetchurl {
       url = "https://registry.npmjs.org/gh-actions-language-server/-/gh-actions-language-server-0.0.3.tgz";
-      hash = "sha256-lgisfGIWGT/WCGqOfm/rqSXVeDWqSge2YJ+ZiBMmS48=";
+      hash = "sha512-T2ph7OoS0tnpWsxpvdiC5k9rrv5t7BMwZRJANrk4gZzvTZ1/rY1kpJQjVaiYeTrlj2fDgQh5fMwPqkxNaKIGdw==";
     };
 
     sourceRoot = "package";
@@ -22,7 +17,7 @@ let
     '';
 
     npmDepsFetcherVersion = 2;
-    npmDepsHash = npmDepsHashes.${pkgs.stdenv.hostPlatform.system};
+    npmDepsHash = lib.fakeHash;
     npmFlags = [ "--omit=dev" ];
     dontNpmBuild = true;
 
