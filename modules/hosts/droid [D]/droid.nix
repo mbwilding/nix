@@ -22,9 +22,9 @@
         useUserPackages = true;
         backupFileExtension = "backup";
         config = inputs.self.modules.homeManager.droid;
-        # extraSpecialArgs = {
-        #   secrets = import ../../nix/_secrets.nix;
-        # };
+        extraSpecialArgs = {
+          secrets = import ../../nix/_secrets.nix;
+        };
       };
 
       system.stateVersion = "24.05";
