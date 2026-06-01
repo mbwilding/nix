@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 let
   gh-actions-language-server = pkgs.buildNpmPackage {
@@ -10,14 +10,8 @@ let
       hash = "sha512-T2ph7OoS0tnpWsxpvdiC5k9rrv5t7BMwZRJANrk4gZzvTZ1/rY1kpJQjVaiYeTrlj2fDgQh5fMwPqkxNaKIGdw==";
     };
 
-    sourceRoot = "package";
-
-    postPatch = ''
-      cp ${./gh-actions-language-server-lock.json} package-lock.json
-    '';
-
     npmDepsFetcherVersion = 2;
-    npmDepsHash = lib.fakeHash;
+    npmDepsHash = "sha256-wh6oE5sRuZ8vJjmU5Tk37rvliibszLpxnzU7n+p5eAw=";
     npmFlags = [ "--omit=dev" ];
     dontNpmBuild = true;
 
