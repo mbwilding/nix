@@ -21,7 +21,7 @@
         useGlobalPkgs = true;
         useUserPackages = true;
         backupFileExtension = "backup";
-        # config = inputs.self.modules.homeManager.droid;
+        config = inputs.self.modules.homeManager.droid;
         # extraSpecialArgs = {
         #   secrets = import ../../nix/_secrets.nix;
         # };
