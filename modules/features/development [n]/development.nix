@@ -48,46 +48,47 @@
           docker-compose-language-service # yaml
           docker-language-server # docker
           gopls # go
+          jdt-language-server # java
           lemminx # xml
           lua-language-server # lua
           marksman # markdown
           nil # nix
+          phpactor # php
+          powershell-editor-services # powershell
+          pyright # python
           qt6.qtdeclarative # qml (qmlls)
           roslyn-ls # c#
-          pyright # python
-          phpactor # php
           rust-analyzer # rust
-          vscode-langservers-extracted # css / html / json (vscode-*-language-server)
-          zls # zig
           sqls # sql
+          tailwindcss-language-server # tailwind
           tombi # toml
           typescript-go # js / ts
-          powershell-editor-services # powershell
-          tailwindcss-language-server # tailwind
+          vscode-langservers-extracted # css / html / json (vscode-*-language-server)
           vue-language-server # vue
           yaml-language-server # yaml
+          zls # zig
 
           # Debuggers
           bashdb # bash
           delve # go
           lldb # c / c++ / rust
           netcoredbg # c# / f#
-          vscode-js-debug # js / ts
           python314Packages.debugpy # python
+          vscode-js-debug # js / ts
 
           # Linters
           cfn-nag # yaml
           clippy # rust
           eslint_d # js / ts
           markdownlint-cli2 # markdown
+          python313Packages.cfn-lint # python
           ruff # python
           yamllint # yaml
-          python313Packages.cfn-lint # python
 
           # Formatters
-          rustfmt # rust
-          prettierd # js / ts
           php85Packages.php-cs-fixer # php
+          prettierd # js / ts
+          rustfmt # rust
 
           # Misc
           quicktype # json to lang
