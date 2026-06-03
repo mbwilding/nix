@@ -32,6 +32,12 @@ in
 
       home-manager.sharedModules = [
         ./_hyprland.nix
+
+        ({ pkgs, ... }: {
+          home.packages = with pkgs; [
+            # package
+          ];
+        })
       ];
 
       networking.hostName = "nona";
@@ -193,9 +199,6 @@ in
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
-        systemPackages = with pkgs; [
-          libreoffice
-        ];
       };
 
       system.stateVersion = "25.11";
