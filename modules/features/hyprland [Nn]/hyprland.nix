@@ -507,7 +507,6 @@
               "network_tx"
             ];
             center = [
-              "clock"
               "workspaces"
               "media"
             ];
@@ -519,6 +518,7 @@
               "notifications"
               "brightness"
               "battery"
+              "clock"
             ];
           };
 
