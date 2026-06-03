@@ -493,6 +493,8 @@
             position = "bottom";
             scale = 1.2;
             thickness = 38;
+            padding = 18;
+            widget_spacing = 18;
 
             start = [
               "workspaces"
