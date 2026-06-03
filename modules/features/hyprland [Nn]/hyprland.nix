@@ -260,11 +260,11 @@
             "$mod, m, exec, teams-for-linux"
             # "$mod, n, exec, neovide"
             "$mod, p, exec, 1password"
-            "$mod, r, exec, noctalia-shell ipc call launcher toggle"
+            "$mod, r, exec, noctalia msg panel-toggle launcher"
             "$mod, s, exec, spotify"
             "$mod, t, exec, ghostty +new-window"
-            "$mod, z, exec, noctalia-shell ipc call lockScreen lock"
-            "$mod, comma, exec, noctalia-shell ipc call settings toggle"
+            "$mod, z, exec, noctalia msg session lock"
+            "$mod, comma, exec, noctalia msg settings-toggle"
             "$mod, minus, exec, ecc toggle"
 
             "$mod, f, togglefloating,"
@@ -333,7 +333,7 @@
           ];
 
           bindl = [
-            ", switch:on:Lid Switch, exec, noctalia-shell ipc call lockScreen lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
+            ", switch:on:Lid Switch, exec, noctalia msg session lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
             ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on ${primaryMonitor}"
           ];
 
@@ -468,12 +468,12 @@
           general = {
             after_sleep_cmd = "hyprctl dispatch dpms on";
             ignore_dbus_inhibit = false;
-            lock_cmd = "noctalia-shell ipc call lockScreen lock";
+            lock_cmd = "noctalia msg session lock";
           };
           listener = [
             {
               timeout = 300;
-              on-timeout = "noctalia-shell ipc call lockScreen lock";
+              on-timeout = "noctalia msg session lock";
             }
             {
               timeout = 360;
