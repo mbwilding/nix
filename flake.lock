@@ -124,11 +124,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780370888,
-        "narHash": "sha256-PRJj9RKTEf/sITycujP1c/BrvLJKMYXzcpwTsXNulXQ=",
+        "lastModified": 1780408569,
+        "narHash": "sha256-s7Tv6FUQThRAvW8En8XVC6HMb0uiikzVccCcCo9u/Bg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "a7a415883195ffbd4dabec8f098f201e6eaaadf8",
+        "rev": "f384af1bec6423a0d4ba1855917ab948f64e5808",
         "type": "github"
       },
       "original": {
@@ -249,11 +249,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1780169171,
-        "narHash": "sha256-3HBYDfBgZ+ph52HS6Ks/bMMwuh2uONIT72sZ1CtLE/s=",
+        "lastModified": 1780448629,
+        "narHash": "sha256-gSA/O9ey7QomcxoRtVA5kJI7XToyyDHQK8Mp4gRCH+I=",
         "owner": "nix-community",
         "repo": "NixOS-WSL",
-        "rev": "998b2821c30b2938637230916904ceb8757c79e8",
+        "rev": "ac3c9e99c686c6fcec24b563880577818c79ba4a",
         "type": "github"
       },
       "original": {
@@ -297,11 +297,11 @@
     },
     "nixpkgs-droid": {
       "locked": {
-        "lastModified": 1780400375,
-        "narHash": "sha256-hE85CHLuctGHxUkiaovdENr7Q8u0Rd4QR9CwtILowTk=",
+        "lastModified": 1780453812,
+        "narHash": "sha256-zAL9mP4i1z9xK3hGaOmitOE10U4t5f0AvRZTbBw254o=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "02cdda9b25384f1b9ad35d0004939fc31fe545a2",
+        "rev": "0aa52897e6d0c645e4983c11ff81ee399799f12b",
         "type": "github"
       },
       "original": {
@@ -359,11 +359,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1780400375,
-        "narHash": "sha256-hE85CHLuctGHxUkiaovdENr7Q8u0Rd4QR9CwtILowTk=",
+        "lastModified": 1780453812,
+        "narHash": "sha256-zAL9mP4i1z9xK3hGaOmitOE10U4t5f0AvRZTbBw254o=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "02cdda9b25384f1b9ad35d0004939fc31fe545a2",
+        "rev": "0aa52897e6d0c645e4983c11ff81ee399799f12b",
         "type": "github"
       },
       "original": {
@@ -405,6 +405,19 @@
         "type": "github"
       }
     },
+    "nixpkgs_4": {
+      "locked": {
+        "lastModified": 1777268161,
+        "narHash": "sha256-e1tDUQMbFCxCnke314UpghgRqg3FJLtcXFfq/WTRLYI=",
+        "rev": "1c3fe55ad329cbcb28471bb30f05c9827f724c76",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre987561.1c3fe55ad329/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
+      }
+    },
     "nmd": {
       "inputs": {
         "nixpkgs": [
@@ -443,6 +456,25 @@
         "type": "gitlab"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_4"
+      },
+      "locked": {
+        "lastModified": 1780453980,
+        "narHash": "sha256-OJSLEK89gG1WyrxTkula2Ab1KY0v+L20zCt6FBCgYNk=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "rev": "4ca95577372139418f399e0e213a9007c4f14153",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "ref": "v5",
+        "repo": "noctalia-shell",
+        "type": "github"
+      }
+    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -478,6 +510,7 @@
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-droid": "nixpkgs-droid",
         "nixpkgs-master": "nixpkgs-master",
+        "noctalia": "noctalia",
         "plasma-manager": "plasma-manager",
         "ucodenix": "ucodenix"
       }
