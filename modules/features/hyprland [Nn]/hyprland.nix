@@ -495,6 +495,7 @@
             thickness = 38;
 
             start = [
+              "workspaces"
               "session"
               "control-center"
               "wallpaper"
@@ -507,7 +508,6 @@
               "network_tx"
             ];
             center = [
-              "workspaces"
               "media"
             ];
             end = [
