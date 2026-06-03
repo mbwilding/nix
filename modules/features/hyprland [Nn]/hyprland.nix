@@ -496,7 +496,10 @@
 
             start = [
               "session"
+              "control-center"
               "launcher"
+              "wallpaper"
+              "clipboard"
               "cpu"
               "ram"
               "temp"
@@ -511,9 +514,6 @@
               "tray"
               "network"
               "volume"
-              "control-center"
-              "wallpaper"
-              "clipboard"
               "bluetooth"
               "notifications"
               "brightness"
