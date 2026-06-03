@@ -498,6 +498,7 @@
 
             start = [
               "workspaces"
+              "notifications"
               "session"
               "control-center"
               "wallpaper"
@@ -514,10 +515,10 @@
             ];
             end = [
               "tray"
+              "weather"
+              "bluetooth"
               "network"
               "volume"
-              "bluetooth"
-              "notifications"
               "brightness"
               "battery"
               "clock"
@@ -527,6 +528,12 @@
           lockscreen.blurred_desktop = true;
           dock.auto_hide = true;
           location.address = "Perth, Australia";
+
+          weather = {
+            unit = "metric";
+            refresh_minutes = 30;
+            effects = true;
+          };
 
           shell = {
             font_family = "NeoSpleen Nerd Font";
@@ -562,6 +569,10 @@
           };
 
           widget = {
+            weather = {
+              show_condition = true;
+              max_length = 160.0;
+            };
             workspaces = {
               empty_color = "on_secondary";
               hide_when_empty = true;
