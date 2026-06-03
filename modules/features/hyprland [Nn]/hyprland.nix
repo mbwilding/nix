@@ -497,8 +497,8 @@
             start = [
               "session"
               "control-center"
-              "launcher"
               "wallpaper"
+              "launcher"
               "clipboard"
               "cpu"
               "ram"
