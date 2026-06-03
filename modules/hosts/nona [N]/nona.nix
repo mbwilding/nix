@@ -2,6 +2,7 @@
 
 let
   keymap = "dvorak";
+  keyThreshold = "144"; # 200
 in
 {
   flake.modules.nixos.nona =
@@ -70,14 +71,14 @@ in
                 leftshift = "esc";
                 rightalt = "layer(symbols)";
 
-                a = "overloadt(control, a, 200)";
-                ";" = "overloadt(control, ;, 200)";
-                s = "overloadt(meta, s, 200)";
-                l = "overloadt(meta, l, 200)";
-                z = "overloadt(alt, z, 200)";
-                "/" = "overloadt(alt, /, 200)";
-                f = "overloadt(numbers, f, 200)";
-                m = "overloadt(fkeys, m, 200)";
+                a = "overloadt(control, a, ${keyThreshold})";
+                ";" = "overloadt(control, ;, ${keyThreshold})";
+                s = "overloadt(meta, s, ${keyThreshold})";
+                l = "overloadt(meta, l, ${keyThreshold})";
+                z = "overloadt(alt, z, ${keyThreshold})";
+                "/" = "overloadt(alt, /, ${keyThreshold})";
+                f = "overloadt(numbers, f, ${keyThreshold})";
+                m = "overloadt(fkeys, m, ${keyThreshold})";
               };
 
               "capslock:C" = {
