@@ -561,7 +561,7 @@
               launcher_categories = false;
               launcher_placement = "centered";
               open_near_click_session = true;
-              transparency_mode = "glass";
+              transparency_mode = "solid";
             };
           };
 
