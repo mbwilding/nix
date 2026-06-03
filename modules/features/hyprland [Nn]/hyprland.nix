@@ -530,8 +530,8 @@
                   "bluetooth"
                   "notifications"
                   "brightness"
-                  "launcher"
                   "session"
+                  "launcher"
                 ];
                 opacity = 1.0;
                 padding = 6.0;
@@ -546,7 +546,7 @@
             ];
           };
 
-          desktop_widgets.enabled = false;
+          lockscreen.blurred_desktop = true;
 
           dock.auto_hide = true;
 
@@ -577,7 +577,12 @@
 
           wallpaper = {
             directory = "/home/anon/nix/wallpapers";
+            directory_dark = "";
             default.path = "/home/anon/nix/wallpapers/retrowave/futuristic-city-5120x2880-15887.jpg";
+            automation = {
+              enabled = true;
+              interval_minutes = 3;
+            };
           };
 
           widget = {
