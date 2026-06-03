@@ -19,7 +19,6 @@
         home-manager.sharedModules = [
           inputs.self.modules.homeManager.hyprland
           inputs.self.modules.homeManager.theme
-          inputs.noctalia.homeModules.default
           { _module.args.primaryMonitor = config.host.primaryMonitor; }
         ];
 
