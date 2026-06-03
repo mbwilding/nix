@@ -521,17 +521,17 @@
                 fill = "surface_variant";
                 id = "g2";
                 members = [
-                  "network"
                   "battery"
+                  "network"
                   "volume"
                   "control-center"
+                  "launcher"
                   "wallpaper"
                   "clipboard"
                   "bluetooth"
-                  "notifications"
                   "brightness"
+                  "notifications"
                   "session"
-                  "launcher"
                 ];
                 opacity = 1.0;
                 padding = 6.0;
