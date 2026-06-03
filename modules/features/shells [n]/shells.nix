@@ -80,6 +80,18 @@
               name = "fifc";
               src = pkgs.fishPlugins.fifc.src;
             }
+            {
+              name = "puffer";
+              src = pkgs.fishPlugins.puffer.src;
+            }
+            {
+              name = "bass";
+              src = pkgs.fishPlugins.bass.src;
+            }
+            {
+              name = "forgit";
+              src = pkgs.fishPlugins.forgit.src;
+            }
           ];
           interactiveShellInit = ''
             set -g fish_greeting
