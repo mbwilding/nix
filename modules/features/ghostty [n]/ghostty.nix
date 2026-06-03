@@ -11,11 +11,11 @@
     let
       mod = "super+shift+ctrl+alt";
       shaders = {
-        color = "vec4(0.35, 0.25375, 0.05635, 1.0)";
-        colorAccent = "vec4(0.35, 0.0, 0.0, 1.0)";
-        duration = "0.05";
+        color = "vec4(0.1, 0.1, 0.1, 1.0)"; # "vec4(0.35, 0.25375, 0.05635, 1.0)"
+        colorAccent = "vec4(0.1, 0.1, 0.1, 1.0)";   # "vec4(0.35, 0.0, 0.0, 1.0)"
+        duration = "0.04";
         blaze = false;
-        trail = false;
+        trail = true;
       };
     in
     {
@@ -39,8 +39,8 @@
             font-synthetic-style = true;
             # adjust-cell-width = "-5%";
             adjust-cell-height = "15%";
-            adjust-underline-position = 4;
-            background-opacity = 0.92;
+            adjust-underline-position = 3;
+            background-opacity = 0.91;
             clipboard-paste-protection = false;
             clipboard-read = "allow";
             clipboard-trim-trailing-spaces = true;
