@@ -37,7 +37,7 @@
           ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
           grep = "grep --color";
           hm-build = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
-          hm-expire = "home-manager expire-generations -days";
+          hm-clean = "home-manager expire-generations -days";
           hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
           lg = "lazygit";
           ll = "eza -lhg";
