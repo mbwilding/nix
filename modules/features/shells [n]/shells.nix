@@ -2,7 +2,12 @@
 
 {
   flake.modules.homeManager.shells =
-    { secrets, config, ... }:
+    {
+      secrets,
+      config,
+      pkgs,
+      ...
+    }:
     {
       home = {
         sessionPath = [ "$HOME/.cargo/bin" ];
@@ -66,6 +71,16 @@
       programs = {
         fish = {
           enable = true;
+          plugins = [
+            {
+              name = "fzf-fish";
+              src = pkgs.fishPlugins.fzf-fish.src;
+            }
+            {
+              name = "fifc";
+              src = pkgs.fishPlugins.fifc.src;
+            }
+          ];
           interactiveShellInit = ''
             set -g fish_greeting
 
