@@ -559,7 +559,7 @@
             animation.speed = 2.0;
             panel = {
               launcher_categories = false;
-              launcher_placement = "attached";
+              launcher_placement = "centered";
               open_near_click_session = true;
               transparency_mode = "glass";
             };
