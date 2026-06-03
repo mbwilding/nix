@@ -489,67 +489,41 @@
         settings = {
           bar.default = {
             auto_hide = true;
-            center = [
-              "group:g1"
-              "group:g3"
-            ];
-            end = [
-              "tray"
-              "group:g2"
-              "clock"
-            ];
             layer = "overlay";
             position = "bottom";
             scale = 1.2;
-            start = [ "workspaces" ];
             thickness = 38;
-            capsule_group = [
-              {
-                fill = "surface_variant";
-                id = "g1";
-                members = [
-                  "cpu"
-                  "ram"
-                  "temp"
-                  "network_rx"
-                  "network_tx"
-                ];
-                opacity = 1.0;
-                padding = 6.0;
-              }
-              {
-                fill = "surface_variant";
-                id = "g2";
-                members = [
-                  "battery"
-                  "network"
-                  "volume"
-                  "control-center"
-                  "launcher"
-                  "wallpaper"
-                  "clipboard"
-                  "bluetooth"
-                  "brightness"
-                  "notifications"
-                  "session"
-                ];
-                opacity = 1.0;
-                padding = 6.0;
-              }
-              {
-                fill = "surface_variant";
-                id = "g3";
-                members = [ "media" ];
-                opacity = 1.0;
-                padding = 6.0;
-              }
+
+            start = [
+              "session"
+              "launcher"
+              "cpu"
+              "ram"
+              "temp"
+              "network_rx"
+              "network_tx"
+            ];
+            center = [
+              "workspaces"
+              "media"
+            ];
+            end = [
+              "tray"
+              "network"
+              "volume"
+              "control-center"
+              "wallpaper"
+              "clipboard"
+              "bluetooth"
+              "notifications"
+              "brightness"
+              "battery"
+              "clock"
             ];
           };
 
           lockscreen.blurred_desktop = true;
-
           dock.auto_hide = true;
-
           location.address = "Perth, Australia";
 
           shell = {
