@@ -34,6 +34,9 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    # nixpkgs.follows intentionally omitted to allow the noctalia cachix binary cache
+    noctalia.url = "github:noctalia-dev/noctalia-shell/v5";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
