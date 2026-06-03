@@ -86,6 +86,7 @@
             killall
             kubectl
             kubernetes-helm
+            libreoffice
             lld
             lshw
             lsof

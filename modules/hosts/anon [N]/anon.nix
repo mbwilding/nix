@@ -34,6 +34,12 @@
 
         ./_hyprland.nix
         # ./_kde.nix
+
+        ({ pkgs, ... }: {
+          home.packages = with pkgs; [
+            davinci-resolve-studio
+          ];
+        })
       ];
 
       networking.hostName = "anon";
@@ -46,10 +52,6 @@
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
-        systemPackages = with pkgs; [
-          davinci-resolve-studio
-          libreoffice
-        ];
       };
 
       hardware = {
