@@ -26,7 +26,7 @@
           hyprland = {
             enable = true;
             portalPackage = pkgs.xdg-desktop-portal-hyprland;
-            xwayland.enable = true;
+            xwayland.enable = false;
           };
         };
 
@@ -73,7 +73,7 @@
           extraPortals = lib.mkForce [
             pkgs.xdg-desktop-portal-hyprland
             pkgs.xdg-desktop-portal-gtk
-            pkgs.kdePackages.xdg-desktop-portal-kde
+            # pkgs.kdePackages.xdg-desktop-portal-kde
           ];
           configPackages = with pkgs; [ hyprland ];
           config = {
