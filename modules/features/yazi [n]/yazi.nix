@@ -21,6 +21,13 @@
         shellWrapperName = "y";
         settings = {
           opener = {
+            view = [
+              {
+                run = ''imv "%s"'';
+                desc = "View image";
+                orphan = true;
+              }
+            ];
             edit = [
               {
                 run = ''nvim "%s"'';
@@ -56,6 +63,10 @@
           };
           open = {
             prepend_rules = [
+              {
+                mime = "image/*";
+                use = "view";
+              }
               {
                 mime = "text/*";
                 use = "edit";
