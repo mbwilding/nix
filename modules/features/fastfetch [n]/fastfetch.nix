@@ -105,6 +105,12 @@
               keyColor = "yellow";
             }
             {
+              type = "gpu";
+              key = "󰢮 Driver";
+              keyColor = "yellow";
+              format = "{driver}";
+            }
+            {
               type = "disk";
               key = " SSD";
               keyColor = "yellow";
