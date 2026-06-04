@@ -9,6 +9,7 @@
         enable = true;
         vencord = {
           settings = {
+            # https://vencord.dev/plugins
             plugins = {
               AlwaysTrust.enabled = true;
               BetterFolders.enabled = true;
