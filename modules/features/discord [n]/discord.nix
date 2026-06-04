@@ -33,6 +33,7 @@
               MemberCount.enabled = true;
               MentionAvatars.enabled = true;
               MessageLatency.enabled = true;
+              TypingTweaks.enabled = true;
               VolumeBooster.enabled = true;
             };
           };
