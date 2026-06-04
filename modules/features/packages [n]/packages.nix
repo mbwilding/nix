@@ -52,6 +52,7 @@
 
             # Packages
             _1password-gui
+            archivemount
             asciiquarium
             azure-cli
             bat
@@ -84,6 +85,7 @@
             nix-diff
             nmap
             openssh
+            p7zip
             pavucontrol
             postgresql
             prismlauncher
