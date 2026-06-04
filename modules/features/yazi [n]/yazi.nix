@@ -2,14 +2,142 @@
 
 {
   flake.modules.homeManager.yazi =
-    { config, ... }:
+    { config, pkgs, ... }:
+    let
+      extractToDir = pkgs.writeShellScriptBin "yazi-extract-dir" ''
+        file="$1"
+        dir="$(dirname "$file")"
+        stem="$(basename "$file")"
+        stem="''${stem%%.*}"
+        7z x "$file" -o"$dir/$stem"
+      '';
+    in
     {
+      home.packages = [ extractToDir ];
       programs.yazi = {
         enable = true;
         enableZshIntegration = config.programs.zsh.enable;
         enableFishIntegration = config.programs.fish.enable;
         shellWrapperName = "y";
         settings = {
+          opener = {
+            edit = [
+              {
+                run = ''nvim "%s"'';
+                desc = "Edit with nvim";
+                block = true;
+              }
+            ];
+            browse = [
+              {
+                run = ''
+                  tmp=$(mktemp -d)
+                  archivemount "%s" "$tmp"
+                  yazi "$tmp"
+                  fusermount -u "$tmp"
+                  rmdir "$tmp"
+                '';
+                desc = "Browse archive";
+                block = true;
+              }
+            ];
+            extract = [
+              {
+                run = ''yazi-extract-dir "%s1"'';
+                desc = "Extract to directory";
+              }
+            ];
+            extract-here = [
+              {
+                run = ''7z x "%s1" -o"%d1"'';
+                desc = "Extract here";
+              }
+            ];
+          };
+          open = {
+            prepend_rules = [
+              {
+                mime = "text/*";
+                use = "edit";
+              }
+              {
+                mime = "application/json";
+                use = "edit";
+              }
+              {
+                mime = "application/zip";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/gzip";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-tar";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-bzip2";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-xz";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-zstd";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-7z-compressed";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/vnd.rar";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+              {
+                mime = "application/x-rar-compressed";
+                use = [
+                  "browse"
+                  "extract"
+                  "extract-here"
+                ];
+              }
+            ];
+          };
           mgr = {
             linemode = "permissions";
             scrolloff = 3;
@@ -34,6 +162,20 @@
             image_filter = "lanczos3";
             image_quality = 90;
           };
+        };
+        keymap = {
+          mgr.prepend_keymap = [
+            {
+              on = "x";
+              run = ''shell -- yazi-extract-dir "%h"'';
+              desc = "Extract archive to directory";
+            }
+            {
+              on = "X";
+              run = ''shell -- 7z x "%h" -o"%d1"'';
+              desc = "Extract archive here";
+            }
+          ];
         };
       };
     };
