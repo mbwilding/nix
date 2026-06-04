@@ -72,6 +72,7 @@
             hostname
             imagemagick
             imhex
+            imv
             jfrog-cli
             jq
             keymapp
