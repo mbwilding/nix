@@ -431,14 +431,14 @@
         mimeApps = {
           enable = true;
           defaultApplications = {
-            "image/png" = "org.kde.gwenview.desktop";
-            "image/jpeg" = "org.kde.gwenview.desktop";
-            "image/gif" = "org.kde.gwenview.desktop";
-            "image/bmp" = "org.kde.gwenview.desktop";
-            "image/svg+xml" = "org.kde.gwenview.desktop";
-            "image/tiff" = "org.kde.gwenview.desktop";
-            "image/webp" = "org.kde.gwenview.desktop";
-            "image/x-icon" = "org.kde.gwenview.desktop";
+            "image/png" = "imv.desktop";
+            "image/jpeg" = "imv.desktop";
+            "image/gif" = "imv.desktop";
+            "image/bmp" = "imv.desktop";
+            "image/svg+xml" = "imv.desktop";
+            "image/tiff" = "imv.desktop";
+            "image/webp" = "imv.desktop";
+            "image/x-icon" = "imv.desktop";
           };
         };
       };
