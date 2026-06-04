@@ -217,7 +217,7 @@
                   "applications:google-chrome.desktop"
                   "applications:firefox.desktop"
                   "applications:com.mitchellh.ghostty.desktop"
-                  "applications:discord.desktop"
+                  "applications:vesktop.desktop"
                   "applications:steam.desktop"
                   "applications:teams-for-linux.desktop"
                 ];
