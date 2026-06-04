@@ -255,7 +255,7 @@
           bind = [
             "$mod, b, exec, firefox"
             "$mod, c, exec, ghostty -e btop +new-window"
-            "$mod, d, exec, discord"
+            "$mod, d, exec, vesktop"
             "$mod, e, exec, dolphin"
             "$mod, m, exec, teams-for-linux"
             "$mod, p, exec, 1password"
