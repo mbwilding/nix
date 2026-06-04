@@ -159,6 +159,8 @@
           preview = {
             wrap = "yes";
             tab_size = 2;
+            max_width = 9999;
+            max_height = 9999;
             image_filter = "lanczos3";
             image_quality = 90;
           };
