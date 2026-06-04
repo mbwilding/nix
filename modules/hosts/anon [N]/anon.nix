@@ -195,7 +195,6 @@
 
       ./_hyprland.nix
       hyprland
-      theme
 
       # kde
     ]

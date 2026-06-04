@@ -64,7 +64,6 @@
         };
         systemPackages = with pkgs; [
           _1password-cli
-          kdePackages.partitionmanager
           lm_sensors
         ];
       };

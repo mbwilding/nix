@@ -18,7 +18,6 @@
       config = {
         home-manager.sharedModules = [
           inputs.self.modules.homeManager.hyprland
-          inputs.self.modules.homeManager.theme
           { _module.args.primaryMonitor = config.host.primaryMonitor; }
         ];
 
@@ -73,7 +72,6 @@
           extraPortals = lib.mkForce [
             pkgs.xdg-desktop-portal-hyprland
             pkgs.xdg-desktop-portal-gtk
-            # pkgs.kdePackages.xdg-desktop-portal-kde
           ];
           configPackages = with pkgs; [ hyprland ];
           config = {
@@ -111,13 +109,8 @@
         };
 
         environment = {
-          etc."xdg/menus/applications.menu".source =
-            "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
-
           systemPackages = with pkgs; [
             hyprpolkitagent
-            kdePackages.kactivitymanagerd
-            kdePackages.ark
           ];
         };
       };
@@ -136,7 +129,7 @@
       gaps = 0.0; # 10.0
       anim_speed = 2.0;
       anim_speed_str = builtins.toString anim_speed;
-      monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
+      # monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
     in
     {
       imports = [ inputs.noctalia.homeModules.default ];
@@ -144,18 +137,8 @@
         packages = with pkgs; [
           hyprshot
           jq
-          kdePackages.breeze
-          kdePackages.plasma-integration
           pulseaudio
         ];
-
-        file.".config/dolphinrc".text = ''
-          [General]
-          PreviewsShown=true
-
-          [PreviewSettings]
-          Plugins=appimagethumbnail,audiothumbnail,blenderthumbnail,comicbookthumbnail,cursorthumbnail,directorythumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,ffmpegthumbs,gsthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,mobithumbnail,opendocumentthumbnail,rawthumbnail,svgthumbnail,textthumbnail,windowsexethumbnail,windowsimagethumbnail
-        '';
       };
 
       wayland.windowManager.hyprland = {
@@ -256,7 +239,7 @@
             "$mod, b, exec, firefox"
             "$mod, c, exec, ghostty -e btop +new-window"
             "$mod, d, exec, vesktop"
-            "$mod, e, exec, dolphin"
+            "$mod, e, exec, ghostty -e yazi +new-window"
             "$mod, m, exec, teams-for-linux"
             "$mod, p, exec, 1password"
             "$mod, r, exec, noctalia msg panel-toggle launcher"
@@ -422,9 +405,7 @@
             "CLUTTER_BACKEND,wayland"
             "ELECTRON_OZONE_PLATFORM_HINT,wayland"
             "GDK_BACKEND,wayland,x11,*"
-            "GTK_THEME,Breeze-Dark"
             "QT_QPA_PLATFORM,wayland;xcb"
-            "QT_QPA_PLATFORMTHEME,kde"
             "SDL_VIDEODRIVER,wayland"
             "GDK_SCALE,1"
             "XDG_CURRENT_DESKTOP,Hyprland"
