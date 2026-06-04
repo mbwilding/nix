@@ -258,12 +258,12 @@
             "$mod, d, exec, discord"
             "$mod, e, exec, dolphin"
             "$mod, m, exec, teams-for-linux"
-            # "$mod, n, exec, neovide"
             "$mod, p, exec, 1password"
             "$mod, r, exec, noctalia msg panel-toggle launcher"
             "$mod, s, exec, spotify"
             "$mod, t, exec, ghostty +new-window"
             "$mod, z, exec, noctalia msg session lock"
+            "$mod, g, exec, systemd-run --user --scope steam"
             "$mod, comma, exec, noctalia msg settings-toggle"
             "$mod, minus, exec, ecc toggle"
 
