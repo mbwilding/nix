@@ -213,7 +213,6 @@ in
       { _module.args.primaryMonitor = "eDP-1"; }
 
       hyprland
-      theme
       ./_hyprland.nix
 
       # kde

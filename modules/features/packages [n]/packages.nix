@@ -73,15 +73,6 @@
             imhex
             jfrog-cli
             jq
-            kdePackages.baloo
-            kdePackages.baloo-widgets
-            kdePackages.dolphin
-            kdePackages.dolphin-plugins
-            kdePackages.ffmpegthumbs
-            kdePackages.gwenview
-            kdePackages.kdegraphics-thumbnailers
-            kdePackages.kimageformats
-            kdePackages.kio-extras
             keymapp
             killall
             kubectl
