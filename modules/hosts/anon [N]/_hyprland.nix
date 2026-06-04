@@ -68,9 +68,9 @@
         "match:class" = "spotify";
       }
       {
-        name = "Discord";
+        name = "Vesktop";
         workspace = "name:social";
-        "match:class" = "discord";
+        "match:class" = "vesktop";
       }
       {
         name = "Steam";
