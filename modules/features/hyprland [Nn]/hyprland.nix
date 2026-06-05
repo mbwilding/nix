@@ -78,30 +78,24 @@
             hyprland = {
               default = [
                 "hyprland"
-                "kde"
                 "gtk"
               ];
               "org.freedesktop.impl.portal.FileChooser" = [
-                "kde"
                 "gtk"
               ];
               "org.freedesktop.impl.portal.AppChooser" = [
-                "kde"
                 "gtk"
               ];
             };
             common = {
               default = [
                 "hyprland"
-                "kde"
                 "gtk"
               ];
               "org.freedesktop.impl.portal.FileChooser" = [
-                "kde"
                 "gtk"
               ];
               "org.freedesktop.impl.portal.AppChooser" = [
-                "kde"
                 "gtk"
               ];
             };
@@ -151,6 +145,17 @@
         gtk4.theme = {
           name = "Breeze-Dark";
           package = pkgs.kdePackages.breeze-gtk;
+        };
+      };
+
+      qt = {
+        enable = true;
+        style = {
+          name = "breeze";
+          package = pkgs.kdePackages.breeze;
+        };
+        platformTheme = {
+          name = "gtk";
         };
       };
 
