@@ -8,37 +8,44 @@ in
   flake.modules.nixos.nona =
     { pkgs, config, ... }:
     {
-      imports = with inputs.self.modules.nixos; [
-        # lutris
-        amd
-        appimage
-        flatpak
-        mounts
-        mpv
-        podman
-        qemu
-        steam
-        system-default
-        ucodenix
-        user-anon
-        waydroid
-        wireguard-nona
-        wireshark
+      imports =
+        with inputs.self.modules.nixos;
+        [
+          # lutris
+          amd
+          appimage
+          flatpak
+          mounts
+          mpv
+          podman
+          qemu
+          steam
+          system-default
+          ucodenix
+          user-anon
+          waydroid
+          wireguard-nona
+          wireshark
 
-        hyprland
-        # kde
-      ] ++ [
-        ./_hardware-configuration.nix
-      ];
+          hyprland
+          # kde
+        ]
+        ++ [
+          ./_hardware-configuration.nix
+        ];
 
       home-manager.sharedModules = [
         ./_hyprland.nix
+        ./_noctalia.nix
 
-        ({ pkgs, ... }: {
-          home.packages = with pkgs; [
-            # package
-          ];
-        })
+        (
+          { pkgs, ... }:
+          {
+            home.packages = with pkgs; [
+              # package
+            ];
+          }
+        )
       ];
 
       networking.hostName = "nona";
