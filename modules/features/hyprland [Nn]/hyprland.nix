@@ -141,6 +141,24 @@
         ];
       };
 
+      gtk = {
+        enable = true;
+        theme = {
+          name = "Breeze-Dark";
+          package = pkgs.kdePackages.breeze-gtk;
+        };
+        gtk4.theme = {
+          name = "Breeze-Dark";
+          package = pkgs.kdePackages.breeze-gtk;
+        };
+      };
+
+      dconf.settings = {
+        "org/gnome/desktop/interface" = {
+          color-scheme = "prefer-dark";
+        };
+      };
+
       wayland.windowManager.hyprland = {
         enable = true;
         configType = "hyprlang"; # TODO: lua
