@@ -127,10 +127,8 @@
 
     let
       gaps = 0.0;
-      animations = false;
       anim_speed = 2.0;
 
-      animations_str = if animations then "1" else "0";
       anim_speed_str = builtins.toString anim_speed;
       # monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
     in
@@ -342,16 +340,16 @@
           ];
 
           animations = {
-            enabled = true;
+            enabled = false;
             animation = [
               "workspaces, 0, 0.0, default"
-              "windows, ${animations_str}, ${anim_speed_str}, default"
-              "layers, ${animations_str}, ${anim_speed_str}, default"
-              "fade, ${animations_str}, ${anim_speed_str}, default"
-              "border, ${animations_str}, ${anim_speed_str}, default"
-              "borderangle, ${animations_str}, ${anim_speed_str}, default"
-              "zoomFactor, ${animations_str}, ${anim_speed_str}, default"
-              "monitorAdded, ${animations_str}, ${anim_speed_str}, default"
+              "windows, 1, ${anim_speed_str}, default"
+              "layers, 1, ${anim_speed_str}, default"
+              "fade, 1, ${anim_speed_str}, default"
+              "border, 1, ${anim_speed_str}, default"
+              "borderangle, 1, ${anim_speed_str}, default"
+              "zoomFactor, 1, ${anim_speed_str}, default"
+              "monitorAdded, 1, ${anim_speed_str}, default"
             ];
           };
 
