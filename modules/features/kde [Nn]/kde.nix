@@ -215,7 +215,6 @@
                   "applications:systemsettings.desktop"
                   "applications:org.kde.dolphin.desktop"
                   "applications:google-chrome.desktop"
-                  "applications:firefox.desktop"
                   "applications:com.mitchellh.ghostty.desktop"
                   "applications:vesktop.desktop"
                   "applications:steam.desktop"
