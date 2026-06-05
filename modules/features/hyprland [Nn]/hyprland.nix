@@ -127,7 +127,7 @@
 
     let
       gaps = 0.0;
-      anim_speed = 2.0;
+      anim_speed = 1.8;
 
       anim_speed_str = builtins.toString anim_speed;
       # monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
@@ -340,7 +340,7 @@
           ];
 
           animations = {
-            enabled = false;
+            enabled = true;
             animation = [
               "workspaces, 0, 0.0, default"
               "windows, 1, ${anim_speed_str}, default"
