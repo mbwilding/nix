@@ -64,7 +64,6 @@
             eza
             fd
             file
-            firefox
             fuse3
             gnugrep
             gnupg

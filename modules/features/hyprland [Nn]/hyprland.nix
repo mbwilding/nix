@@ -236,7 +236,7 @@
 
           "$mod" = "SUPER";
           bind = [
-            "$mod, b, exec, firefox"
+            "$mod, b, exec, google-chrome"
             "$mod, c, exec, ghostty -e btop +new-window"
             "$mod, d, exec, vesktop"
             "$mod, e, exec, ghostty -e yazi +new-window"
