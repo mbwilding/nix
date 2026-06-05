@@ -126,8 +126,8 @@
     }:
 
     let
-      gaps = 0.0; # 10.0
-      anim_speed = 2.0;
+      gaps = 0.0;
+      anim_speed = 0.0; # 2.0
       anim_speed_str = builtins.toString anim_speed;
       # monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
     in
