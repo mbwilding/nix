@@ -494,6 +494,8 @@
             thickness = 38;
             padding = 18;
             widget_spacing = 18;
+            margin_edge = 0;
+            margin_ends = 700;
 
             start = [
               "workspaces"
@@ -542,7 +544,9 @@
             panel = {
               launcher_categories = false;
               launcher_placement = "centered";
+              open_near_click_control_center = true;
               open_near_click_session = true;
+              open_near_click_wallpaper = true;
               transparency_mode = "solid";
             };
           };
@@ -568,6 +572,9 @@
           };
 
           widget = {
+            media = {
+              max_length = 400;
+            };
             weather = {
               show_condition = true;
               max_length = 160.0;
