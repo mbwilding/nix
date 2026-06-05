@@ -30,9 +30,9 @@ in
           # kde
         ]
         ++ [
+          ./_hardware-configuration.nix
           ./_audio.nix
           ./_keyd.nix
-          ./_hardware-configuration.nix
         ];
 
       home-manager.sharedModules = [
