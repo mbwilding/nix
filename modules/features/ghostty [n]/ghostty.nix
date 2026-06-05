@@ -15,7 +15,7 @@
         colorAccent = "vec4(0.1, 0.1, 0.1, 1.0)"; # "vec4(0.35, 0.0, 0.0, 1.0)"
         duration = "0.04";
         blaze = false;
-        trail = true;
+        trail = false;
       };
     in
     {
