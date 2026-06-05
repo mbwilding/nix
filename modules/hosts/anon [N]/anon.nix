@@ -4,42 +4,49 @@
   flake.modules.nixos.anon =
     { pkgs, config, ... }:
     {
-      imports = with inputs.self.modules.nixos; [
-        appimage
-        flatpak
-        lutris
-        mounts
-        mpv
-        nvidia
-        obs
-        podman
-        qemu
-        solaar
-        steam
-        system-default
-        ucodenix
-        user-anon
-        waydroid
-        wine
-        wireshark
+      imports =
+        with inputs.self.modules.nixos;
+        [
+          # lutris
+          appimage
+          flatpak
+          mounts
+          mpv
+          nvidia
+          obs
+          podman
+          qemu
+          solaar
+          steam
+          system-default
+          ucodenix
+          user-anon
+          waydroid
+          wine
+          wireshark
 
-        hyprland
-        # kde
-      ] ++ [
-        ./_hardware-configuration.nix
-      ];
+          hyprland
+          # kde
+        ]
+        ++ [
+          ./_hardware-configuration.nix
+        ];
 
       home-manager.sharedModules = [
-        ./_ghostty.nix
-
-        ./_hyprland.nix
         # ./_kde.nix
 
-        ({ pkgs, ... }: {
-          home.packages = with pkgs; [
-            davinci-resolve-studio
-          ];
-        })
+        ./_ghostty.nix
+        ./_hyprland.nix
+        ./_noctalia.nix
+
+        (
+          { pkgs, ... }:
+          {
+            home.packages = with pkgs; [
+              davinci-resolve-studio
+            ];
+          }
+        )
       ];
 
       networking.hostName = "anon";
