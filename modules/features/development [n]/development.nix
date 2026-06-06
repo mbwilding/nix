@@ -71,10 +71,13 @@
           # Debuggers
           bashdb # bash
           delve # go
-          lldb # c / c++ / rust
+          lldb # c / c++ / rust / zig
+          vscode-extensions.vadimcn.vscode-lldb.adapter # c / c++ / rust / zig
           netcoredbg # c# / f#
           python314Packages.debugpy # python
+          powershell-editor-services # powershell
           vscode-js-debug # js / ts
+          # TODO: vscode-bash-debug
 
           # Linters
           cfn-nag # yaml
@@ -92,11 +95,6 @@
 
           # Misc
           quicktype # json to lang
-
-          # TODO: Find these
-          # vscode-bash-debug
-          # vscode-extensions.ms-vscode.powershell
-          # vscode-extensions.llvm-vs-code-extensions.lldb-dap
         ];
       };
     };
