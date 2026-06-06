@@ -8,6 +8,9 @@
       pkgsMaster,
       ...
     }:
+    let
+      vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
+    in
     {
       home = {
         packages = with pkgs; [
@@ -77,7 +80,7 @@
           python314Packages.debugpy # python
           powershell-editor-services # powershell
           vscode-js-debug # js / ts
-          # TODO: vscode-bash-debug
+          vscode-bash-debug # bash
 
           # Linters
           cfn-nag # yaml
