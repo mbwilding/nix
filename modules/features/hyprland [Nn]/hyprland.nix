@@ -25,7 +25,7 @@
           hyprland = {
             enable = true;
             portalPackage = pkgs.xdg-desktop-portal-hyprland;
-            xwayland.enable = false;
+            xwayland.enable = true;
           };
         };
 
