@@ -270,7 +270,7 @@
             "$mod, s, exec, spotify"
             "$mod, t, exec, ghostty +new-window"
             "$mod, z, exec, noctalia msg session lock"
-            "$mod, g, exec, systemd-run --user --scope steam"
+            "$mod, g, exec, systemd-run --user --scope steam -beta publicbeta"
             "$mod, comma, exec, noctalia msg settings-toggle"
             "$mod, minus, exec, ecc toggle"
 

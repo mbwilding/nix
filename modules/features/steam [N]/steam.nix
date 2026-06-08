@@ -39,23 +39,6 @@
       protonName = builtins.elemAt (pkgs.lib.splitString " " protonVersion) 1;
     in
     {
-      xdg.desktopEntries.steam = {
-        name = "Steam";
-        exec = "${pkgs.steam}/bin/steam -beta publicbeta %U";
-        icon = "steam";
-        terminal = false;
-        type = "Application";
-        categories = [
-          "Network"
-          "FileTransfer"
-          "Game"
-        ];
-        mimeType = [
-          "x-scheme-handler/steam"
-          "x-scheme-handler/steamlink"
-        ];
-      };
-
       home.file.".config/steamtinkerlaunch/default_template.conf".text = ''
         ## config Version: v14.0.20250602
         ##########################
