@@ -37,7 +37,6 @@ in
 
       home-manager.sharedModules = [
         ./_hyprland.nix
-        ./_noctalia.nix
 
         (
           { pkgs, ... }:
