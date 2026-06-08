@@ -6,11 +6,11 @@
     {
       environment.systemPackages = with pkgs; [
         termshark
-        wireshark
       ];
 
-      services.udev.extraRules = ''
-        SUBSYSTEM=="usbmon", GROUP="wireshark", MODE="0640"
-      '';
+      programs.wireshark = {
+        enable = true;
+        package = pkgs.wireshark;
+      };
     };
 }
