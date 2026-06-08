@@ -51,7 +51,7 @@
             fi
 
             # Install pac (Power Apps CLI) if not already installed
-            if ! "$dotnet_cmd" tool list --global | grep -q "^pac"; then
+            if ! "$dotnet_cmd" tool list --global | grep -qi "^microsoft.powerapps.cli.tool"; then
               "$dotnet_cmd" tool install --global Microsoft.PowerApps.CLI.Tool
             fi
           '';

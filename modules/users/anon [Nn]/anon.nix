@@ -11,13 +11,14 @@
         description = "anon";
         extraGroups = [
           "audio"
+          "dialout"
           "docker"
+          "libvirtd"
           "networkmanager"
           "render"
           "video"
           "wheel"
-          "dialout"
-          "libvirtd"
+          "wireshark"
         ];
         isNormalUser = true;
         shell = pkgs.fish;
