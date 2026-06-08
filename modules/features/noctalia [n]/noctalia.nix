@@ -64,6 +64,7 @@
             lang = "en";
             settings_show_advanced = true;
             animation.speed = 2.0;
+            launch_apps_as_systemd_services = true;
             panel = {
               launcher_categories = false;
               launcher_placement = "centered";
