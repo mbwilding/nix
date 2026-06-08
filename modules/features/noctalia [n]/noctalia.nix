@@ -11,6 +11,7 @@
         settings = {
           bar.default = {
             auto_hide = true;
+            reserve_space = false;
             layer = "overlay";
             position = "bottom";
             scale = 1.2;
