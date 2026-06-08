@@ -2,7 +2,7 @@
   programs.noctalia = {
     settings = {
       bar.default = {
-        margin_ends = 700;
+        # margin_ends = 700;
       };
     };
   };

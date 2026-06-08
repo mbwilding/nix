@@ -39,7 +39,6 @@
 
         ./_ghostty.nix
         ./_hyprland.nix
-        ./_noctalia.nix
 
         (
           { pkgs, ... }:
