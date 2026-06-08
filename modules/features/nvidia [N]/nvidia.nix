@@ -4,6 +4,8 @@
   flake.modules.nixos.nvidia =
     { config, pkgs, ... }:
     {
+      nixpkgs.config.cudaSupport = true;
+
       boot.blacklistedKernelModules = [ "nouveau" ];
 
       hardware = {
