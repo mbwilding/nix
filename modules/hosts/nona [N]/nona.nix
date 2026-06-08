@@ -16,6 +16,7 @@ in
           flatpak
           mounts
           mpv
+          obs
           podman
           qemu
           steam
