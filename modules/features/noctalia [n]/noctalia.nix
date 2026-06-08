@@ -28,11 +28,11 @@
               "wallpaper"
               "launcher"
               "clipboard"
-              "cpu"
-              "ram"
-              "temp"
-              "network_rx"
-              "network_tx"
+              # "cpu"
+              # "ram"
+              # "temp"
+              # "network_rx"
+              # "network_tx"
             ];
             center = [
               "media"
