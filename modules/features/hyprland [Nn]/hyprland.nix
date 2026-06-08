@@ -382,6 +382,7 @@
             touchpad = {
               natural_scroll = true;
               scroll_factor = 1.0;
+              disable_while_typing = false;
             };
           };
 
@@ -420,7 +421,7 @@
           cursor = {
             no_hardware_cursors = 2;
             no_break_fs_vrr = 2;
-            hide_on_key_press = true;
+            hide_on_key_press = false;
             hide_on_touch = true;
             no_warps = false;
           };
