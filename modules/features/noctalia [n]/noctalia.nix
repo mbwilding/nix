@@ -84,9 +84,9 @@
           };
 
           wallpaper = {
-            directory = "/home/anon/nix/wallpapers";
+            directory = "/home/anon/nix/wallpapers/retrowave";
             directory_dark = "";
-            default.path = "/home/anon/nix/wallpapers/retrowave/futuristic-city-5120x2880-15887.jpg";
+            default.path = "/home/anon/nix/wallpapers/retrowave/sunset-synthwave-sports-car-city-palm-trees-digital-art-4k-wallpaper-uhdpaper.com-216@1@n.jpg";
             automation = {
               enabled = true;
               interval_minutes = 3;
