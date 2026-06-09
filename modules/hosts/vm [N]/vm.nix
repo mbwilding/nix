@@ -6,7 +6,7 @@
     {
       imports = with inputs.self.modules.nixos; [
         system-default
-        user-anon
+        user-mbwilding
 
         # hyprland
         kde

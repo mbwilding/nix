@@ -20,7 +20,7 @@
           steam
           system-default
           ucodenix
-          user-anon
+          user-mbwilding
           waydroid
           wine
           wireshark

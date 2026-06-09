@@ -12,19 +12,11 @@
             group = "apps";
             isSystemUser = true;
           };
-          mbwilding = {
-            uid = 3000;
-            group = "mbwilding";
-            isSystemUser = true;
-          };
         };
 
         groups = {
           apps = {
             gid = 568;
-          };
-          mbwilding = {
-            gid = 3000;
           };
         };
       };

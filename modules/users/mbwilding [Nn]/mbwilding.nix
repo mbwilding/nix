@@ -1,40 +1,46 @@
 { inputs, ... }:
 
 {
-  # NixOS user definition for "anon".
-  # Desktop-environment-specific HM features (hyprland, kde) are injected by
-  # their system features via home-manager.sharedModules (hyprland [Nn] / kde [Nn]).
-  flake.modules.nixos.user-anon =
+  flake.modules.nixos.user-mbwilding =
     { config, pkgs, ... }:
     {
-      users.users.anon = {
-        description = "anon";
-        extraGroups = [
-          "apps"
-          "audio"
-          "dialout"
-          "docker"
-          "libvirtd"
-          "mbwilding"
-          "networkmanager"
-          "render"
-          "video"
-          "wheel"
-          "wireshark"
-        ];
-        isNormalUser = true;
-        shell = pkgs.fish;
+      users = {
+        users.mbwilding = {
+          description = "mbwilding";
+          extraGroups = [
+            "apps"
+            "audio"
+            "dialout"
+            "docker"
+            "libvirtd"
+            "mbwilding"
+            "networkmanager"
+            "render"
+            "video"
+            "wheel"
+            "wireshark"
+          ];
+          isNormalUser = true;
+          shell = pkgs.fish;
+          uid = 3000;
+          group = "mbwilding";
+        };
+        groups = {
+          mbwilding = {
+            gid = 3000;
+          };
+        };
       };
 
-      home-manager.users.anon = {
-        imports = [ inputs.self.modules.homeManager.anon ];
+      home-manager.users.mbwilding = {
+        imports = [ inputs.self.modules.homeManager.mbwilding ];
         _module.args.secrets = config._module.args.secrets;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 
-  flake.modules.homeManager.anon =
+  flake.modules.homeManager.mbwilding =
     { pkgs, lib, ... }:
     {
       imports = (
@@ -81,8 +87,8 @@
       news.display = "silent";
 
       home = {
-        username = "anon";
-        homeDirectory = import ../../nix/_home.nix;
+        username = "mbwilding";
+        homeDirectory = "/home/mbwilding";
 
         sessionVariables = {
           EDITOR = "nvim";
