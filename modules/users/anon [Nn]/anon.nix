@@ -15,6 +15,7 @@
           "dialout"
           "docker"
           "libvirtd"
+          "mbwilding"
           "networkmanager"
           "render"
           "video"
