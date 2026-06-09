@@ -6,13 +6,25 @@
 
     {
       users = {
-        users.apps = {
-          uid = 568;
-          group = "apps";
-          isSystemUser = true;
+        users = {
+          apps = {
+            uid = 568;
+            group = "apps";
+            isSystemUser = true;
+          };
+          mbwilding = {
+            uid = 3000;
+            group = "mbwilding";
+            isSystemUser = true;
+          };
         };
-        groups.apps = {
-          gid = 568;
+        groups = {
+          apps = {
+            gid = 568;
+          };
+          mbwilding = {
+            gid = 3000;
+          };
         };
       };
 
