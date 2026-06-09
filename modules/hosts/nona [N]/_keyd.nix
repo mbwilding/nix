@@ -1,7 +1,7 @@
 { ... }:
 
 let
-  keyThreshold = "144"; # 200
+  keyThreshold = "200";
 in
 {
   services.keyd = {

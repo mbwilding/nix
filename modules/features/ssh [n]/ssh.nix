@@ -24,12 +24,12 @@
 
             desktop = personal // {
               HostName = "192.168.11.254";
-              User = "anon";
+              User = "anon"; # TODO: mbwilding
             };
 
             laptop = personal // {
               HostName = "192.168.11.60";
-              User = "anon";
+              User = "mbwilding";
             };
 
             truenas = personal // {
@@ -39,6 +39,7 @@
 
             surface = personal // {
               HostName = "192.168.11.253";
+              User = "anon"; # TODO: mbwilding
               TCPKeepAlive = "yes";
               ServerAliveCountMax = 10;
               ServerAliveInterval = 20;

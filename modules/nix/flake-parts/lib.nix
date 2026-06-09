@@ -57,7 +57,7 @@
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};
           modules = [
-            inputs.self.modules.homeManager.anon
+            inputs.self.modules.homeManager.mbwilding
             {
               nixpkgs.config.allowUnfree = true;
               _module.args.secrets = secrets;
