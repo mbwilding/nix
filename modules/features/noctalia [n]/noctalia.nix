@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.noctalia =
-    { ... }:
+    { config, ... }:
     {
       imports = [ inputs.noctalia.homeModules.default ];
 
@@ -86,9 +86,9 @@
           };
 
           wallpaper = {
-            directory = "/home/anon/nix/wallpapers/retrowave";
+            directory = "${config.home.homeDirectory}/nix/wallpapers/retrowave";
             directory_dark = "";
-            default.path = "/home/anon/nix/wallpapers/retrowave/sunset-synthwave-sports-car-city-palm-trees-digital-art-4k-wallpaper-uhdpaper.com-216@1@n.jpg";
+            default.path = "${config.home.homeDirectory}/nix/wallpapers/retrowave/sunset-synthwave-sports-car-city-palm-trees-digital-art-4k-wallpaper-uhdpaper.com-216@1@n.jpg";
             automation = {
               enabled = true;
               interval_minutes = 3;
