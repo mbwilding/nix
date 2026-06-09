@@ -43,7 +43,7 @@
         };
 
         "/mnt/mbwilding" = {
-          device = "192.168.11.10:/mnt/main/mbwilding";
+          device = "192.168.11.10:/mnt/main/Users/mbwilding";
           fsType = "nfs";
           options = [
             "nofail"
