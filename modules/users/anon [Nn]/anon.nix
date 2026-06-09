@@ -10,6 +10,7 @@
       users.users.anon = {
         description = "anon";
         extraGroups = [
+          "apps"
           "audio"
           "dialout"
           "docker"

@@ -5,6 +5,17 @@
     { ... }:
 
     {
+      users = {
+        users.apps = {
+          uid = 568;
+          group = "apps";
+          isSystemUser = true;
+        };
+        groups.apps = {
+          gid = 568;
+        };
+      };
+
       fileSystems."/mnt/common" = {
         device = "192.168.11.10:/mnt/main/Common";
         fsType = "nfs";
