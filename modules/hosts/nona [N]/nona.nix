@@ -22,7 +22,7 @@ in
           steam
           system-default
           ucodenix
-          user-anon
+          user-mbwilding
           waydroid
           wireguard-nona
           wireshark

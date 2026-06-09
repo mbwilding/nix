@@ -7,7 +7,7 @@
       imports = with inputs.self.modules.nixos; [
         system-base
         fonts
-        user-anon
+        user-mbwilding
         docker
       ] ++ [
         inputs.nixos-wsl.nixosModules.default
@@ -18,7 +18,7 @@
       ];
 
       wsl.enable = true;
-      wsl.defaultUser = "anon";
+      wsl.defaultUser = "mbwilding";
 
       networking.hostName = "wsl";
 
@@ -26,7 +26,7 @@
 
       system.stateVersion = "25.11";
 
-      home-manager.users.anon.home.stateVersion = "25.11";
+      home-manager.users.mbwilding.home.stateVersion = "25.11";
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos "x86_64-linux" "wsl";
