@@ -489,18 +489,5 @@
           ];
         };
       };
-
-      home.file.".config/hypr/.luarc.json".text = builtins.toJSON {
-        workspace = {
-          library = [
-            "${pkgs.hyprland}/share/hypr/stubs"
-          ];
-        };
-        diganostics = {
-          globals = [
-            "hl"
-          ];
-        };
-      };
     };
 }
