@@ -24,7 +24,7 @@
 
             desktop = personal // {
               HostName = "192.168.11.254";
-              User = "anon"; # TODO: mbwilding
+              User = "mbwilding";
             };
 
             laptop = personal // {
