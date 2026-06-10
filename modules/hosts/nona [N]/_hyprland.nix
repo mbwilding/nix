@@ -1,8 +1,5 @@
 { lib, ... }:
 
-let
-  cursorSize = 48;
-in
 {
   wayland.windowManager.hyprland.settings = {
     monitorv2 = [
@@ -51,11 +48,6 @@ in
       "3, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
       "4, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
       "5, monitor:desc:Lenovo Group Limited 0x8AC2, layoutopt:direction:right, persistent:true"
-    ];
-
-    env = lib.mkAfter [
-      "XCURSOR_SIZE,${toString cursorSize}"
-      "HYPRCURSOR_SIZE,${toString cursorSize}"
     ];
 
     exec-once = lib.mkAfter [

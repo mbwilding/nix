@@ -167,7 +167,7 @@
 
       wayland.windowManager.hyprland = {
         enable = true;
-        configType = "hyprlang"; # TODO: lua
+        configType = "lua";
         package = pkgs.hyprland;
         portalPackage = pkgs.xdg-desktop-portal-hyprland;
         systemd = {
