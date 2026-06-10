@@ -2,6 +2,7 @@
 
 let
   keymap = "dvorak";
+  cursorSize = 48;
 in
 {
   flake.modules.nixos.nona =
@@ -69,6 +70,8 @@ in
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
+          XCURSOR_SIZE = toString cursorSize;
+          HYPRCURSOR_SIZE = toString cursorSize;
         };
       };
 
