@@ -1,5 +1,8 @@
 { inputs, ... }:
 
+let
+  cursorSize = 24;
+in
 {
   flake.modules.nixos.anon =
     { pkgs, config, ... }:
@@ -59,6 +62,8 @@
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
+          XCURSOR_SIZE = toString cursorSize;
+          HYPRCURSOR_SIZE = toString cursorSize;
         };
       };
 

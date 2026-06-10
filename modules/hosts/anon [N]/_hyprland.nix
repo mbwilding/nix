@@ -1,8 +1,5 @@
 { lib, ... }:
 
-let
-  cursorSize = 24;
-in
 {
   wayland.windowManager.hyprland.settings = {
     monitorv2 = [
@@ -123,11 +120,6 @@ in
         "match:class" = "^(steam_app.*)$";
         content = "game";
       }
-    ];
-
-    env = lib.mkAfter [
-      "XCURSOR_SIZE,${toString cursorSize}"
-      "HYPRCURSOR_SIZE,${toString cursorSize}"
     ];
   };
 }
