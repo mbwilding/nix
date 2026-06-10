@@ -2,7 +2,6 @@
 
 let
   keymap = "dvorak";
-  cursorSize = 48;
 in
 {
   flake.modules.nixos.nona =
@@ -70,8 +69,6 @@ in
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
-          XCURSOR_SIZE = toString cursorSize;
-          HYPRCURSOR_SIZE = toString cursorSize;
         };
       };
 
@@ -83,7 +80,9 @@ in
   flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "nona" (
     with inputs.self.modules.homeManager;
     [
-      { _module.args.primaryMonitor = "eDP-1"; }
+      {
+        _module.args.primaryMonitor = "eDP-1";
+      }
 
       hyprland
       ./_hyprland.nix

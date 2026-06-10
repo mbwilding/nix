@@ -9,16 +9,20 @@
       ...
     }:
     {
-      options.host.primaryMonitor = lib.mkOption {
-        type = lib.types.str;
-        default = "";
-        description = "Primary monitor output name for this host (e.g. HDMI-A-1, eDP-1).";
+      options.host = {
+        primaryMonitor = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+          description = "Primary monitor output name for this host (e.g. HDMI-A-1, eDP-1).";
+        };
       };
 
       config = {
         home-manager.sharedModules = [
           inputs.self.modules.homeManager.hyprland
-          { _module.args.primaryMonitor = config.host.primaryMonitor; }
+          {
+            _module.args.primaryMonitor = config.host.primaryMonitor;
+          }
         ];
 
         programs = {
@@ -146,6 +150,13 @@
           name = "Breeze-Dark";
           package = pkgs.kdePackages.breeze-gtk;
         };
+      };
+
+      home.pointerCursor = {
+        name = "breeze_cursors";
+        package = pkgs.kdePackages.breeze;
+        gtk.enable = true;
+        x11.enable = true;
       };
 
       qt = {

@@ -1,8 +1,5 @@
 { inputs, ... }:
 
-let
-  cursorSize = 24;
-in
 {
   flake.modules.nixos.anon =
     { pkgs, config, ... }:
@@ -62,8 +59,6 @@ in
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
-          XCURSOR_SIZE = toString cursorSize;
-          HYPRCURSOR_SIZE = toString cursorSize;
         };
       };
 
@@ -86,7 +81,9 @@ in
   flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "anon" (
     with inputs.self.modules.homeManager;
     [
-      { _module.args.primaryMonitor = "HDMI-A-1"; }
+      {
+        _module.args.primaryMonitor = "HDMI-A-1";
+      }
 
       ./_ghostty.nix
 
