@@ -44,11 +44,32 @@
       ];
 
       workspace_rule = lib.mkAfter [
-        { workspace = 1; monitor = "desc:Lenovo Group Limited 0x8AC2"; layout_opts = { direction = "right"; }; persistent = true; default = true; }
-        { workspace = 2; monitor = "desc:Lenovo Group Limited 0x8AC2"; layout_opts = { direction = "right"; }; persistent = true; }
-        { workspace = 3; monitor = "desc:Lenovo Group Limited 0x8AC2"; layout_opts = { direction = "right"; }; persistent = true; }
-        { workspace = 4; monitor = "desc:Lenovo Group Limited 0x8AC2"; layout_opts = { direction = "right"; }; persistent = true; }
-        { workspace = 5; monitor = "desc:Lenovo Group Limited 0x8AC2"; layout_opts = { direction = "right"; }; persistent = true; }
+        {
+          workspace = 1;
+          monitor = "desc:Lenovo Group Limited 0x8AC2";
+          persistent = true;
+          default = true;
+        }
+        {
+          workspace = 2;
+          monitor = "desc:Lenovo Group Limited 0x8AC2";
+          persistent = true;
+        }
+        {
+          workspace = 3;
+          monitor = "desc:Lenovo Group Limited 0x8AC2";
+          persistent = true;
+        }
+        {
+          workspace = 4;
+          monitor = "desc:Lenovo Group Limited 0x8AC2";
+          persistent = true;
+        }
+        {
+          workspace = 5;
+          monitor = "desc:Lenovo Group Limited 0x8AC2";
+          persistent = true;
+        }
       ];
     };
 
