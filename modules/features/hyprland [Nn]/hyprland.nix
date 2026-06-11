@@ -295,7 +295,7 @@
               follow_focus = true;
               direction = "right";
               focus_fit_method = 1;
-              column_width = 0.25;
+              column_width = 0.333;
               explicit_column_widths = "0.25, 0.333, 0.5, 1.0";
             };
 
