@@ -2,13 +2,59 @@
 
 {
   flake.modules.homeManager.opencode =
-    { pkgsMaster, ... }:
+    {
+      lib,
+      pkgs,
+      pkgsMaster,
+      secrets,
+      ...
+    }:
+    let
+      opencodeConfigDir = "$HOME/.config/opencode";
+
+      opencodeJson = pkgs.writeText "opencode.json" (
+        builtins.toJSON {
+          "$schema" = "https://opencode.ai/config.json";
+          mcp = {
+            atlassian = {
+              type = "remote";
+              url = "https://mcp.atlassian.com/v1/mcp";
+            };
+            github-personal = {
+              type = "remote";
+              url = "https://api.githubcopilot.com/mcp";
+              headers = {
+                Authorization = "Bearer ${secrets.githubPersonalToken}";
+              };
+            };
+            github-work = {
+              type = "remote";
+              url = "https://api.githubcopilot.com/mcp";
+              headers = {
+                Authorization = "Bearer ${secrets.githubWorkToken}";
+              };
+            };
+            lucid = {
+              type = "remote";
+              url = "https://mcp.lucid.app/mcp";
+            };
+          };
+        }
+      );
+
+      packageJson = pkgs.writeText "package.json" (
+        builtins.toJSON {
+          dependencies = {
+            "@opencode-ai/plugin" = "1.16.2";
+          };
+        }
+      );
+    in
     {
       programs = {
         opencode = {
           enable = true;
           package = pkgsMaster.opencode;
-          enableMcpIntegration = true;
           context = ''
             Use Australian English at all times and avoid em dashes
             When writing Markdown files, don't add --- as separators
@@ -53,5 +99,17 @@
           };
         };
       };
+
+      home.activation.opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "${opencodeConfigDir}"
+
+        if [ ! -f "${opencodeConfigDir}/opencode.json" ]; then
+          $DRY_RUN_CMD cp ${opencodeJson} "${opencodeConfigDir}/opencode.json"
+        fi
+
+        if [ ! -f "${opencodeConfigDir}/package.json" ]; then
+          $DRY_RUN_CMD cp ${packageJson} "${opencodeConfigDir}/package.json"
+        fi
+      '';
     };
 }
