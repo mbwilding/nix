@@ -294,6 +294,7 @@
               fullscreen_on_one_column = true;
               follow_focus = true;
               direction = "right";
+              focus_fit_method = 0;
             };
 
             cursor = {
