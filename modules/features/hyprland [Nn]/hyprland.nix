@@ -124,11 +124,12 @@
     }:
 
     let
+      lua = lib.generators.mkLuaInline;
+
       gaps = 0.0;
       anim_speed = 1.8;
 
-      anim_speed_str = builtins.toString anim_speed;
-      # monitors = if primaryMonitor != "" then [ primaryMonitor ] else [ ];
+      screenshotDir = "${import ../../nix/_home.nix}/Pictures/Screenshots";
     in
     {
       imports = [ inputs.self.modules.homeManager.noctalia ];
@@ -178,224 +179,134 @@
 
       wayland.windowManager.hyprland = {
         enable = true;
-        configType = "hyprlang"; # TODO: lua
+        configType = "lua";
         package = pkgs.hyprland;
         portalPackage = pkgs.xdg-desktop-portal-hyprland;
         systemd = {
           enable = true;
           variables = [ "--all" ];
         };
-        importantPrefixes = [
-          "$mod"
-          "output"
-          "name"
-        ];
         settings = {
-          ecosystem = {
-            no_update_news = true;
-            no_donation_nag = true;
+          mod = {
+            _var = "SUPER";
           };
 
-          general = {
-            layout = "scrolling"; # master
-
-            gaps_in = gaps;
-            gaps_out = gaps * 2;
-            border_size = 0;
-
-            "col.active_border" = "rgba(4eade5ee)";
-            "col.inactive_border" = "rgba(787878ee)";
-
-            resize_on_border = true;
-
-            allow_tearing = false;
-          };
-
-          master = {
-            mfact = 0.5;
-            smart_resizing = false;
-            new_status = "master";
-            orientation = "right";
-            center_master_fallback = "right";
-            slave_count_for_center_master = 2;
-          };
-
-          dwindle = {
-            # pseudotile = true; # TODO: Find replacement in 0.55
-            preserve_split = true;
-          };
-
-          debug = {
-            full_cm_proto = false;
-          };
-
-          decoration = {
-            rounding = 0; # 10
-
-            active_opacity = 1.0;
-            inactive_opacity = 1.0; # 0.96
-
-            shadow = {
-              enabled = false;
+          config = {
+            ecosystem = {
+              no_update_news = true;
+              no_donation_nag = true;
             };
 
-            blur = {
-              enabled = false;
-              size = 3;
-              passes = 1;
+            general = {
+              layout = "scrolling";
 
-              vibrancy = 0.1696;
+              gaps_in = gaps;
+              gaps_out = gaps * 2;
+              border_size = 0;
+
+              col = {
+                active_border = "rgba(4eade5ee)";
+                inactive_border = "rgba(787878ee)";
+              };
+
+              resize_on_border = true;
+
+              allow_tearing = false;
+            };
+
+            master = {
+              mfact = 0.5;
+              smart_resizing = false;
+              new_status = "master";
+              orientation = "right";
+              center_master_fallback = "right";
+              slave_count_for_center_master = 2;
+            };
+
+            dwindle = {
+              preserve_split = true;
+            };
+
+            debug = {
+              full_cm_proto = false;
+            };
+
+            decoration = {
+              rounding = 0;
+
+              active_opacity = 1.0;
+              inactive_opacity = 1.0;
+
+              shadow = {
+                enabled = false;
+              };
+
+              blur = {
+                enabled = false;
+                size = 3;
+                passes = 1;
+
+                vibrancy = 0.1696;
+              };
+            };
+
+            misc = {
+              force_default_wallpaper = 0;
+              disable_hyprland_logo = true;
+              disable_splash_rendering = true;
+              background_color = "0x000000";
+            };
+
+            render = {
+              send_content_type = true;
+              direct_scanout = 1;
+              cm_auto_hdr = 2;
+              new_render_scheduling = false;
+            };
+
+            input = {
+              kb_layout = "us";
+              kb_variant = "dvorak";
+
+              resolve_binds_by_sym = true;
+
+              repeat_rate = 63;
+              repeat_delay = 195;
+
+              sensitivity = 0;
+              force_no_accel = 1;
+              numlock_by_default = false;
+              follow_mouse = 0;
+              mouse_refocus = false;
+
+              touchpad = {
+                natural_scroll = true;
+                scroll_factor = 1.0;
+                disable_while_typing = false;
+              };
+            };
+
+            xwayland = {
+              force_zero_scaling = true;
+            };
+
+            scrolling = {
+              fullscreen_on_one_column = true;
+              follow_focus = true;
+              direction = "right";
+            };
+
+            cursor = {
+              no_hardware_cursors = 2;
+              no_break_fs_vrr = 2;
+              hide_on_key_press = false;
+              hide_on_touch = true;
+              no_warps = false;
             };
           };
 
-          misc = {
-            force_default_wallpaper = 0;
-            disable_hyprland_logo = true;
-            disable_splash_rendering = true;
-            background_color = "0x000000";
-            # vfr = true; # TODO: Find replacement in 0.55
-          };
-
-          render = {
-            send_content_type = true;
-            direct_scanout = 1;
-            # cm_fs_passthrough = 2; # TODO: Find replacement in 0.55
-            cm_auto_hdr = 2;
-            new_render_scheduling = false;
-          };
-
-          exec-once = [
-            "noctalia"
-            "systemctl --user start hyprpolkitagent"
-          ];
-
-          "$mod" = "SUPER";
-          bind = [
-            "$mod, b, exec, google-chrome"
-            "$mod, c, exec, ghostty -e btop +new-window"
-            "$mod, d, exec, vesktop"
-            "$mod, e, exec, ghostty -e yazi +new-window"
-            "$mod, m, exec, teams-for-linux"
-            "$mod, p, exec, 1password"
-            "$mod, r, exec, noctalia msg panel-toggle launcher"
-            "$mod, s, exec, spotify"
-            "$mod, t, exec, ghostty +new-window"
-            "$mod, z, exec, noctalia msg session lock"
-            "$mod, g, exec, systemd-run --user --scope steam -beta publicbeta"
-            "$mod, comma, exec, noctalia msg settings-toggle"
-            "$mod, minus, exec, ecc toggle"
-
-            "$mod, f, togglefloating,"
-            "$mod, o, fullscreen,"
-            "$mod, q, killactive,"
-            "$mod, grave, exit,"
-
-            "$mod, semicolon, exec, hyprshot -m window -m active --clipboard-only"
-            "$mod, apostrophe, exec, hyprshot -m region"
-
-            # Switch window focus
-            "$mod, h, movefocus, l"
-            "$mod, l, movefocus, r"
-            "$mod, k, movefocus, u"
-            "$mod, j, movefocus, d"
-
-            # Swap window positions
-            "$mod SHIFT, h, swapwindow, l"
-            "$mod SHIFT, l, swapwindow, r"
-            "$mod SHIFT, k, swapwindow, u"
-            "$mod SHIFT, j, swapwindow, d"
-
-            ", Print, exec, hyprshot -m window -m active"
-
-            # Scroll through existing workspaces with mod + scroll
-            "$mod, mouse_down, workspace, e+1"
-            "$mod, mouse_up, workspace, e-1"
-
-            # Media keys
-            ", XF86AudioMute,    exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
-            ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
-
-            # Master Layout
-            "$mod, n, layoutmsg, cyclenext"
-            "$mod, return, layoutmsg, swapwithmaster master"
-          ]
-          ++ [
-            "$mod CTRL, h, workspace, 1"
-            "$mod CTRL, t, workspace, 2"
-            "$mod CTRL, n, workspace, 3"
-            "$mod CTRL, s, workspace, 4"
-            "$mod CTRL, minus, workspace, 5"
-            "$mod CTRL SHIFT, h, movetoworkspace, 1"
-            "$mod CTRL SHIFT, t, movetoworkspace, 2"
-            "$mod CTRL SHIFT, n, movetoworkspace, 3"
-            "$mod CTRL SHIFT, s, movetoworkspace, 4"
-            "$mod CTRL SHIFT, minus, movetoworkspace, 5"
-            "$mod, 6, workspace, name:social"
-            "$mod, 7, workspace, name:spare"
-            "$mod SHIFT, 6, movetoworkspace, name:social"
-            "$mod SHIFT, 7, movetoworkspace, name:spare"
-          ];
-
-          binde = [
-            ", XF86AudioLowerVolume,  exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
-            ", XF86AudioRaiseVolume,  exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
-            ", 248,                   exec, brightnessctl set --device=platform::kbd_backlight 5%-"
-            ", XF86Calculator,        exec, brightnessctl set --device=platform::kbd_backlight 5%+"
-            ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-            ", XF86MonBrightnessUp,   exec, brightnessctl set +5%"
-          ];
-
-          bindm = [
-            "$mod, mouse:272, movewindow"
-            "$mod, mouse:273, resizewindow"
-          ];
-
-          bindl = [
-            ", switch:on:Lid Switch, exec, noctalia msg session lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
-            ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on ${primaryMonitor}"
-          ];
-
-          animations = {
-            enabled = true;
-            animation = [
-              "workspaces, 0, 0.0, default"
-              "windows, 1, ${anim_speed_str}, default"
-              "layers, 1, ${anim_speed_str}, default"
-              "fade, 1, ${anim_speed_str}, default"
-              "border, 1, ${anim_speed_str}, default"
-              "borderangle, 1, ${anim_speed_str}, default"
-              "zoomFactor, 1, ${anim_speed_str}, default"
-              "monitorAdded, 1, ${anim_speed_str}, default"
-            ];
-          };
-
-          xwayland = {
-            force_zero_scaling = true;
-          };
-
-          monitorv2 = [ ];
-
-          input = {
-            kb_layout = "us";
-            kb_variant = "dvorak";
-
-            resolve_binds_by_sym = true;
-
-            repeat_rate = 63;
-            repeat_delay = 195;
-
-            sensitivity = 0;
-            force_no_accel = 1;
-            numlock_by_default = false;
-            follow_mouse = 0;
-            mouse_refocus = false;
-
-            touchpad = {
-              natural_scroll = true;
-              scroll_factor = 1.0;
-              disable_while_typing = false;
-            };
-          };
+          # Extension point for host startup commands (exec-once equivalents)
+          on = [ ];
 
           device = [
             {
@@ -415,52 +326,149 @@
             }
           ];
 
-          gestures = {
-            workspace_swipe_create_new = true;
-            workspace_swipe_forever = true;
-            workspace_swipe_touch = true;
-
-            gesture = [
-              "3, vertical, workspace"
-              "3, right, dispatcher, layoutmsg, focus left"
-              "3, left, dispatcher, layoutmsg, focus right"
-              "3, pinchin, dispatcher, layoutmsg, colresize +conf"
-              "3, pinchout, dispatcher, layoutmsg, colresize -conf"
-            ];
-          };
-
-          cursor = {
-            no_hardware_cursors = 2;
-            no_break_fs_vrr = 2;
-            hide_on_key_press = false;
-            hide_on_touch = true;
-            no_warps = false;
-          };
-
           env = [
-            "CLUTTER_BACKEND,wayland"
-            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
-            "GDK_BACKEND,wayland,x11,*"
-            "QT_QPA_PLATFORM,wayland;xcb"
-            "SDL_VIDEODRIVER,wayland"
-            "GDK_SCALE,1"
-            "XDG_CURRENT_DESKTOP,Hyprland"
-            "XDG_SESSION_DESKTOP,Hyprland"
-            "XDG_SESSION_TYPE,wayland"
-            "HYPRSHOT_DIR,${import ../../nix/_home.nix}/Pictures/Screenshots"
+            { _args = [ "CLUTTER_BACKEND" "wayland" ]; }
+            { _args = [ "ELECTRON_OZONE_PLATFORM_HINT" "wayland" ]; }
+            { _args = [ "GDK_BACKEND" "wayland,x11,*" ]; }
+            { _args = [ "QT_QPA_PLATFORM" "wayland;xcb" ]; }
+            { _args = [ "SDL_VIDEODRIVER" "wayland" ]; }
+            { _args = [ "GDK_SCALE" "1" ]; }
+            { _args = [ "XDG_CURRENT_DESKTOP" "Hyprland" ]; }
+            { _args = [ "XDG_SESSION_DESKTOP" "Hyprland" ]; }
+            { _args = [ "XDG_SESSION_TYPE" "wayland" ]; }
+            { _args = [ "HYPRSHOT_DIR" screenshotDir ]; }
           ];
 
-          workspace = [ ];
+          animation = [
+            { leaf = "workspaces"; enabled = false; }
+            { leaf = "windows";     enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "layers";      enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "fade";        enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "border";      enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "borderangle"; enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "zoomFactor";  enabled = true; speed = anim_speed; bezier = "default"; }
+            { leaf = "monitorAdded"; enabled = true; speed = anim_speed; bezier = "default"; }
+          ];
 
-          windowrule = [ ];
+          bind = [
+            { _args = [ (lua "mod .. \" + b\"") (lua ''hl.dsp.exec_cmd("google-chrome")'') ]; }
+            { _args = [ (lua "mod .. \" + c\"") (lua ''hl.dsp.exec_cmd("ghostty -e btop +new-window")'') ]; }
+            { _args = [ (lua "mod .. \" + d\"") (lua ''hl.dsp.exec_cmd("vesktop")'') ]; }
+            { _args = [ (lua "mod .. \" + e\"") (lua ''hl.dsp.exec_cmd("ghostty -e yazi +new-window")'') ]; }
+            { _args = [ (lua "mod .. \" + m\"") (lua ''hl.dsp.exec_cmd("teams-for-linux")'') ]; }
+            { _args = [ (lua "mod .. \" + p\"") (lua ''hl.dsp.exec_cmd("1password")'') ]; }
+            { _args = [ (lua "mod .. \" + r\"") (lua ''hl.dsp.exec_cmd("noctalia msg panel-toggle launcher")'') ]; }
+            { _args = [ (lua "mod .. \" + s\"") (lua ''hl.dsp.exec_cmd("spotify")'') ]; }
+            { _args = [ (lua "mod .. \" + t\"") (lua ''hl.dsp.exec_cmd("ghostty +new-window")'') ]; }
+            { _args = [ (lua "mod .. \" + z\"") (lua ''hl.dsp.exec_cmd("noctalia msg session lock")'') ]; }
+            { _args = [ (lua "mod .. \" + g\"") (lua ''hl.dsp.exec_cmd("systemd-run --user --scope steam -beta publicbeta")'') ]; }
+            { _args = [ (lua "mod .. \" + comma\"") (lua ''hl.dsp.exec_cmd("noctalia msg settings-toggle")'') ]; }
+            { _args = [ (lua "mod .. \" + minus\"") (lua ''hl.dsp.exec_cmd("ecc toggle")'') ]; }
 
-          scrolling = {
-            fullscreen_on_one_column = true;
-            follow_focus = true;
-            direction = "right";
-          };
+            { _args = [ (lua "mod .. \" + f\"") (lua "hl.dsp.window.float({ action = \"toggle\" })") ]; }
+            { _args = [ (lua "mod .. \" + o\"") (lua "hl.dsp.window.fullscreen()") ]; }
+            { _args = [ (lua "mod .. \" + q\"") (lua "hl.dsp.window.close()") ]; }
+            { _args = [ (lua "mod .. \" + grave\"") (lua "hl.dsp.exit()") ]; }
 
+            { _args = [ (lua "mod .. \" + semicolon\"") (lua ''hl.dsp.exec_cmd("hyprshot -m window -m active --clipboard-only")'') ]; }
+            { _args = [ (lua "mod .. \" + apostrophe\"") (lua ''hl.dsp.exec_cmd("hyprshot -m region")'') ]; }
+
+            # Switch window focus
+            { _args = [ (lua "mod .. \" + h\"") (lua "hl.dsp.focus({ direction = \"left\" })") ]; }
+            { _args = [ (lua "mod .. \" + l\"") (lua "hl.dsp.focus({ direction = \"right\" })") ]; }
+            { _args = [ (lua "mod .. \" + k\"") (lua "hl.dsp.focus({ direction = \"up\" })") ]; }
+            { _args = [ (lua "mod .. \" + j\"") (lua "hl.dsp.focus({ direction = \"down\" })") ]; }
+
+            # Swap window positions
+            { _args = [ (lua "mod .. \" + SHIFT + h\"") (lua "hl.dsp.window.swap({ direction = \"left\" })") ]; }
+            { _args = [ (lua "mod .. \" + SHIFT + l\"") (lua "hl.dsp.window.swap({ direction = \"right\" })") ]; }
+            { _args = [ (lua "mod .. \" + SHIFT + k\"") (lua "hl.dsp.window.swap({ direction = \"up\" })") ]; }
+            { _args = [ (lua "mod .. \" + SHIFT + j\"") (lua "hl.dsp.window.swap({ direction = \"down\" })") ]; }
+
+            { _args = [ "Print" (lua ''hl.dsp.exec_cmd("hyprshot -m window -m active")'') ]; }
+
+            # Scroll through existing workspaces with mod + scroll
+            { _args = [ (lua "mod .. \" + mouse_down\"") (lua "hl.dsp.focus({ workspace = \"e+1\" })") ]; }
+            { _args = [ (lua "mod .. \" + mouse_up\"") (lua "hl.dsp.focus({ workspace = \"e-1\" })") ]; }
+
+            # Media keys
+            { _args = [ "XF86AudioMute"    (lua ''hl.dsp.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")'') { locked = true; } ]; }
+            { _args = [ "XF86AudioMicMute" (lua ''hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")'') { locked = true; } ]; }
+
+            # Master layout
+            { _args = [ (lua "mod .. \" + n\"")     (lua "hl.dsp.layout(\"cyclenext\")") ]; }
+            { _args = [ (lua "mod .. \" + return\"") (lua "hl.dsp.layout(\"swapwithmaster master\")") ]; }
+
+            # Workspace switching (Dvorak home row: h=1 t=2 n=3 s=4 -=5)
+            { _args = [ (lua "mod .. \" + CTRL + h\"")             (lua "hl.dsp.focus({ workspace = \"1\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + t\"")             (lua "hl.dsp.focus({ workspace = \"2\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + n\"")             (lua "hl.dsp.focus({ workspace = \"3\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + s\"")             (lua "hl.dsp.focus({ workspace = \"4\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + minus\"")         (lua "hl.dsp.focus({ workspace = \"5\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + SHIFT + h\"")     (lua "hl.dsp.window.move({ workspace = \"1\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + SHIFT + t\"")     (lua "hl.dsp.window.move({ workspace = \"2\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + SHIFT + n\"")     (lua "hl.dsp.window.move({ workspace = \"3\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + SHIFT + s\"")     (lua "hl.dsp.window.move({ workspace = \"4\" })") ]; }
+            { _args = [ (lua "mod .. \" + CTRL + SHIFT + minus\"") (lua "hl.dsp.window.move({ workspace = \"5\" })") ]; }
+            { _args = [ (lua "mod .. \" + 6\"")         (lua "hl.dsp.focus({ workspace = \"name:social\" })") ]; }
+            { _args = [ (lua "mod .. \" + 7\"")         (lua "hl.dsp.focus({ workspace = \"name:spare\" })") ]; }
+            { _args = [ (lua "mod .. \" + SHIFT + 6\"") (lua "hl.dsp.window.move({ workspace = \"name:social\" })") ]; }
+            { _args = [ (lua "mod .. \" + SHIFT + 7\"") (lua "hl.dsp.window.move({ workspace = \"name:spare\" })") ]; }
+
+            # Repeating volume / brightness binds
+            { _args = [ "XF86AudioLowerVolume"  (lua ''hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ -5%")'') { repeating = true; } ]; }
+            { _args = [ "XF86AudioRaiseVolume"  (lua ''hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ +5%")'') { repeating = true; } ]; }
+            { _args = [ "code:248"              (lua ''hl.dsp.exec_cmd("brightnessctl set --device=platform::kbd_backlight 5%-")'') { repeating = true; } ]; }
+            { _args = [ "XF86Calculator"        (lua ''hl.dsp.exec_cmd("brightnessctl set --device=platform::kbd_backlight 5%+")'') { repeating = true; } ]; }
+            { _args = [ "XF86MonBrightnessDown" (lua ''hl.dsp.exec_cmd("brightnessctl set 5%-")'') { repeating = true; } ]; }
+            { _args = [ "XF86MonBrightnessUp"   (lua ''hl.dsp.exec_cmd("brightnessctl set +5%")'') { repeating = true; } ]; }
+
+            # Mouse move/resize
+            { _args = [ (lua "mod .. \" + mouse:272\"") (lua "hl.dsp.window.drag()") { mouse = true; } ]; }
+            { _args = [ (lua "mod .. \" + mouse:273\"") (lua "hl.dsp.window.resize()") { mouse = true; } ]; }
+
+            # Lid switch
+            { _args = [ "switch:on:Lid Switch"  (lua ''hl.dsp.exec_cmd("noctalia msg session lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend")'') { locked = true; } ]; }
+            { _args = [ "switch:off:Lid Switch" (lua ''hl.dsp.exec_cmd("hyprctl dispatch dpms on ${primaryMonitor}")'') { locked = true; } ]; }
+          ];
+
+          gesture = [
+            { fingers = 3; direction = "vertical"; action = "workspace"; }
+            {
+              fingers = 3;
+              direction = "right";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("focus left")) end'';
+            }
+            {
+              fingers = 3;
+              direction = "left";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("focus right")) end'';
+            }
+            {
+              fingers = 3;
+              direction = "pinchin";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("colresize +conf")) end'';
+            }
+            {
+              fingers = 3;
+              direction = "pinchout";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("colresize -conf")) end'';
+            }
+          ];
+
+          monitor = [ ];
+
+          workspace_rule = [ ];
+
+          window_rule = [ ];
         };
+
+        extraConfig = ''
+          hl.on("hyprland.start", function()
+            hl.exec_cmd("noctalia")
+            hl.exec_cmd("systemctl --user start hyprpolkitagent")
+          end)
+        '';
       };
 
       xdg = {
