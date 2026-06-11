@@ -18,6 +18,7 @@
           qemu
           solaar
           steam
+          streamcontroller
           system-default
           ucodenix
           user-mbwilding
@@ -84,6 +85,8 @@
       {
         _module.args.primaryMonitor = "HDMI-A-1";
       }
+
+      streamcontroller
 
       ./_ghostty.nix
 
