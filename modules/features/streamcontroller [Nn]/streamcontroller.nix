@@ -29,7 +29,7 @@
 
         ".var/app/com.core447.StreamController/data/settings/settings.json".text = builtins.toJSON {
           general = {
-            "app-launches" = 2;
+            "app-launches" = 1;
           };
           system = {
             "keep-running" = true;
