@@ -295,6 +295,8 @@
               follow_focus = true;
               direction = "right";
               focus_fit_method = 1;
+              column_width = 0.25;
+              explicit_column_widths = "0.25, 0.333, 0.5, 1.0";
             };
 
             cursor = {
@@ -828,6 +830,16 @@
               fingers = 3;
               direction = "vertical";
               action = "workspace";
+            }
+            {
+              fingers = 3;
+              direction = "pinchin";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("colresize +conf")) end'';
+            }
+            {
+              fingers = 3;
+              direction = "pinchout";
+              action = lua ''function() hl.dispatch(hl.dsp.layout("colresize -conf")) end'';
             }
           ];
 
