@@ -172,7 +172,6 @@
         hl.exec_cmd("hyprctl dispatch workspace name:social")
         hl.exec_cmd("hyprctl dispatch workspace name:spare")
         hl.exec_cmd("hyprctl dispatch workspace 1")
-        hl.exec_cmd("streamcontroller -b")
       end)
     '';
   };
