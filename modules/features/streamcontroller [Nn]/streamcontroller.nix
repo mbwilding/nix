@@ -42,37 +42,38 @@
     {
       home.activation.streamcontrollerFiles = config.lib.dag.entryAfter [ "writeBoundary" ] (
         copyOnce "streamcontroller-skip-onboarding" "${dataDir}/.skip-onboarding" ""
-        + copyOnce "streamcontroller-settings" "${dataDir}/settings/settings.json" ''
-          {
-              "general": {
-                  "app-launches": 1,
-                  "default-font": {
-                      "font-family": "NeoSpleen",
-                      "font-size": 15.0,
-                      "font-weight": 400,
-                      "font-style": "normal"
-                  },
-                  "show-donate-window": false
-              },
-              "store": {
-                  "responsibility-notes-agreed": true
-              },
-              "system": {
-                  "keep-running": true,
-                  "autostart": false
-              },
-              "ui": {
-                  "auto-open-action-config": true
-              }
+        + copyOnce "streamcontroller-settings" "${dataDir}/settings/settings.json" (
+          builtins.toJSON {
+            general = {
+              app-launches = 1;
+              default-font = {
+                font-family = "NeoSpleen";
+                font-size = 15.0;
+                font-weight = 400;
+                font-style = "normal";
+              };
+              show-donate-window = false;
+            };
+            store = {
+              responsibility-notes-agreed = true;
+            };
+            system = {
+              keep-running = true;
+              autostart = false;
+            };
+            ui = {
+              auto-open-action-config = true;
+            };
           }
-        ''
-        + copyOnce "streamcontroller-main-page" "${dataDir}/settings/pages.json" ''
-          {
-              "default-pages": {
-                  "A00SA3402O5JYX": "${dataDir}/pages/Main.json"
-              }
+        )
+        + copyOnce "streamcontroller-main-page" "${dataDir}/settings/pages.json" (
+          builtins.toJSON {
+            default-pages = {
+              A00SA3402O5JYX = "${dataDir}/pages/Main.json";
+            };
           }
-        ''
+        )
+        # NOTE: Left this as nixlang to make it easy to paste in updates
         + copyOnce "streamcontroller-main-page" "${dataDir}/pages/Main.json" ''
           {
               "keys": {
