@@ -22,12 +22,27 @@
     };
 
   flake.modules.homeManager.streamcontroller =
-    { ... }:
-    {
-      home.file = {
-        ".var/app/com.core447.StreamController/data/.skip-onboarding".text = "";
+    { config, pkgs, ... }:
+    let
+      dataDir = "${config.home.homeDirectory}/.var/app/com.core447.StreamController/data";
 
-        ".var/app/com.core447.StreamController/data/settings/settings.json".text = ''
+      copyOnce =
+        name: dest: content:
+        let
+          file = pkgs.writeText name content;
+        in
+        ''
+          if [ ! -e "${dest}" ]; then
+            mkdir -p "$(dirname "${dest}")"
+            cp ${file} "${dest}"
+            chmod 644 "${dest}"
+          fi
+        '';
+    in
+    {
+      home.activation.streamcontrollerFiles = config.lib.dag.entryAfter [ "writeBoundary" ] (
+        copyOnce "streamcontroller-skip-onboarding" "${dataDir}/.skip-onboarding" ""
+        + copyOnce "streamcontroller-settings" "${dataDir}/settings/settings.json" ''
           {
               "general": {
                   "app-launches": 6,
@@ -49,9 +64,15 @@
                   "auto-open-action-config": true
               }
           }
-        '';
-
-        ".var/app/com.core447.StreamController/data/pages/Main.json".text = ''
+        ''
+        + copyOnce "streamcontroller-main-page" "${dataDir}/settings/pages.json" ''
+          {
+              "default-pages": {
+                  "A00SA3402O5JYX": "${dataDir}/pages/Main.json"
+              }
+          }
+        ''
+        + copyOnce "streamcontroller-main-page" "${dataDir}/pages/Main.json" ''
           {
               "keys": {
                   "0x0": {
@@ -83,16 +104,16 @@
                                   {
                                       "id": "com_memclash_elgatokeylight::ToggleButton",
                                       "settings": {
-                                          "ip_address": "192.168.11.191"
+                                          "ip_address": "192.168.11.192"
                                       },
-                                      "comment": "Right"
+                                      "comment": "Left"
                                   },
                                   {
                                       "id": "com_memclash_elgatokeylight::ToggleButton",
                                       "settings": {
-                                          "ip_address": "192.168.11.192"
+                                          "ip_address": "192.168.11.191"
                                       },
-                                      "comment": "Left"
+                                      "comment": "Right"
                                   }
                               ],
                               "image-control-action": 0,
@@ -340,7 +361,7 @@
                   "3x0": {}
               }
           }
-        '';
-      };
+        ''
+      );
     };
 }
