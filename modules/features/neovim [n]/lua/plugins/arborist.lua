@@ -1,4 +1,6 @@
 return {
     "arborist-ts/arborist.nvim",
-    opts = {},
+    opts = {
+        prefer_wasm = false,
+    },
 }
