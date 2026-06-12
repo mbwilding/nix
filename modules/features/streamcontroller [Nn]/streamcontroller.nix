@@ -25,7 +25,9 @@
     { ... }:
     {
       home.file = {
-        ".var/app/com.core447.StreamController/data/.skip-onboarding".text = ""; # ".var/app/com.core447.StreamController/data/settings/settings.json".text = builtins.toJSON {
+        ".var/app/com.core447.StreamController/data/.skip-onboarding".text = "";
+
+        # ".var/app/com.core447.StreamController/data/settings/settings.json".text = builtins.toJSON {
         #   general = {
         #     "app-launches" = 1;
         #   };
