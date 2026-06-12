@@ -20,7 +20,6 @@ in
           podman
           qemu
           steam
-          streamcontroller
           system-default
           ucodenix
           user-mbwilding
@@ -84,8 +83,6 @@ in
       {
         _module.args.primaryMonitor = "eDP-1";
       }
-
-      streamcontroller
 
       hyprland
       ./_hyprland.nix
