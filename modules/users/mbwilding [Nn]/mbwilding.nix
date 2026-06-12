@@ -50,7 +50,6 @@
           aws
           btop
           dapr
-          development
           direnv
           discord
           dotnet
@@ -65,6 +64,7 @@
           lazygit
           lazysql
           mcp
+          neovim
           npm
           obs
           opencode

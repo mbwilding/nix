@@ -1,0 +1,20 @@
+-- Actions Preview will display a floating window with a preview of code actions.
+
+---@type zpack.Spec
+return {
+    "aznhe21/actions-preview.nvim",
+    lazy = true,
+    keys = {
+        {
+            "<leader><enter>",
+            function()
+                require("actions-preview").code_actions()
+            end,
+            desc = "Actions Preview",
+            mode = { "n", "v" },
+        },
+    },
+    opts = {
+        backend = { "snacks", "minipick", "telescope", "nui" },
+    },
+}

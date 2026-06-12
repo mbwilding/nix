@@ -39,7 +39,6 @@
             ];
             end = [
               "tray"
-              "weather"
               "bluetooth"
               "network"
               "volume"
@@ -54,6 +53,7 @@
           location.address = "Perth, Australia";
 
           weather = {
+            enabled = false;
             unit = "metric";
             refresh_minutes = 30;
             effects = true;
