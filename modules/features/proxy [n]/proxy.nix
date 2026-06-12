@@ -39,14 +39,15 @@
               "network.target"
               "ProxySocks5.service"
             ];
-            BindsTo = [ "ProxySocks5.service" ];
+            Requires = [ "ProxySocks5.service" ];
             StartLimitIntervalSec = 0;
           };
           Service = {
+            ExecStartPre = "${pkgs.bash}/bin/bash -c 'until ${pkgs.netcat}/bin/nc -z 127.0.0.1 1080; do sleep 5; done'";
             ExecStart = "${pkgs.privoxy}/bin/privoxy --no-daemon ${privoxyConfig}";
             Restart = "always";
             RestartSec = 5;
-            TimeoutStartSec = 30;
+            TimeoutStartSec = 60;
           };
           Install = {
             WantedBy = [ "default.target" ];
