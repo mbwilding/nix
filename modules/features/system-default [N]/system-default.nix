@@ -63,11 +63,6 @@
           '';
           mode = "0755";
         };
-        systemPackages = with pkgs; [
-          _1password-cli
-          lm_sensors
-          vim
-        ];
       };
     };
 }

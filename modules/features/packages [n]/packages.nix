@@ -51,6 +51,7 @@
             powerplatform-toolbox
 
             # Packages
+            _1password-cli
             _1password-gui
             archivemount
             asciiquarium
@@ -80,6 +81,7 @@
             kubernetes-helm
             libreoffice
             lld
+            lm_sensors
             lshw
             lsof
             nix-diff
@@ -102,6 +104,7 @@
             teams-for-linux
             tlrc
             unzip
+            vim
             wev
             wget
             xdg-user-dirs

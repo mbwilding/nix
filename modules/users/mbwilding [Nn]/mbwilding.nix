@@ -50,6 +50,7 @@
           aws
           btop
           dapr
+          development
           direnv
           discord
           dotnet
