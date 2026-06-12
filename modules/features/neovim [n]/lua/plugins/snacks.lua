@@ -1,3 +1,5 @@
+local is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil
+
 vim.api.nvim_create_autocmd("User", {
     pattern = "OilActionsPost",
     callback = function(event)
@@ -327,12 +329,6 @@ return {
                         key = "r",
                         desc = "Recent Files",
                         action = ":lua Snacks.dashboard.pick('oldfiles')",
-                    },
-                    {
-                        icon = "",
-                        key = "c",
-                        desc = "Config",
-                        action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
                     },
                     {
                         icon = "",
