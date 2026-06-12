@@ -88,6 +88,7 @@
             p7zip
             pavucontrol
             postgresql
+            powershell
             prismlauncher
             psmisc
             pulumi-bin

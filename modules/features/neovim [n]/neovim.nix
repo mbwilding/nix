@@ -76,7 +76,6 @@
           vscode-extensions.vadimcn.vscode-lldb.adapter # c / c++ / rust / zig
           netcoredbg # c# / f#
           python314Packages.debugpy # python
-          powershell-editor-services # powershell
           vscode-js-debug # js / ts
           vscode-bash-debug # bash
 
