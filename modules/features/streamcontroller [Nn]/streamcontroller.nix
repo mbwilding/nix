@@ -45,13 +45,14 @@
         + copyOnce "streamcontroller-settings" "${dataDir}/settings/settings.json" ''
           {
               "general": {
-                  "app-launches": 6,
+                  "app-launches": 1,
                   "default-font": {
                       "font-family": "NeoSpleen",
                       "font-size": 15.0,
                       "font-weight": 400,
                       "font-style": "normal"
-                  }
+                  },
+                  "show-donate-window": false
               },
               "store": {
                   "responsibility-notes-agreed": true
