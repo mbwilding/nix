@@ -27,294 +27,320 @@
       home.file = {
         ".var/app/com.core447.StreamController/data/.skip-onboarding".text = "";
 
-        # ".var/app/com.core447.StreamController/data/settings/settings.json".text = builtins.toJSON {
-        #   general = {
-        #     "app-launches" = 1;
-        #   };
-        #   system = {
-        #     "keep-running" = true;
-        #   };
-        #   store = {
-        #     "responsibility-notes-agreed" = true;
-        #   };
-        # };
+        ".var/app/com.core447.StreamController/data/settings/settings.json".text = ''
+          {
+              "general": {
+                  "app-launches": 6,
+                  "default-font": {
+                      "font-family": "NeoSpleen",
+                      "font-size": 15.0,
+                      "font-weight": 400,
+                      "font-style": "normal"
+                  }
+              },
+              "store": {
+                  "responsibility-notes-agreed": true
+              },
+              "system": {
+                  "keep-running": true,
+                  "autostart": false
+              },
+              "ui": {
+                  "auto-open-action-config": true
+              }
+          }
+        '';
 
-        # ".var/app/com.core447.StreamController/data/pages/Main.json".text = builtins.toJSON {
-        #   keys = {
-        #     "0x0" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_MicMute::ToggleMute";
-        #               settings = {
-        #                 all = true;
-        #                 device = null;
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #     "1x0" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_memclash_elgatokeylight::ToggleButton";
-        #               settings = {
-        #                 ip_address = "192.168.11.191";
-        #               };
-        #             }
-        #             {
-        #               id = "com_memclash_elgatokeylight::ToggleButton";
-        #               settings = {
-        #                 ip_address = "192.168.11.192";
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #     "4x2" = {
-        #       states = {
-        #         "0" = {
-        #           background = {
-        #             color = [ 0 0 0 255 ];
-        #           };
-        #           actions = [
-        #             {
-        #               id = "com_core447_Clocks::AnalogClock";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #     "3x2" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_Clocks::DigitalClock";
-        #               settings = {
-        #                 "twenty-four-format" = false;
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             center = {
-        #               "font-family" = "NeoSpleen";
-        #               style = "normal";
-        #               "font-size" = 18.0;
-        #               "font-weight" = 400;
-        #             };
-        #             bottom = {
-        #               "font-family" = "NeoSpleen";
-        #               style = "normal";
-        #               "font-size" = 18.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "1x1" = { };
-        #     "4x0" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_OSPlugin::RAM";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             center = {
-        #               "font-family" = "NeoSpleen";
-        #               style = "normal";
-        #               "font-size" = 24.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "3x0" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_OSPlugin::CPU";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             center = {
-        #               "font-family" = "DejaVu Sans";
-        #               style = "normal";
-        #               "font-size" = 24.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "2x0" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_OSPlugin::CPUTemp";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             center = {
-        #               "font-family" = "NeoSpleen";
-        #               style = "normal";
-        #               "font-size" = 18.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "2x2" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_Clocks::Date";
-        #               settings = {
-        #                 key = "%d-%m";
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             center = {
-        #               "font-family" = "DejaVu Sans";
-        #               style = "normal";
-        #               "font-size" = 19.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "0x2" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_Battery::BatteryPercentage";
-        #               settings = {
-        #                 device = "L23D4PF1";
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #     "1x2" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_codeNinja_DaysUntil::DaysUntilAction";
-        #               settings = {
-        #                 date_format_ymd = true;
-        #                 bottom_label = "Holiday";
-        #                 target_date = "2026/07/24";
-        #               };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #           labels = {
-        #             bottom = {
-        #               "font-family" = "cantarell";
-        #               style = "normal";
-        #               "font-size" = 15.0;
-        #               "font-weight" = 400;
-        #             };
-        #             center = {
-        #               "font-family" = "cantarell";
-        #               style = "normal";
-        #               "font-size" = 15.0;
-        #               "font-weight" = 400;
-        #             };
-        #             top = {
-        #               "font-family" = "NeoSpleen";
-        #               style = "normal";
-        #               "font-size" = 14.0;
-        #               "font-weight" = 400;
-        #             };
-        #           };
-        #         };
-        #       };
-        #     };
-        #     "3x1" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_OSPlugin::CPU_Graph";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #     "2x1" = { };
-        #     "4x1" = {
-        #       states = {
-        #         "0" = {
-        #           actions = [
-        #             {
-        #               id = "com_core447_OSPlugin::RAM_Graph";
-        #               settings = { };
-        #             }
-        #           ];
-        #           "image-control-action" = 0;
-        #           "label-control-actions" = [ 0 0 0 ];
-        #           "background-control-action" = 0;
-        #         };
-        #       };
-        #     };
-        #   };
-        # };
+        ".var/app/com.core447.StreamController/data/pages/Main.json".text = ''
+          {
+              "keys": {
+                  "0x0": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_MicMute::ToggleMute",
+                                      "settings": {
+                                          "all": true,
+                                          "device": null
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "1x0": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_memclash_elgatokeylight::ToggleButton",
+                                      "settings": {
+                                          "ip_address": "192.168.11.191"
+                                      },
+                                      "comment": "Right"
+                                  },
+                                  {
+                                      "id": "com_memclash_elgatokeylight::ToggleButton",
+                                      "settings": {
+                                          "ip_address": "192.168.11.192"
+                                      },
+                                      "comment": "Left"
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "1x1": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_OSPlugin::RAM",
+                                      "settings": {}
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0,
+                              "labels": {
+                                  "bottom": {
+                                      "text": "RAM"
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "0x1": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_OSPlugin::CPU",
+                                      "settings": {}
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0,
+                              "labels": {
+                                  "bottom": {
+                                      "text": "CPU"
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "2x1": {},
+                  "3x1": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Countdown::Countdown",
+                                      "settings": {
+                                          "duration": 60
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "4x2": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Clocks::DigitalClock",
+                                      "settings": {
+                                          "twenty-four-format": false,
+                                          "show-seconds": false
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "3x2": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Clocks::DigitalClock",
+                                      "settings": {
+                                          "show-seconds": true
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "2x2": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Clocks::Date",
+                                      "settings": {
+                                          "label-position": "center",
+                                          "key": "%d-%m"
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0,
+                              "labels": {
+                                  "center": {
+                                      "font-family": "DejaVu Sans",
+                                      "style": "normal",
+                                      "font-size": 20.0,
+                                      "font-weight": 400
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "1x2": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Weather::Weather",
+                                      "settings": {
+                                          "lat": "-31.871026171903267",
+                                          "lon": "115.83659755889765"
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "2x0": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "steam::ChangeStatus",
+                                      "settings": {
+                                          "committed_status": "invisible"
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "0x2": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_OSPlugin::CPUTemp",
+                                      "settings": {}
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0,
+                              "labels": {
+                                  "bottom": {
+                                      "text": "CPU"
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "4x1": {
+                      "states": {
+                          "0": {
+                              "actions": [
+                                  {
+                                      "id": "com_core447_Counter::Counter",
+                                      "settings": {
+                                          "value": 0
+                                      }
+                                  }
+                              ],
+                              "image-control-action": 0,
+                              "label-control-actions": [
+                                  0,
+                                  0,
+                                  0
+                              ],
+                              "background-control-action": 0
+                          }
+                      }
+                  },
+                  "4x0": {},
+                  "3x0": {}
+              }
+          }
+        '';
       };
     };
 }
