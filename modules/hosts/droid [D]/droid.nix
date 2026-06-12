@@ -7,7 +7,7 @@
       environment.packages = with pkgs; [
         curl
         git
-        neovim-unwrapped
+        vim
         wget
       ];
 
