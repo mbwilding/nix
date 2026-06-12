@@ -98,6 +98,7 @@
 
           # Misc
           quicktype # json to lang
+          sqlite # codecompanion (neovim, copilot)
         ];
       };
     };
