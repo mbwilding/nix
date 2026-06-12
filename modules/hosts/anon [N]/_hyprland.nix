@@ -94,7 +94,7 @@
         }
         {
           match = {
-            title = ".*Microsoft Teams.*";
+            class = "teams-for-linux";
           };
           workspace = "name:social";
         }
