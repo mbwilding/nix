@@ -1,23 +1,21 @@
 { ... }:
 
 {
-  flake.modules.homeManager.development =
-    {
-      pkgs,
-      pkgsStable,
-      pkgsMaster,
-      ...
-    }:
+  flake.modules.homeManager.neovim =
+    { lib, pkgs, ... }:
+
     let
       vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
     in
     {
-      home = {
-        packages = with pkgs; [
-          # Editors
-          neovim-unwrapped
-          vim
-
+      programs.neovim = {
+        enable = true;
+        defaultEditor = true;
+        withNodeJs = false;
+        withPerl = false;
+        withPython3 = false;
+        withRuby = false;
+        extraPackages = with pkgs; [
           # Editor Dependencies
           tree-sitter
 
@@ -99,7 +97,17 @@
           # Misc
           quicktype # json to lang
           sqlite # codecompanion (neovim, copilot)
+          luajitPackages.magick # image.nvim
         ];
+
+        initLua = builtins.readFile ./init.lua;
+      };
+
+      xdg.configFile = {
+        "nvim/lua".source = ./lua;
+        "nvim/after".source = ./after;
+        "nvim/configs".source = ./configs;
+        "nvim/spell".source = ./spell;
       };
     };
 }
