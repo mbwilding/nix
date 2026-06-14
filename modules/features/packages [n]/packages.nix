@@ -103,6 +103,7 @@
             ssm-session-manager-plugin
             teams-for-linux
             tlrc
+            trash-cli
             unzip
             vim
             wev
