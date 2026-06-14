@@ -91,7 +91,7 @@
             default.path = "${config.home.homeDirectory}/nix/wallpapers/retrowave/sunset-synthwave-sports-car-city-palm-trees-digital-art-4k-wallpaper-uhdpaper.com-216@1@n.jpg";
             automation = {
               enabled = true;
-              interval_minutes = 3;
+              interval_seconds = 300; # 5 min
             };
           };
 
