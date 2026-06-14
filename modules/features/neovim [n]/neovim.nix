@@ -14,10 +14,11 @@
         withRuby = false;
         extraPackages = with pkgs; [
           # Misc
-          tree-sitter # syntax highlighting
+          luajitPackages.magick # image.nvim
           quicktype # json to lang
           sqlite # codecompanion (copilot)
-          luajitPackages.magick # image.nvim
+          trash-cli # trash (snacks.explorer)
+          tree-sitter # syntax highlighting
         ];
 
         initLua = builtins.readFile ./init.lua;
