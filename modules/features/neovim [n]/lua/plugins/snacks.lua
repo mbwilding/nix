@@ -353,12 +353,15 @@ return {
                     return {
                         align = "center",
                         text = {
-                            { "started in ", hl = "footer" },
+                            { "started in ",         hl = "footer" },
                             { ("%.2fms"):format(ms), hl = "special" },
                         },
                     }
                 end,
             },
+        },
+        explorer = {
+            trash = true,
         },
         picker = {
             ui_select = true,
@@ -398,16 +401,16 @@ return {
                 -- },
             },
             matcher = {
-                fuzzy = true, -- use fuzzy matching
-                smartcase = true, -- use smartcase
-                ignorecase = true, -- use ignorecase
-                sort_empty = false, -- sort results when the search string is empty
+                fuzzy = true,          -- use fuzzy matching
+                smartcase = true,      -- use smartcase
+                ignorecase = true,     -- use ignorecase
+                sort_empty = false,    -- sort results when the search string is empty
                 filename_bonus = true, -- give bonus for matching file names (last part of the path)
-                file_pos = true, -- support patterns like `file:line:col` and `file:line`
+                file_pos = true,       -- support patterns like `file:line:col` and `file:line`
                 -- the bonuses below, possibly require string concatenation and path normalization,
                 -- so this can have a performance impact for large lists and increase memory usage
                 cwd_bonus = true, -- give bonus for matching files in the cwd
-                frecency = true, -- frecency bonus
+                frecency = true,  -- frecency bonus
             },
             sources = {
                 files = {
