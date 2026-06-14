@@ -295,6 +295,14 @@ return {
             end,
             desc = "GitHub Pull Requests (all)",
         },
+        {
+            "<leader>e",
+            function()
+                ---@diagnostic disable-next-line: missing-fields, assign-type-mismatch
+                Snacks.explorer()
+            end,
+            desc = "Explorer",
+        },
     },
     ---@type snacks.plugins.Config
     opts = {
