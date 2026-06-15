@@ -102,6 +102,7 @@
             sshfs
             ssm-session-manager-plugin
             teams-for-linux
+            tigervnc
             tlrc
             trash-cli
             unzip
