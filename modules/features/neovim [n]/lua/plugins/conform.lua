@@ -23,6 +23,8 @@ return {
             go = { "goimports", "gofmt" },
             javascript = { "prettierd", "prettier", stop_after_first = true },
             javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+            json = { "prettierd" },
+            jsonc = { "prettierd" },
             typescript = { "prettierd", "prettier", stop_after_first = true },
             typescriptreact = { "prettierd", "prettier", stop_after_first = true },
             -- You can use a function here to determine the formatters dynamically
