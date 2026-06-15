@@ -73,7 +73,6 @@
             home-manager
             hostname
             imagemagick
-            imagemagick
             imhex
             imv
             jfrog-cli
