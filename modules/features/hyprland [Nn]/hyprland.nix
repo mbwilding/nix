@@ -9,6 +9,8 @@
       ...
     }:
     {
+      imports = [ inputs.self.modules.nixos.udiskie ];
+
       options.host = {
         primaryMonitor = lib.mkOption {
           type = lib.types.str;
@@ -45,7 +47,6 @@
           };
 
           udisks2.enable = true;
-
           xserver.enable = false;
           pulseaudio.enable = false;
           pipewire = {
