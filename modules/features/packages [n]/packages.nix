@@ -62,14 +62,17 @@
             cifs-utils
             curl
             dapr-cli
+            exiftool
             eza
             fd
+            ffmpeg-headless
             file
             fuse3
             gnugrep
             gnupg
             home-manager
             hostname
+            imagemagick
             imagemagick
             imhex
             imv
