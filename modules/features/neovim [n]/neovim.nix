@@ -2,11 +2,12 @@
 
 {
   flake.modules.homeManager.neovim =
-    { lib, pkgs, ... }:
+    { lib, pkgs, pkgsMaster, ... }:
 
     {
       programs.neovim = {
         enable = true;
+        package = pkgsMaster.neovim-unwrapped;
         defaultEditor = true;
         withNodeJs = false;
         withPerl = false;
