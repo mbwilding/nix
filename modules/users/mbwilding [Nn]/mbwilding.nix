@@ -77,6 +77,7 @@
           shells
           ssh
           steam
+          teams
           wine
           yabridge
           yazi
