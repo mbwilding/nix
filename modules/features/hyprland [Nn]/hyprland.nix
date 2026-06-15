@@ -9,7 +9,9 @@
       ...
     }:
     {
-      imports = [ inputs.self.modules.nixos.udiskie ];
+      imports = [
+        inputs.self.modules.nixos.udiskie
+      ];
 
       options.host = {
         primaryMonitor = lib.mkOption {
@@ -133,7 +135,10 @@
       screenshotDir = "${import ../../nix/_home.nix}/Pictures/Screenshots";
     in
     {
-      imports = [ inputs.self.modules.homeManager.noctalia ];
+      imports = [
+        inputs.self.modules.homeManager.noctalia
+        inputs.self.modules.homeManager.udiskie
+      ];
       home = {
         packages = with pkgs; [
           hyprshot
