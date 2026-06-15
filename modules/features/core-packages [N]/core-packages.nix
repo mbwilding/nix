@@ -56,6 +56,7 @@
           libGL
           libICE
           libSM
+          libfido2
           libva
           libva-utils
           libx11
