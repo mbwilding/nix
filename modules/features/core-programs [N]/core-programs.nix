@@ -12,7 +12,6 @@
           enable = true;
           libraries = with pkgs; [
             icu
-            # Unreal Engine runtime dependencies
             stdenv.cc.cc.lib # libstdc++.so.6
             glib # libglib-2.0, libgobject-2.0, libgio-2.0
             nss # libnss3, libnssutil3, libsmime3
@@ -37,6 +36,8 @@
             pango # libpango-1.0
             cairo # libcairo
             alsa-lib # libasound
+            cups # libcups
+            gtk3 # libgtk-3
           ];
         };
       };
