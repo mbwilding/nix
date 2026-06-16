@@ -405,5 +405,45 @@
           };
         };
       };
+
+      # Patch any new VSCode workspace state.vscdb to hide sidebars by default
+      systemd.user.services.vscode-workspace-patcher = {
+        Unit = {
+          Description = "Patch new VSCode workspace databases to hide sidebars";
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart =
+            let
+              script = pkgs.writeShellScript "vscode-workspace-patcher" ''
+                STORAGE="$HOME/.config/Code/User/workspaceStorage"
+                [ -d "$STORAGE" ] || exit 0
+                for db in "$STORAGE"/*/state.vscdb; do
+                  [ -f "$db" ] || continue
+                  ${pkgs.sqlite}/bin/sqlite3 "$db" "
+                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.sideBar.hidden', 'true');
+                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.auxiliaryBar.hidden', 'true');
+                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.panel.hidden', 'true');
+                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.statusBar.hidden', 'true');
+                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.activityBar.hidden', 'true');
+                  " 2>/dev/null || true
+                done
+              '';
+            in
+            "${script}";
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
+
+      systemd.user.paths.vscode-workspace-patcher = {
+        Unit = {
+          Description = "Watch for new VSCode workspace databases";
+        };
+        Path = {
+          PathChanged = "%h/.config/Code/User/workspaceStorage";
+          MakeDirectory = true;
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
     };
 }
