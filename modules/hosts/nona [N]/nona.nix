@@ -37,6 +37,7 @@ in
         ];
 
       home-manager.sharedModules = [
+        inputs.self.modules.homeManager.vscode
         ./_hyprland.nix
 
         (
@@ -85,6 +86,7 @@ in
       }
 
       hyprland
+      vscode
       ./_hyprland.nix
 
       # kde
