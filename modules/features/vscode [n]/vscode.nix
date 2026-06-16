@@ -279,7 +279,6 @@
             "workbench.activityBar.location" = "hidden";
             "workbench.statusBar.visible" = false;
             "workbench.sideBar.location" = "right";
-            "workbench.startupEditor" = "none";
 
             # Hide sidebar on startup
             "workbench.editor.sideBarVisible" = false;
