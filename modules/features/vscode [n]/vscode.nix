@@ -235,7 +235,7 @@
 
             # Editor
             "editor.fontFamily" = "'NeoSpleen Nerd Font', monospace";
-            "editor.fontSize" = 14;
+            "editor.fontSize" = 17;
             "editor.tabSize" = 4;
             "editor.insertSpaces" = true;
             "editor.wordWrap" = "off";
@@ -280,13 +280,9 @@
             "workbench.statusBar.visible" = false;
             "workbench.sideBar.location" = "right";
 
-            # Hide sidebar on startup
-            "workbench.editor.sideBarVisible" = false;
-
             # Hide AI / chat
             "chat.commandCenter.enabled" = false;
             "github.copilot.chat.welcomeMessage" = "never";
-            "workbench.secondarySideBar.visible" = false;
 
             # Zen mode as default -- hides everything except editor, persists across restarts
             "zenMode.restore" = true;
@@ -357,8 +353,11 @@
               { before = ["<leader>" "y"]; after = ["\"" "+" "y"]; }
               { before = ["<leader>" "y" "y"]; after = ["\"" "+" "y" "y"]; }
 
-              # <leader>q -> close tab
-              { before = ["<leader>" "q"]; commands = ["workbench.action.closeActiveEditor"]; }
+              # <leader><leader> -> file search (quick open)
+              { before = ["<leader>" "<leader>"]; commands = ["workbench.action.quickOpen"]; }
+
+              # <leader>/ -> find in files
+              { before = ["<leader>" "/"]; commands = ["workbench.action.findInFiles"]; }
 
               # <leader>f -> format
               { before = ["<leader>" "f"]; commands = ["editor.action.formatDocument"]; }
@@ -406,44 +405,5 @@
         };
       };
 
-      # Patch any new VSCode workspace state.vscdb to hide sidebars by default
-      systemd.user.services.vscode-workspace-patcher = {
-        Unit = {
-          Description = "Patch new VSCode workspace databases to hide sidebars";
-        };
-        Service = {
-          Type = "oneshot";
-          ExecStart =
-            let
-              script = pkgs.writeShellScript "vscode-workspace-patcher" ''
-                STORAGE="$HOME/.config/Code/User/workspaceStorage"
-                [ -d "$STORAGE" ] || exit 0
-                for db in "$STORAGE"/*/state.vscdb; do
-                  [ -f "$db" ] || continue
-                  ${pkgs.sqlite}/bin/sqlite3 "$db" "
-                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.sideBar.hidden', 'true');
-                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.auxiliaryBar.hidden', 'true');
-                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.panel.hidden', 'true');
-                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.statusBar.hidden', 'true');
-                    INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('workbench.activityBar.hidden', 'true');
-                  " 2>/dev/null || true
-                done
-              '';
-            in
-            "${script}";
-        };
-        Install.WantedBy = [ "default.target" ];
-      };
-
-      systemd.user.paths.vscode-workspace-patcher = {
-        Unit = {
-          Description = "Watch for new VSCode workspace databases";
-        };
-        Path = {
-          PathChanged = "%h/.config/Code/User/workspaceStorage";
-          MakeDirectory = true;
-        };
-        Install.WantedBy = [ "default.target" ];
-      };
     };
 }
