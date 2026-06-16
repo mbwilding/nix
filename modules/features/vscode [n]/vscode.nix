@@ -266,10 +266,33 @@
             "files.autoSave" = "off";
 
             # Misc
-            "breadcrumbs.enabled" = true;
+            "breadcrumbs.enabled" = false;
             "window.menuBarVisibility" = "toggle";
             "telemetry.telemetryLevel" = "off";
             "update.mode" = "none";
+
+            # Hide tabs (single buffer workflow)
+            "workbench.editor.showTabs" = "single";
+            "workbench.editor.enablePreview" = false;
+
+            # Hide activity bar, status bar, sidebar by default
+            "workbench.activityBar.location" = "hidden";
+            "workbench.statusBar.visible" = false;
+            "workbench.sideBar.location" = "right";
+
+            # Hide panel (terminal/problems) by default
+            "workbench.panel.defaultLocation" = "bottom";
+            "workbench.panel.opensMaximized" = "never";
+
+            # Hide AI chat sidebar
+            "chat.commandCenter.enabled" = false;
+            "workbench.editor.chatEditorFontSize" = 14;
+
+            # Zen-like editor
+            "editor.scrollbar.vertical" = "hidden";
+            "editor.scrollbar.horizontal" = "hidden";
+            "editor.overviewRulerBorder" = false;
+            "editor.hideCursorInOverviewRuler" = true;
 
             # VSCodeVim
             "vim.leader" = "<space>";
