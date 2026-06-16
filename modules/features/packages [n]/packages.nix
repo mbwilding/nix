@@ -103,6 +103,7 @@
             ripgrep
             sl
             spotify
+            sqlite
             sshfs
             ssm-session-manager-plugin
             teams-for-linux
