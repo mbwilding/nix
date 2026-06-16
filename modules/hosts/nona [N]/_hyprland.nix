@@ -78,6 +78,10 @@
         hl.exec_cmd("brightnessctl set --device=platform::micmute 0")
         hl.exec_cmd("hyprctl dispatch workspace 1")
       end)
+
+      hl.bind(mod .. " + backslash", function()
+        hl.exec_cmd("systemctl is-active --quiet keyd && systemctl stop keyd || systemctl start keyd")
+      end)
     '';
   };
 }
