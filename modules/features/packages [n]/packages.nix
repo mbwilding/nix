@@ -18,6 +18,7 @@
             github-copilot = pkgs.callPackage ./_github-copilot.nix { };
             open-ecc = pkgs.callPackage ./_open-ecc.nix { };
             powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
+            steam-achievement-manager = pkgs.callPackage ./_steam-achievement-manager.nix { };
             google-chrome = pkgs.google-chrome.override {
               commandLineArgs = [
                 "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
@@ -49,6 +50,7 @@
             google-chrome
             open-ecc
             powerplatform-toolbox
+            steam-achievement-manager
 
             # Packages
             _1password-cli
