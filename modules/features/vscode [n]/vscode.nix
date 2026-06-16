@@ -235,7 +235,7 @@
 
             # Editor
             "editor.fontFamily" = "'NeoSpleen Nerd Font', monospace";
-            "editor.fontSize" = 17;
+            "editor.fontSize" = 12;
             "editor.tabSize" = 4;
             "editor.insertSpaces" = true;
             "editor.wordWrap" = "off";
