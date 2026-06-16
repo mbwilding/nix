@@ -37,7 +37,6 @@
 
       home-manager.sharedModules = [
         # ./_kde.nix
-        inputs.self.modules.homeManager.vscode
         ./_ghostty.nix
         ./_hyprland.nix
 
@@ -88,7 +87,6 @@
 
       streamcontroller
 
-      vscode
       ./_ghostty.nix
 
       ./_hyprland.nix
