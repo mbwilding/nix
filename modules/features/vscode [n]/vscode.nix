@@ -279,14 +279,15 @@
             "workbench.activityBar.location" = "hidden";
             "workbench.statusBar.visible" = false;
             "workbench.sideBar.location" = "right";
+            "workbench.startupEditor" = "none";
 
-            # Hide panel (terminal/problems) by default
-            "workbench.panel.defaultLocation" = "bottom";
-            "workbench.panel.opensMaximized" = "never";
+            # Hide sidebar on startup
+            "workbench.editor.sideBarVisible" = false;
 
-            # Hide AI chat sidebar
+            # Hide AI / chat
             "chat.commandCenter.enabled" = false;
-            "workbench.editor.chatEditorFontSize" = 14;
+            "github.copilot.chat.welcomeMessage" = "never";
+            "workbench.secondarySideBar.visible" = false;
 
             # Zen-like editor
             "editor.scrollbar.vertical" = "hidden";
