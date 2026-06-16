@@ -288,6 +288,16 @@
             "github.copilot.chat.welcomeMessage" = "never";
             "workbench.secondarySideBar.visible" = false;
 
+            # Zen mode as default -- hides everything except editor, persists across restarts
+            "zenMode.restore" = true;
+            "zenMode.fullScreen" = false;
+            "zenMode.centerLayout" = false;
+            "zenMode.hideActivityBar" = true;
+            "zenMode.hideStatusBar" = true;
+            "zenMode.hideLineNumbers" = false;
+            "zenMode.showTabs" = "single";
+            "zenMode.silentNotifications" = false;
+
             # Zen-like editor
             "editor.scrollbar.vertical" = "hidden";
             "editor.scrollbar.horizontal" = "hidden";
