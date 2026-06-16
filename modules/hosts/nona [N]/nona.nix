@@ -14,6 +14,7 @@ in
           amd
           appimage
           flatpak
+          keyd
           mounts
           mpv
           obs
@@ -33,7 +34,6 @@ in
         ++ [
           ./_hardware-configuration.nix
           ./_audio.nix
-          ./_keyd.nix
         ];
 
       home-manager.sharedModules = [
