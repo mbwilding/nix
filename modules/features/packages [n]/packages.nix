@@ -83,7 +83,6 @@
             killall
             kubectl
             kubernetes-helm
-            libreoffice
             lld
             lm_sensors
             lshw
