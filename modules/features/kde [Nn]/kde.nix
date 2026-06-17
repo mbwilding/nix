@@ -215,7 +215,6 @@
                   "applications:systemsettings.desktop"
                   "applications:org.kde.dolphin.desktop"
                   "applications:helium.desktop"
-                  "applications:google-chrome.desktop"
                   "applications:com.mitchellh.ghostty.desktop"
                   "applications:vesktop.desktop"
                   "applications:steam.desktop"
@@ -303,11 +302,6 @@
 
           "helium.desktop" = {
             "new-window" = "Meta+B";
-            "new-private-window" = [ ];
-          };
-
-          "google-chrome.desktop" = {
-            "new-window" = [ ];
             "new-private-window" = [ ];
           };
 
