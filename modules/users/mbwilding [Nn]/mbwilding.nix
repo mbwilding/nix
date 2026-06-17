@@ -68,6 +68,7 @@
           neovim
           npm
           obs
+          onlyoffice
           opencode
           package-managers
           packages
