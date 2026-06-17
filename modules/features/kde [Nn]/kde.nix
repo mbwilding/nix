@@ -214,6 +214,7 @@
                 iconTasks.launchers = [
                   "applications:systemsettings.desktop"
                   "applications:org.kde.dolphin.desktop"
+                  "applications:helium.desktop"
                   "applications:google-chrome.desktop"
                   "applications:com.mitchellh.ghostty.desktop"
                   "applications:vesktop.desktop"
@@ -300,8 +301,13 @@
             "new-window" = "Meta+T";
           };
 
-          "google-chrome.desktop" = {
+          "helium.desktop" = {
             "new-window" = "Meta+B";
+            "new-private-window" = [ ];
+          };
+
+          "google-chrome.desktop" = {
+            "new-window" = [ ];
             "new-private-window" = [ ];
           };
 

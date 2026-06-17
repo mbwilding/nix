@@ -59,6 +59,7 @@
       environment = {
         etc."1password/custom_allowed_browsers" = {
           text = ''
+            helium
             google-chrome
           '';
           mode = "0755";
