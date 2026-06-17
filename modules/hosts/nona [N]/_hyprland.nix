@@ -19,8 +19,8 @@
         {
           output = "HDMI-A-1";
           mode = "3840x2160@120.00";
-          position = "1080x-1080";
-          scale = 2.0;
+          position = "-813x-2160";
+          scale = 1.0;
           transform = 0;
           bitdepth = 10;
           supports_wide_color = 1;
