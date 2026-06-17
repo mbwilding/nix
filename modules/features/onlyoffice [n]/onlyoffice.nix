@@ -16,5 +16,16 @@
           };
         };
       };
+
+      home.activation = {
+        copy-fonts-local-share = ''
+          mkdir -p ~/.local/share/fonts
+          chmod 744 ~/.local/share/fonts
+          while IFS= read -r fontDir; do
+            find "$fontDir" -type f \( -iname "*.ttf" -o -iname "*.otf" \) \
+              -exec cp -u {} ~/.local/share/fonts/ \;
+          done < <(grep -oP '(?<=<dir>)[^<]+(?=</dir>)' /etc/fonts/conf.d/00-nixos-cache.conf)
+        '';
+      };
     };
 }
