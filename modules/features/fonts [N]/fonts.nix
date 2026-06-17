@@ -13,13 +13,13 @@
     {
       fonts = {
         packages = with pkgs; [
-          corefonts
-          vista-fonts
           segoe-ui
           neospleen
           neospleen-nerdfont
-          # neospleen-local
-          # neospleen-nerdfont-local
+
+          corefonts
+          vista-fonts
+          libre-baskerville
           nerd-fonts.jetbrains-mono
           nerd-fonts.iosevka
           nerd-fonts.caskaydia-mono
