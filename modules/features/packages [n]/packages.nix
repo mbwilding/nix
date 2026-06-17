@@ -19,35 +19,12 @@
             open-ecc = pkgs.callPackage ./_open-ecc.nix { };
             powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
             steam-achievement-manager = pkgs.callPackage ./_steam-achievement-manager.nix { };
-            google-chrome = pkgs.google-chrome.override {
-              commandLineArgs = [
-                "--enable-features=UseOzonePlatform,VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
-                "--ozone-platform=wayland"
-                "--disable-features=UseChromeOSDirectVideoDecoder"
-                "--canvas-oop-rasterization"
-                "--disable-font-subpixel-positioning"
-                "--disable-gpu-driver-bug-workarounds"
-                "--disable-gpu-driver-workarounds"
-                "--disable-gpu-vsync"
-                "--disable-software-rasterizer"
-                "--enable-accelerated-mjpeg-decode"
-                "--enable-accelerated-video-decode"
-                "--enable-gpu-compositing"
-                "--enable-gpu-rasterization"
-                "--enable-oop-rasterization"
-                "--enable-raw-draw"
-                "--enable-zero-copy"
-                "--use-cmd-decoder=validating"
-                "--use-vulkan"
-              ];
-            };
           in
           with pkgs;
           [
             # Custom
             dtctl
             github-copilot
-            google-chrome
             open-ecc
             powerplatform-toolbox
             steam-achievement-manager
