@@ -13,7 +13,6 @@
     {
       fonts = {
         packages = with pkgs; [
-          segoe-ui
           neospleen
           neospleen-nerdfont
           microsoft-fonts
