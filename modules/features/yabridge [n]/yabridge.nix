@@ -11,10 +11,6 @@
         editor_force_dnd = true
       '';
 
-      # Latest commit on main as of last update
-      # Update rev + hashes with:
-      #   nix-prefetch-github robbert-vdh yabridge --rev main
-      #   nix-prefetch-url --unpack https://github.com/robbert-vdh/yabridge/archive/<rev>.tar.gz
       yabridgeSrc = pkgs.fetchFromGitHub {
         owner = "robbert-vdh";
         repo = "yabridge";
@@ -22,8 +18,6 @@
         hash = "sha256-J3qyTNMyMqDpc2pijJn4E9Q1ZYUOQ5JIEeq4ueMmrII=";
       };
 
-      # Swap the pinned wine 9.x yabridge build for latest wine-staging,
-      # then point src at the latest main commit.
       yabridge =
         (pkgs.yabridge.override {
           wineWow64Packages = pkgs.wineWow64Packages // {
