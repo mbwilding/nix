@@ -280,7 +280,7 @@
               repeat_delay = 195;
 
               sensitivity = 0;
-              force_no_accel = 1;
+              force_no_accel = true;
               numlock_by_default = false;
               follow_mouse = 0;
               mouse_refocus = false;
