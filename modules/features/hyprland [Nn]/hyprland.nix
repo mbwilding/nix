@@ -451,7 +451,7 @@
             {
               _args = [
                 (lua "mod .. \" + b\"")
-                (lua ''hl.dsp.exec_cmd("helium")'')
+                (lua ''hl.dsp.exec_cmd("google-chrome")'')
               ];
             }
             {

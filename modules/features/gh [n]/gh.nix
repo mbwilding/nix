@@ -35,7 +35,7 @@
             editor = "nvim";
             git_protocol = "ssh";
             color_labels = "enabled";
-            browser = "helium";
+            browser = "google-chrome-stable";
             pager = "delta";
             spinner = "enabled";
             prompt = "enabled";
