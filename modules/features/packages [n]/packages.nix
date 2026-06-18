@@ -49,6 +49,7 @@
             fuse3
             gnugrep
             gnupg
+            google-chrome
             home-manager
             hostname
             imagemagick

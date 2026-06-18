@@ -43,77 +43,48 @@
   flake.modules.homeManager.mbwilding =
     { pkgs, lib, ... }:
     {
-      imports = (
-        with inputs.self.modules.homeManager;
-        [
-          atuin
-          aws
-          btop
-          dapr
-          development
-          direnv
-          discord
-          dotnet
-          fastfetch
-          files
-          fzf
-          gh
-          ghostty
-          git
-          jetbrains
-          k9s
-          lazygit
-          lazysql
-          mcp
-          neovim
-          npm
-          obs
-          onlyoffice
-          opencode
-          package-managers
-          packages
-          power-platform-toolbox
-          proxy
-          proxychains
-          shells
-          ssh
-          steam
-          teams
-          wine
-          yabridge
-          yazi
-          zellij
-          zoxide
-        ]
-      ) ++ [
-        inputs.helium.homeModules.default
+      imports = with inputs.self.modules.homeManager; [
+        atuin
+        aws
+        btop
+        dapr
+        development
+        direnv
+        discord
+        dotnet
+        fastfetch
+        files
+        fzf
+        gh
+        ghostty
+        git
+        jetbrains
+        k9s
+        lazygit
+        lazysql
+        mcp
+        neovim
+        npm
+        obs
+        onlyoffice
+        opencode
+        package-managers
+        packages
+        power-platform-toolbox
+        proxy
+        proxychains
+        shells
+        ssh
+        steam
+        teams
+        wine
+        yabridge
+        yazi
+        zellij
+        zoxide
       ];
 
       news.display = "silent";
-
-      programs.helium = {
-        enable = true;
-        flags = [
-          "--ozone-platform-hint=auto"
-          "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization"
-          "--disable-features=UseChromeOSDirectVideoDecoder"
-          "--canvas-oop-rasterization"
-          "--disable-font-subpixel-positioning"
-          "--disable-gpu-driver-bug-workarounds"
-          "--disable-gpu-driver-workarounds"
-          "--disable-gpu-vsync"
-          "--disable-software-rasterizer"
-          "--enable-accelerated-mjpeg-decode"
-          "--enable-accelerated-video-decode"
-          "--enable-gpu-compositing"
-          "--enable-gpu-rasterization"
-          "--enable-oop-rasterization"
-          "--enable-raw-draw"
-          "--enable-zero-copy"
-          "--use-cmd-decoder=validating"
-          "--use-vulkan"
-        ];
-      };
 
       home = {
         username = "mbwilding";
