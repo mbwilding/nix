@@ -64,7 +64,6 @@
         lazysql
         mcp
         neovim
-        npm
         obs
         onlyoffice
         opencode

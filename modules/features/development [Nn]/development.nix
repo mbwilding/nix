@@ -118,6 +118,7 @@
     let
       vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
       vscode-langservers-extracted = pkgs.callPackage ./_vscode-langservers-extracted.nix { };
+      gh-actions-language-server = pkgs.callPackage ./_gh-actions-language-server.nix { };
     in
     {
       home = {
@@ -151,6 +152,7 @@
           bash-language-server # bash
           docker-compose-language-service # yaml
           docker-language-server # docker
+          gh-actions-language-server # yaml
           gopls # go
           jdt-language-server # java
           lemminx # xml
