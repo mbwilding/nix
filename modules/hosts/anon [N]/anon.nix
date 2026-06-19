@@ -6,7 +6,7 @@ let
   primaryMonitor = "HDMI-A-1";
 in
 {
-  flake.modules.nixos.anon =
+  flake.modules.nixos.${hostName} =
     { pkgs, config, ... }:
     let
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
