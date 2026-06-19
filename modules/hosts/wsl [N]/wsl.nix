@@ -3,6 +3,7 @@
 let
   arch = "x86_64-linux";
   hostName = "wsl";
+  stateVersion = "25.11";
 in
 {
   flake.modules.nixos.${hostName} =
@@ -24,16 +25,15 @@ in
         ./_shells.nix
       ];
 
-      wsl.enable = true;
-      wsl.defaultUser = "mbwilding";
-
+      home-manager.users.mbwilding.home.stateVersion = stateVersion;
       networking.hostName = hostName;
-
       programs.zsh.enable = false;
+      system.stateVersion = stateVersion;
 
-      system.stateVersion = "25.11";
-
-      home-manager.users.mbwilding.home.stateVersion = "25.11";
+      wsl = {
+        defaultUser = "mbwilding";
+        enable = true;
+      };
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;

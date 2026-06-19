@@ -3,6 +3,7 @@
 let
   arch = "x86_64-linux";
   hostName = "vm";
+  stateVersion = "25.11";
 in
 {
   flake.modules.nixos.${hostName} =
@@ -18,8 +19,7 @@ in
         ++ [ ./_hardware-configuration.nix ];
 
       networking.hostName = hostName;
-
-      system.stateVersion = "25.11";
+      system.stateVersion = stateVersion;
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;

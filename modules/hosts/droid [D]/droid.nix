@@ -2,6 +2,7 @@
 
 let
   hostName = "droid";
+  stateVersion = "24.05";
 in
 {
   flake.modules.nixOnDroid.${hostName} =
@@ -15,6 +16,7 @@ in
       ];
 
       environment.etcBackupExtension = ".bak";
+      system.stateVersion = stateVersion;
 
       nix.extraOptions = ''
         experimental-features = nix-command flakes
@@ -23,14 +25,12 @@ in
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        backupFileExtension = "backup";
+        backupFileExtension = "bak";
         config = inputs.self.modules.homeManager."user-${hostName}";
         extraSpecialArgs = {
           secrets = import ../../nix/_secrets.nix;
         };
       };
-
-      system.stateVersion = "24.05";
     };
 
   flake.nixOnDroidConfigurations = inputs.self.lib.mkNixOnDroid hostName;
