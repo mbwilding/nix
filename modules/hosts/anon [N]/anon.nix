@@ -9,6 +9,7 @@
         [
           # lutris
           appimage
+          development
           flatpak
           mounts
           mpv
