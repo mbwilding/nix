@@ -6,13 +6,13 @@
 }:
 
 let
-  version = "0.2.29";
+  version = "1.0.2";
   pname = "github-copilot";
   repo = "https://github.com/github/app";
 
   src = fetchurl {
     url = "${repo}/releases/download/v${version}/GitHub-Copilot-linux-x64.AppImage";
-    hash = "sha256-2v68Emh2m5EMRSMRHl1hxltTDYlgUD0bc+JUego0hYA=";
+    hash = "sha256-IFUhSwvI/+bBEwf3iFd4+IHOgDCF/+DBmiHME6MrSLU=";
   };
 
   appimageContents = appimageTools.extractType2 {
