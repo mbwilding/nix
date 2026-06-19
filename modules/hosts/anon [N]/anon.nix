@@ -1,19 +1,27 @@
 { inputs, ... }:
 
+let
+  arch = "x86_64-linux";
+  hostName = "anon";
+  primaryMonitor = "HDMI-A-1";
+in
 {
   flake.modules.nixos.anon =
     { pkgs, config, ... }:
+    let
+      kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
+    in
     {
       imports =
         with inputs.self.modules.nixos;
         [
-          # lutris
           appimage
           development
           flatpak
+          gpu-nvidia
+          hyprland
           mounts
           mpv
-          nvidia
           obs
           podman
           qemu
@@ -26,21 +34,16 @@
           waydroid
           wine
           wireshark
-
-          hyprland
-          # kde
         ]
         ++ [
-          ./_hardware-configuration.nix
           ./_audio.nix
-          # ./_sunshine.nix
+          ./_hardware-configuration.nix
+          ./_sunshine.nix
         ];
 
       home-manager.sharedModules = [
-        # ./_kde.nix
         ./_ghostty.nix
         ./_hyprland.nix
-
         (
           { pkgs, ... }:
           {
@@ -51,11 +54,9 @@
         )
       ];
 
-      networking.hostName = "anon";
-
-      host.primaryMonitor = "HDMI-A-1";
-
-      boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
+      networking.hostName = hostName;
+      host.primaryMonitor = primaryMonitor;
+      boot.kernelPackages = kernel;
 
       environment = {
         sessionVariables = {
@@ -77,23 +78,19 @@
       system.stateVersion = "25.11";
     };
 
-  flake.nixosConfigurations = inputs.self.lib.mkNixos "x86_64-linux" "anon";
+  flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager "x86_64-linux" "anon" (
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName (
     with inputs.self.modules.homeManager;
     [
       {
-        _module.args.primaryMonitor = "HDMI-A-1";
+        _module.args.primaryMonitor = primaryMonitor;
       }
 
-      streamcontroller
-
       ./_ghostty.nix
-
       ./_hyprland.nix
       hyprland
-
-      # kde
+      streamcontroller
     ]
   );
 }
