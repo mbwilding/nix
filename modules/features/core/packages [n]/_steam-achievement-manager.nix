@@ -4,6 +4,7 @@
   fetchzip,
   autoPatchelfHook,
   gcc,
+  testers,
 }:
 
 let
@@ -29,7 +30,7 @@ let
       or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
 in
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "steam-achievement-manager";
   inherit version;
 
@@ -42,7 +43,13 @@ stdenv.mkDerivation {
 
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ gcc.cc.lib ];
 
+  strictDeps = true;
+  __structuredAttrs = true;
+
+  dontBuild = true;
+
   installPhase = ''
+    runHook preInstall
     install -Dm755 sam $out/bin/sam
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       install -Dm644 libsteam_api.so $out/lib/libsteam_api.so
@@ -50,15 +57,20 @@ stdenv.mkDerivation {
     ${lib.optionalString stdenv.hostPlatform.isDarwin ''
       install -Dm644 libsteam_api.dylib $out/lib/libsteam_api.dylib
     ''}
+    runHook postInstall
   '';
 
-  meta = with lib; {
+  passthru.tests.version = testers.testVersion {
+    package = finalAttrs.finalPackage;
+  };
+
+  meta = {
     description = "Steam Achievement Manager CLI";
     homepage = "https://github.com/mbwilding/steam-achievement-manager";
-    license = licenses.mit;
+    license = lib.licenses.mit;
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
+    maintainers = with lib.maintainers; [ mbwilding ];
     platforms = builtins.attrNames sources;
-    maintainers = with maintainers; [ mbwilding ];
     mainProgram = "sam";
-    sourceProvenance = [ sourceTypes.binaryNativeCode ];
   };
-}
+})

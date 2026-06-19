@@ -6,12 +6,11 @@
 }:
 
 let
+  pname = "power-platform-toolbox";
   version = "1.2.2";
-  pname = "powerplatform-toolbox";
-  repo = "https://github.com/PowerPlatformToolBox/desktop-app";
 
   src = fetchurl {
-    url = "${repo}/releases/download/v${version}/Power-Platform-ToolBox-${version}-x86_64-linux.AppImage";
+    url = "https://github.com/PowerPlatformToolBox/desktop-app/releases/download/v${version}/Power-Platform-ToolBox-${version}-x86_64-linux.AppImage";
     hash = "sha256-Pgf6JqBmTSsThhqJZ0KC8UNuSj77s+mT2cYlVaevr+4=";
   };
 
@@ -19,31 +18,35 @@ let
     inherit pname version src;
   };
 in
-appimageTools.wrapType2 rec {
+(appimageTools.wrapType2 {
   inherit pname version src;
 
   nativeBuildInputs = [ makeWrapper ];
 
   extraInstallCommands = ''
-    install -Dm444 ${appimageContents}/${pname}.desktop -T $out/share/applications/${pname}.desktop
-    install -Dm444 ${appimageContents}/${pname}.png -T $out/share/icons/hicolor/512x512/apps/${pname}.png
+    install -Dm444 ${appimageContents}/powerplatform-toolbox.desktop -T $out/share/applications/${pname}.desktop
+    install -Dm444 ${appimageContents}/powerplatform-toolbox.png -T $out/share/icons/hicolor/512x512/apps/${pname}.png
 
     substituteInPlace $out/share/applications/${pname}.desktop \
-      --replace-fail 'Exec=AppRun' 'Exec=${meta.mainProgram}' \
-      --replace-fail 'Icon=powerplatform-toolbox' 'Icon=${pname}'
+      --replace-fail 'Exec=AppRun' "Exec=${pname}" \
+      --replace-fail 'Icon=powerplatform-toolbox' "Icon=${pname}"
 
     wrapProgram $out/bin/${pname} \
       --set ELECTRON_OZONE_PLATFORM_HINT x11
   '';
 
   meta = {
-    description = "Power Platform Toolbox";
+    description = "Desktop app for managing Microsoft Power Platform resources";
     homepage = "https://www.powerplatformtoolbox.com";
-    downloadPage = "${repo}/releases";
+    downloadPage = "https://github.com/PowerPlatformToolBox/desktop-app/releases";
     license = lib.licenses.gpl3Only;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
-    maintainers = [ lib.maintainers.mbwilding ];
+    maintainers = with lib.maintainers; [ mbwilding ];
     platforms = [ "x86_64-linux" ];
-    mainProgram = pname;
+    mainProgram = "power-platform-toolbox";
   };
-}
+}).overrideAttrs
+  {
+    strictDeps = true;
+    __structuredAttrs = true;
+  }
