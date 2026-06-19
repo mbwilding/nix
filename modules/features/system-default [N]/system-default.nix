@@ -16,6 +16,9 @@
           inputs.nix-flatpak.nixosModules.nix-flatpak
         ];
 
+      time.timeZone = "Australia/Perth";
+      i18n.defaultLocale = "en_AU.UTF-8";
+
       services.flatpak.enable = true;
 
       boot = {
