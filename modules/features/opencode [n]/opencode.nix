@@ -41,14 +41,6 @@
           };
         }
       );
-
-      packageJson = pkgs.writeText "package.json" (
-        builtins.toJSON {
-          dependencies = {
-            "@opencode-ai/plugin" = "1.16.2";
-          };
-        }
-      );
     in
     {
       programs = {
@@ -59,12 +51,6 @@
             Use Australian English at all times and avoid em dashes
             When writing Markdown files, don't add --- as separators
           '';
-          # context = builtins.replaceStrings ["nvim-mcp"] ["neovim"] (
-          #   builtins.readFile (builtins.fetchurl {
-          #     url = "https://raw.githubusercontent.com/paulburgess1357/nvim-mcp/89608e1fe6ea82a5e5f2da825934b726e6a97d4c/config/AGENTS-EXAMPLE.md";
-          #     sha256 = "0609hz0v87vs487nqj23rcj28bmakndja25fvkai426bc92vprlv";
-          #   })
-          # );
           agents = {
             document = ''
               # Documentation Writer Agent
@@ -105,10 +91,6 @@
 
         if [ ! -f "${opencodeConfigDir}/opencode.json" ]; then
           $DRY_RUN_CMD cp ${opencodeJson} "${opencodeConfigDir}/opencode.json"
-        fi
-
-        if [ ! -f "${opencodeConfigDir}/package.json" ]; then
-          $DRY_RUN_CMD cp ${packageJson} "${opencodeConfigDir}/package.json"
         fi
       '';
     };

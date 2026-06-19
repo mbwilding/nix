@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "0.28.0";
+  version = "0.30.3";
   pname = "dtctl";
   repo = "https://github.com/dynatrace-oss/dtctl";
 in
@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "${repo}/releases/download/v${version}/${pname}_${version}_linux_amd64.tar.gz";
-    hash = "sha256-gVnFHtComldTQ8exaG9Mgx0re4YZ0uvZfolVRXKvYYM=";
+    hash = "sha256-Mg66uvyYnzm32hQS3Sxm3J5Hi3lG7w95HgoT5IhPrx8=";
   };
 
   nativeBuildInputs = [ makeWrapper ];

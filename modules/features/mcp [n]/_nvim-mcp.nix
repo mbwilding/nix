@@ -2,13 +2,13 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "nvim-mcp";
-  version = "0.6.1";
+  version = "1.0.0";
   pyproject = true;
 
   src = python3Packages.fetchPypi {
     inherit version;
     pname = "nvim_mcp";
-    hash = "sha256-7AwOAQMThIuz6d6/VeiL2p1M0Je3qmsSgLmhuWXWb0Y=";
+    hash = "sha256-ZHR/sBFA7bSsvnOjxk6IM9hxCWL401EaLG88U9DDX4o=";
   };
 
   build-system = [ python3Packages.hatchling ];
