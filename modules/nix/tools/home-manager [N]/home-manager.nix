@@ -13,7 +13,7 @@
       verbose = true;
       useUserPackages = true;
       useGlobalPkgs = true;
-      backupFileExtension = "backup";
+      backupFileExtension = "bak";
     };
   };
 }

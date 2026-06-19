@@ -5,6 +5,7 @@ let
   hostName = "nona";
   keymap = "dvorak";
   primaryMonitor = "eDP-1";
+  stateVersion = "25.11";
 in
 {
   flake.modules.nixos.${hostName} =
@@ -53,10 +54,12 @@ in
         # )
       ];
 
-      networking.hostName = hostName;
-      console.keyMap = keymap;
-      services.xserver.xkb.variant = keymap;
       boot.kernelPackages = kernel;
+      console.keyMap = keymap;
+      host.primaryMonitor = primaryMonitor;
+      networking.hostName = hostName;
+      services.xserver.xkb.variant = keymap;
+      system.stateVersion = stateVersion;
 
       hardware = {
         xone.enable = true;
@@ -66,15 +69,11 @@ in
         upower.enable = true;
       };
 
-      host.primaryMonitor = primaryMonitor;
-
       environment = {
         sessionVariables = {
           WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
         };
       };
-
-      system.stateVersion = "25.11";
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;
