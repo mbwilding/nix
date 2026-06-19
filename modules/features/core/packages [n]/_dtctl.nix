@@ -3,28 +3,52 @@
   stdenv,
   fetchurl,
   makeWrapper,
+  testers,
 }:
 
 let
   version = "0.30.3";
-  pname = "dtctl";
-  repo = "https://github.com/dynatrace-oss/dtctl";
+
+  sources = {
+    "x86_64-linux" = {
+      url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_linux_amd64.tar.gz";
+      hash = "sha256-Mg66uvyYnzm32hQS3Sxm3J5Hi3lG7w95HgoT5IhPrx8=";
+    };
+    "aarch64-linux" = {
+      url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_linux_arm64.tar.gz";
+      hash = "sha256-GfhYRwIIYpvganlp/sQ7ATc130yvepVDnfUkG1iDM5I=";
+    };
+    "x86_64-darwin" = {
+      url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_darwin_amd64.tar.gz";
+      hash = "sha256-FHpCfjhoLdbYmn5g43x4mffWshChXXhqdutg4CvLybk=";
+    };
+    "aarch64-darwin" = {
+      url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_darwin_arm64.tar.gz";
+      hash = "sha256-PpMFacjzcQKUlc+LrYJxra5wXyV4qNGAMleC2QhmgHg=";
+    };
+  };
+
+  source =
+    sources.${stdenv.hostPlatform.system}
+      or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
 in
-stdenv.mkDerivation {
-  inherit pname version;
+
+stdenv.mkDerivation (finalAttrs: {
+  pname = "dtctl";
+  version = version;
 
   src = fetchurl {
-    url = "${repo}/releases/download/v${version}/${pname}_${version}_linux_amd64.tar.gz";
-    hash = "sha256-Mg66uvyYnzm32hQS3Sxm3J5Hi3lG7w95HgoT5IhPrx8=";
+    inherit (source) url hash;
   };
 
   nativeBuildInputs = [ makeWrapper ];
 
-  dontUnpack = false;
-  dontBuild = true;
-  dontConfigure = true;
-
   sourceRoot = ".";
+
+  strictDeps = true;
+  __structuredAttrs = true;
+
+  dontBuild = true;
 
   installPhase = ''
     runHook preInstall
@@ -37,14 +61,19 @@ stdenv.mkDerivation {
     runHook postInstall
   '';
 
+  passthru.tests.version = testers.testVersion {
+    package = finalAttrs.finalPackage;
+    command = "dtctl version";
+  };
+
   meta = {
     description = "CLI for the Dynatrace platform";
-    homepage = "${repo}";
-    downloadPage = "${repo}/releases";
+    homepage = "https://github.com/dynatrace-oss/dtctl";
+    downloadPage = "https://github.com/dynatrace-oss/dtctl/releases";
     license = lib.licenses.asl20;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
-    maintainers = [ lib.maintainers.mbwilding ];
-    platforms = [ "x86_64-linux" ];
-    mainProgram = pname;
+    maintainers = with lib.maintainers; [ mbwilding ];
+    platforms = builtins.attrNames sources;
+    mainProgram = "dtctl";
   };
-}
+})
