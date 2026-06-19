@@ -19,8 +19,6 @@
       time.timeZone = "Australia/Perth";
       i18n.defaultLocale = "en_AU.UTF-8";
 
-      services.flatpak.enable = true;
-
       boot = {
         kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
         loader = {
@@ -34,6 +32,7 @@
         blueman.enable = true;
         power-profiles-daemon.enable = true;
         xserver.xkb.layout = "us";
+        flatpak.enable = true;
       };
 
       hardware = {
@@ -52,14 +51,24 @@
       };
 
       programs = {
-        bazecor.enable = true;
+        _1password.enable = true;
         _1password-gui = {
           enable = true;
           polkitPolicyOwners = [ "mbwilding" ];
         };
+        fish.enable = true;
+        mtr.enable = true;
+        nano.enable = false;
+        nix-ld.enable = true;
+        bazecor.enable = true;
       };
 
       environment = {
+        sessionVariables = {
+          NIXOS_OZONE_WL = "1";
+          ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+          NIXPKGS_ALLOW_UNFREE = 1;
+        };
         etc."1password/custom_allowed_browsers" = {
           text = ''
             google-chrome
@@ -67,6 +76,8 @@
           mode = "0755";
         };
       };
+
+      nixpkgs.config.allowUnfree = true;
 
       nix = {
         settings = {
