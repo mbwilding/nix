@@ -1,7 +1,7 @@
 { inputs, ... }:
 
 {
-  flake.modules.homeManager.droid =
+  flake.modules.homeManager.user-droid =
     { secrets, ... }:
     {
       imports = with inputs.self.modules.homeManager; [

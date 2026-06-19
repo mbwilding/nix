@@ -1,5 +1,8 @@
 { inputs, ... }:
 
+let
+  hostName = "droid";
+in
 {
   flake.modules.nixOnDroid.droid =
     { pkgs, ... }:
@@ -21,7 +24,7 @@
         useGlobalPkgs = true;
         useUserPackages = true;
         backupFileExtension = "backup";
-        config = inputs.self.modules.homeManager.droid;
+        config = inputs.self.modules.homeManager."user-${hostName}";
         extraSpecialArgs = {
           secrets = import ../../nix/_secrets.nix;
         };
@@ -30,5 +33,5 @@
       system.stateVersion = "24.05";
     };
 
-  flake.nixOnDroidConfigurations = inputs.self.lib.mkNixOnDroid "droid";
+  flake.nixOnDroidConfigurations = inputs.self.lib.mkNixOnDroid hostName;
 }

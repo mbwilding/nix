@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.nixos.amd = {
+  flake.modules.nixos.gpu-amd = {
     hardware = {
       graphics = {
         enable = true;
