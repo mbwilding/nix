@@ -6,7 +6,6 @@
       core-programs
       home-manager
       locale
-      nix-settings
       openssh
       secrets
     ];
