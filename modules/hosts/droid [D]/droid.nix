@@ -4,7 +4,7 @@ let
   hostName = "droid";
 in
 {
-  flake.modules.nixOnDroid.droid =
+  flake.modules.nixOnDroid.${hostName} =
     { pkgs, ... }:
     {
       environment.packages = with pkgs; [
