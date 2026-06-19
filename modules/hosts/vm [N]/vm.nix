@@ -5,7 +5,7 @@ let
   hostName = "vm";
 in
 {
-  flake.modules.nixos.vm =
+  flake.modules.nixos.${hostName} =
     { ... }:
     {
       imports =
