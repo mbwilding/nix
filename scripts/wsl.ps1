@@ -9,6 +9,7 @@ $url = (Invoke-RestMethod https://api.github.com/repos/nix-community/NixOS-WSL/r
 Invoke-WebRequest $url -OutFile nixos.wsl
 
 wsl --install --from-file nixos.wsl
+rm nixos.wsl
 wsl -d NixOS
 
 ## TODO
