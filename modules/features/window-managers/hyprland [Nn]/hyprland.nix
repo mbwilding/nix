@@ -128,11 +128,9 @@
 
     let
       lua = lib.generators.mkLuaInline;
-
-      gaps = 0.0;
       anim_speed = 1.8;
-
-      screenshotDir = "${import ../../nix/_home.nix}/Pictures/Screenshots";
+      gaps = 0.0;
+      screenshotDir = "${import ../../../nix/_home.nix}/Pictures/Screenshots";
     in
     {
       imports = [
