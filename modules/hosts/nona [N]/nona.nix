@@ -13,6 +13,7 @@ in
           # lutris
           amd
           appimage
+          development
           flatpak
           keyd
           mounts
