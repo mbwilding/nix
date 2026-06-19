@@ -5,7 +5,6 @@
       core-packages
       core-programs
       home-manager
-      locale
       openssh
       secrets
     ];
