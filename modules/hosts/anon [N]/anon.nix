@@ -24,6 +24,7 @@ in
           mpv
           obs
           podman
+          printing
           qemu
           solaar
           steam

@@ -27,6 +27,7 @@ in
           mpv
           obs
           podman
+          printing
           qemu
           steam
           system-default
