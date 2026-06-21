@@ -171,7 +171,7 @@
           package = pkgs.kdePackages.breeze;
         };
         platformTheme = {
-          name = "gtk";
+          name = "gtk3";
         };
       };
 

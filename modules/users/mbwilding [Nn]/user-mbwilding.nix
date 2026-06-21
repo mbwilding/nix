@@ -1,47 +1,46 @@
 { inputs, ... }:
 
+let
+  user = "mbwilding";
+in
 {
-  flake.modules.nixos.user-mbwilding =
+  flake.modules.nixos."user-${user}" =
     { config, pkgs, ... }:
     {
+      custom.managedUsers = [ user ];
       users = {
-        users.mbwilding = {
-          description = "mbwilding";
+        users.${user} = {
+          description = user;
           extraGroups = [
-            "apps"
+            user
             "audio"
             "dialout"
-            "docker"
-            "kvm"
-            "libvirtd"
-            "mbwilding"
             "networkmanager"
             "render"
             "video"
             "wheel"
-            "wireshark"
           ];
           isNormalUser = true;
           shell = pkgs.fish;
           uid = 3000;
-          group = "mbwilding";
+          group = user;
         };
         groups = {
-          mbwilding = {
+          ${user} = {
             gid = 3000;
           };
         };
       };
 
-      home-manager.users.mbwilding = {
-        imports = [ inputs.self.modules.homeManager.mbwilding ];
+      home-manager.users.${user} = {
+        imports = [ inputs.self.modules.homeManager.${user} ];
         _module.args.secrets = config._module.args.secrets;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 
-  flake.modules.homeManager.mbwilding =
+  flake.modules.homeManager.${user} =
     { pkgs, lib, ... }:
     {
       imports = with inputs.self.modules.homeManager; [
@@ -87,8 +86,8 @@
       news.display = "silent";
 
       home = {
-        username = "mbwilding";
-        homeDirectory = "/home/mbwilding";
+        username = user;
+        homeDirectory = "/home/${user}";
 
         sessionVariables = {
           EDITOR = "nvim";
