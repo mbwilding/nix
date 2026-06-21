@@ -96,9 +96,6 @@
           interactiveShellInit = ''
             set -g fish_greeting
 
-            # fzf-fish: tab navigates, ctrl-space toggles multi-select
-            set -g fzf_directory_opts --bind=tab:down --bind=shift-tab:up --bind=ctrl-space:toggle
-
             # Git prompt settings
             set -g __fish_git_prompt_showdirtystate 1
             set -g __fish_git_prompt_showuntrackedfiles 1
@@ -216,13 +213,13 @@
                   read -P "Repo: " repo
                 end
                 mkdir -p "$path"
-                set dest_dir $path/$repo
-                if test -d $dest_dir
+                set dest_dir "$path/$repo"
+                if test -d "$dest_dir"
                   echo "Already cloned, swapping to directory"
-                  cd $dest_dir
+                  cd "$dest_dir"
                 else
-                  git clone --recursive "git@github.com:$owner/$repo" $dest_dir
-                  cd $dest_dir
+                  git clone --recursive "git@github.com:$owner/$repo" "$dest_dir"
+                  cd "$dest_dir"
                 end
               '';
             };
