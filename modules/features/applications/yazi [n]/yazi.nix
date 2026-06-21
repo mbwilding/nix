@@ -62,7 +62,7 @@
             ];
             wine = [
               {
-                run = ''wine "%s"'';
+                run = "wine %s";
                 desc = "Run with Wine";
                 orphan = true;
               }
