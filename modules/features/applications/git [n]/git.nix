@@ -67,13 +67,17 @@
               autocrlf = false;
               pager = "delta";
             };
-            interactive.diffFilter = "delta --color-only";
-            push.autoSetupRemote = true;
+            push = {
+              autoSetupRemote = true;
+              recurseSubmodules = "no";
+            };
+            submodule.recurse = true;
             delta = {
               navigate = true;
               dark = true;
               "side-by-side" = true;
             };
+            interactive.diffFilter = "delta --color-only";
             diff = {
               tool = "nvim";
               algorithm = "histogram";
