@@ -4,6 +4,8 @@
   flake.modules.nixos.podman =
     { pkgs, ... }:
     {
+      custom.availableGroups = [ "docker" ];
+
       environment = {
         sessionVariables = {
           DOTNET_ASPIRE_CONTAINER_RUNTIME = "podman";

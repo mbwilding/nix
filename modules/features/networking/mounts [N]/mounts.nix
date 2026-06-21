@@ -5,6 +5,8 @@
     { ... }:
 
     {
+      custom.availableGroups = [ "apps" ];
+
       users = {
         users = {
           apps = {
