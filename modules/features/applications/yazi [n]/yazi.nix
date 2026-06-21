@@ -71,14 +71,6 @@
           open = {
             prepend_rules = [
               {
-                name = "*.exe";
-                use = "wine";
-              }
-              {
-                name = "*.msi";
-                use = "wine";
-              }
-              {
                 mime = "application/x-dosexec";
                 use = "wine";
               }
