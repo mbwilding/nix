@@ -96,6 +96,9 @@
           interactiveShellInit = ''
             set -g fish_greeting
 
+            # fzf-fish: tab navigates, ctrl-space toggles multi-select
+            set -g fzf_directory_opts --bind=tab:down --bind=shift-tab:up --bind=ctrl-space:toggle
+
             # Git prompt settings
             set -g __fish_git_prompt_showdirtystate 1
             set -g __fish_git_prompt_showuntrackedfiles 1
