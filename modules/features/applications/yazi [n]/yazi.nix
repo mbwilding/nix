@@ -60,9 +60,36 @@
                 desc = "Extract here";
               }
             ];
+            wine = [
+              {
+                run = ''wine "%s"'';
+                desc = "Run with Wine";
+                orphan = true;
+              }
+            ];
           };
           open = {
             prepend_rules = [
+              {
+                name = "*.exe";
+                use = "wine";
+              }
+              {
+                name = "*.msi";
+                use = "wine";
+              }
+              {
+                mime = "application/x-dosexec";
+                use = "wine";
+              }
+              {
+                mime = "application/vnd.microsoft.portable-executable";
+                use = "wine";
+              }
+              {
+                mime = "application/x-msi";
+                use = "wine";
+              }
               {
                 mime = "image/*";
                 use = "view";
