@@ -18,6 +18,7 @@ in
         with inputs.self.modules.nixos;
         [
           appimage
+          audio
           development
           flatpak
           gpu-amd
