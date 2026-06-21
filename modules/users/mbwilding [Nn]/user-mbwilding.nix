@@ -12,6 +12,7 @@
             "audio"
             "dialout"
             "docker"
+            "kvm"
             "libvirtd"
             "mbwilding"
             "networkmanager"
