@@ -90,7 +90,6 @@ in
         homeDirectory = "/home/${user}";
 
         sessionVariables = {
-          EDITOR = "nvim";
           XDG_CONFIG_HOME = lib.mkForce "$HOME/.config";
           MANPAGER = "nvim +Man!";
           MANWIDTH = "999";
