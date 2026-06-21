@@ -4,6 +4,11 @@
   flake.modules.nixos.qemu =
     { pkgs, ... }:
     {
+      custom.availableGroups = [
+        "kvm"
+        "libvirtd"
+      ];
+
       virtualisation.libvirtd = {
         enable = true;
         qemu.vhostUserPackages = with pkgs; [ virtiofsd ];

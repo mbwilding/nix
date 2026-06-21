@@ -4,6 +4,8 @@
   flake.modules.nixos.wireshark =
     { pkgs, ... }:
     {
+      custom.availableGroups = [ "wireshark" ];
+
       environment.systemPackages = with pkgs; [
         termshark
       ];
