@@ -10,7 +10,7 @@ return {
     },
     opts = {
         skipInsignificantPunctuation = true,
-        subwordMovement = true,
+        subwordMovement = false,
         consistentOperatorPending = false,
         customPatterns = {},
     },
