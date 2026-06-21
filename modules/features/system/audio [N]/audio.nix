@@ -4,8 +4,6 @@
   flake.modules.nixos.audio =
     { ... }:
     {
-      # Allow the audio group to lock unlimited memory (required for VST plugins via
-      # yabridge/Wine) and to raise real-time scheduling priority.
       security.pam.loginLimits = [
         {
           domain = "@audio";
