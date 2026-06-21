@@ -1,15 +1,28 @@
 { lib, ... }:
 
+let
+  scale = "1.33";
+in
 {
+  xresources.properties = {
+    "Xft.dpi" = 128;
+  };
+
   wayland.windowManager.hyprland = {
     settings = {
+      env = lib.mkAfter [
+        { _args = [ "GDK_DPI_SCALE" scale ]; }
+        { _args = [ "QT_SCALE_FACTOR" scale ]; }
+        { _args = [ "XCURSOR_SIZE" scale ]; }
+      ];
+
       monitor = lib.mkAfter [
         # Internal
         {
           output = "desc:Lenovo Group Limited 0x8AC2";
           mode = "2944x1840@90";
           position = "0x0";
-          scale = 1.33;
+          scale = scale;
           transform = 0;
           bitdepth = 10;
           supports_wide_color = 1;
