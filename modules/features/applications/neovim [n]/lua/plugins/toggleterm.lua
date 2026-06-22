@@ -29,6 +29,8 @@ return {
             desc = "ToggleTerm: Toggle All",
         },
     },
+    ---@type ToggleTermConfig
+    ---@diagnostic disable: missing-fields
     opts = {
         auto_scroll = true,
         close_on_exit = true,
@@ -39,6 +41,7 @@ return {
         start_in_insert = true,
         terminal_mappings = false,
     },
+    ---@param opts ToggleTermConfig
     config = function(_, opts)
         local toggle_term = require("toggleterm")
 
@@ -46,6 +49,7 @@ return {
         if uname == "Windows_NT" then
             opts.shell = "pwsh -NoLogo"
         else
+            ---@diagnostic disable-next-line: assign-type-mismatch
             opts.shell = os.getenv('SHELL')
         end
 

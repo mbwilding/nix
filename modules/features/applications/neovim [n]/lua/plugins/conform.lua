@@ -13,6 +13,7 @@ return {
             desc = "Conform: Format",
         },
     },
+    ---@type conform.setupOpts
     opts = {
         default_format_opts = {
             lsp_format = "fallback",

@@ -2,6 +2,7 @@
 return {
     "folke/lazydev.nvim",
     ft = "lua",
+    ---@type lazydev.Config
     opts = {
         integrations = {
             cmp = false,
@@ -19,6 +20,14 @@ return {
             {
                 path = "snacks.nvim",
                 words = { "Snacks" },
+            },
+            {
+                path = "zen-mode.nvim",
+                words = { "zen-mode.nvim" },
+            },
+            {
+                path = "lazydev.nvim",
+                words = { "lazydev.nvim" },
             },
         },
     },

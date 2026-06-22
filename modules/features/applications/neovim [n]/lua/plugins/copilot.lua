@@ -12,6 +12,7 @@ return {
             desc = "Copilot: Toggle",
         },
     },
+    ---@type CopilotConfig
     opts = {
         copilot_model = "gpt-41-copilot",
         panel = {
