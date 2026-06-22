@@ -3,7 +3,7 @@
 {
   programs.niri.settings = {
     outputs = {
-      "desc:Lenovo Group Limited 0x8AC2" = {
+      "Lenovo Group Limited 0x8AC2 Unknown" = {
         mode = {
           width = 2944;
           height = 1840;
@@ -55,19 +55,19 @@
 
     workspaces = {
       "1" = {
-        open-on-output = "desc:Lenovo Group Limited 0x8AC2";
+        open-on-output = "Lenovo Group Limited 0x8AC2 Unknown";
       };
       "2" = {
-        open-on-output = "desc:Lenovo Group Limited 0x8AC2";
+        open-on-output = "Lenovo Group Limited 0x8AC2 Unknown";
       };
       "3" = {
-        open-on-output = "desc:Lenovo Group Limited 0x8AC2";
+        open-on-output = "Lenovo Group Limited 0x8AC2 Unknown";
       };
       "4" = {
-        open-on-output = "desc:Lenovo Group Limited 0x8AC2";
+        open-on-output = "Lenovo Group Limited 0x8AC2 Unknown";
       };
       "5" = {
-        open-on-output = "desc:Lenovo Group Limited 0x8AC2";
+        open-on-output = "Lenovo Group Limited 0x8AC2 Unknown";
       };
     };
 

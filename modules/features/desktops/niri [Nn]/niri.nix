@@ -118,15 +118,10 @@
 
         layout = {
           gaps = 0;
-
-          border = {
-            enable = false;
-            width = 2;
-            active.color = "#4eade5ee";
-            inactive.color = "#787878ee";
-          };
-
+          border.enable = false;
+          focus-ring.enable = false;
           shadow.enable = false;
+          default-column-width = { proportion = 1.0; };
 
           struts = {
             left = 0;
@@ -149,7 +144,6 @@
           GDK_BACKEND = "wayland,x11,*";
           QT_QPA_PLATFORM = "wayland;xcb";
           SDL_VIDEODRIVER = "wayland";
-          GDK_SCALE = "1";
           XDG_CURRENT_DESKTOP = "niri";
           XDG_SESSION_DESKTOP = "niri";
           XDG_SESSION_TYPE = "wayland";
@@ -166,17 +160,6 @@
         workspaces = { };
 
         binds =
-          let
-            # Spawn helper: takes a list of args
-            spawn = args: { action.spawn = args; };
-            spawnSh = cmd: {
-              action.spawn = [
-                "sh"
-                "-c"
-                cmd
-              ];
-            };
-          in
           {
             # Applications
             "${mod}+B".action.spawn = [ "google-chrome" ];
@@ -220,7 +203,7 @@
               "msg"
               "settings-toggle"
             ];
-            "${mod}+Minus" = spawnSh "ecc toggle";
+            "${mod}+Minus".action.spawn = [ "sh" "-c" "ecc toggle" ];
 
             # Window management
             "${mod}+F".action.toggle-window-floating = { };
@@ -263,7 +246,7 @@
 
             # Column sizing
             "${mod}+I".action.set-column-width = "+5%";
-            "${mod}+D2".action.set-column-width = "-5%";
+            "${mod}+Shift+I".action.set-column-width = "-5%";
 
             # Media keys
             "XF86AudioMute" = {
