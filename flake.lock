@@ -175,11 +175,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1782099360,
-        "narHash": "sha256-DKRw9LBtn4td+b6SSPnkbsPN9ulYPr5o2hmfv58RdtY=",
+        "lastModified": 1782099424,
+        "narHash": "sha256-K8wCImFlOxmfD81rNRNZEA1c+inD/6S0kAT7EePeQkc=",
         "owner": "mbwilding",
         "repo": "lazydotnet",
-        "rev": "16e38d7d45fabe5d76fb5e5a956762212d04b835",
+        "rev": "04d744773f9c06d5235d36f38533fde6ab3d77fd",
         "type": "github"
       },
       "original": {
