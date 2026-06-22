@@ -39,6 +39,9 @@
 
     # nixpkgs.follows intentionally omitted to allow the noctalia cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell/main";
+
+    # nixpkgs.follows intentionally omitted to allow the niri cachix binary cache
+    niri.url = "github:sodiboo/niri-flake";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);

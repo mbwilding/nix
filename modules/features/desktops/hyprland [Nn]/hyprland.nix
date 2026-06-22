@@ -4,24 +4,18 @@
   flake.modules.nixos.hyprland =
     {
       pkgs,
-      lib,
       config,
       ...
     }:
     {
       imports = [
+        inputs.self.modules.nixos.wayland-session
         inputs.self.modules.nixos.udiskie
       ];
 
-      options.host = {
-        primaryMonitor = lib.mkOption {
-          type = lib.types.str;
-          default = "";
-          description = "Primary monitor output name for this host (e.g. HDMI-A-1, eDP-1).";
-        };
-      };
-
       config = {
+        host.waylandSession.sessionPackage = pkgs.hyprland;
+
         home-manager.sharedModules = [
           inputs.self.modules.homeManager.hyprland
           {
@@ -37,83 +31,34 @@
           };
         };
 
-        services = {
-          greetd = {
-            enable = true;
-            settings = {
-              default_session = with pkgs; {
-                command = "${tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${hyprland}/share/wayland-sessions";
-                user = "greeter";
-              };
-            };
-          };
-
-          udisks2.enable = true;
-          xserver.enable = false;
-          pulseaudio.enable = false;
-          pipewire = {
-            enable = true;
-            alsa.enable = true;
-            alsa.support32Bit = true;
-            pulse.enable = true;
-          };
-        };
-
-        security = {
-          rtkit.enable = true;
-          polkit.enable = true;
-        };
-
-        systemd.services.greetd.serviceConfig = {
-          Type = "idle";
-          StandardInput = "tty";
-          StandardOutput = "tty";
-          StandardError = "journal";
-          TTYReset = true;
-          TTYVHangup = true;
-          TTYVTDisallocate = true;
-        };
-
         xdg.portal = {
           enable = true;
-          extraPortals = lib.mkForce [
+          extraPortals = [
             pkgs.xdg-desktop-portal-hyprland
             pkgs.xdg-desktop-portal-gtk
           ];
-          configPackages = with pkgs; [ hyprland ];
+          configPackages = [ pkgs.hyprland ];
           config = {
             hyprland = {
               default = [
                 "hyprland"
                 "gtk"
               ];
-              "org.freedesktop.impl.portal.FileChooser" = [
-                "gtk"
-              ];
-              "org.freedesktop.impl.portal.AppChooser" = [
-                "gtk"
-              ];
+              "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+              "org.freedesktop.impl.portal.AppChooser" = [ "gtk" ];
             };
             common = {
               default = [
                 "hyprland"
                 "gtk"
               ];
-              "org.freedesktop.impl.portal.FileChooser" = [
-                "gtk"
-              ];
-              "org.freedesktop.impl.portal.AppChooser" = [
-                "gtk"
-              ];
+              "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+              "org.freedesktop.impl.portal.AppChooser" = [ "gtk" ];
             };
           };
         };
 
-        environment = {
-          systemPackages = with pkgs; [
-            hyprpolkitagent
-          ];
-        };
+        environment.systemPackages = [ pkgs.hyprpolkitagent ];
       };
     };
 
@@ -136,50 +81,14 @@
       imports = [
         inputs.self.modules.homeManager.noctalia
         inputs.self.modules.homeManager.udiskie
+        inputs.self.modules.homeManager.desktop-theme
       ];
-      home = {
-        packages = with pkgs; [
-          hyprshot
-          jq
-          pulseaudio
-        ];
-      };
 
-      gtk = {
-        enable = true;
-        theme = {
-          name = "Breeze-Dark";
-          package = pkgs.kdePackages.breeze-gtk;
-        };
-        gtk4.theme = {
-          name = "Breeze-Dark";
-          package = pkgs.kdePackages.breeze-gtk;
-        };
-      };
-
-      home.pointerCursor = {
-        name = "breeze_cursors";
-        package = pkgs.kdePackages.breeze;
-        gtk.enable = true;
-        x11.enable = true;
-      };
-
-      qt = {
-        enable = true;
-        style = {
-          name = "breeze";
-          package = pkgs.kdePackages.breeze;
-        };
-        platformTheme = {
-          name = "gtk3";
-        };
-      };
-
-      dconf.settings = {
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-        };
-      };
+      home.packages = with pkgs; [
+        hyprshot
+        jq
+        pulseaudio
+      ];
 
       wayland.windowManager.hyprland = {
         enable = true;
@@ -862,19 +771,17 @@
         '';
       };
 
-      xdg = {
-        mimeApps = {
-          enable = true;
-          defaultApplications = {
-            "image/png" = "imv.desktop";
-            "image/jpeg" = "imv.desktop";
-            "image/gif" = "imv.desktop";
-            "image/bmp" = "imv.desktop";
-            "image/svg+xml" = "imv.desktop";
-            "image/tiff" = "imv.desktop";
-            "image/webp" = "imv.desktop";
-            "image/x-icon" = "imv.desktop";
-          };
+      xdg.mimeApps = {
+        enable = true;
+        defaultApplications = {
+          "image/png" = "imv.desktop";
+          "image/jpeg" = "imv.desktop";
+          "image/gif" = "imv.desktop";
+          "image/bmp" = "imv.desktop";
+          "image/svg+xml" = "imv.desktop";
+          "image/tiff" = "imv.desktop";
+          "image/webp" = "imv.desktop";
+          "image/x-icon" = "imv.desktop";
         };
       };
 
