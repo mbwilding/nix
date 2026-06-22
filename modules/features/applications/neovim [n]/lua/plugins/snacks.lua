@@ -1,5 +1,3 @@
-local is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil
-
 vim.api.nvim_create_autocmd("User", {
     pattern = "OilActionsPost",
     callback = function(event)
