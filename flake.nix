@@ -35,6 +35,8 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
+    lazydotnet.url = "github:ckob/lazydotnet";
+
     # nixpkgs.follows intentionally omitted to allow the noctalia cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell/main";
   };
