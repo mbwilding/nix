@@ -23,17 +23,12 @@ return {
             }
         end
 
-        local vspacer = { provider = " | " }
-
-        local cut = { provider = "%<" }
-
-        local align = { provider = "%=" }
-
         local align_cut = { provider = "%<%=" }
-
-        local open = { provider = "[" }
-
-        local close = { provider = "]" }
+        -- local vspacer = { provider = " | " }
+        -- local cut = { provider = "%<" }
+        -- local align = { provider = "%=" }
+        -- local open = { provider = "[" }
+        -- local close = { provider = "]" }
 
         -- MODE
         local mode_name = {
@@ -549,6 +544,7 @@ return {
             { primary = colors.window_accent, contents = { lint } },
             { primary = colors.window_bg,     contents = { lsp } },
             { primary = colors.window_accent, contents = { diagnostics } },
+            { primary = colors.window_bg,     contents = { debug } },
             align_cut,
             { primary = colors.window_bg,     contents = { ruler } },
             { primary = colors.window_accent, contents = { date_time } },
@@ -576,6 +572,7 @@ return {
         -- Init
         require("heirline").setup({
             statusline = statusline,
+            --- @diagnostic disable: assign-type-mismatch
             winbar = nil,
         })
     end,

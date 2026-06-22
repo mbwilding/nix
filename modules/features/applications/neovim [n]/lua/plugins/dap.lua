@@ -162,7 +162,7 @@ return {
                     end
 
                     local function find_framework(build_dir)
-                        local frameworks = vim.fn.glob(build_dir .. "/*", 1, 1)
+                        local frameworks = vim.fn.glob(build_dir .. "/*", true, true)
                         if #frameworks > 0 then
                             return vim.fn.fnamemodify(frameworks[1], ":t")
                         end
@@ -218,7 +218,6 @@ return {
                         local output = vim.fn.systemlist(command)
                         local errors = {}
                         local json_status
-                        local error_message
                         for _, line in ipairs(output) do
                             local ok, decoded = pcall(vim.json.decode, line)
                             if ok and type(decoded) == "table" then
