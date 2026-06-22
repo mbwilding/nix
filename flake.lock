@@ -175,15 +175,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1781977706,
-        "narHash": "sha256-EgYXRMVnqn89CnSNWS78LBh58HtoL8cV1bPKbvoIST8=",
-        "owner": "ckob",
+        "lastModified": 1782098636,
+        "narHash": "sha256-37B1zTl1nIr104S9XLcTrKuB6gR7dupwDg/nW2ic70M=",
+        "owner": "mbwilding",
         "repo": "lazydotnet",
-        "rev": "f63d10dc4d98a469bab667c49736d88988d9844d",
+        "rev": "4a144eea3bb3a1d5312ecf8b995a954ccb399d20",
         "type": "github"
       },
       "original": {
-        "owner": "ckob",
+        "owner": "mbwilding",
+        "ref": "fix/nix-build",
         "repo": "lazydotnet",
         "type": "github"
       }

@@ -3,15 +3,11 @@
 {
   flake.modules.homeManager.lazydotnet =
     { pkgs, ... }:
-    let
-      lazydotnet = (inputs.lazydotnet.packages.${pkgs.stdenv.hostPlatform.system}.lazydotnet).overrideAttrs (old: {
-        nugetDeps = ./deps.json;
-        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.git ];
-      });
-    in
     {
       home = {
-        packages = [ lazydotnet ];
+        packages = [
+          inputs.lazydotnet.packages.${pkgs.stdenv.hostPlatform.system}.lazydotnet
+        ];
 
         file = {
           ".config/lazydotnet/settings.json".text = builtins.toJSON {
