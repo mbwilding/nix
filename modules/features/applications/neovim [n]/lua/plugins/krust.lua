@@ -2,6 +2,7 @@
 return {
     "alexpasmantier/krust.nvim",
     ft = "rust",
+    ---@type KrustConfig
     opts = {
         keymap = "<leader>k",
         float_win = {

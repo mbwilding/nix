@@ -4,6 +4,7 @@
 return {
     "vyfor/cord.nvim",
     build = ":Cord update",
+    ---@type CordConfig
     opts = {
         editor = {
             client = "neovim",

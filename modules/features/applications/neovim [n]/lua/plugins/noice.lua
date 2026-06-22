@@ -19,6 +19,7 @@ return {
         -- "rcarriga/nvim-notify",
         -- "hrsh7th/nvim-cmp",
     },
+    ---@type NoiceConfig
     opts = {
         cmdline = {
             enabled = true,

@@ -569,11 +569,12 @@ return {
             end
         end
 
-        -- Init
-        require("heirline").setup({
+        ---@type {statusline: StatusLine, winbar: StatusLine, tabline: StatusLine, statuscolumn: StatusLine, opts: table}
+        local opts = {
             statusline = statusline,
             ---@diagnostic disable: assign-type-mismatch
             winbar = nil,
-        })
+        }
+        require("heirline").setup(opts)
     end,
 }
