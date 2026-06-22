@@ -13,6 +13,7 @@ return {
             desc = "CSV View: Toggle",
         },
     },
+    ---@type CsvView.Options
     opts = {
         parser = { comments = { "#", "//" } },
         keymaps = {

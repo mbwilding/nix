@@ -66,16 +66,15 @@ return {
     build = function()
         require("unrealengine.commands").build_engine({ engine_path = engine_path })
     end,
-    config = function()
-        require("unrealengine").setup({
-            auto_generate = true,
-            auto_build = false,
-            engine_path = engine_path,
-            link_plugin = true,
-            environment_variables = {
-                -- SDL_VIDEODRIVER = "",
-                VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json",
-            },
-        })
-    end,
+    ---@type UnrealEngine.Opts
+    opts = {
+        auto_generate = true,
+        auto_build = false,
+        engine_path = engine_path,
+        link_plugin = true,
+        environment_variables = {
+            -- SDL_VIDEODRIVER = "",
+            VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json",
+        },
+    },
 }

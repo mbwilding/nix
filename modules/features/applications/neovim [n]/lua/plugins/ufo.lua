@@ -1,3 +1,10 @@
+vim.o.foldenable = true
+-- vim.o.foldcolumn = "1"
+vim.o.foldcolumn = "0"
+vim.o.fillchars = "eob: ,fold: ,diff:/,foldopen:,foldsep: ,foldclose:"
+vim.o.foldlevel = 99999999
+vim.o.foldlevelstart = 99999999
+
 ---@type zpack.Spec
 return {
     "kevinhwang91/nvim-ufo",
@@ -20,14 +27,6 @@ return {
             desc = "UFO Folds: Collapse All",
         },
     },
-    config = function()
-        vim.o.foldenable = true
-        -- vim.o.foldcolumn = "1"
-        vim.o.foldcolumn = "0"
-        vim.o.fillchars = "eob: ,fold: ,diff:/,foldopen:,foldsep: ,foldclose:"
-        vim.o.foldlevel = 99999999
-        vim.o.foldlevelstart = 99999999
-
-        require("ufo").setup()
-    end,
+    ---@type UfoConfig
+    opts = {},
 }

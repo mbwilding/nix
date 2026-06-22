@@ -100,6 +100,7 @@ return {
             desc = "Crates: Extract into table",
         },
     },
+    ---@type crates.UserConfig
     opts = {
         lsp = {
             enabled = true,

@@ -36,6 +36,7 @@ return {
             desc = "Spectre: Search current file",
         },
     },
+    ---@type SpectreConfig
     opts = {
         is_insert_mode = true,
         find_engine = {

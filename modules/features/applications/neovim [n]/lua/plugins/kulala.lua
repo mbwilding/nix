@@ -4,6 +4,7 @@
 return {
     "mistweaverco/kulala.nvim",
     ft = { "http", "rest" },
+    ---@type KulalaDefaultConfig
     opts = {
         global_keymaps = true,
         global_keymaps_prefix = "<leader>h",

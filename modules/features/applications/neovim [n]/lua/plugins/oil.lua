@@ -16,6 +16,7 @@ return {
             desc = "Oil: Open parent directory",
         },
     },
+    ---@type oil.SetupOpts
     opts = {
         keymaps = {
             ["g?"] = { "actions.show_help", mode = "n" },

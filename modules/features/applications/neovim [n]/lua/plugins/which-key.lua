@@ -3,6 +3,7 @@ return {
     "folke/which-key.nvim",
     event = "VeryLazy",
     lazy = true,
+    ---@type wk.Opts
     opts = {
         delay = 1000,
     },

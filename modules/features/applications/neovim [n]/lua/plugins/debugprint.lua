@@ -7,6 +7,7 @@ return {
         "nvim-mini/mini.hipatterns",
         branch = "main",
     },
+    ---@type debugprint.GlobalOptions
     opts = {
         highlight_lines = false,
         print_tag = "DEBUGPRINT",
