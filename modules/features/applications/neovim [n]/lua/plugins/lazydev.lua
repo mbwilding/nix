@@ -17,7 +17,7 @@ return {
                 words = { "zpack" },
             },
             {
-                path = "Snacks.nvim",
+                path = "snacks.nvim",
                 words = { "Snacks" },
             },
         },
