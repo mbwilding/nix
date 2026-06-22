@@ -23,7 +23,7 @@ return {
             },
             {
                 path = "zen-mode.nvim",
-                words = { "zen-mode.nvim" },
+                words = { "ZenOptions" },
             },
             {
                 path = "lazydev.nvim",
