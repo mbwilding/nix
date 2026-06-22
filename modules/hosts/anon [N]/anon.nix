@@ -46,8 +46,10 @@ in
 
       home-manager.sharedModules = [
         ./_ghostty.nix
+
         ./_hyprland.nix
         # ./_niri.nix
+
         (
           { pkgs, ... }:
           {
