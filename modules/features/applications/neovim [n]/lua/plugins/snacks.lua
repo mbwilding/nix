@@ -376,7 +376,8 @@ return {
                 "mnt",
             },
             layout = {
-                preview = "main",
+                ---@diagnostic disable: assign-type-mismatch
+                preview = true,
                 -- reverse = true,
                 -- layout = {
                 --     box = "vertical",
