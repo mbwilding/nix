@@ -9,7 +9,7 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgs, config, ... }:
+    { pkgs, ... }:
     let
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
@@ -23,6 +23,7 @@ in
           flatpak
           gpu-amd
           hyprland
+          # niri
           keyd
           mounts
           mpv
@@ -46,6 +47,7 @@ in
 
       home-manager.sharedModules = [
         ./_hyprland.nix
+        # ./_niri.nix
         # (
         #   { pkgs, ... }:
         #   {
@@ -70,12 +72,6 @@ in
       services = {
         upower.enable = true;
       };
-
-      environment = {
-        sessionVariables = {
-          WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
-        };
-      };
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;
@@ -88,6 +84,7 @@ in
       }
 
       ./_hyprland.nix
+      # ./_niri.nix
       hyprland
     ]
   );
