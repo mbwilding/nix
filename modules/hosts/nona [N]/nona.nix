@@ -22,7 +22,7 @@ in
           development
           flatpak
           gpu-amd
-          # hyprland
+          hyprland
           niri
           keyd
           mounts
@@ -46,7 +46,7 @@ in
         ];
 
       home-manager.sharedModules = [
-        # ./_hyprland.nix
+        ./_hyprland.nix
         ./_niri.nix
         # (
         #   { pkgs, ... }:
@@ -83,10 +83,11 @@ in
         _module.args.primaryMonitor = primaryMonitor;
       }
 
-      # ./_hyprland.nix
-      # hyprland
-      niri
+      ./_hyprland.nix
+      hyprland
+
       ./_niri.nix
+      niri
     ]
   );
 }
