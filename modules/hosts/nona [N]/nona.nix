@@ -22,8 +22,8 @@ in
           development
           flatpak
           gpu-amd
-          hyprland
-          # niri
+          # hyprland
+          niri
           keyd
           mounts
           mpv
@@ -46,8 +46,8 @@ in
         ];
 
       home-manager.sharedModules = [
-        ./_hyprland.nix
-        # ./_niri.nix
+        # ./_hyprland.nix
+        ./_niri.nix
         # (
         #   { pkgs, ... }:
         #   {
@@ -83,9 +83,10 @@ in
         _module.args.primaryMonitor = primaryMonitor;
       }
 
-      ./_hyprland.nix
-      # ./_niri.nix
-      hyprland
+      # ./_hyprland.nix
+      # hyprland
+      niri
+      ./_niri.nix
     ]
   );
 }
