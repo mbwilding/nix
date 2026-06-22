@@ -87,6 +87,7 @@ in
 
       ./_ghostty.nix
       ./_hyprland.nix
+      # niri
       # ./_niri.nix
       hyprland
       streamcontroller
