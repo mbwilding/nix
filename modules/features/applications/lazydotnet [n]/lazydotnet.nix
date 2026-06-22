@@ -1,34 +1,41 @@
-{ inputs, pkgs, ... }:
+{ inputs, ... }:
 
 {
-  flake.modules.homeManager.lazydotnet = {
-    home = {
-      packages = [
-        inputs.lazydotnet.packages.${pkgs.system}.lazydotnet
-      ];
-      file = {
-        ".config/lazydotnet/settings.json".text = builtins.toJSON {
-          "$schema" = "https://raw.githubusercontent.com/ckob/lazydotnet/main/docs/settings.schema.json";
-          DetailsPane = {
-            ReferencesTab = {
-              Enabled = true;
-              Position = 0;
-            };
-            NuGetsTab = {
-              Enabled = true;
-              Position = 1;
-            };
-            TestsTab = {
-              Enabled = true;
-              Position = 2;
-            };
-            ExecutionTab = {
-              Enabled = true;
-              Position = 3;
+  flake.modules.homeManager.lazydotnet =
+    { pkgs, ... }:
+    let
+      lazydotnet = (inputs.lazydotnet.packages.${pkgs.stdenv.hostPlatform.system}.lazydotnet).overrideAttrs (old: {
+        nugetDeps = ./deps.json;
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.git ];
+      });
+    in
+    {
+      home = {
+        packages = [ lazydotnet ];
+
+        file = {
+          ".config/lazydotnet/settings.json".text = builtins.toJSON {
+            "$schema" = "https://raw.githubusercontent.com/ckob/lazydotnet/main/docs/settings.schema.json";
+            DetailsPane = {
+              ReferencesTab = {
+                Enabled = true;
+                Position = 0;
+              };
+              NuGetsTab = {
+                Enabled = true;
+                Position = 1;
+              };
+              TestsTab = {
+                Enabled = true;
+                Position = 2;
+              };
+              ExecutionTab = {
+                Enabled = true;
+                Position = 3;
+              };
             };
           };
         };
       };
     };
-  };
 }
