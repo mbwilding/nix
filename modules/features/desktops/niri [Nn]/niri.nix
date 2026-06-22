@@ -121,7 +121,7 @@
           border.enable = false;
           focus-ring.enable = false;
           shadow.enable = false;
-          default-column-width = { proportion = 1.0; };
+          default-column-width = { proportion = 0.5; };
 
           struts = {
             left = 0;
