@@ -572,7 +572,7 @@ return {
         -- Init
         require("heirline").setup({
             statusline = statusline,
-            --- @diagnostic disable: assign-type-mismatch
+            ---@diagnostic disable: assign-type-mismatch
             winbar = nil,
         })
     end,
