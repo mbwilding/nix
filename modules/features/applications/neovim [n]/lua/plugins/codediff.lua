@@ -205,7 +205,8 @@ return {
                 cmd = "git",
                 args = { "branch", "--all", "--color=never" },
                 layout = {
-                    preview = "main",
+                    ---@diagnostic disable: assign-type-mismatch
+                    preview = true,
                 },
                 transform = function(item)
                     local branch = item.text:gsub("^%*?%s*", ""):gsub("^remotes/", "")
