@@ -40,17 +40,17 @@
           activation.dotnetSetup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             dotnet_cmd="${config.custom.dotnet.sdk}/bin/dotnet"
 
-            # Generate dev-certs if not already present
+            # dev-certs
             if ! "$dotnet_cmd" dev-certs https --check --quiet 2>/dev/null; then
               "$dotnet_cmd" dev-certs https --trust
             fi
 
-            # Install dotnet-ef if not already installed
+            # dotnet-ef
             if ! "$dotnet_cmd" tool list --global | grep -q "^dotnet-ef"; then
               "$dotnet_cmd" tool install --global dotnet-ef
             fi
 
-            # Install pac (Power Apps CLI) if not already installed
+            # pac (Power Apps CLI)
             if ! "$dotnet_cmd" tool list --global | grep -qi "^microsoft.powerapps.cli.tool"; then
               "$dotnet_cmd" tool install --global Microsoft.PowerApps.CLI.Tool
             fi
