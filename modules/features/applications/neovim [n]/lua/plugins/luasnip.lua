@@ -12,13 +12,14 @@ return {
         luasnip.config.setup(opts)
 
         local s = luasnip.snippet
-        local sn = luasnip.snippet_node
         local t = luasnip.text_node
         local i = luasnip.insert_node
-        local f = luasnip.function_node
-        local c = luasnip.choice_node
-        local d = luasnip.dynamic_node
-        local r = luasnip.restore_node
+        -- local sn = luasnip.snippet_node
+        -- local f = luasnip.function_node
+        -- local c = luasnip.choice_node
+        -- local d = luasnip.dynamic_node
+        -- local r = luasnip.restore_node
+
         luasnip.add_snippets("rust", {
             -- s("struct", {
             --     t({ "#[derive(Debug)]", "struct " }), i(1, "Name"), t({ " {", "\t" }), i(2, "field"), t({ ": "}), i(3, "Type"), t({ "", "}" }),

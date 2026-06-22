@@ -1,5 +1,6 @@
 -- Cellular Automaton provides a bunch of fun things to do with your text.
 
+---@type zpack.Spec
 return {
     "eandrju/cellular-automaton.nvim",
     lazy = true,

@@ -376,7 +376,7 @@ return {
                 "mnt",
             },
             layout = {
-                preview = true,
+                preview = "main",
                 -- reverse = true,
                 -- layout = {
                 --     box = "vertical",

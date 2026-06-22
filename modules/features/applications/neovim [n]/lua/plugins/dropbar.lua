@@ -8,8 +8,8 @@ return {
         bar = {
             enable = function(buf, win, _)
                 local ft = vim.bo[buf].filetype
-                local bt = vim.bo[buf].buftype
                 local wb = vim.wo[win].winbar
+                -- local bt = vim.bo[buf].buftype
 
                 if
                     not vim.api.nvim_buf_is_valid(buf)

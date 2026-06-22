@@ -88,7 +88,7 @@ return {
                 is_global = true
             end
 
-            local title_scope = is_global and "Global" or vim.fn.fnamemodify(current_file, ":t")
+            local title_scope = is_global and "Global" or vim.fn.fnamemodify(current_file or "", ":t")
             vim.ui.input({ prompt = "Git Search (-G) in " .. title_scope .. ": " }, function(query)
                 if not query or query == "" then
                     return
@@ -205,7 +205,7 @@ return {
                 cmd = "git",
                 args = { "branch", "--all", "--color=never" },
                 layout = {
-                    preview = false,
+                    preview = "main",
                 },
                 transform = function(item)
                     local branch = item.text:gsub("^%*?%s*", ""):gsub("^remotes/", "")
