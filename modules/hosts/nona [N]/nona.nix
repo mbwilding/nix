@@ -23,7 +23,7 @@ in
           flatpak
           gpu-amd
           hyprland
-          niri
+          # niri
           keyd
           mounts
           mpv
@@ -47,7 +47,8 @@ in
 
       home-manager.sharedModules = [
         ./_hyprland.nix
-        ./_niri.nix
+        # ./_niri.nix
+
         # (
         #   { pkgs, ... }:
         #   {
@@ -86,8 +87,8 @@ in
       ./_hyprland.nix
       hyprland
 
-      ./_niri.nix
-      niri
+      # ./_niri.nix
+      # niri
     ]
   );
 }
