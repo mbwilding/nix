@@ -7,7 +7,7 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgs, config, ... }:
+    { pkgs, ... }:
     let
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
@@ -21,6 +21,7 @@ in
           flatpak
           gpu-nvidia
           hyprland
+          # niri
           mounts
           mpv
           obs
@@ -46,6 +47,7 @@ in
       home-manager.sharedModules = [
         ./_ghostty.nix
         ./_hyprland.nix
+        # ./_niri.nix
         (
           { pkgs, ... }:
           {
@@ -59,12 +61,6 @@ in
       networking.hostName = hostName;
       host.primaryMonitor = primaryMonitor;
       boot.kernelPackages = kernel;
-
-      environment = {
-        sessionVariables = {
-          WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
-        };
-      };
 
       hardware = {
         xone.enable = true;
@@ -91,6 +87,7 @@ in
 
       ./_ghostty.nix
       ./_hyprland.nix
+      # ./_niri.nix
       hyprland
       streamcontroller
     ]
