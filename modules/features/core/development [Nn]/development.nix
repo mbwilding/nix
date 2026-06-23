@@ -159,6 +159,7 @@
           lua-language-server # lua
           marksman # markdown
           nixd # nix
+          # nil # nix
           phpactor # php
           powershell-editor-services # powershell
           pyright # python
@@ -195,10 +196,10 @@
           yamllint # yaml
 
           # Formatters
+          nixfmt # nix
           php85Packages.php-cs-fixer # php
           prettierd # js / ts
           rustfmt # rust
-          nil # nix
         ];
       };
     };
