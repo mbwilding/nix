@@ -1,7 +1,8 @@
-{ ... }:
+{ pkgsMaster, ... }:
 
 {
   services.sunshine = {
+    package = pkgsMaster.sunshine;
     enable = true;
     openFirewall = true;
     autoStart = true;
