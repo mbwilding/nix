@@ -17,4 +17,6 @@
       nvenc_preset = 1;
     };
   };
+
+  systemd.user.services.sunshine.environment.LD_LIBRARY_PATH = "/run/opengl-driver/lib";
 }
