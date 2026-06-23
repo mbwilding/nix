@@ -159,7 +159,6 @@
           lua-language-server # lua
           marksman # markdown
           nixd # nix
-          # nil # nix
           phpactor # php
           powershell-editor-services # powershell
           pyright # python
