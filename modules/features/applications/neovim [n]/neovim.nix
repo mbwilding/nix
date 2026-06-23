@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.neovim =
-    { lib, pkgs, pkgsMaster, ... }:
+    { pkgs, pkgsMaster, ... }:
 
     {
       programs.neovim = {
