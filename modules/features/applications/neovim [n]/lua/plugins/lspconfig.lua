@@ -20,19 +20,20 @@ return {
             tombi = {},
             jdtls = {},
             -- taplo = {},
-            nil_ls = {
-                settings = {
-                    ["nil"] = {
-                        nix = {
-                            maxMemoryMB = nil,
-                            flake = {
-                                autoArchive = true,
-                                autoEvalInputs = true,
-                            },
-                        }
-                    },
-                },
-            },
+            nixd = {},
+            -- nil_ls = {
+            --     settings = {
+            --         ["nil"] = {
+            --             nix = {
+            --                 maxMemoryMB = nil,
+            --                 flake = {
+            --                     autoArchive = true,
+            --                     autoEvalInputs = true,
+            --                 },
+            --             }
+            --         },
+            --     },
+            -- },
             cssls = {
                 capabilities = {
                     textDocument = {
