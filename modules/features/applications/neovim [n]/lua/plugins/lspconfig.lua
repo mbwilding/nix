@@ -1,6 +1,7 @@
 # https://github.com/neovim/nvim-lspconfig/tree/master/lsp
 
 local is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil
+local hostname = vim.fn.hostname()
 
 ---@type zpack.Spec
 return {
@@ -21,18 +22,28 @@ return {
             jdtls = {},
             -- taplo = {},
             nixd = {
-                nixpkgs = {
-                    expr = "import <nixpkgs> { }",
-                },
-                formatting = {
-                    command = { "nixfmt" },
-                },
-                options = {
-                    nixos = {
-                        expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.' .. vim.fn.hostname() .. '.options',
-                    },
-                    home_manager = {
-                        expr = '(builtins.getFlake (toString ./.)).homeConfigurations."' .. (vim.env.USER or vim.env.USERNAME or vim.fn.expand('$USER')) .. '@' .. vim.fn.hostname() .. '".options',
+                settings = {
+                    nixd = {
+                        nixpkgs = {
+                            expr = "import <nixpkgs> { }",
+                        },
+                        formatting = {
+                            command = { "nixfmt" },
+                        },
+                        options = {
+                            nixos = {
+                                expr = '(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.' ..
+                                hostname .. '.options',
+                            },
+                            ["home-manager"] = {
+                                expr = '(builtins.getFlake (builtins.toString ./.)).homeConfigurations.' ..
+                                hostname .. '.options',
+                            },
+                            ["nix-on-droid"] = {
+                                expr =
+                                '(builtins.getFlake (builtins.toString ./.)).nixOnDroidConfigurations.droid.config.home-manager.options',
+                            },
+                        },
                     },
                 },
             },

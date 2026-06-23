@@ -132,7 +132,6 @@
         };
 
         animations = {
-          # neckbeard: speed-multiplier is niri's global animation scale (lower = faster)
           slowdown = 0.5;
         };
 
