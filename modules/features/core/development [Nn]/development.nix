@@ -158,7 +158,8 @@
           lemminx # xml
           lua-language-server # lua
           marksman # markdown
-          nil # nix
+          # nil # nix
+          nixd # nix
           phpactor # php
           powershell-editor-services # powershell
           pyright # python
