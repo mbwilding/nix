@@ -20,7 +20,8 @@ return {
         },
         -- Map of filetype to formatters
         formatters_by_ft = {
-            nix = { lsp_format = "prefer" },
+            -- nix = { lsp_format = "prefer" },
+            nix = { "nixfmt" },
             lua = { "stylua" },
             go = { "goimports", "gofmt" },
             javascript = { "prettierd", "prettier", stop_after_first = true },
