@@ -168,7 +168,7 @@
           sqls # sql
           tailwindcss-language-server # tailwind
           tombi # toml
-          typescript-go # js / ts
+          pkgsMaster.typescript-go # js / ts
           vscode-langservers-extracted # css / html / json (vscode-*-language-server)
           vue-language-server # vue
           yaml-language-server # yaml
