@@ -196,7 +196,7 @@
           yamllint # yaml
 
           # Formatters
-          nixfmt # nix
+          nixfmt-rs # nix
           php85Packages.php-cs-fixer # php
           prettierd # js / ts
           rustfmt # rust
