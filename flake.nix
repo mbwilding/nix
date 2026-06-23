@@ -4,9 +4,13 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-compat.url = "github:NixOS/flake-compat";
     import-tree.url = "github:vic/import-tree";
 
-    nixos-wsl.url = "github:nix-community/NixOS-WSL";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.flake-compat.follows = "flake-compat";
+    };
 
     # Pinned to last commit before nix 2.31.3 PTY regression (nix-on-droid#495)
     # nixpkgs-droid.url = "github:NixOS/nixpkgs/88d3861";
@@ -33,14 +37,18 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.flake-compat.follows = "flake-compat";
+    };
 
     lazydotnet.url = "github:ckob/lazydotnet";
 
-    # nixpkgs.follows intentionally omitted to allow the noctalia cachix binary cache
+    # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
 
-    # nixpkgs.follows intentionally omitted to allow the niri cachix binary cache
+    # nixpkgs.follows omitted for cachix binary cache
     niri.url = "github:sodiboo/niri-flake";
   };
 
