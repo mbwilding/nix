@@ -21,19 +21,23 @@ return {
             jdtls = {},
             -- taplo = {},
             nixd = {},
-            -- nil_ls = {
-            --     settings = {
-            --         ["nil"] = {
-            --             nix = {
-            --                 maxMemoryMB = nil,
-            --                 flake = {
-            --                     autoArchive = true,
-            --                     autoEvalInputs = true,
-            --                 },
-            --             }
-            --         },
-            --     },
-            -- },
+            nil_ls = {
+                -- Used only for formatting via conform; suppress diagnostics to avoid conflict with nixd
+                handlers = {
+                    ["textDocument/publishDiagnostics"] = function() end,
+                },
+                -- settings = {
+                --     ["nil"] = {
+                --         nix = {
+                --             maxMemoryMB = nil,
+                --             flake = {
+                --                 autoArchive = true,
+                --                 autoEvalInputs = true,
+                --             },
+                --         }
+                --     },
+                -- },
+            },
             cssls = {
                 capabilities = {
                     textDocument = {
