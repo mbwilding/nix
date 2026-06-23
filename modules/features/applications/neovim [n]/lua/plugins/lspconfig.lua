@@ -40,8 +40,7 @@ return {
                                 hostname .. '.options',
                             },
                             ["nix-on-droid"] = {
-                                expr =
-                                '(builtins.getFlake (builtins.toString ./.)).nixOnDroidConfigurations.droid.config.home-manager.options',
+                                expr = '(builtins.getFlake (builtins.toString ./.)).nixOnDroidConfigurations.droid.options',
                             },
                         },
                     },
