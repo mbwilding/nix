@@ -158,7 +158,6 @@
           lemminx # xml
           lua-language-server # lua
           marksman # markdown
-          # nil # nix
           nixd # nix
           phpactor # php
           powershell-editor-services # powershell
@@ -199,6 +198,7 @@
           php85Packages.php-cs-fixer # php
           prettierd # js / ts
           rustfmt # rust
+          nil # nix
         ];
       };
     };
