@@ -41,7 +41,7 @@ in
     };
 
   flake.modules.homeManager.${user} =
-    { pkgs, lib, ... }:
+    { lib, ... }:
     {
       imports = with inputs.self.modules.homeManager; [
         atuin

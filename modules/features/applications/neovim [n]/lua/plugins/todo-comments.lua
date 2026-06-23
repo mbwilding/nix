@@ -35,6 +35,7 @@ return {
         "nvim-lua/plenary.nvim",
         "folke/snacks.nvim",
     },
+    lazy = false,
     keys = {
         {
             "<leader>st",
