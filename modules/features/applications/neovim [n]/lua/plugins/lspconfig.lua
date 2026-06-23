@@ -29,10 +29,10 @@ return {
                 },
                 options = {
                     nixos = {
-                        expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.<hostname>.options',
+                        expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.' .. vim.fn.hostname() .. '.options',
                     },
                     home_manager = {
-                        expr = '(builtins.getFlake (toString ./.)).homeConfigurations."<username>@<hostname>".options',
+                        expr = '(builtins.getFlake (toString ./.)).homeConfigurations."' .. (vim.env.USER or vim.env.USERNAME or vim.fn.expand('$USER')) .. '@' .. vim.fn.hostname() .. '".options',
                     },
                 },
             },
