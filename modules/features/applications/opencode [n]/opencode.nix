@@ -60,6 +60,9 @@
           enable = true;
           package = pkgsMaster.opencode;
           context = context;
+          settings = {
+            lsp = true;
+          };
           agents = {
             document = ''
               As an AI agent focused on technical documentation, your task is to analyse files, regardless of whether they are staged, unstaged, or simply reflect the current implementation—to produce clear, accurate, and maintainable documentation.
