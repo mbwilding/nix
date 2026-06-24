@@ -37,6 +37,12 @@
               User = "mbwilding";
             };
 
+            phone = personal // {
+              HostName = "192.168.11.41";
+              Port = 8022;
+              User = "nix-on-droid";
+            };
+
             surface = personal // {
               HostName = "192.168.11.253";
               User = "mbwilding";
