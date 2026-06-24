@@ -9,6 +9,6 @@ return {
         require("gronk").setup({
             transparent = true,
         })
-        vim.cmd.colorscheme = "gronk"
+        vim.cmd([[colorscheme gronk]])
     end,
 }
