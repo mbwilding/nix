@@ -81,24 +81,6 @@
         "type": "github"
       }
     },
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -106,11 +88,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782220169,
-        "narHash": "sha256-NxykfEdGQjop9m49Bk61pXpAduH8ICHgXC1N3Ph3Jp0=",
+        "lastModified": 1782233665,
+        "narHash": "sha256-h/xOtrByoA/Ak1lWHn0O1lVZz4qWYbwOSLQ8YSwQO0I=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "4b0b9474749820afac53ea30d4ccfef60aba5ce6",
+        "rev": "062581938b4a378a82dfbb294b494808157153a1",
         "type": "github"
       },
       "original": {
@@ -134,31 +116,11 @@
         "type": "github"
       }
     },
-    "lazydotnet": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1782225022,
-        "narHash": "sha256-GToASLcliT86k+9y/Xs+31/UJKAezC0M5ZeRov2l7ug=",
-        "owner": "mbwilding",
-        "repo": "lazydotnet",
-        "rev": "f802c83bbacf2d812c6f5fed2842c4db379df407",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mbwilding",
-        "ref": "feat/nix-flake",
-        "repo": "lazydotnet",
-        "type": "github"
-      }
-    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
         "niri-unstable": "niri-unstable",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
         "xwayland-satellite-stable": "xwayland-satellite-stable",
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
@@ -220,7 +182,7 @@
         "flake-parts": [
           "flake-parts"
         ],
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1782159764,
@@ -310,7 +272,7 @@
         "flake-compat": [
           "flake-compat"
         ],
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
         "lastModified": 1781182279,
@@ -360,11 +322,11 @@
     },
     "nixpkgs-droid": {
       "locked": {
-        "lastModified": 1782224347,
-        "narHash": "sha256-bdxF8NWAmorlXgs0XA/ouwHOR3u0bZO4wDgTvopn+3E=",
+        "lastModified": 1782263319,
+        "narHash": "sha256-LO5oDgyAfGio0Ins6JTM1ySawR3LbXXfDyhVWLQ2jCc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9a84fd568e7c093b85db3dad1719e3b973fc9b1b",
+        "rev": "1bf4e8513dd31ae00e63d97627056dd3aff1b7ed",
         "type": "github"
       },
       "original": {
@@ -407,11 +369,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1782224347,
-        "narHash": "sha256-bdxF8NWAmorlXgs0XA/ouwHOR3u0bZO4wDgTvopn+3E=",
+        "lastModified": 1782263319,
+        "narHash": "sha256-LO5oDgyAfGio0Ins6JTM1ySawR3LbXXfDyhVWLQ2jCc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9a84fd568e7c093b85db3dad1719e3b973fc9b1b",
+        "rev": "1bf4e8513dd31ae00e63d97627056dd3aff1b7ed",
         "type": "github"
       },
       "original": {
@@ -439,22 +401,6 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1781577229,
-        "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
-      "locked": {
         "lastModified": 1782145344,
         "narHash": "sha256-8cz8/2hWTYdsPcpqWXa/IAkyjw1xBv3tx2UPNzkpe3c=",
         "owner": "NixOS",
@@ -469,7 +415,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_4": {
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1780243769,
         "narHash": "sha256-x5UQuRsH3MqI0U9afaXSNqzTPSeZlRLvFAav2Ux1pNw=",
@@ -485,7 +431,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_5": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1781577229,
         "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
@@ -501,7 +447,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_6": {
+    "nixpkgs_5": {
       "locked": {
         "lastModified": 1781577229,
         "narHash": "sha256-rcUHdUtJEvMdNEl2Wq+YpHraHKfcer3KsBscpZEF2Yg=",
@@ -554,14 +500,14 @@
     },
     "noctalia": {
       "inputs": {
-        "nixpkgs": "nixpkgs_6"
+        "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1782223387,
-        "narHash": "sha256-s8rdbLLxuFO55dQHJBbNtZ/kQf4cRsRGjLtDJxSmRuY=",
+        "lastModified": 1782264338,
+        "narHash": "sha256-o9E+urwH/RdaISuRn4Aqnuwb84H6CayRfruq6QYjNL0=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "2b21b9839ff9466785a9b291c84d78bd738817c3",
+        "rev": "d7b0677527708b8a26f157fae74d4aa14b407e5c",
         "type": "github"
       },
       "original": {
@@ -599,13 +545,12 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "lazydotnet": "lazydotnet",
         "niri": "niri",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nix-flatpak": "nix-flatpak",
         "nix-on-droid": "nix-on-droid",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs_5",
+        "nixpkgs": "nixpkgs_4",
         "nixpkgs-droid": "nixpkgs-droid",
         "nixpkgs-master": "nixpkgs-master",
         "noctalia": "noctalia",
@@ -626,21 +571,6 @@
       "original": {
         "owner": "andreymatin",
         "repo": "scss-reset",
-        "type": "github"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
         "type": "github"
       }
     },
