@@ -43,9 +43,6 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
-    # lazydotnet.url = "github:ckob/lazydotnet";
-    lazydotnet.url = "github:mbwilding/lazydotnet/feat/nix-flake";
-
     # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
 
