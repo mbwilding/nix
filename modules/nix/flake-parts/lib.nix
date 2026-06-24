@@ -20,6 +20,23 @@
   };
 
   config.flake.lib = {
+    symlinkDir =
+      base: ignore:
+      lib.listToAttrs (
+        map
+          (file: {
+            name = lib.removePrefix (toString base + "/") (toString file);
+            value = {
+              source = file;
+            };
+          })
+          (
+            lib.filter (
+              f: !lib.any (pattern: lib.hasInfix pattern (toString f)) (if ignore == null then [ ] else ignore)
+            ) (lib.filesystem.listFilesRecursive base)
+          )
+      );
+
     mkNixos = system: name: {
       ${name} = inputs.nixpkgs.lib.nixosSystem {
         modules = [
@@ -34,7 +51,9 @@
                 substituters = [ "https://attic.xuyh0120.win/lantian" ];
                 trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
                 extra-substituters = [ "https://noctalia.cachix.org" ];
-                extra-trusted-public-keys = [ "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=" ];
+                extra-trusted-public-keys = [
+                  "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+                ];
               };
             };
 

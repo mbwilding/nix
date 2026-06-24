@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, inputs, ... }:
 
 {
   flake.modules.homeManager.neovim =
@@ -21,15 +21,13 @@
           trash-cli # trash (snacks.explorer)
           tree-sitter # syntax highlighting
         ];
-
-        initLua = builtins.readFile ./init.lua;
       };
 
-      xdg.configFile = {
-        "nvim/lua".source = ./lua;
-        "nvim/after".source = ./after;
-        "nvim/configs".source = ./configs;
-        "nvim/spell".source = ./spell;
-      };
+      xdg.configFile = lib.mapAttrs' (name: value: lib.nameValuePair "nvim/${name}" value) (
+        inputs.self.lib.symlinkDir ./. [
+          ".nix"
+          "graveyard"
+        ]
+      );
     };
 }
