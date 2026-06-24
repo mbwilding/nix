@@ -60,7 +60,6 @@ in
         git
         jetbrains
         k9s
-        lazydotnet
         lazygit
         lazysql
         mcp
