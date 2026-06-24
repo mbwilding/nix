@@ -4,7 +4,6 @@
   flake.modules.homeManager.opencode =
     {
       lib,
-      pkgs,
       pkgsMaster,
       secrets,
       ...
@@ -21,38 +20,6 @@
 
       ''
       + context;
-
-      opencodeConfigDir = "$HOME/.config/opencode";
-
-      opencodeJson = pkgs.writeText "opencode.json" (
-        builtins.toJSON {
-          "$schema" = "https://opencode.ai/config.json";
-          mcp = {
-            atlassian = {
-              type = "remote";
-              url = "https://mcp.atlassian.com/v1/mcp";
-            };
-            github-personal = {
-              type = "remote";
-              url = "https://api.githubcopilot.com/mcp";
-              headers = {
-                Authorization = "Bearer ${secrets.githubPersonalToken}";
-              };
-            };
-            github-work = {
-              type = "remote";
-              url = "https://api.githubcopilot.com/mcp";
-              headers = {
-                Authorization = "Bearer ${secrets.githubWorkToken}";
-              };
-            };
-            lucid = {
-              type = "remote";
-              url = "https://mcp.lucid.app/mcp";
-            };
-          };
-        }
-      );
     in
     {
       programs = {
@@ -62,6 +29,30 @@
           context = context;
           settings = {
             lsp = true;
+            mcp = {
+              atlassian = {
+                type = "remote";
+                url = "https://mcp.atlassian.com/v1/mcp";
+              };
+              github-personal = {
+                type = "remote";
+                url = "https://api.githubcopilot.com/mcp";
+                headers = {
+                  Authorization = "Bearer ${secrets.githubPersonalToken}";
+                };
+              };
+              github-work = {
+                type = "remote";
+                url = "https://api.githubcopilot.com/mcp";
+                headers = {
+                  Authorization = "Bearer ${secrets.githubWorkToken}";
+                };
+              };
+              lucid = {
+                type = "remote";
+                url = "https://mcp.lucid.app/mcp";
+              };
+            };
           };
           agents = {
             document = ''
@@ -121,13 +112,5 @@
           };
         };
       };
-
-      home.activation.opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "${opencodeConfigDir}"
-
-        if [ ! -f "${opencodeConfigDir}/opencode.json" ]; then
-          $DRY_RUN_CMD cp ${opencodeJson} "${opencodeConfigDir}/opencode.json"
-        fi
-      '';
     };
 }
