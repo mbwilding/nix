@@ -29,6 +29,20 @@
           context = context;
           settings = {
             lsp = true;
+            permission = {
+              # allow, deny, ask
+              bash = "allow";
+              edit = "allow";
+              glob = "allow";
+              grep = "allow";
+              lsp = "allow";
+              question = "allow";
+              read = "allow";
+              skill = "allow";
+              todowrite = "allow";
+              webfetch = "allow";
+              websearch = "deny"; # NOTE: Requires EXA AI and OPENCODE_ENABLE_EXA=true
+            };
             mcp = {
               atlassian = {
                 type = "remote";
