@@ -29,6 +29,10 @@ return {
                 path = "lazydev.nvim",
                 words = { "lazydev.nvim" },
             },
+            {
+                path = "dotnet.nvim",
+                words = { "dotnet.Config" },
+            },
         },
     },
 }
