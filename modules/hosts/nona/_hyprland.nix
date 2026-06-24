@@ -76,7 +76,7 @@
     extraConfig = lib.mkAfter ''
       hl.on("hyprland.start", function()
         hl.exec_cmd("brightnessctl set --device=platform::micmute 0")
-        hl.exec_cmd("hyprctl dispatch workspace 1")
+        hl.exec_cmd("hyprctl dispatch 'hl.dsp.focus({ workspace = \"1\" })'")
       end)
 
       hl.bind(mod .. " + backslash", function()

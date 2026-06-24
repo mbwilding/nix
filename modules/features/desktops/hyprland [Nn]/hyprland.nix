@@ -725,14 +725,14 @@
             {
               _args = [
                 "switch:on:Lid Switch"
-                (lua ''hl.dsp.exec_cmd("noctalia msg session lock && hyprctl dispatch dpms off ${primaryMonitor} && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend")'')
+                (lua ''hl.dsp.exec_cmd("noctalia msg session lock && hyprctl dispatch 'hl.dsp.dpms(\"off\")' && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend")'')
                 { locked = true; }
               ];
             }
             {
               _args = [
                 "switch:off:Lid Switch"
-                (lua ''hl.dsp.exec_cmd("hyprctl dispatch dpms on ${primaryMonitor}")'')
+                (lua ''hl.dsp.exec_cmd("hyprctl dispatch 'hl.dsp.dpms(\"on\")'")'')
                 { locked = true; }
               ];
             }
@@ -789,7 +789,7 @@
         enable = true;
         settings = {
           general = {
-            after_sleep_cmd = "hyprctl dispatch dpms on";
+            after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
             ignore_dbus_inhibit = false;
             lock_cmd = "noctalia msg session lock";
           };
@@ -800,8 +800,8 @@
             }
             {
               timeout = 360;
-              on-timeout = "hyprctl dispatch dpms off";
-              on-resume = "hyprctl dispatch dpms on";
+              on-timeout = "hyprctl dispatch 'hl.dsp.dpms(\"off\")'";
+              on-resume = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
             }
           ];
         };
