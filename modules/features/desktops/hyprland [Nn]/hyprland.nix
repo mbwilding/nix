@@ -784,7 +784,18 @@
 
           workspace_rule = [ ];
 
-          window_rule = [ ];
+          window_rule = [
+            {
+              match = {
+                class = ".*[Rr]esolve.*";
+                # title = "^(?!DaVinci Resolve).*";
+              };
+              float = true;
+              stay_focused = true;
+              # focus = true;
+              # modal = true;
+            }
+          ];
         };
 
         extraConfig = ''
