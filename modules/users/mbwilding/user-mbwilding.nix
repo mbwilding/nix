@@ -46,7 +46,6 @@ in
       imports = with inputs.self.modules.homeManager; [
         atuin
         aws
-        bolt-launcher
         btop
         dapr
         development
