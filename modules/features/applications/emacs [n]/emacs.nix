@@ -5,12 +5,12 @@
     { ... }:
 
     {
-      services.emacs = {
-        enable = false;
-        startWithUserSession = true;
-        defaultEditor = false;
-        extraOptions = null;
-      };
+      # services.emacs = {
+      #   enable = false;
+      #   startWithUserSession = true;
+      #   defaultEditor = false;
+      #   extraOptions = null;
+      # };
 
       programs.emacs = {
         enable = true;
