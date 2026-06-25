@@ -15,15 +15,8 @@
         };
 
         nvidia = {
-          package = config.boot.kernelPackages.nvidiaPackages.stable; # beta
-          # package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-          #   version = "610.43.02";
-          #   sha256_64bit = "sha256:0qvllxnb20arjhw3bxdz0hw521di9ib75hldzx97gpscpdaa0d1h";
-          #   sha256_aarch64 = "sha256:0qvllxnb20arjhw3bxdz0hw521di9ib75hldzx97gpscpdaa0d1h";
-          #   openSha256 = "sha256-hP5NVZZ4vGsACHLmUDKq4uckpd/kn1GxCSYnnJfAuBs=";
-          #   settingsSha256 = "sha256-0YAhufRgjDW+uR+kjaTb154fibpcDw8QowfrucoZsKE=";
-          #   persistencedSha256 = "sha256:0nd0bf2s9b2ic8a0rcscddasddkryx2qf6mx4861bv44wblm513z";
-          # };
+          # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
+          package = config.boot.kernelPackages.nvidiaPackages.production;
           open = true;
           modesetting.enable = true;
           nvidiaSettings = true;
