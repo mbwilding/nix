@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  secrets,
   ...
 }:
 {
@@ -38,7 +37,7 @@
           )
       );
 
-    mkNixos =
+    mkNixOS =
       let
         secrets = import ../_secrets.nix;
       in
@@ -64,18 +63,11 @@
               };
 
               _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
+              _module.args.pkgsStable = inputs.nixpkgs-stable.legacyPackages.${system};
             }
           ];
         };
       };
-
-    mkNixOnDroid = name: {
-      ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import inputs.nixpkgs-droid { system = "aarch64-linux"; };
-        modules = [ inputs.self.modules.nixOnDroid.${name} ];
-        extraSpecialArgs = { inherit inputs; };
-      };
-    };
 
     mkHomeManager =
       let
@@ -90,10 +82,19 @@
               nixpkgs.config.allowUnfree = true;
               _module.args.secrets = secrets;
               _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
+              _module.args.pkgsStable = inputs.nixpkgs-stable.legacyPackages.${system};
             }
           ]
           ++ extraModules;
         };
       };
+
+    mkNixOnDroid = name: {
+      ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+        pkgs = import inputs.nixpkgs-droid { system = "aarch64-linux"; };
+        modules = [ inputs.self.modules.nixOnDroid.${name} ];
+        extraSpecialArgs = { inherit inputs; };
+      };
+    };
   };
 }
