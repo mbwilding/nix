@@ -40,6 +40,7 @@
             cifs-utils
             curl
             dapr-cli
+            emacs
             exiftool
             eza
             fd
