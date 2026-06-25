@@ -36,6 +36,7 @@
             asciiquarium
             azure-cli
             bat
+            bolt-launcher
             brightnessctl
             cameractrls-gtk4
             cifs-utils
