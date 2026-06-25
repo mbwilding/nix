@@ -52,7 +52,6 @@ in
         direnv
         discord
         dotnet
-        emacs
         fastfetch
         files
         fzf
