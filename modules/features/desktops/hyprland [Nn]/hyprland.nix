@@ -787,13 +787,20 @@
           window_rule = [
             {
               match = {
-                class = ".*[Rr]esolve.*";
-                # title = "^(?!DaVinci Resolve).*";
+                class = "^(resolve)$";
               };
               float = true;
+              tile = false;
               stay_focused = true;
-              # focus = true;
-              # modal = true;
+            }
+            {
+              match = {
+                class = "^(resolve)$";
+                title = "^(DaVinci Resolve.*)$";
+              };
+              float = false;
+              tile = true;
+              stay_focused = false;
             }
           ];
         };
