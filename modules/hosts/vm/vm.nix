@@ -22,7 +22,7 @@ in
       system.stateVersion = stateVersion;
     };
 
-  flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;
+  flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
   flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
     inputs.self.modules.homeManager.kde

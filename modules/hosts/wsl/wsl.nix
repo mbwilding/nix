@@ -36,7 +36,7 @@ in
       };
     };
 
-  flake.nixosConfigurations = inputs.self.lib.mkNixos arch hostName;
+  flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
   flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
     ./_shells.nix
