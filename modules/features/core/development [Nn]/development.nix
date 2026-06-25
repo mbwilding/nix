@@ -140,7 +140,7 @@
           gcc # c / c++
           gnumake # n/a
           go # go
-          jdk # java / kotlin
+          jdk25 # java / kotlin
           luajit # lua
           luajitPackages.luarocks-nix # lua
           nodejs # js / ts
