@@ -52,7 +52,7 @@
               nix = {
                 nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
                 settings = {
-                  access-tokens = "github.com=${secrets.githubPersonalToken}";
+                  access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
                   substituters = [ "https://attic.xuyh0120.win/lantian" ];
                   trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
                   extra-substituters = [ "https://noctalia.cachix.org" ];
