@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  pkgsMaster,
   ...
 }:
 {
@@ -54,7 +55,9 @@
             inputs.self.modules.nixos.${name}
             {
               nixpkgs.hostPlatform = lib.mkDefault system;
-              nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.default ];
+              nixpkgs.overlays = [
+                inputs.nix-cachyos-kernel.overlays.default
+              ];
 
               nix = {
                 nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];

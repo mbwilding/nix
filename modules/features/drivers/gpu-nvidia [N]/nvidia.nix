@@ -2,7 +2,11 @@
 
 {
   flake.modules.nixos.gpu-nvidia =
-    { config, pkgs, ... }:
+    {
+      config,
+      pkgs,
+      ...
+    }:
     {
       nixpkgs.config.cudaSupport = true;
 
