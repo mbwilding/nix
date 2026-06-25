@@ -126,6 +126,9 @@
           # Shells
           powershell
 
+          # Utilities
+          scc # Code counter and complexity calculator
+
           # AI
           github-copilot-cli
 
