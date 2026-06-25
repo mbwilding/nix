@@ -15,8 +15,17 @@
       programs.emacs = {
         enable = true;
         extraConfig = ''
-          (menu-bar-mode -1)
-          (tool-bar-mode -1)
+          (setq inhibit-startup-screen t)
+
+          (tool-bar-mode 0)
+          (menu-bar-mode 0)
+          (scroll-bar-mode 0)
+
+          (modify-all-frames-parameters
+           '((border-width . 0)
+             (internal-border-width . 0)))
+
+          (column-number-mode 1)
         '';
       };
     };
