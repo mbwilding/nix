@@ -96,7 +96,11 @@
             }
           ];
           interactiveShellInit = ''
+            # Suppress greeting
             set -g fish_greeting
+
+            # Vi
+            fish_vi_key_bindings
 
             # Git prompt settings
             set -g __fish_git_prompt_showdirtystate 1
