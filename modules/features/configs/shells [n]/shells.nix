@@ -51,7 +51,7 @@
           ls = "eza";
           n = "nvim";
           nix-boot = "sudo nixos-rebuild boot --impure --flake ~/nix";
-          nix-build = "sudo nixos-rebuild build --no-out-link --impure --flake ~/nix";
+          nix-build = "nixos-rebuild build --no-link --impure --flake ~/nix";
           nix-build-link = "sudo nixos-rebuild build --impure --flake ~/nix";
           nix-clean = "sudo nix-collect-garbage -d";
           nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
