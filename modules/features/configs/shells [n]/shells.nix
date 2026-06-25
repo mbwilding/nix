@@ -41,7 +41,8 @@
           ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
           ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
           grep = "grep --color";
-          hm-build = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
+          hm-build = "home-manager build --no-out-link -b backup --impure --flake ~/nix#(hostname)";
+          hm-build-link = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
           hm-clean = "home-manager expire-generations -days";
           hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
           lg = "lazygit";
@@ -49,8 +50,9 @@
           lla = "eza -alhg";
           ls = "eza";
           n = "nvim";
-          nix-build = "sudo nixos-rebuild build --impure --flake ~/nix";
           nix-boot = "sudo nixos-rebuild boot --impure --flake ~/nix";
+          nix-build = "sudo nixos-rebuild build --no-out-link --impure --flake ~/nix";
+          nix-build-link = "sudo nixos-rebuild build --impure --flake ~/nix";
           nix-clean = "sudo nix-collect-garbage -d";
           nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
           nix-update = "nix flake update --flake ~/nix";
