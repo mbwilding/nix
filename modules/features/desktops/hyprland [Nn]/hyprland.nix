@@ -799,9 +799,13 @@
               on-timeout = "noctalia msg session lock";
             }
             {
-              timeout = 360;
-              on-timeout = "hyprctl dispatch 'hl.dsp.dpms(\"off\")'";
-              on-resume = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
+              timeout = 330;
+              on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'";
+              on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })' && brightnessctl -r";
+            }
+            {
+              timeout = 1800;
+              on-timeout = "systemctl suspend";
             }
           ];
         };
