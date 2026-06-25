@@ -7,9 +7,9 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgsMaster, ... }:
+    { pkgs, ... }:
     let
-      kernel = pkgsMaster.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
+      kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
     {
       imports =
