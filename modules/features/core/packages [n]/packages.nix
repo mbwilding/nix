@@ -1,7 +1,5 @@
 { ... }:
 
-# https://search.nixos.org/packages?channel=unstable
-
 {
   flake.modules.homeManager.packages =
     {
