@@ -789,7 +789,7 @@
         enable = true;
         settings = {
           general = {
-            after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
+            after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })' && brightnessctl -r";
             ignore_dbus_inhibit = false;
             lock_cmd = "noctalia msg session lock";
           };
@@ -803,10 +803,10 @@
               on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'";
               on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })' && brightnessctl -r";
             }
-            {
-              timeout = 1800;
-              on-timeout = "systemctl suspend";
-            }
+            # {
+            #   timeout = 1800;
+            #   on-timeout = "systemctl suspend";
+            # }
           ];
         };
       };
