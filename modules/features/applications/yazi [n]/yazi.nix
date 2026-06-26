@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.homeManager.yazi =
@@ -16,9 +16,32 @@
       home.packages = [ extractToDir ];
       programs.yazi = {
         enable = true;
+        package = inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default;
         enableZshIntegration = config.programs.zsh.enable;
         enableFishIntegration = config.programs.fish.enable;
         shellWrapperName = "y";
+        plugins = {
+          git = pkgs.yaziPlugins.git;
+          githead = pkgs.yaziPlugins.githead;
+          bookmarks = pkgs.yaziPlugins.bookmarks;
+          bypass = pkgs.yaziPlugins.bypass;
+          chmod = pkgs.yaziPlugins.chmod;
+          clipboard = pkgs.yaziPlugins.clipboard;
+          compress = pkgs.yaziPlugins.compress;
+          convert = pkgs.yaziPlugins.convert;
+          gitui = pkgs.yaziPlugins.gitui;
+          gvfs = pkgs.yaziPlugins.gvfs;
+          lazygit = pkgs.yaziPlugins.lazygit;
+          mediainfo = pkgs.yaziPlugins.mediainfo;
+          mount = pkgs.yaziPlugins.mount;
+          office = pkgs.yaziPlugins.office;
+          "omni-trash" = pkgs.yaziPlugins.omni-trash;
+          ouch = pkgs.yaziPlugins.ouch;
+          rsync = pkgs.yaziPlugins.rsync;
+          "smart-paste" = pkgs.yaziPlugins.smart-paste;
+          sshfs = pkgs.yaziPlugins.sshfs;
+          sudo = pkgs.yaziPlugins.sudo;
+        };
         settings = {
           opener = {
             view = [
