@@ -389,7 +389,7 @@
             {
               _args = [
                 (lua "mod .. \" + c\"")
-                (lua ''hl.dsp.exec_cmd("${terminal} -e btop +new-window")'')
+                (lua ''hl.dsp.exec_cmd("${terminal} -e btop")'')
               ];
             }
             {
@@ -401,7 +401,7 @@
             {
               _args = [
                 (lua "mod .. \" + e\"")
-                (lua ''hl.dsp.exec_cmd("${terminal} -e yazi +new-window")'')
+                (lua ''hl.dsp.exec_cmd("${terminal} -e yazi")'')
               ];
             }
             {
