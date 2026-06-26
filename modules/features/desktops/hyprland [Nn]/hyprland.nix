@@ -814,17 +814,19 @@
         '';
       };
 
-      xdg.mimeApps = {
-        enable = true;
-        defaultApplications = {
-          "image/png" = "imv.desktop";
-          "image/jpeg" = "imv.desktop";
-          "image/gif" = "imv.desktop";
-          "image/bmp" = "imv.desktop";
-          "image/svg+xml" = "imv.desktop";
-          "image/tiff" = "imv.desktop";
-          "image/webp" = "imv.desktop";
-          "image/x-icon" = "imv.desktop";
+      xdg = {
+        mimeApps = {
+          enable = true;
+          defaultApplications = {
+            "image/png" = "imv.desktop";
+            "image/jpeg" = "imv.desktop";
+            "image/gif" = "imv.desktop";
+            "image/bmp" = "imv.desktop";
+            "image/svg+xml" = "imv.desktop";
+            "image/tiff" = "imv.desktop";
+            "image/webp" = "imv.desktop";
+            "image/x-icon" = "imv.desktop";
+          };
         };
       };
 
