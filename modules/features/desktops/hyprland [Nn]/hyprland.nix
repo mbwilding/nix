@@ -72,10 +72,11 @@
     }:
 
     let
-      lua = lib.generators.mkLuaInline;
       anim_speed = 1.8;
       gaps = 0.0;
+      lua = lib.generators.mkLuaInline;
       screenshotDir = "${import ../../../nix/_home.nix}/Pictures/Screenshots";
+      terminal = "kitty";
     in
     {
       imports = [
@@ -388,7 +389,7 @@
             {
               _args = [
                 (lua "mod .. \" + c\"")
-                (lua ''hl.dsp.exec_cmd("ghostty -e btop +new-window")'')
+                (lua ''hl.dsp.exec_cmd("${terminal} -e btop +new-window")'')
               ];
             }
             {
@@ -400,7 +401,7 @@
             {
               _args = [
                 (lua "mod .. \" + e\"")
-                (lua ''hl.dsp.exec_cmd("ghostty -e yazi +new-window")'')
+                (lua ''hl.dsp.exec_cmd("${terminal} -e yazi +new-window")'')
               ];
             }
             {
@@ -430,7 +431,7 @@
             {
               _args = [
                 (lua "mod .. \" + t\"")
-                (lua ''hl.dsp.exec_cmd("ghostty +new-window")'')
+                (lua ''hl.dsp.exec_cmd("${terminal}")'')
               ];
             }
             {
