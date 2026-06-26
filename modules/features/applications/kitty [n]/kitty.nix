@@ -31,13 +31,17 @@
             clear_all_shortcuts = true;
             confirm_os_window_close = 0;
             copy_on_select = "clipboard";
-            cursor_shape = "block";
-            cursor = "#bdbdbd";
-            cursor_text_color = "#000000";
             focus_follows_mouse = true;
             hide_window_decorations = true;
+            pixel_scroll = true;
             strip_trailing_spaces = "always";
             window_padding_width = 5;
+
+            cursor = "none";
+            cursor_blink_interval = -1;
+            cursor_shape = "block";
+            cursor_text_color = "background";
+            cursor_trail = 1;
 
             background = "#000000";
             foreground = "#bdbdbd";
