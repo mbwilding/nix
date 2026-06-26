@@ -9,6 +9,7 @@
         packages = with pkgs; [
           kdePackages.dolphin
           kdePackages.kio-extras
+          kdePackages.kdegraphics-thumbnailers
           kdePackages.ffmpegthumbs
           kdePackages.kimageformats
           kdePackages.qtimageformats
