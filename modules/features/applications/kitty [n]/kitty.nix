@@ -42,6 +42,7 @@
             cursor_shape = "block";
             cursor_text_color = "background";
             cursor_trail = 1;
+            cursor_trail_decay = "0.2 0.2";
 
             background = "#000000";
             foreground = "#bdbdbd";
