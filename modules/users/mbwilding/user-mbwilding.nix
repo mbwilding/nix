@@ -51,6 +51,7 @@ in
         development
         direnv
         discord
+        dolphin
         dotnet
         fastfetch
         files
