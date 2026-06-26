@@ -32,6 +32,7 @@
           gitui = pkgs.yaziPlugins.gitui;
           gvfs = pkgs.yaziPlugins.gvfs;
           lazygit = pkgs.yaziPlugins.lazygit;
+          lsar = pkgs.yaziPlugins.lsar;
           mediainfo = pkgs.yaziPlugins.mediainfo;
           mount = pkgs.yaziPlugins.mount;
           office = pkgs.yaziPlugins.office;
