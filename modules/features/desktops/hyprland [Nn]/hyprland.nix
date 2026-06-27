@@ -786,25 +786,6 @@
           workspace_rule = [ ];
 
           window_rule = [
-            # Reaper
-            {
-              match = {
-                class = "^(REAPER)$";
-              };
-              float = true;
-              tile = false;
-              stay_focused = true;
-              center = true;
-            }
-            {
-              match = {
-                class = "^(REAPER)$";
-                title = "^.*REAPER.*$";
-              };
-              float = false;
-              tile = true;
-              stay_focused = false;
-            }
             # DaVinic
             {
               match = {
