@@ -74,6 +74,7 @@ in
         power-platform-toolbox
         proxy
         proxychains
+        reaper
         shells
         ssh
         steam

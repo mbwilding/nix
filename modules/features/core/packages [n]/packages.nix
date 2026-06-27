@@ -76,7 +76,6 @@
             psmisc
             pulumi-bin
             qbittorrent
-            reaper
             ripgrep
             sl
             spotify
