@@ -31,8 +31,10 @@
             clear_all_shortcuts = true;
             confirm_os_window_close = 0;
             copy_on_select = "clipboard";
+            clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
             focus_follows_mouse = true;
             hide_window_decorations = true;
+            paste_actions = "quote-urls-at-prompt,replace-dangerous-control-codes";
             pixel_scroll = true;
             strip_trailing_spaces = "always";
             window_padding_width = 5;
