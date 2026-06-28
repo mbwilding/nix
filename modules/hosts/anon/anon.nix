@@ -21,7 +21,7 @@ in
           flatpak
           gpu-nvidia
           hyprland
-          # niri
+          llama
           mounts
           mpv
           obs
@@ -72,10 +72,6 @@ in
       services = {
         hardware = {
           openrgb.enable = true;
-        };
-        ollama = {
-          enable = true;
-          package = pkgs.ollama-cuda;
         };
       };
 
