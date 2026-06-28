@@ -15,8 +15,8 @@
           context = ./context.md;
           settings = {
             lsp = true;
-            model = "llama-swap/qwythos-9b";
-            small_model = "llama-swap/qwythos-9b";
+            model = "llama-swap/qwythos-9b-mtp";
+            small_model = "llama-swap/qwythos-9b-mtp-fast";
             provider = {
               llama-swap = {
                 api = "openai";
