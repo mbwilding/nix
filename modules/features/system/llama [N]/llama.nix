@@ -69,9 +69,10 @@
           openFirewall = true;
           settings = {
             healthCheckTimeout = 60;
+            startPort = 61000;
             models = {
               "qwythos-9b" = {
-                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 -ngl 99 -c 8192 --no-webui";
+                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 8192 --no-webui";
                 aliases = [
                   "qwythos"
                   "mythos"
@@ -79,7 +80,7 @@
               };
 
               "qwythos-9b-fast" = {
-                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K -ngl 99 -c 8192 --no-webui";
+                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 8192 --no-webui";
                 aliases = [
                   "qwythos-fast"
                   "mythos-fast"
