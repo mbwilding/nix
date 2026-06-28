@@ -17,10 +17,11 @@
             lsp = true;
             model = "llama-swap/qwythos-9b-abliterated";
             small_model = "llama-swap/qwythos-9b-abliterated-fast";
+            disabled_providers = ["opencode" "opencode-go" "gemini" "amazon-bedrock" "duo" "gitlab"];
             provider = {
               llama-swap = {
                 api = "openai";
-                name = "Llama Swap";
+                name = "Llama Swap (Local)";
                 options = {
                   baseURL = "http://192.168.11.254:60000/v1";
                   apiKey = "not-needed";
