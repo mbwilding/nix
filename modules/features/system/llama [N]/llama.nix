@@ -69,10 +69,11 @@
           openFirewall = true;
           settings = {
             healthCheckTimeout = 60;
-            startPort = 61000;
+            # logToStdout = "both";
             models = {
               "qwythos-9b" = {
-                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 8192 --no-webui";
+                proxy = "http://127.0.0.1:61001";
+                cmd = "${llama-server} --port 61001 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 65536 --no-webui";
                 aliases = [
                   "qwythos"
                   "mythos"
@@ -80,7 +81,8 @@
               };
 
               "qwythos-9b-fast" = {
-                cmd = "${llama-server} --port \${PORT} -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 8192 --no-webui";
+                proxy = "http://127.0.0.1:61002";
+                cmd = "${llama-server} --port 61002 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 65536 --no-webui";
                 aliases = [
                   "qwythos-fast"
                   "mythos-fast"
@@ -95,6 +97,13 @@
             };
           };
         };
+      };
+
+      systemd.services.llama-swap.serviceConfig = {
+        DynamicUser = lib.mkForce false;
+        User = "mbwilding";
+        Group = "users";
+        ProtectHome = lib.mkForce false;
       };
     };
 }
