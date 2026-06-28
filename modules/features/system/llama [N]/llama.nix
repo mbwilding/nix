@@ -73,7 +73,8 @@
             models = {
               "qwythos-9b" = {
                 proxy = "http://127.0.0.1:61001";
-                cmd = "${llama-server} --port 61001 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 65536 --no-webui";
+                cmd = "${llama-server} --port 61001 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 1048576 --no-webui";
+                ttl = 300;
                 aliases = [
                   "qwythos"
                   "mythos"
@@ -82,18 +83,13 @@
 
               "qwythos-9b-fast" = {
                 proxy = "http://127.0.0.1:61002";
-                cmd = "${llama-server} --port 61002 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 65536 --no-webui";
+                cmd = "${llama-server} --port 61002 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 1048576 --no-webui";
+                ttl = 300;
                 aliases = [
                   "qwythos-fast"
                   "mythos-fast"
                 ];
               };
-
-              # "other-model" = {
-              #   proxy = "http://127.0.0.1:5555";
-              #   cmd = "${llama-server} --port 5555 -m /var/lib/llama-cpp/models/other-model.gguf -ngl 0 -c 4096 -np 4 --no-webui";
-              #   concurrencyLimit = 4;
-              # };
             };
           };
         };
