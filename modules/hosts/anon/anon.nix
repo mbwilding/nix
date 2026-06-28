@@ -45,7 +45,7 @@ in
         ];
 
       home-manager.sharedModules = [
-        ./_ghostty.nix
+        # ./_ghostty.nix
 
         ./_hyprland.nix
         # ./_niri.nix
@@ -87,7 +87,7 @@ in
         _module.args.primaryMonitor = primaryMonitor;
       }
 
-      ./_ghostty.nix
+      # ./_ghostty.nix
 
       ./_hyprland.nix
       hyprland
