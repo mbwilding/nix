@@ -44,6 +44,7 @@ in
     { lib, ... }:
     {
       imports = with inputs.self.modules.homeManager; [
+        # ghostty
         atuin
         aws
         btop
@@ -57,7 +58,6 @@ in
         files
         fzf
         gh
-        ghostty
         git
         jetbrains
         k9s
