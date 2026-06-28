@@ -16,7 +16,7 @@
           settings = {
             lsp = true;
             model = "llama-swap/qwythos-9b";
-            small_model = "llama-swap/qwythos-9b-fast";
+            small_model = "llama-swap/qwythos-9b";
             provider = {
               llama-swap = {
                 api = "openai";
@@ -32,6 +32,11 @@
                     tool_call = true;
                     temperature = true;
                     reasoning = true;
+                    limit = {
+                      context = 65536;
+                      input = 49152;
+                      output = 8192;
+                    };
                   };
                   "qwythos-9b" = {
                     name = "Qwythos 9B (Q8_0)";
@@ -39,6 +44,11 @@
                     tool_call = true;
                     temperature = true;
                     reasoning = true;
+                    limit = {
+                      context = 65536;
+                      input = 49152;
+                      output = 8192;
+                    };
                   };
                 };
               };
