@@ -52,7 +52,7 @@
                   };
                   "qwythos-9b-mtp" = {
                     name = "Qwythos 9B MTP (Q8_0)";
-                    id = "qwythos-9b";
+                    id = "qwythos-9b-mtp";
                     tool_call = true;
                     temperature = true;
                     reasoning = true;
@@ -64,7 +64,7 @@
                   };
                   "qwythos-9b-mtp-fast" = {
                     name = "Qwythos 9B MTP Fast (Q6_K)";
-                    id = "qwythos-9b-fast";
+                    id = "qwythos-9b-mtp-fast";
                     tool_call = true;
                     temperature = true;
                     reasoning = true;
