@@ -1,6 +1,8 @@
+{ lib, ... }:
+
 let
   home = import ./_home.nix;
-  read = f: builtins.readFile "${home}/.secrets/${f}";
+  read = f: lib.strings.trim (builtins.readFile "${home}/.secrets/${f}");
   readJSON = f: builtins.fromJSON (read f);
 in
 {
