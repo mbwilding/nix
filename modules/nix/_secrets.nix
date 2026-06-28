@@ -1,8 +1,16 @@
-{ lib, ... }:
-
 let
   home = import ./_home.nix;
-  read = f: lib.strings.trim (builtins.readFile "${home}/.secrets/${f}");
+  removeSuffix =
+    suffix: s:
+    let
+      sLen = builtins.stringLength s;
+      suffixLen = builtins.stringLength suffix;
+    in
+    if sLen >= suffixLen && builtins.substring (sLen - suffixLen) suffixLen s == suffix then
+      builtins.substring 0 (sLen - suffixLen) s
+    else
+      s;
+  read = f: removeSuffix "\r" (removeSuffix "\n" (builtins.readFile "${home}/.secrets/${f}"));
   readJSON = f: builtins.fromJSON (read f);
 in
 {
