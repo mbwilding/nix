@@ -16,7 +16,7 @@
           settings = {
             lsp = true;
             autoupdate = false;
-            share = "maunal";
+            share = "manual";
             model = "llama-swap/qwythos-9b-abliterated";
             small_model = "llama-swap/qwythos-9b-abliterated-fast";
             disabled_providers = [
