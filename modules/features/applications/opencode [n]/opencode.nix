@@ -15,6 +15,7 @@
           context = ./context.md;
           settings = {
             lsp = true;
+            formatter = true;
             autoupdate = false;
             share = "manual";
             model = "llama-swap/qwythos-9b-abliterated";
