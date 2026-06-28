@@ -73,6 +73,10 @@ in
         hardware = {
           openrgb.enable = true;
         };
+        ollama = {
+          enable = true;
+          acceleration = "cuda";
+        };
       };
 
       system.stateVersion = "25.11";
