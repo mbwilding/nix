@@ -91,6 +91,30 @@
                   "mythos-fast"
                 ];
               })
+
+(mkModel {
+                name = "qwythos-9b-mtp-fast";
+                port = 61003;
+                repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
+                quant = "MTP-Q6_K";
+                file = "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q6_K.gguf";
+                aliases = [
+                  "qwythos-mtp-fast"
+                  "mythos-mtp-fast"
+                ];
+              })
+
+(mkModel {
+                name = "qwythos-9b-mtp";
+                port = 61004;
+                repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
+                quant = "MTP-Q4_K_M";
+                file = "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf";
+                aliases = [
+                  "qwythos-mtp"
+                  "mythos-mtp"
+                ];
+              })
             ];
           };
         };
