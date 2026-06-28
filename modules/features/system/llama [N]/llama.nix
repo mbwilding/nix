@@ -1,105 +1,100 @@
-{ ... }:
+{ lib, pkgs, ... }:
 
-{
-  flake.modules.nixos.llama =
-    { lib, pkgs, ... }:
+let
+  llama-cpp =
+    (pkgs.llama-cpp.override {
+      cudaSupport = true;
+      rocmSupport = false;
+      metalSupport = false;
+      blasSupport = true;
+    }).overrideAttrs
+      (oldAttrs: {
+        cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
+          "-DGGML_NATIVE=ON"
+        ];
 
-    let
-      llama-cpp =
-        (pkgs.llama-cpp.override {
-          cudaSupport = true;
-          rocmSupport = false;
-          metalSupport = false;
-          # Enable BLAS for optimized CPU layer performance (OpenBLAS)
-          blasSupport = true;
-        }).overrideAttrs
-          (oldAttrs: rec {
-            # version = "7205";
-            # src = pkgs.fetchFromGitHub {
-            #   owner = "ggml-org";
-            #   repo = "llama.cpp";
-            #   tag = "b${version}";
-            #   hash = "sha256-1CcYbc8RWAPVz8hoxKEmbAgQesC1oGFZ3fhfuU5vmOc=";
-            #   leaveDotGit = true;
-            #   postFetch = ''
-            #     git -C "$out" rev-parse --short HEAD > $out/COMMIT
-            #     find "$out" -name .git -print0 | xargs -0 rm -rf
-            #   '';
-            # };
+        preConfigure = ''
+          export NIX_ENFORCE_NO_NATIVE=0
+          ${oldAttrs.preConfigure or ""}
+        '';
+      });
 
-            # Enable native CPU optimizations (AVX, AVX2, etc.)
-            cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
-              "-DGGML_NATIVE=ON"
-            ];
+  llama-server = lib.getExe' llama-cpp "llama-server";
 
-            # Disable Nix's march=native stripping
-            preConfigure = ''
-              export NIX_ENFORCE_NO_NATIVE=0
-              ${oldAttrs.preConfigure or ""}
-            '';
-          });
-
-      llama-server = lib.getExe' llama-cpp "llama-server";
-    in
+  mkModel =
     {
-      services = {
-        # llama-cpp = {
-        #   enable = true;
-        #   package = llama-cpp;
-        #   openFirewall = true;
-        #   port = 11433;
-        #   # model = "/data/services/models/moondream2/moondream2-text-model-f16.gguf";
-        #   # extraFlags = [
-        #   #   "--mmproj"
-        #   #   "/data/services/models/moondream2/moondream2-mmproj-f16.gguf"
-        #   #   "-ngl"
-        #   #   "99"
-        #   #   "-t"
-        #   #   "12"
-        #   #   "-tb"
-        #   #   "12"
-        #   # ];
-        # };
+      name,
+      port,
+      quant,
+      file,
+      aliases ? [ ],
+      repo ? "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF",
+      ctx ? 1048576,
+      ngl ? 99,
+      ttl ? 300,
+      extraArgs ? "",
+    }:
+    lib.nameValuePair name {
+      proxy = "http://127.0.0.1:${toString port}";
+      inherit ttl aliases;
 
-        llama-swap = {
-          enable = true;
-          package = pkgs.llama-swap;
-          port = 60000;
-          listenAddress = "0.0.0.0";
-          openFirewall = true;
-          settings = {
-            healthCheckTimeout = 60;
-            # logToStdout = "both";
-            models = {
-              "qwythos-9b" = {
-                proxy = "http://127.0.0.1:61001";
-                cmd = "${llama-server} --port 61001 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q8_0 --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf -ngl 99 -c 1048576 --no-webui";
-                ttl = 300;
-                aliases = [
-                  "qwythos"
-                  "mythos"
-                ];
-              };
-
-              "qwythos-9b-fast" = {
-                proxy = "http://127.0.0.1:61002";
-                cmd = "${llama-server} --port 61002 -hf empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q6_K --hf-file Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf -ngl 99 -c 1048576 --no-webui";
-                ttl = 300;
-                aliases = [
-                  "qwythos-fast"
-                  "mythos-fast"
-                ];
-              };
-            };
-          };
-        };
-      };
-
-      systemd.services.llama-swap.serviceConfig = {
-        DynamicUser = lib.mkForce false;
-        User = "mbwilding";
-        Group = "users";
-        ProtectHome = lib.mkForce false;
-      };
+      cmd = ''
+        ${llama-server} \
+          --port ${toString port} \
+          -hf ${repo}:${quant} \
+          --hf-file ${file} \
+          -ngl ${toString ngl} \
+          -c ${toString ctx} \
+          --no-webui \
+          ${extraArgs}
+      '';
     };
+
+in
+{
+  services.llama-swap = {
+    enable = true;
+    package = pkgs.llama-swap;
+
+    port = 60000;
+    listenAddress = "0.0.0.0";
+    openFirewall = true;
+
+    settings = {
+      healthCheckTimeout = 60;
+
+      models = lib.listToAttrs [
+        (mkModel {
+          name = "qwythos-9b";
+          port = 61001;
+          repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
+          quant = "Q8_0";
+          file = "Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf";
+          aliases = [
+            "qwythos"
+            "mythos"
+          ];
+        })
+
+        (mkModel {
+          name = "qwythos-9b-fast";
+          port = 61002;
+          repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
+          quant = "Q6_K";
+          file = "Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf";
+          aliases = [
+            "qwythos-fast"
+            "mythos-fast"
+          ];
+        })
+      ];
+    };
+  };
+
+  systemd.services.llama-swap.serviceConfig = {
+    DynamicUser = lib.mkForce false;
+    User = "mbwilding";
+    Group = "users";
+    ProtectHome = lib.mkForce false;
+  };
 }
