@@ -50,6 +50,30 @@
                       output = 1000000;
                     };
                   };
+                  "qwythos-9b-mtp" = {
+                    name = "Qwythos 9B MTP (Q8_0)";
+                    id = "qwythos-9b";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-mtp-fast" = {
+                    name = "Qwythos 9B MTP Fast (Q6_K)";
+                    id = "qwythos-9b-fast";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
                 };
               };
             };
