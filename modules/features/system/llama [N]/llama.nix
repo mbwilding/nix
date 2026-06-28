@@ -104,7 +104,7 @@
                 ];
               })
 
-(mkModel {
+              (mkModel {
                 name = "qwythos-9b-mtp";
                 port = 61004;
                 repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
@@ -114,6 +114,36 @@
                   "qwythos-mtp"
                   "mythos-mtp"
                 ];
+              })
+
+              (mkModel {
+                name = "qwythos-9b-abliterated";
+                port = 61005;
+                repo = "huihui-ai/Huihui-Qwythos-9B-Claude-Mythos-5-1M-abliterated-GGUF";
+                quant = "Q8_0";
+                file = "Huihui-Qwythos-9B-Claude-Mythos-5-1M-abliterated-Q8_0.gguf";
+                ctx = 262144;
+                ngl = 99;
+                aliases = [
+                  "qwythos-abliterated"
+                  "mythos-abliterated"
+                ];
+                extraArgs = "-fa on -np 1 --spec-type draft-mtp --spec-draft-n-max 2";
+              })
+
+              (mkModel {
+                name = "qwythos-9b-abliterated-fast";
+                port = 61006;
+                repo = "huihui-ai/Huihui-Qwythos-9B-Claude-Mythos-5-1M-abliterated-GGUF";
+                quant = "Q6_K";
+                file = "Huihui-Qwythos-9B-Claude-Mythos-5-1M-abliterated-Q6_K.gguf";
+                ctx = 262144;
+                ngl = 99;
+                aliases = [
+                  "qwythos-abliterated-fast"
+                  "mythos-abliterated-fast"
+                ];
+                extraArgs = "-fa on -np 1 --spec-type draft-mtp --spec-draft-n-max 2";
               })
             ];
           };
