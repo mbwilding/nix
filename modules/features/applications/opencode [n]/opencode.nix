@@ -15,9 +15,17 @@
           context = ./context.md;
           settings = {
             lsp = true;
+            autoupdate = false;
             model = "llama-swap/qwythos-9b-abliterated";
             small_model = "llama-swap/qwythos-9b-abliterated-fast";
-            disabled_providers = ["opencode" "opencode-go" "gemini" "amazon-bedrock" "duo" "gitlab"];
+            disabled_providers = [
+              "opencode"
+              "opencode-go"
+              "gemini"
+              "amazon-bedrock"
+              "duo"
+              "gitlab"
+            ];
             provider = {
               llama-swap = {
                 api = "openai";
@@ -147,6 +155,16 @@
           commands = {
             commit = ./commands/commit.md;
             doco = ./commands/doco.md;
+          };
+          tui = {
+            mouse = true;
+            diff_style = "auto";
+            attention = {
+              enabled = true;
+              notifications = true;
+              sound = true;
+              volume = 0.4;
+            };
           };
         };
       };
