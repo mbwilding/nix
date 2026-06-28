@@ -63,7 +63,7 @@
 
         llama-swap = {
           enable = true;
-          packages = pkgs.llama-swap;
+          package = pkgs.llama-swap;
           port = 60000;
           listenAddress = "0.0.0.0";
           openFirewall = true;
