@@ -26,18 +26,6 @@
                   apiKey = "not-needed";
                 };
                 models = {
-                  "qwythos-9b-fast" = {
-                    name = "Qwythos 9B Fast (Q6_K)";
-                    id = "qwythos-9b-fast";
-                    tool_call = true;
-                    temperature = true;
-                    reasoning = true;
-                    limit = {
-                      context = 65536;
-                      input = 49152;
-                      output = 8192;
-                    };
-                  };
                   "qwythos-9b" = {
                     name = "Qwythos 9B (Q8_0)";
                     id = "qwythos-9b";
@@ -45,9 +33,21 @@
                     temperature = true;
                     reasoning = true;
                     limit = {
-                      context = 65536;
-                      input = 49152;
-                      output = 8192;
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-fast" = {
+                    name = "Qwythos 9B Fast (Q6_K)";
+                    id = "qwythos-9b-fast";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
                     };
                   };
                 };
