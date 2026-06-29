@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.nixos.llama =
+  flake.modules.nixos.llama-swap =
     { lib, pkgs, ... }:
 
     let
@@ -35,7 +35,7 @@
           quant,
           file,
           aliases ? [ ],
-          repo ? "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF",
+          repo ? "",
           ctx ? 1048576,
           ngl ? 99,
           ttl ? 300,
@@ -61,7 +61,6 @@
       services = {
         llama-swap = {
           enable = true;
-          package = pkgs.llama-swap;
           port = 60000;
           listenAddress = "0.0.0.0";
           openFirewall = true;
@@ -92,7 +91,7 @@
                 ];
               })
 
-(mkModel {
+              (mkModel {
                 name = "qwythos-9b-mtp-fast";
                 port = 61003;
                 repo = "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF";
