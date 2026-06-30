@@ -3,7 +3,7 @@
 ---@type zpack.Spec
 return {
     "mistweaverco/kulala.nvim",
-    ft = { "http", "rest" },
+    ft = { "http", "rest", "javascript", "lua" },
     ---@type KulalaDefaultConfig
     opts = {
         global_keymaps = true,
