@@ -5,8 +5,11 @@
     { pkgs, ... }:
     let
       buildInputs = [
+        "${pkgs.alsa-lib.dev}/lib/pkgconfig"
         "${pkgs.fontconfig.dev}/lib/pkgconfig"
         "${pkgs.gtk3.dev}/lib/pkgconfig"
+        "${pkgs.librsvg.dev}/lib/pkgconfig"
+        "${pkgs.libusb1.dev}/lib/pkgconfig"
         "${pkgs.libGL.dev}/lib/pkgconfig"
         "${pkgs.libx11.dev}/lib/pkgconfig"
         "${pkgs.libxcursor}/lib/pkgconfig"
@@ -16,13 +19,19 @@
         "${pkgs.libxkbcommon}/lib/pkgconfig"
         "${pkgs.libxrandr.dev}/lib/pkgconfig"
         "${pkgs.libxrender.dev}/lib/pkgconfig"
+        "${pkgs.libsoup_3.dev}/lib/pkgconfig"
         "${pkgs.openssl.dev}/lib/pkgconfig"
         "${pkgs.pipewire.dev}/lib/pkgconfig"
+        "${pkgs.webkitgtk_4_1.dev}/lib/pkgconfig"
         "${pkgs.wayland}/lib/pkgconfig"
         "${pkgs.wayland-protocols}/share/pkgconfig"
       ];
       runtimeLibs = [
+        "${pkgs.alsa-lib}/lib"
         "${pkgs.fontconfig.lib}/lib"
+        "${pkgs.gtk3}/lib"
+        "${pkgs.librsvg}/lib"
+        "${pkgs.libusb1}/lib"
         "${pkgs.libGL}/lib"
         "${pkgs.libICE}/lib"
         "${pkgs.libSM}/lib"
@@ -35,6 +44,9 @@
         "${pkgs.libxrandr}/lib"
         "${pkgs.libxrender}/lib"
         "${pkgs.libxshmfence}/lib"
+        "${pkgs.libsoup_3}/lib"
+        "${pkgs.pipewire}/lib"
+        "${pkgs.webkitgtk_4_1}/lib"
       ];
     in
     {
@@ -49,6 +61,8 @@
           export LD_LIBRARY_PATH="${builtins.concatStringsSep ":" runtimeLibs}:$LD_LIBRARY_PATH"
         '';
         systemPackages = with pkgs; [
+          alsa-lib
+          alsa-lib.dev
           cacert
           cifs-utils
           coreutils
@@ -56,6 +70,10 @@
           gtk3
           gtk3.dev
           icu
+          librsvg
+          librsvg.dev
+          libusb1
+          libusb1.dev
           libGL
           libICE
           libSM
@@ -70,12 +88,16 @@
           libxrandr
           libxrender
           libxshmfence
+          libsoup_3
+          libsoup_3.dev
           openssl
           openssl.dev
           pipewire
           pipewire.dev
           pkg-config
           skia
+          webkitgtk_4_1
+          webkitgtk_4_1.dev
           wayland
           wayland-protocols
         ];
@@ -112,6 +134,11 @@
             alsa-lib # libasound
             cups # libcups
             gtk3 # libgtk-3
+            libusb1 # libusb-1.0
+            librsvg # librsvg-2
+            libsoup_3 # libsoup-3.0
+            pipewire # libpipewire-0.3
+            webkitgtk_4_1 # libwebkit2gtk-4.1
           ];
         };
       };
