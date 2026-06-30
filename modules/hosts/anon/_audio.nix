@@ -79,8 +79,8 @@
           {
             matches = [ { "device.name" = "alsa_card.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00"; } ];
             actions.update-props = {
-              "device.description" = "Babyface Pro";
-              "device.nick" = "Babyface Pro";
+              "device.description" = "Babyface";
+              "device.nick" = "Babyface";
               "device.profile" = "pro-audio";
             };
           }
@@ -97,8 +97,8 @@
               { "node.name" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
             ];
             actions.update-props = {
-              "node.description" = "Babyface Pro";
-              "node.nick" = "Babyface Pro Out";
+              "node.description" = "Babyface";
+              "node.nick" = "Babyface Out";
             };
           }
           {
@@ -106,8 +106,8 @@
               { "node.name" = "alsa_input.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
             ];
             actions.update-props = {
-              "node.description" = "Babyface Pro";
-              "node.nick" = "Babyface Pro In";
+              "node.description" = "Babyface";
+              "node.nick" = "Babyface In";
             };
           }
         ];
