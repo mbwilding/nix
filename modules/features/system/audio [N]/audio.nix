@@ -2,8 +2,13 @@
 
 {
   flake.modules.nixos.audio =
-    { ... }:
+    { pkgs, ... }:
     {
+      environment.systemPackages = [
+        pkgs.alsa-utils
+        pkgs.qastools
+      ];
+
       security.pam.loginLimits = [
         {
           domain = "@audio";
