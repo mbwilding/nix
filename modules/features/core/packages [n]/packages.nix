@@ -30,6 +30,7 @@
             # Packages
             _1password-cli
             _1password-gui
+            postman
             archivemount
             asciiquarium
             azure-cli

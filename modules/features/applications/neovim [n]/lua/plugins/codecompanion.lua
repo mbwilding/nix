@@ -7,6 +7,11 @@ local function codecompanion_prompt(command_prefix)
     end)
 end
 
+-- local adapter = "copilot"
+-- local model = "claude-sonnet-4-6"
+local adapter = "llama-swap"
+local model = "qwythos-9b-abliterated"
+
 ---@type zpack.Spec
 return {
     "olimorris/codecompanion.nvim",
@@ -47,22 +52,38 @@ return {
         },
     },
     opts = {
+        adapters = {
+            ["llama-swap"] = function()
+                return require("codecompanion.adapters").extend("openai_compatible", {
+                    name = "llama-swap",
+                    formatted_name = "LlamaSwap",
+                    schema = {
+                        model = {
+                            default = "qwythos-9b-abliterated",
+                        },
+                    },
+                    env = {
+                        url = "http://192.168.11.254:60000",
+                    },
+                })
+            end,
+        },
         strategies = {
             chat = {
-                adapter = "copilot",
-                model = "claude-sonnet-4-6",
+                adapter = adapter,
+                model = model,
             },
             inline = {
-                adapter = "copilot",
-                model = "claude-sonnet-4-6",
+                adapter = adapter,
+                model = model,
             },
             agent = {
-                adapter = "copilot",
-                model = "claude-sonnet-4-6",
+                adapter = adapter,
+                model = model,
             },
             cmd = {
-                adapter = "copilot",
-                model = "claude-sonnet-4-6",
+                adapter = adapter,
+                model = model,
             },
         },
     },
