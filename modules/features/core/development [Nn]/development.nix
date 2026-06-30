@@ -6,6 +6,7 @@
     let
       buildInputs = [
         "${pkgs.fontconfig.dev}/lib/pkgconfig"
+        "${pkgs.gtk3.dev}/lib/pkgconfig"
         "${pkgs.libGL.dev}/lib/pkgconfig"
         "${pkgs.libx11.dev}/lib/pkgconfig"
         "${pkgs.libxcursor}/lib/pkgconfig"
@@ -16,6 +17,7 @@
         "${pkgs.libxrandr.dev}/lib/pkgconfig"
         "${pkgs.libxrender.dev}/lib/pkgconfig"
         "${pkgs.openssl.dev}/lib/pkgconfig"
+        "${pkgs.pipewire.dev}/lib/pkgconfig"
         "${pkgs.wayland}/lib/pkgconfig"
         "${pkgs.wayland-protocols}/share/pkgconfig"
       ];
@@ -37,6 +39,9 @@
     in
     {
       environment = {
+        variables = {
+          PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
+        };
         sessionVariables = {
           PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
         };
@@ -48,6 +53,8 @@
           cifs-utils
           coreutils
           fontconfig
+          gtk3
+          gtk3.dev
           icu
           libGL
           libICE
@@ -65,6 +72,8 @@
           libxshmfence
           openssl
           openssl.dev
+          pipewire
+          pipewire.dev
           pkg-config
           skia
           wayland
