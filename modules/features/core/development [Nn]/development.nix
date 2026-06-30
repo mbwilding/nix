@@ -6,7 +6,11 @@
     let
       buildInputs = [
         "${pkgs.alsa-lib.dev}/lib/pkgconfig"
+        "${pkgs.atk.dev}/lib/pkgconfig"
+        "${pkgs.cairo.dev}/lib/pkgconfig"
         "${pkgs.fontconfig.dev}/lib/pkgconfig"
+        "${pkgs.gdk-pixbuf.dev}/lib/pkgconfig"
+        "${pkgs.glib.dev}/lib/pkgconfig"
         "${pkgs.gtk3.dev}/lib/pkgconfig"
         "${pkgs.librsvg.dev}/lib/pkgconfig"
         "${pkgs.libusb1.dev}/lib/pkgconfig"
@@ -21,6 +25,7 @@
         "${pkgs.libxrender.dev}/lib/pkgconfig"
         "${pkgs.libsoup_3.dev}/lib/pkgconfig"
         "${pkgs.openssl.dev}/lib/pkgconfig"
+        "${pkgs.pango.dev}/lib/pkgconfig"
         "${pkgs.pipewire.dev}/lib/pkgconfig"
         "${pkgs.webkitgtk_4_1.dev}/lib/pkgconfig"
         "${pkgs.wayland}/lib/pkgconfig"
@@ -28,7 +33,11 @@
       ];
       runtimeLibs = [
         "${pkgs.alsa-lib}/lib"
+        "${pkgs.atk}/lib"
+        "${pkgs.cairo}/lib"
         "${pkgs.fontconfig.lib}/lib"
+        "${pkgs.gdk-pixbuf}/lib"
+        "${pkgs.glib}/lib"
         "${pkgs.gtk3}/lib"
         "${pkgs.librsvg}/lib"
         "${pkgs.libusb1}/lib"
@@ -45,6 +54,7 @@
         "${pkgs.libxrender}/lib"
         "${pkgs.libxshmfence}/lib"
         "${pkgs.libsoup_3}/lib"
+        "${pkgs.pango}/lib"
         "${pkgs.pipewire}/lib"
         "${pkgs.webkitgtk_4_1}/lib"
       ];
@@ -63,10 +73,18 @@
         systemPackages = with pkgs; [
           alsa-lib
           alsa-lib.dev
+          atk
+          atk.dev
           cacert
+          cairo
+          cairo.dev
           cifs-utils
           coreutils
           fontconfig
+          gdk-pixbuf
+          gdk-pixbuf.dev
+          glib
+          glib.dev
           gtk3
           gtk3.dev
           icu
@@ -92,6 +110,8 @@
           libsoup_3.dev
           openssl
           openssl.dev
+          pango
+          pango.dev
           pipewire
           pipewire.dev
           pkg-config
