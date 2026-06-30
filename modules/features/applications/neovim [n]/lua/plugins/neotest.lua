@@ -28,7 +28,7 @@ return {
         {
             "<leader>ntd",
             function()
-                ---@diagnostic disable: missing-fields
+                ---@diagnostic disable-next-line: missing-fields
                 require("neotest").run.run({ strategy = "dap" })
             end,
             desc = "Neotest: Debug Nearest Test",
