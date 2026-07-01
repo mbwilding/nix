@@ -51,7 +51,7 @@
             default = {
               aws_access_key_id = s.personal.id;
               aws_secret_access_key = s.personal.secret;
-              region = s.region;
+              region = s.personal.region;
               output = output;
             };
 
