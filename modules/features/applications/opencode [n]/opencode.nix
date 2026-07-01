@@ -18,8 +18,10 @@
             formatter = true;
             autoupdate = false;
             share = "manual";
-            model = "llama-swap/qwythos-9b-abliterated";
-            small_model = "llama-swap/qwythos-9b-abliterated-fast";
+            model = "github-copilot/claude-sonnet-4.6";
+            small_model = "github-copilot/gpt-5-mini";
+            # model = "llama-swap/qwythos-9b-abliterated";
+            # small_model = "llama-swap/qwythos-9b-abliterated-fast";
             disabled_providers = [
               "opencode"
               "opencode-go"
