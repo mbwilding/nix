@@ -258,6 +258,9 @@
           php85Packages.php-cs-fixer # php
           prettierd # js / ts
           rustfmt # rust
+
+          # Extras
+          cargo-lambda
         ];
       };
     };
