@@ -21,7 +21,7 @@ in
           flatpak
           gpu-nvidia
           hyprland
-          llama-swap
+          # llama-swap
           mounts
           mpv
           obs
