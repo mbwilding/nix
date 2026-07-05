@@ -36,35 +36,10 @@
             resample.quality = 1;
           };
           session.properties = {
-            "default.sink" = "babyface-stereo";
+            "default.sink" = "Babyface";
             "default.volume" = "1.0";
           };
         };
-
-        pipewire-pulse."95-babyfacepro-compat" = {
-          pulse.cmd = [
-            {
-              cmd = "load-module";
-              args = "module-remap-sink sink_name=babyface-stereo master=alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.pro-output-0 channels=2 channel_map=front-left,front-right master_channel_map=aux0,aux1 resample_method=copy sink_properties='node.description=Babyface\\ Stereo device.description=Babyface\\ Stereo node.nick=Babyface\\ Stereo'";
-            }
-          ];
-        };
-
-        # pipewire-pulse."95-babyfacepro-split" = {
-        #   pulse.cmd = [
-        #     {
-        #       cmd = "load-module";
-        #       args =
-        #         "module-remap-sink sink_name=Speakers master=alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.pro-output-0 channels=2 channel_map=front-left,front-right master_channel_map=aux0,aux1 resample_method=copy sink_properties='node.description=Speakers device.description=Speakers node.nick=Speakers'";
-        #     }
-        #     {
-        #       cmd = "load-module";
-        #       args =
-        #         "module-remap-sink sink_name=Headphones master=alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.pro-output-0 channels=2 channel_map=front-left,front-right master_channel_map=aux2,aux3 resample_method=copy sink_properties='node.description=Headphones device.description=Headphones node.nick=Headphones'";
-        #     }
-        #   ];
-        #   session.properties."default.sink" = "Headphones";
-        # };
       };
 
       wireplumber.extraConfig."99-rename-devices" = {
