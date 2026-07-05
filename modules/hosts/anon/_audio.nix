@@ -36,9 +36,18 @@
             resample.quality = 1;
           };
           session.properties = {
-            "default.sink" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.pro-output-0";
+            "default.sink" = "babyface-stereo";
             "default.volume" = "1.0";
           };
+        };
+
+        pipewire-pulse."95-babyfacepro-compat" = {
+          pulse.cmd = [
+            {
+              cmd = "load-module";
+              args = "module-remap-sink sink_name=babyface-stereo master=alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.pro-output-0 channels=2 channel_map=front-left,front-right master_channel_map=aux0,aux1 resample_method=copy sink_properties='node.description=Babyface\\ Stereo device.description=Babyface\\ Stereo node.nick=Babyface\\ Stereo'";
+            }
+          ];
         };
 
         # pipewire-pulse."95-babyfacepro-split" = {
