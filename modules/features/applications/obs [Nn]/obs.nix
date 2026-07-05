@@ -22,32 +22,32 @@
         v4l-utils
       ];
 
-      services.pipewire.extraConfig.pipewire."90-obs-virtual-audio" = {
-        "context.objects" = [
-          {
-            factory = "adapter";
-            args = {
-              "factory.name" = "support.null-audio-sink";
-              "node.name" = "obs-monitor-sink";
-              "node.description" = "OBS Monitor";
-              "media.class" = "Audio/Sink";
-              "audio.position" = "FL,FR";
-              "object.linger" = true;
-            };
-          }
-          {
-            factory = "adapter";
-            args = {
-              "factory.name" = "support.null-audio-sink";
-              "node.name" = "obs-virtual-mic";
-              "node.description" = "OBS Mic";
-              "media.class" = "Audio/Source/Virtual";
-              "audio.position" = "FL,FR";
-              "object.linger" = true;
-            };
-          }
-        ];
-      };
+      # services.pipewire.extraConfig.pipewire."90-obs-virtual-audio" = {
+      #   "context.objects" = [
+      #     {
+      #       factory = "adapter";
+      #       args = {
+      #         "factory.name" = "support.null-audio-sink";
+      #         "node.name" = "obs-monitor-sink";
+      #         "node.description" = "OBS Monitor";
+      #         "media.class" = "Audio/Sink";
+      #         "audio.position" = "FL,FR";
+      #         "object.linger" = true;
+      #       };
+      #     }
+      #     {
+      #       factory = "adapter";
+      #       args = {
+      #         "factory.name" = "support.null-audio-sink";
+      #         "node.name" = "obs-virtual-mic";
+      #         "node.description" = "OBS Mic";
+      #         "media.class" = "Audio/Source/Virtual";
+      #         "audio.position" = "FL,FR";
+      #         "object.linger" = true;
+      #       };
+      #     }
+      #   ];
+      # };
     };
 
   flake.modules.homeManager.obs =
