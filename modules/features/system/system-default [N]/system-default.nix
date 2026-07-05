@@ -63,10 +63,13 @@
         bazecor = {
           enable = true;
           package = pkgs.bazecor.overrideAttrs (old: {
-            buildCommand = lib.replaceStrings
-              [ "--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true" ]
-              [ "--ozone-platform=x11" ]
-              old.buildCommand;
+            buildCommand =
+              lib.replaceStrings
+                [
+                  "--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true"
+                ]
+                [ "--ozone-platform=x11" ]
+                old.buildCommand;
           });
         };
       };
@@ -85,7 +88,14 @@
         };
       };
 
-      nixpkgs.config.allowUnfree = true;
+      nixpkgs = {
+        config = {
+          allowUnfree = true;
+          permittedInsecurePackages = [
+            "pnpm-10.34.0"
+          ];
+        };
+      };
 
       nix = {
         settings = {
