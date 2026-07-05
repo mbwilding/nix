@@ -35,7 +35,7 @@
             asciiquarium
             azure-cli
             bat
-            blender
+            blender-bin
             bolt-launcher
             brightnessctl
             cameractrls-gtk4
