@@ -8,9 +8,9 @@
 vscode-langservers-extracted.overrideAttrs (old: {
   postFixup = (old.postFixup or "") + ''
     for f in \
-      $out/lib/node_modules/vscode-langservers-extracted/lib/css-language-server/node/cssServerMain.js \
-      $out/lib/node_modules/vscode-langservers-extracted/lib/html-language-server/node/htmlServerMain.js \
-      $out/lib/node_modules/vscode-langservers-extracted/lib/json-language-server/node/jsonServerMain.js; do
+      $out/lib/extensions/css-language-features/server/dist/node/cssServerMain.js \
+      $out/lib/extensions/html-language-features/server/dist/node/htmlServerMain.js \
+      $out/lib/extensions/json-language-features/server/dist/node/jsonServerMain.js; do
       substituteInPlace "$f" \
         --replace-fail 'import.meta.url' '"file://" + __filename'
     done
