@@ -78,6 +78,7 @@
         sessionVariables = {
           NIXOS_OZONE_WL = "1";
           ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+          NIXPKGS_ALLOW_INSECURE = 1;
           NIXPKGS_ALLOW_UNFREE = 1;
         };
         etc."1password/custom_allowed_browsers" = {

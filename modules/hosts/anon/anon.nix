@@ -55,7 +55,6 @@ in
           {
             home.packages = with pkgs; [
               davinci-resolve-studio
-              stable-diffusion-cpp-cuda
             ];
           }
         )
