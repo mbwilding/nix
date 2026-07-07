@@ -22,12 +22,18 @@
 
   config.flake.lib =
     let
+      user = "mbwilding";
       secrets = import ../_secrets.nix;
       sharedNixSettings = {
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
+        trusted-users = [ user ];
         extra-substituters = [
           "https://attic.xuyh0120.win/lantian"
           "https://noctalia.cachix.org"
+        ];
+        extra-trusted-public-keys = [
+          "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+          "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
         ];
       };
     in
@@ -61,12 +67,7 @@
 
               nix = {
                 nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-                settings = sharedNixSettings // {
-                  extra-trusted-public-keys = [
-                    "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
-                    "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-                  ];
-                };
+                settings = sharedNixSettings;
               };
 
               _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
@@ -80,7 +81,7 @@
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};
           modules = [
-            inputs.self.modules.homeManager.mbwilding
+            inputs.self.modules.homeManager.${user}
             (
               { pkgs, ... }:
               {
@@ -101,7 +102,15 @@
       mkNixOnDroid = name: {
         ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
           pkgs = import inputs.nixpkgs-droid { system = "aarch64-linux"; };
-          modules = [ inputs.self.modules.nixOnDroid.${name} ];
+          modules = [
+            inputs.self.modules.nixOnDroid.${name}
+            {
+              nix.extraOptions = ''
+                extra-substituters = ${builtins.concatStringsSep " " sharedNixSettings.extra-substituters}
+                extra-trusted-public-keys = ${builtins.concatStringsSep " " sharedNixSettings.extra-trusted-public-keys}
+              '';
+            }
+          ];
           extraSpecialArgs = { inherit inputs; };
         };
       };
