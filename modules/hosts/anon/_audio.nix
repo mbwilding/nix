@@ -36,7 +36,7 @@
             resample.quality = 1;
           };
           session.properties = {
-            "default.sink" = "Babyface";
+            "default.sink" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.iec958-stereo";
             "default.volume" = "1.0";
           };
         };
@@ -65,7 +65,7 @@
             actions.update-props = {
               "device.description" = "Babyface";
               "device.nick" = "Babyface";
-              "device.profile" = "pro-audio";
+              "device.profile" = "output:iec958-stereo+input:iec958-stereo"; # Can't use pro-audio as it breaks game audio under Proton/Wine
             };
           }
           {
@@ -78,7 +78,7 @@
           }
           {
             matches = [
-              { "node.name" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
+              { "node.name" = "alsa_output.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.iec958-stereo"; }
             ];
             actions.update-props = {
               "node.description" = "Babyface";
@@ -87,7 +87,7 @@
           }
           {
             matches = [
-              { "node.name" = "alsa_input.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.analog-stereo"; }
+              { "node.name" = "alsa_input.usb-RME_Babyface_Pro__71972575__77EB3EDA0B95BC8-00.iec958-stereo"; }
             ];
             actions.update-props = {
               "node.description" = "Babyface";
