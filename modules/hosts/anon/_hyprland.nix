@@ -100,7 +100,7 @@
         }
         {
           match = {
-            class = "Spotify";
+            class = "[Ss]potify";
           };
           workspace = "name:social";
         }
