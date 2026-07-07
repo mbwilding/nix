@@ -130,10 +130,12 @@
             };
             mcp = {
               atlassian = {
+                enabled = false;
                 type = "remote";
                 url = "https://mcp.atlassian.com/v1/mcp";
               };
               github-personal = {
+                enabled = false;
                 type = "remote";
                 url = "https://api.githubcopilot.com/mcp";
                 headers = {
@@ -141,6 +143,7 @@
                 };
               };
               github-work = {
+                enabled = false;
                 type = "remote";
                 url = "https://api.githubcopilot.com/mcp";
                 headers = {
@@ -148,6 +151,7 @@
                 };
               };
               lucid = {
+                enabled = false;
                 type = "remote";
                 url = "https://mcp.lucid.app/mcp";
               };
