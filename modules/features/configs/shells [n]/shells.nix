@@ -37,6 +37,7 @@
           battery = "cat /sys/class/power_supply/BAT1/capacity";
           bios = "systemctl reboot --firmware-setup";
           c = "clear";
+          dn = "nvim /mnt/mbwilding/Documents/DailyNotes.md";
           g = "git";
           ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
           ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
