@@ -40,7 +40,7 @@
     in
     {
       home.sessionVariables = {
-        AWS_PROFILE = "md";
+        AWS_PROFILE = "default";
         AWS_REGION = s.region;
       };
 
