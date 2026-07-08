@@ -18,7 +18,7 @@
             formatter = true;
             autoupdate = false;
             share = "manual";
-            model = "github-copilot/claude-sonnet-4.6";
+            model = "github-copilot/claude-sonnet-5";
             small_model = "github-copilot/gpt-5-mini";
             # model = "llama-swap/qwythos-9b-abliterated";
             # small_model = "llama-swap/qwythos-9b-abliterated-fast";
