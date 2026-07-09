@@ -12,7 +12,7 @@
         opencode = {
           enable = true;
           package = pkgsMaster.opencode;
-          context = ./context.md;
+          context = ../context.md;
           settings = {
             lsp = true;
             formatter = true;
@@ -158,11 +158,11 @@
             };
           };
           agents = {
-            ponytail = ./agents/ponytail.md;
+            ponytail = ../agent-ponytail.md;
           };
           commands = {
-            commit = ./commands/commit.md;
-            doco = ./commands/doco.md;
+            commit = ../command-commit.md;
+            doco = ../command-doco.md;
           };
           tui = {
             mouse = true;
