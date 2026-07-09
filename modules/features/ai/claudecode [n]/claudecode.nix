@@ -4,6 +4,7 @@
   flake.modules.homeManager.claudecode =
     {
       pkgsMaster,
+      secrets,
       ...
     }:
     {
@@ -14,7 +15,17 @@
           context = ../context.md;
           settings = {
             includeCoAuthoredBy = false;
+            disableClaudeAiConnectors = true;
             model = "claude-sonnet-5";
+          };
+          mcpServers = {
+            github = {
+              type = "http";
+              url = "https://api.githubcopilot.com/mcp";
+              headers = {
+                Authorization = "Bearer ${secrets.githubPersonalToken}";
+              };
+            };
           };
           agents = {
             ponytail = ../agent-ponytail.md;
