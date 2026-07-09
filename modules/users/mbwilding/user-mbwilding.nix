@@ -48,6 +48,7 @@ in
         atuin
         aws
         btop
+        claudecode
         dapr
         development
         direnv
