@@ -8,12 +8,9 @@
       ...
     }:
     {
-      # Disabled: forces a global derivation hash change that causes blender, openusd, and
-      # other CUDA-capable packages to build from source (no Hydra cache coverage).
-      # OptiX is available without this and is the preferred GPU renderer in blender.
-      # nixpkgs.config.cudaSupport = true;
-
       boot.blacklistedKernelModules = [ "nouveau" ];
+
+      nixpkgs.config.cudaSupport = true;
 
       hardware = {
         graphics = {
