@@ -7,24 +7,24 @@
 }:
 
 let
-  version = "0.30.3";
+  version = "0.33.0";
 
   sources = {
     "x86_64-linux" = {
       url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_linux_amd64.tar.gz";
-      hash = "sha256-Mg66uvyYnzm32hQS3Sxm3J5Hi3lG7w95HgoT5IhPrx8=";
+      hash = "sha256-4vP6JaBlKOPBJzpXbAKpgUZnk9r+LlcSgpsfrZP4iQY=";
     };
     "aarch64-linux" = {
       url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_linux_arm64.tar.gz";
-      hash = "sha256-GfhYRwIIYpvganlp/sQ7ATc130yvepVDnfUkG1iDM5I=";
+      hash = "sha256-ahOj9HS6yxFtSRldGHtrbKGAQWwX02H4UkIN/SJFVBE=";
     };
     "x86_64-darwin" = {
       url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_darwin_amd64.tar.gz";
-      hash = "sha256-FHpCfjhoLdbYmn5g43x4mffWshChXXhqdutg4CvLybk=";
+      hash = "sha256-i5gaWYdgdLiJwnofR4ipLf1vDCRhbGnoBda1fj/pRZs=";
     };
     "aarch64-darwin" = {
       url = "https://github.com/dynatrace-oss/dtctl/releases/download/v${version}/dtctl_${version}_darwin_arm64.tar.gz";
-      hash = "sha256-PpMFacjzcQKUlc+LrYJxra5wXyV4qNGAMleC2QhmgHg=";
+      hash = "sha256-VFmqLySKJ0+azM4shvFgZO2ZVdW8OMNEZERbfpMvL/M=";
     };
   };
 
