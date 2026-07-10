@@ -17,6 +17,7 @@
             includeCoAuthoredBy = false;
             disableClaudeAiConnectors = true;
             model = "claude-sonnet-5";
+            defaultMode = "auto";
           };
           mcpServers = {
             github = {
