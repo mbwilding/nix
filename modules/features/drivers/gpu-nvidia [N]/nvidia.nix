@@ -10,7 +10,7 @@
     {
       boot.blacklistedKernelModules = [ "nouveau" ];
 
-      nixpkgs.config.cudaSupport = false;
+      nixpkgs.config.cudaSupport = true;
 
       hardware = {
         graphics = {
