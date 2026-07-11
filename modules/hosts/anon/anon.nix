@@ -31,6 +31,7 @@ in
           solaar
           steam
           streamcontroller
+          swap
           system-default
           ucodenix
           user-mbwilding
