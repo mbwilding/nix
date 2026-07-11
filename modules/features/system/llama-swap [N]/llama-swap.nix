@@ -2,15 +2,14 @@
 
 {
   flake.modules.nixos.llama-swap =
-    { lib, pkgs, ... }:
+    { lib, pkgs, config, ... }:
 
     let
       llama-cpp =
         (pkgs.llama-cpp.override {
-          cudaSupport = true;
+          cudaSupport = config.nixpkgs.config.cudaSupport;
           rocmSupport = false;
           metalSupport = false;
-          # Enable BLAS for optimized CPU layer performance (OpenBLAS)
           blasSupport = true;
         }).overrideAttrs
           (oldAttrs: {
