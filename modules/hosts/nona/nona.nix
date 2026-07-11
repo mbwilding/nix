@@ -32,6 +32,7 @@ in
           printing
           qemu
           steam
+          swap
           system-default
           ucodenix
           user-mbwilding
