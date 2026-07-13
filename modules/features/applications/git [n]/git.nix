@@ -98,14 +98,14 @@
               "gitdir:**" = {
                 path = "~/.config/git/config-personal";
               };
-              "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
-                path = "~/.config/git/config-work";
-              };
               "hasconfig:remote.*.url:git@github.com:${secrets.workName}/**" = {
-                path = "~/.config/git/config-work";
+                path = "~/.config/git/config-work-long";
               };
               "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${lib.toUpper secrets.workName}/**" = {
-                path = "~/.config/git/config-work";
+                path = "~/.config/git/config-work-long";
+              };
+              "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
+                path = "~/.config/git/config-work-short";
               };
             };
           };
@@ -124,7 +124,14 @@
               signingkey = ~/.ssh/personal.pub
         '';
 
-        file.".config/git/config-work".text = ''
+        file.".config/git/config-work-short".text = ''
+          [user]
+              name = Matt Wilding
+              email = ${secrets.workEmailId}
+              signingkey = ~/.ssh/work.pub
+        '';
+
+        file.".config/git/config-work-long".text = ''
           [user]
               name = Matt Wilding
               email = ${secrets.workEmailName}
