@@ -59,23 +59,23 @@
       '';
     in
     {
-      systemd.user.services.obs-virtual-mic-link = {
-        Unit = {
-          Description = "Link OBS monitor sink to OBS virtual mic";
-          After = [ "pipewire.service" ];
-          Requires = [ "pipewire.service" ];
-        };
-        Service = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
-          ExecStart = pkgs.writeShellScript "obs-virtual-mic-link" ''
-            ${pkgs.pipewire}/bin/pw-link obs-monitor-sink:monitor_FL obs-virtual-mic:input_FL
-            ${pkgs.pipewire}/bin/pw-link obs-monitor-sink:monitor_FR obs-virtual-mic:input_FR
-          '';
-        };
-        Install.WantedBy = [ "default.target" ];
-      };
+      # systemd.user.services.obs-virtual-mic-link = {
+      #   Unit = {
+      #     Description = "Link OBS monitor sink to OBS virtual mic";
+      #     After = [ "pipewire.service" ];
+      #     Requires = [ "pipewire.service" ];
+      #   };
+      #   Service = {
+      #     Type = "oneshot";
+      #     RemainAfterExit = true;
+      #     ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+      #     ExecStart = pkgs.writeShellScript "obs-virtual-mic-link" ''
+      #       ${pkgs.pipewire}/bin/pw-link obs-monitor-sink:monitor_FL obs-virtual-mic:input_FL
+      #       ${pkgs.pipewire}/bin/pw-link obs-monitor-sink:monitor_FR obs-virtual-mic:input_FR
+      #     '';
+      #   };
+      #   Install.WantedBy = [ "default.target" ];
+      # };
 
       programs.obs-studio = {
         enable = true;
