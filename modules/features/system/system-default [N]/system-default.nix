@@ -17,7 +17,7 @@
         ];
 
       home-manager.sharedModules = [
-        inputs.self.modules.homeManager.packages-gui
+        inputs.self.modules.homeManager.gui
       ];
 
       time.timeZone = "Australia/Perth";
