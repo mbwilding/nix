@@ -48,7 +48,6 @@ in
         atuin
         aws
         btop
-        claudecode
         dapr
         development
         direnv
@@ -71,7 +70,7 @@ in
         onlyoffice
         opencode
         package-managers
-        packages
+        packages-cli
         power-platform-toolbox
         proxy
         proxychains

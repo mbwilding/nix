@@ -46,6 +46,8 @@ in
         ];
 
       home-manager.sharedModules = [
+        inputs.self.modules.homeManager.claudecode
+
         # ./_ghostty.nix
 
         ./_hyprland.nix
@@ -87,6 +89,9 @@ in
       {
         _module.args.primaryMonitor = primaryMonitor;
       }
+
+      claudecode
+      packages-gui
 
       # ./_ghostty.nix
 
