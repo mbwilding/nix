@@ -17,7 +17,10 @@
             includeCoAuthoredBy = false;
             disableClaudeAiConnectors = true;
             model = "claude-sonnet-5";
-            defaultMode = "auto";
+            theme = "dark";
+            permissions = {
+              defaultMode = "auto";
+            };
           };
           mcpServers = {
             github = {
