@@ -18,6 +18,10 @@ in
         ]
         ++ [ ./_hardware-configuration.nix ];
 
+      home-manager.sharedModules = [
+        inputs.self.modules.homeManager.claudecode
+      ];
+
       networking.hostName = hostName;
       system.stateVersion = stateVersion;
     };
@@ -26,5 +30,7 @@ in
 
   flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
     inputs.self.modules.homeManager.kde
+    inputs.self.modules.homeManager.claudecode
+    inputs.self.modules.homeManager.packages-gui
   ];
 }
