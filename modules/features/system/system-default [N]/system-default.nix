@@ -16,6 +16,10 @@
           inputs.nix-flatpak.nixosModules.nix-flatpak
         ];
 
+      home-manager.sharedModules = [
+        inputs.self.modules.homeManager.packages-gui
+      ];
+
       time.timeZone = "Australia/Perth";
       i18n.defaultLocale = "en_AU.UTF-8";
 
