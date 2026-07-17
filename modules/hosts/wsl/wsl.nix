@@ -4,6 +4,8 @@ let
   arch = "x86_64-linux";
   hostName = "wsl";
   stateVersion = "25.11";
+
+  homeManagerModules = [ ./_shells.nix ];
 in
 {
   flake.modules.nixos.${hostName} =
@@ -21,9 +23,7 @@ in
           inputs.nixos-wsl.nixosModules.default
         ];
 
-      home-manager.sharedModules = [
-        ./_shells.nix
-      ];
+      home-manager.sharedModules = homeManagerModules;
 
       home-manager.users.mbwilding.home.stateVersion = stateVersion;
       networking.hostName = hostName;
@@ -38,7 +38,5 @@ in
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
-    ./_shells.nix
-  ];
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName homeManagerModules;
 }

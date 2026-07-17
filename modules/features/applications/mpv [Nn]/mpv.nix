@@ -1,5 +1,3 @@
-{ inputs, ... }:
-
 {
   flake.modules.nixos.mpv =
     { ... }:
@@ -11,10 +9,6 @@
         (_final: prev: {
           yt-dlp = prev.yt-dlp.override { javascriptSupport = false; };
         })
-      ];
-
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.mpv
       ];
     };
 

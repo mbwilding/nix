@@ -79,6 +79,17 @@
         };
       };
 
+      mkFeatures =
+        features:
+        {
+          nixos = lib.filter (m: m != null) (
+            map (name: inputs.self.modules.nixos.${name} or null) features
+          );
+          homeManager = lib.filter (m: m != null) (
+            map (name: inputs.self.modules.homeManager.${name} or null) features
+          );
+        };
+
       mkHomeManager = system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.${system};

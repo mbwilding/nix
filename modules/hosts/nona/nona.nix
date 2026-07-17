@@ -6,6 +6,47 @@ let
   keymap = "dvorak";
   primaryMonitor = "eDP-1";
   stateVersion = "25.11";
+
+  features = [
+    "appimage"
+    "audio"
+    "claudecode"
+    "development"
+    "flatpak"
+    "gpu-amd"
+    "gui"
+    "hyprland"
+    "keyd"
+    "mounts"
+    "mpv"
+    "obs"
+    "podman"
+    "printing"
+    "proxy"
+    "proxychains"
+    "qemu"
+    "steam"
+    "swap"
+    "system-default"
+    "ucodenix"
+    "user-mbwilding"
+    "waydroid"
+    "wine"
+    "wireguard-nona"
+    "wireshark"
+  ];
+
+  featureModules = inputs.self.lib.mkFeatures features;
+
+  homeManagerExtraModules = [
+    {
+      _module.args.primaryMonitor = primaryMonitor;
+    }
+
+    ./_hyprland.nix
+  ];
+
+  homeManagerModules = featureModules.homeManager ++ homeManagerExtraModules;
 in
 {
   flake.modules.nixos.${hostName} =
@@ -14,46 +55,12 @@ in
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
     {
-      imports =
-        with inputs.self.modules.nixos;
-        [
-          appimage
-          audio
-          development
-          flatpak
-          gpu-amd
-          hyprland
-          keyd
-          mounts
-          mpv
-          obs
-          podman
-          printing
-          qemu
-          steam
-          swap
-          system-default
-          ucodenix
-          user-mbwilding
-          waydroid
-          wine
-          wireguard-nona
-          wireshark
-        ]
-        ++ [
-          ./_hardware-configuration.nix
-          ./_audio.nix
-        ];
-
-      home-manager.sharedModules = with inputs.self.modules.homeManager; [
-        claudecode
-        gui
-        proxy
-        proxychains
-
-        ./_hyprland.nix
-        hyprland
+      imports = featureModules.nixos ++ [
+        ./_hardware-configuration.nix
+        ./_audio.nix
       ];
+
+      home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
       console.keyMap = keymap;
@@ -73,20 +80,5 @@ in
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName (
-    with inputs.self.modules.homeManager;
-    [
-      {
-        _module.args.primaryMonitor = primaryMonitor;
-      }
-
-      claudecode
-      gui
-      proxy
-      proxychains
-
-      ./_hyprland.nix
-      hyprland
-    ]
-  );
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName homeManagerModules;
 }

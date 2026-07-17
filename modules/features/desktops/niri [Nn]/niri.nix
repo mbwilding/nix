@@ -2,11 +2,7 @@
 
 {
   flake.modules.nixos.niri =
-    {
-      pkgs,
-      config,
-      ...
-    }:
+    { pkgs, ... }:
     {
       imports = [
         inputs.self.modules.nixos.wayland-session
@@ -15,13 +11,6 @@
 
       config = {
         host.waylandSession.sessionPackage = pkgs.niri;
-
-        home-manager.sharedModules = [
-          inputs.self.modules.homeManager.niri
-          {
-            _module.args.primaryMonitor = config.host.primaryMonitor;
-          }
-        ];
 
         programs.niri = {
           enable = true;

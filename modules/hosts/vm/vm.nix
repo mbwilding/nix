@@ -4,23 +4,24 @@ let
   arch = "x86_64-linux";
   hostName = "vm";
   stateVersion = "25.11";
+
+  features = [
+    "claudecode"
+    "gui"
+    "kde"
+    "system-default"
+    "user-mbwilding"
+  ];
+
+  featureModules = inputs.self.lib.mkFeatures features;
 in
 {
   flake.modules.nixos.${hostName} =
     { ... }:
     {
-      imports =
-        with inputs.self.modules.nixos;
-        [
-          kde
-          system-default
-          user-mbwilding
-        ]
-        ++ [ ./_hardware-configuration.nix ];
+      imports = featureModules.nixos ++ [ ./_hardware-configuration.nix ];
 
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.claudecode
-      ];
+      home-manager.sharedModules = featureModules.homeManager;
 
       networking.hostName = hostName;
       system.stateVersion = stateVersion;
@@ -28,9 +29,5 @@ in
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
-    inputs.self.modules.homeManager.kde
-    inputs.self.modules.homeManager.claudecode
-    inputs.self.modules.homeManager.gui
-  ];
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName featureModules.homeManager;
 }
