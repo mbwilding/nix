@@ -2,11 +2,7 @@
 
 {
   flake.modules.nixos.hyprland =
-    {
-      pkgs,
-      config,
-      ...
-    }:
+    { pkgs, ... }:
     {
       imports = [
         inputs.self.modules.nixos.wayland-session
@@ -15,13 +11,6 @@
 
       config = {
         host.waylandSession.sessionPackage = pkgs.hyprland;
-
-        home-manager.sharedModules = [
-          inputs.self.modules.homeManager.hyprland
-          {
-            _module.args.primaryMonitor = config.host.primaryMonitor;
-          }
-        ];
 
         programs = {
           hyprland = {

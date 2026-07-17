@@ -4,6 +4,57 @@ let
   arch = "x86_64-linux";
   hostName = "anon";
   primaryMonitor = "HDMI-A-1";
+
+  features = [
+    "appimage"
+    "audio"
+    "claudecode"
+    "development"
+    "flatpak"
+    "gpu-nvidia"
+    "gui"
+    "hyprland"
+    "llama-swap"
+    "mounts"
+    "mpv"
+    "obs"
+    "podman"
+    "printing"
+    "proxy"
+    "proxychains"
+    "qemu"
+    "solaar"
+    "steam"
+    "streamcontroller"
+    "swap"
+    "system-default"
+    "ucodenix"
+    "user-mbwilding"
+    "waydroid"
+    "wine"
+    "wireshark"
+  ];
+
+  featureModules = inputs.self.lib.mkFeatures features;
+
+  homeManagerExtraModules = [
+    {
+      _module.args.primaryMonitor = primaryMonitor;
+    }
+
+    ./_hyprland.nix
+
+    (
+      { pkgs, ... }:
+      {
+        home.packages = with pkgs; [
+          davinci-resolve-studio
+        ];
+      }
+    )
+  ];
+
+  homeManagerModules = featureModules.homeManager ++ homeManagerExtraModules;
 in
 {
   flake.modules.nixos.${hostName} =
@@ -12,55 +63,13 @@ in
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
     {
-      imports =
-        with inputs.self.modules.nixos;
-        [
-          appimage
-          audio
-          development
-          flatpak
-          gpu-nvidia
-          hyprland
-          llama-swap
-          mounts
-          mpv
-          obs
-          podman
-          printing
-          qemu
-          solaar
-          steam
-          streamcontroller
-          swap
-          system-default
-          ucodenix
-          user-mbwilding
-          waydroid
-          wine
-          wireshark
-        ]
-        ++ [
-          ./_audio.nix
-          ./_hardware-configuration.nix
-          ./_sunshine.nix
-        ];
-
-      home-manager.sharedModules = with inputs.self.modules.homeManager; [
-        ./_hyprland.nix
-        claudecode
-        gui
-        proxy
-        proxychains
-
-        (
-          { pkgs, ... }:
-          {
-            home.packages = with pkgs; [
-              davinci-resolve-studio
-            ];
-          }
-        )
+      imports = featureModules.nixos ++ [
+        ./_audio.nix
+        ./_hardware-configuration.nix
+        ./_sunshine.nix
       ];
+
+      home-manager.sharedModules = homeManagerModules;
 
       networking.hostName = hostName;
       host.primaryMonitor = primaryMonitor;
@@ -82,21 +91,5 @@ in
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName (
-    with inputs.self.modules.homeManager;
-    [
-      {
-        _module.args.primaryMonitor = primaryMonitor;
-      }
-
-      ./_hyprland.nix
-      claudecode
-      gui
-      hyprland
-      proxy
-      proxychains
-
-      streamcontroller
-    ]
-  );
+  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName homeManagerModules;
 }
