@@ -91,7 +91,7 @@ in
       }
 
       claudecode
-      packages-gui
+      gui
 
       # ./_ghostty.nix
 

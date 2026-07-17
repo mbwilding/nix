@@ -31,6 +31,6 @@ in
   flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName [
     inputs.self.modules.homeManager.kde
     inputs.self.modules.homeManager.claudecode
-    inputs.self.modules.homeManager.packages-gui
+    inputs.self.modules.homeManager.gui
   ];
 }

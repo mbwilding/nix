@@ -43,48 +43,7 @@ in
   flake.modules.homeManager.${user} =
     { lib, ... }:
     {
-      imports = with inputs.self.modules.homeManager; [
-        # ghostty
-        atuin
-        aws
-        btop
-        dapr
-        development
-        direnv
-        discord
-        dolphin
-        dotnet
-        fastfetch
-        files
-        fzf
-        gh
-        git
-        jetbrains
-        k9s
-        kitty
-        lazygit
-        lazysql
-        mcp
-        neovim
-        obs
-        onlyoffice
-        opencode
-        package-managers
-        packages-cli
-        power-platform-toolbox
-        proxy
-        proxychains
-        reaper
-        shells
-        ssh
-        steam
-        teams
-        wine
-        yabridge
-        yazi
-        zellij
-        zoxide
-      ];
+      imports = [ inputs.self.modules.homeManager.cli ];
 
       news.display = "silent";
 
