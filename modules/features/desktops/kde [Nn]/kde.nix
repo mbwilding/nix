@@ -4,8 +4,6 @@
   flake.modules.nixos.kde =
     { pkgs, ... }:
     {
-      home-manager.sharedModules = [ inputs.self.modules.homeManager.kde ];
-
       hardware.graphics.extraPackages = with pkgs; [
         vulkan-hdr-layer-kwin6
       ];

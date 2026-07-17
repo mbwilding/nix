@@ -1,5 +1,3 @@
-{ inputs, ... }:
-
 {
   flake.modules.nixos.lutris =
     { ... }:
@@ -10,10 +8,6 @@
             doCheck = false; # False is a bit more honest on x86_64 systems
           };
         })
-      ];
-
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.lutris
       ];
     };
 
