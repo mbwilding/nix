@@ -88,7 +88,7 @@ in
       }
 
       claudecode
-      packages-gui
+      gui
 
       ./_hyprland.nix
       hyprland
