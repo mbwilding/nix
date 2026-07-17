@@ -24,8 +24,6 @@
       opencode
       package-managers
       packages-cli
-      proxy
-      proxychains
       shells
       ssh
       yazi

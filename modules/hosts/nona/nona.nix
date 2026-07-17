@@ -23,7 +23,6 @@ in
           flatpak
           gpu-amd
           hyprland
-          # niri
           keyd
           mounts
           mpv
@@ -46,20 +45,14 @@ in
           ./_audio.nix
         ];
 
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.claudecode
+      home-manager.sharedModules = with inputs.self.modules.homeManager; [
+        claudecode
+        gui
+        proxy
+        proxychains
 
         ./_hyprland.nix
-        # ./_niri.nix
-
-        # (
-        #   { pkgs, ... }:
-        #   {
-        #     home.packages = with pkgs; [
-        #       # package
-        #     ];
-        #   }
-        # )
+        hyprland
       ];
 
       boot.kernelPackages = kernel;
@@ -89,12 +82,11 @@ in
 
       claudecode
       gui
+      proxy
+      proxychains
 
       ./_hyprland.nix
       hyprland
-
-      # ./_niri.nix
-      # niri
     ]
   );
 }
