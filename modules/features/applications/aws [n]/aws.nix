@@ -37,6 +37,22 @@
           );
         in
         defaultEntry // suffixedEntries;
+
+      mkAssumeRoleProfile =
+        {
+          name,
+          source_profile,
+          role,
+          role_session_name ? name,
+          region ? s.region,
+          output ? "json",
+        }:
+        {
+          "profile ${name}" = {
+            inherit region output role_session_name source_profile;
+            role_arn = "arn:aws:iam::${s.accounts.${source_profile}}:role/${role}";
+          };
+        };
     in
     {
       home.sessionVariables = {
@@ -245,6 +261,13 @@
               "power-elevated"
               "secrets-elevated"
             ];
+          }
+
+          // mkAssumeRoleProfile {
+            name = "cd-sa";
+            source_profile = "cd";
+            role = s.special_roles.sa;
+            role_session_name = "admin";
           }
 
           // mkProfile {
