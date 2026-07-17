@@ -45,13 +45,12 @@ in
           ./_sunshine.nix
         ];
 
-      home-manager.sharedModules = [
-        inputs.self.modules.homeManager.claudecode
-
-        # ./_ghostty.nix
-
+      home-manager.sharedModules = with inputs.self.modules.homeManager; [
         ./_hyprland.nix
-        # ./_niri.nix
+        claudecode
+        gui
+        proxy
+        proxychains
 
         (
           { pkgs, ... }:
@@ -90,16 +89,12 @@ in
         _module.args.primaryMonitor = primaryMonitor;
       }
 
+      ./_hyprland.nix
       claudecode
       gui
-
-      # ./_ghostty.nix
-
-      ./_hyprland.nix
       hyprland
-
-      # ./_niri.nix
-      # niri
+      proxy
+      proxychains
 
       streamcontroller
     ]
