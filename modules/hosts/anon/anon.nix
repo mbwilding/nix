@@ -71,9 +71,9 @@ in
 
       home-manager.sharedModules = homeManagerModules;
 
-      networking.hostName = hostName;
-      host.primaryMonitor = primaryMonitor;
       boot.kernelPackages = kernel;
+      host.primaryMonitor = primaryMonitor;
+      networking.hostName = hostName;
 
       hardware = {
         xone.enable = true;
