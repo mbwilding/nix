@@ -6,6 +6,7 @@
       monitor = lib.mkAfter [
         # Internal
         {
+          # output = "eDP-1";
           output = "desc:Lenovo Group Limited 0x8AC2";
           mode = "2944x1840@90";
           position = "0x0";
@@ -17,14 +18,17 @@
         }
         # Home
         {
-          output = "HDMI-A-1";
+          # output = "HDMI-A-1";
+          output = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. AORUS FO48U SN20430B0000";
           mode = "3840x2160@120.00";
-          position = "-813x-2160";
+          position = "-813x-2160"; # Below
           scale = 1.0;
           transform = 0;
+          vrr = 3;
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
+          cm = "wide";
         }
         # Work
         {
