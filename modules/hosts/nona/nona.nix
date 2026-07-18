@@ -5,7 +5,6 @@ let
   hostName = "nona";
   keymap = "dvorak";
   primaryMonitor = "eDP-1";
-  stateVersion = "25.11";
 
   features = [
     "appimage"
@@ -67,7 +66,6 @@ in
       host.primaryMonitor = primaryMonitor;
       networking.hostName = hostName;
       services.xserver.xkb.variant = keymap;
-      system.stateVersion = stateVersion;
 
       hardware = {
         xone.enable = true;
@@ -76,6 +74,8 @@ in
       services = {
         upower.enable = true;
       };
+
+      system.stateVersion = "25.11";
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
