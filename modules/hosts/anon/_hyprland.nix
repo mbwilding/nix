@@ -24,18 +24,13 @@
           transform = 1;
           vrr = 3;
         }
-        # {
-        #   output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
-        #   mode = "2560x1080@60";
-        #   position = "-1080x0";
-        #   scale = 1.0;
-        #   transform = 3;
-        # }
         {
           output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
           mode = "2560x1080@60";
-          position = "-2560x1080";
           scale = 1.0;
+          position = "-2560x1080";
+          # position = "-1080x0";
+          # transform = 3;
         }
       ];
 
