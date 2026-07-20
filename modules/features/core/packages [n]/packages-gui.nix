@@ -23,15 +23,16 @@
 
             # Packages
             _1password-gui
-            postman
             blender
             bolt-launcher
             cameractrls-gtk4
+            firefox
             google-chrome
             imhex
             imv
             keymapp
             pavucontrol
+            postman
             prismlauncher
             qbittorrent
             spotify
