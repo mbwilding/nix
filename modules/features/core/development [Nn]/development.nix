@@ -167,7 +167,7 @@
   flake.modules.homeManager.development =
     {
       pkgs,
-      pkgsStable,
+      # pkgsStable,
       pkgsMaster,
       ...
     }:

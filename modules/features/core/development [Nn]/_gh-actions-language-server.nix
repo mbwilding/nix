@@ -16,7 +16,7 @@ pkgs.buildNpmPackage {
   '';
 
   npmDepsFetcherVersion = 2;
-  npmDepsHash = "sha256-wh6oE5sRuZ8vJjmU5Tk37rvliibszLpxnzU7n+p5eAw=";
+  npmDepsHash = "sha256-tefbD/2BdyqajOQ3jdl/5ljBtUGORXOxOt9HqWKZ4pA=";
   npmFlags = [ "--omit=dev" ];
   dontNpmBuild = true;
 
