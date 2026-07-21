@@ -54,6 +54,17 @@
             if ! "$dotnet_cmd" tool list --global | grep -qi "^microsoft.powerapps.cli.tool"; then
               "$dotnet_cmd" tool install --global Microsoft.PowerApps.CLI.Tool
             fi
+
+            # dotnet profiling tools
+            if ! "$dotnet_cmd" tool list --global | grep -qi "^dotnet-counters"; then
+              "$dotnet_cmd" tool install --global dotnet-counters
+            fi
+            if ! "$dotnet_cmd" tool list --global | grep -qi "^dotnet-gcdump"; then
+              "$dotnet_cmd" tool install --global dotnet-gcdump
+            fi
+            if ! "$dotnet_cmd" tool list --global | grep -qi "^dotnet-trace"; then
+              "$dotnet_cmd" tool install --global dotnet-trace
+            fi
           '';
         };
       };
