@@ -6,7 +6,7 @@
       monitor = lib.mkAfter [
         {
           output = "desc:LG Electronics LG TV SSCR2 0x01010101";
-          mode = "3840x2160@119.88";
+          mode = "3840x2160@143.99"; # 119.88
           position = "0x0";
           scale = 1.0;
           transform = 0;
