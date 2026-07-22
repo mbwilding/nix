@@ -152,7 +152,7 @@
                   set_color --bold green
                 else
                   set_color --bold red
-                  echo -n "$last_status "
+                  echo -n (fish_status_to_signal $last_status)" "
                 end
                 echo -n '❯ '
                 set_color normal
