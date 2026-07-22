@@ -37,6 +37,11 @@
               User = "mbwilding";
             };
 
+            server = personal // {
+              HostName = "192.168.11.219";
+              User = "mbwilding";
+            };
+
             phone = personal // {
               HostName = "192.168.11.41";
               Port = 8022;
