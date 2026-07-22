@@ -5,7 +5,12 @@
 
 {
   flake.modules.nixos.system-default =
-    { lib, pkgs, ... }:
+    {
+      lib,
+      pkgs,
+      pkgsMaster,
+      ...
+    }:
     {
       imports =
         (with inputs.self.modules.nixos; [
@@ -62,7 +67,7 @@
         nix-ld.enable = true;
         bazecor = {
           enable = true;
-          package = pkgs.bazecor.overrideAttrs (old: {
+          package = pkgsMaster.bazecor.overrideAttrs (old: {
             buildCommand =
               lib.replaceStrings
                 [
