@@ -1,4 +1,10 @@
-{ modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -6,23 +12,24 @@
   ];
 
   boot.initrd.availableKernelModules = [
-    "ahci"
+    "ata_piix"
     "xhci_pci"
+    "ahci"
     "virtio_pci"
     "sr_mod"
     "virtio_blk"
   ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/8b647b99-3d11-4478-bbb3-8c365cbda6e3";
+    device = "/dev/disk/by-uuid/a432123d-89dc-45af-8164-a17ab39d5365";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/4962-AD17";
+    device = "/dev/disk/by-uuid/BFD4-E49E";
     fsType = "vfat";
     options = [
       "fmask=0077"
@@ -31,4 +38,6 @@
   };
 
   swapDevices = [ ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
