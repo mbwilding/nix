@@ -12,14 +12,10 @@
       ...
     }:
     {
-      imports =
-        (with inputs.self.modules.nixos; [
-          system-base
-          fonts
-        ])
-        ++ [
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-        ];
+      imports = with inputs.self.modules.nixos; [
+        system-base
+        fonts
+      ];
 
       time.timeZone = "Australia/Perth";
       i18n.defaultLocale = "en_AU.UTF-8";
@@ -37,7 +33,6 @@
         blueman.enable = true;
         power-profiles-daemon.enable = true;
         xserver.xkb.layout = "us";
-        flatpak.enable = true;
       };
 
       hardware = {
