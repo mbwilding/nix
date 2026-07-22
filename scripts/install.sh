@@ -10,4 +10,5 @@ fi
 
 HOST="${HOST// /}"
 
-sudo nixos-rebuild switch --impure --flake "$HOME/nix#$HOST"
+sudo nixos-rebuild boot --impure --flake "$HOME/nix#$HOST"
+echo "Reboot"
