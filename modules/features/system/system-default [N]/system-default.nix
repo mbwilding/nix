@@ -65,18 +65,6 @@
         mtr.enable = true;
         nano.enable = false;
         nix-ld.enable = true;
-        bazecor = {
-          enable = true;
-          package = pkgsMaster.bazecor.overrideAttrs (old: {
-            buildCommand =
-              lib.replaceStrings
-                [
-                  "--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true"
-                ]
-                [ "--ozone-platform=x11" ]
-                old.buildCommand;
-          });
-        };
       };
 
       environment = {

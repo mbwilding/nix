@@ -58,7 +58,12 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgs, ... }:
+    {
+      lib,
+      pkgs,
+      pkgsMaster,
+      ...
+    }:
     let
       kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
     in
@@ -83,6 +88,21 @@ in
       services = {
         hardware = {
           openrgb.enable = true;
+        };
+      };
+
+      programs = {
+        bazecor = {
+          enable = true;
+          package = pkgsMaster.bazecor.overrideAttrs (old: {
+            buildCommand =
+              lib.replaceStrings
+                [
+                  "--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true"
+                ]
+                [ "--ozone-platform=x11" ]
+                old.buildCommand;
+          });
         };
       };
 
