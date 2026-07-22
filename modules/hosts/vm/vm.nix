@@ -6,9 +6,6 @@ let
   stateVersion = "25.11";
 
   features = [
-    "claudecode"
-    "gui"
-    "kde"
     "system-default"
     "user-mbwilding"
   ];
