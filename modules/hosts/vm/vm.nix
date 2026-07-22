@@ -3,7 +3,7 @@
 let
   arch = "x86_64-linux";
   hostName = "vm";
-  stateVersion = "25.11";
+  stateVersion = "26.05";
 
   features = [
     "system-default"
