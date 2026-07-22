@@ -8,8 +8,7 @@
       config,
       ...
     }:
-
-    {
+{
       options.custom.dotnet.sdk = lib.mkOption {
         type = lib.types.package;
         default = pkgs.dotnetCorePackages.combinePackages [
