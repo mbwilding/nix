@@ -90,6 +90,9 @@
               "git@${secrets.workName}.github.com:${secrets.workName}/" = {
                 insteadOf = "git@github.com:${secrets.workName}/";
               };
+              "git@${secrets.workName}.github.com:${secrets.workName}-shared-platform/" = {
+                insteadOf = "git@github.com:${secrets.workName}-shared-platform/";
+              };
               "git@${secrets.workName}.gitlab.com:${secrets.workName}/" = {
                 insteadOf = "git@gitlab.com:${secrets.workName}/";
               };
@@ -99,6 +102,9 @@
                 path = "~/.config/git/config-personal";
               };
               "hasconfig:remote.*.url:git@github.com:${secrets.workName}/**" = {
+                path = "~/.config/git/config-work-long";
+              };
+              "hasconfig:remote.*.url:git@github.com:${secrets.workName}-shared-platform/**" = {
                 path = "~/.config/git/config-work-long";
               };
               "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${lib.toUpper secrets.workName}/**" = {
