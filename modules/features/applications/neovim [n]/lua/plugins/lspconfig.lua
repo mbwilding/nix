@@ -150,7 +150,7 @@ return {
             },
             powershell_es = {
                 bundle_path = (function()
-                    return (is_nixos and "/etc/profiles/per-user/mbwilding/bin/powershell-editor-services")
+                    return (is_nixos and "/etc/profiles/per-user/mbwilding/lib/powershell-editor-services")
                         or (jit.os == "OSX" and os.getenv("HOME") .. "/.lsp/powershell_es")
                         or (jit.os == "Linux" and "/opt/powershell-editor-services")
                 end)(),
