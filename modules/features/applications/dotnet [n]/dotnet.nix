@@ -37,6 +37,7 @@
           };
 
           activation.dotnetSetup = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            export LD_LIBRARY_PATH="${pkgs.openssl.out}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
             dotnet_cmd="${config.custom.dotnet.sdk}/bin/dotnet"
 
             # dev-certs
