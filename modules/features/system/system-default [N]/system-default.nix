@@ -72,7 +72,6 @@
         etc."1password/custom_allowed_browsers" = {
           text = ''
             google-chrome
-            firefox
           '';
           mode = "0755";
         };
