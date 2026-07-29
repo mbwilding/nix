@@ -21,8 +21,6 @@
   flake.modules.homeManager.packages-gui =
     {
       pkgs,
-      pkgsStable,
-      pkgsMaster,
       ...
     }:
     {
@@ -40,7 +38,6 @@
 
             # Packages
             _1password-gui
-            blender
             bolt-launcher
             cameractrls-gtk4
             firefox
