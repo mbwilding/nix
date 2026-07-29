@@ -147,23 +147,15 @@
         }
         {
           match = {
-            class = "^(World of Warcraft|wow)$";
-          };
-          workspace = "1";
-          float = true;
-          content = "game";
-        }
-        {
-          match = {
-            title = "^(World of Warcraft)$";
-          };
-          workspace = "1";
-          float = true;
-          content = "game";
-        }
-        {
-          match = {
             class = "^(steam_app.*)$";
+          };
+          workspace = "1";
+          float = true;
+          content = "game";
+        }
+        {
+          match = {
+            class = ".*\\.exe$";
           };
           workspace = "1";
           float = true;
