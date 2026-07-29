@@ -82,6 +82,7 @@
             lm_sensors
             lshw
             lsof
+            ncdu
             nix-diff
             nmap
             openssh
