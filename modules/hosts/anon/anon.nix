@@ -31,6 +31,7 @@ let
     "system-default"
     "ucodenix"
     "user-mbwilding"
+    "vm-curator"
     "waydroid"
     "wine"
     "wireshark"
