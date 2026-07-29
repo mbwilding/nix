@@ -14,7 +14,14 @@
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
-          cm = "wide";
+          cm = "wide"; # hdr, hdredid
+          sdrbrightness = 1.0;
+          sdrsaturation = 1.0;
+          sdr_min_luminance = 0.005;
+          sdr_max_luminance = 380;
+          min_luminance = 0;
+          max_luminance = 1200;
+          max_avg_luminance = 400;
         }
         {
           output = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
@@ -144,7 +151,6 @@
           };
           workspace = "1";
           float = true;
-          suppress_event = "fullscreen maximize";
           content = "game";
         }
         {
@@ -153,7 +159,6 @@
           };
           workspace = "1";
           float = true;
-          suppress_event = "fullscreen maximize";
           content = "game";
         }
         {
@@ -162,7 +167,6 @@
           };
           workspace = "1";
           float = true;
-          suppress_event = "fullscreen maximize";
           content = "game";
         }
       ];
