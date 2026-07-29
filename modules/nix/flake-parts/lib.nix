@@ -30,10 +30,12 @@
         extra-substituters = [
           "https://attic.xuyh0120.win/lantian"
           "https://noctalia.cachix.org"
+          "https://cache.nixos-cuda.org"
         ];
         extra-trusted-public-keys = [
           "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
           "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+          "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
         ];
         max-jobs = 1;
         # cores = 2;
@@ -79,16 +81,12 @@
         };
       };
 
-      mkFeatures =
-        features:
-        {
-          nixos = lib.filter (m: m != null) (
-            map (name: inputs.self.modules.nixos.${name} or null) features
-          );
-          homeManager = lib.filter (m: m != null) (
-            map (name: inputs.self.modules.homeManager.${name} or null) features
-          );
-        };
+      mkFeatures = features: {
+        nixos = lib.filter (m: m != null) (map (name: inputs.self.modules.nixos.${name} or null) features);
+        homeManager = lib.filter (m: m != null) (
+          map (name: inputs.self.modules.homeManager.${name} or null) features
+        );
+      };
 
       mkHomeManager = system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
