@@ -12,7 +12,6 @@
       packages-gui
       power-platform-toolbox
       reaper
-      steam
       teams
       wine
       yabridge
