@@ -12,6 +12,13 @@
           extraCompatPackages = [
             pkgs.proton-ge-bin
           ];
+          package = pkgs.steam.override {
+            extraPkgs = pkgs: with pkgs; [
+              gamemode
+              gamescope
+              mangohud
+            ];
+          };
         };
       };
 
