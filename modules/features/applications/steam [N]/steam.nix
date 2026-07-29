@@ -116,7 +116,7 @@
         ## Enable gamescope for this game
         USEGAMESCOPE="1"
         ## The command line arguments for gamescope for this game
-        GAMESCOPE_ARGS="--nested-width 3840 --nested-height 2160 --output-width 3840 --output-height 2160 --nested-refresh 120 --nested-unfocused-refresh 120 --fullscreen --prefer-vk-device --expose-wayland --backend wayland --hdr-enabled --hdr-itm-enabled --adaptive-sync --rt --"
+        GAMESCOPE_ARGS="--nested-width 3840 --nested-height 2160 --output-width 3840 --output-height 2160 --nested-refresh 144 --nested-unfocused-refresh 144 --fullscreen --prefer-vk-device --expose-wayland --backend wayland --hdr-enabled --hdr-itm-enabled --adaptive-sync --rt --"
         ## Start the game through obs-gamecapture
         USEOBSCAP="0"
         ## Enable Zink to renders OpenGL games in Vulkan
