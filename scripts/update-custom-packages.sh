@@ -113,6 +113,62 @@ update_github_release_file() {
   done < <(grep -n 'url = "https://github.com' "$file" | cut -d: -f1,1)
 }
 
+update_claude_desktop_file() {
+  local file="$1" repo_base cur_version latest
+
+  repo_base=$(first_match '(?<=url = ")https://[^"]+(?=/pool/main)' "$file")
+  if [[ -z "$repo_base" ]]; then
+    echo "  skip: no apt repo url found"
+    return
+  fi
+
+  cur_version=$(first_match '(?<=version = ")[^"]+' "$file")
+  if [[ -z "$cur_version" ]]; then
+    echo "  skip: no version assignment found"
+    return
+  fi
+
+  latest=$(curl -sf "$repo_base/dists/stable/main/binary-amd64/Packages" |
+    awk '/^Package: claude-desktop$/{p=1; next} p && /^Version: /{print $2} /^$/{p=0}' |
+    sort -V | tail -1)
+
+  if [[ -z "$latest" ]]; then
+    echo "  skip: could not resolve latest version from apt repo"
+    return
+  fi
+
+  if [[ "$latest" == "$cur_version" ]]; then
+    echo "  up to date ($cur_version)"
+    return
+  fi
+
+  echo "  claude-desktop: $cur_version -> $latest"
+  sed -i "s/version = \"$cur_version\"/version = \"$latest\"/g" "$file"
+
+  local line_no url next_line old_val new_sri
+  while IFS=: read -r line_no _; do
+    url=$(sed -n "${line_no}p" "$file" | sed -E 's/^\s*url = "(.*)";/\1/')
+    url=${url//\$\{version\}/$latest}
+
+    next_line=$(sed -n "$((line_no + 1))p" "$file")
+    if [[ "$next_line" =~ hash\ =\ \"(.*)\"\; ]]; then
+      old_val="${BASH_REMATCH[1]}"
+    else
+      echo "    FAILED: no hash attribute found after $url"
+      continue
+    fi
+
+    echo "    prefetching: $url"
+    new_sri=$(prefetch_hash sha256 "$url")
+    if [[ -z "$new_sri" ]]; then
+      echo "    FAILED to prefetch $url"
+      continue
+    fi
+
+    sed -i "s#$old_val#$new_sri#" "$file"
+  done < <(grep -n 'url = "https://downloads\.claude\.ai' "$file" | cut -d: -f1,1)
+}
+
 update_fetchfromgithub_file() {
   local file="$1" owner repo cur_rev cur_hash latest_sha new_hash
 
@@ -356,6 +412,8 @@ main() {
       update_pypi_file "$file"
     elif grep -q 'fetchFromGitHub' "$file" && grep -q 'rev = "' "$file"; then
       update_fetchfromgithub_file "$file"
+    elif grep -q 'downloads\.claude\.ai/claude-desktop/apt' "$file"; then
+      update_claude_desktop_file "$file"
     elif grep -q 'github\.com/.*releases/download' "$file"; then
       update_github_release_file "$file"
     else
