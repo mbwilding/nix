@@ -8,7 +8,6 @@
     {
       lib,
       pkgs,
-      pkgsMaster,
       ...
     }:
     {
@@ -27,6 +26,7 @@
           efi.canTouchEfiVariables = true;
           timeout = 1;
         };
+        initrd.systemd.enable = true;
       };
 
       services = {
