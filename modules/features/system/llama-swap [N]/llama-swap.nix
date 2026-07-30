@@ -2,7 +2,12 @@
 
 {
   flake.modules.nixos.llama-swap =
-    { lib, pkgs, config, ... }:
+    {
+      lib,
+      pkgs,
+      config,
+      ...
+    }:
 
     let
       llama-cpp =
@@ -153,6 +158,101 @@
         User = "mbwilding";
         Group = "users";
         ProtectHome = lib.mkForce false;
+      };
+    };
+
+  flake.modules.homeManager.llama-swap =
+    { ... }:
+    {
+      programs = {
+        opencode = {
+          settings = {
+            provider = {
+              llama-swap = {
+                api = "openai";
+                name = "Llama Swap (Local)";
+                options = {
+                  baseURL = "http://192.168.11.254:60000/v1";
+                  apiKey = "not-needed";
+                };
+                models = {
+                  "qwythos-9b" = {
+                    name = "Qwythos 9B (Q8_0)";
+                    id = "qwythos-9b";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-fast" = {
+                    name = "Qwythos 9B Fast (Q6_K)";
+                    id = "qwythos-9b-fast";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-mtp" = {
+                    name = "Qwythos 9B MTP (Q8_0)";
+                    id = "qwythos-9b-mtp";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-mtp-fast" = {
+                    name = "Qwythos 9B MTP Fast (Q6_K)";
+                    id = "qwythos-9b-mtp-fast";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-abliterated" = {
+                    name = "Qwythos 9B Abliterated (Q8_0)";
+                    id = "qwythos-9b-abliterated";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                  "qwythos-9b-abliterated-fast" = {
+                    name = "Qwythos 9B Abliterated Fast (Q6_K)";
+                    id = "qwythos-9b-abliterated-fast";
+                    tool_call = true;
+                    temperature = true;
+                    reasoning = true;
+                    limit = {
+                      context = 1000000;
+                      input = 1000000;
+                      output = 1000000;
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
       };
     };
 }
