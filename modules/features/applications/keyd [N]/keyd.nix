@@ -21,7 +21,7 @@ in
               space = "overload(shift, space)";
               capslock = "overload(capslock, backspace)";
               leftshift = "esc";
-              rightalt = "layer(symbols)";
+              # rightalt = "layer(symbols)";
 
               a = "overloadt(control, a, ${keyThreshold})";
               ";" = "overloadt(control, ;, ${keyThreshold})";
@@ -47,36 +47,36 @@ in
               p = "C-right";
             };
 
-            symbols = {
-              q = "`";
-              w = "!";
-              e = "?";
-              r = "@";
-              t = "{";
-              y = "}";
-              u = "~";
-              p = "right";
-              a = "=";
-              s = "|";
-              d = "^";
-              f = "_";
-              g = "(";
-              h = ")";
-              j = "left";
-              k = "$";
-              l = "&";
-              ";" = "-";
-              z = "/";
-              x = "#";
-              c = "down";
-              v = "up";
-              b = "{";
-              n = "}";
-              m = "+";
-              "," = "%";
-              "." = "*";
-              "/" = "\\";
-            };
+            # symbols = {
+            #   q = "`";
+            #   w = "!";
+            #   e = "?";
+            #   r = "@";
+            #   t = "{";
+            #   y = "}";
+            #   u = "~";
+            #   p = "right";
+            #   a = "=";
+            #   s = "|";
+            #   d = "^";
+            #   f = "_";
+            #   g = "(";
+            #   h = ")";
+            #   j = "left";
+            #   k = "$";
+            #   l = "&";
+            #   ";" = "-";
+            #   z = "/";
+            #   x = "#";
+            #   c = "down";
+            #   v = "up";
+            #   b = "{";
+            #   n = "}";
+            #   m = "+";
+            #   "," = "%";
+            #   "." = "*";
+            #   "/" = "\\";
+            # };
 
             numbers = {
               ";" = "0";
