@@ -16,7 +16,9 @@
       home.packages = [ extractToDir ];
       programs.yazi = {
         enable = true;
-        package = inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        package = inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+          _7zz = pkgs._7zz-rar;
+        };
         enableZshIntegration = config.programs.zsh.enable;
         enableFishIntegration = config.programs.fish.enable;
         shellWrapperName = "y";
