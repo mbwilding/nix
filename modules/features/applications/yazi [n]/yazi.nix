@@ -231,118 +231,181 @@
         };
         keymap = {
           mgr.prepend_keymap = [
+            # {
+            #   on = "a";
+            #   run = ''shell -- yazi-extract-dir "%h"'';
+            #   desc = "Extract archive to directory";
+            # }
+            # {
+            #   on = "E";
+            #   run = ''shell -- 7z x "%h" -o"%d1"'';
+            #   desc = "Extract archive here";
+            # }
             {
-              on = "x";
-              run = ''shell -- yazi-extract-dir "%h"'';
-              desc = "Extract archive to directory";
-            }
-            {
-              on = "X";
-              run = ''shell -- 7z x "%h" -o"%d1"'';
-              desc = "Extract archive here";
-            }
-            {
-              on = [ "g" "s" ];
+              on = [
+                "g"
+                "s"
+              ];
               run = "plugin git";
               desc = "Git status";
             }
             {
-              on = [ "g" "h" ];
+              on = [
+                "g"
+                "h"
+              ];
               run = "plugin githead";
               desc = "Git HEAD details";
             }
             {
-              on = [ "g" "u" ];
+              on = [
+                "g"
+                "u"
+              ];
               run = "plugin gitui";
               desc = "Open gitui";
             }
             {
-              on = [ "g" "l" ];
+              on = [
+                "g"
+                "l"
+              ];
               run = "plugin lazygit";
               desc = "Open lazygit";
             }
             {
-              on = [ "b" "m" ];
+              on = [
+                "b"
+                "m"
+              ];
               run = "plugin bookmarks";
               desc = "Bookmarks";
             }
             {
-              on = [ "b" "p" ];
+              on = [
+                "b"
+                "p"
+              ];
               run = "plugin bypass";
               desc = "Bypass operations";
             }
             {
-              on = [ "c" "h" ];
+              on = [
+                "c"
+                "h"
+              ];
               run = "plugin chmod";
               desc = "Change permissions";
             }
             {
-              on = [ "c" "l" ];
+              on = [
+                "c"
+                "l"
+              ];
               run = "plugin clipboard";
               desc = "Clipboard";
             }
             {
-              on = [ "c" "o" ];
+              on = [
+                "c"
+                "o"
+              ];
               run = "plugin compress";
               desc = "Compress";
             }
             {
-              on = [ "c" "v" ];
+              on = [
+                "c"
+                "v"
+              ];
               run = "plugin convert";
               desc = "Convert files";
             }
             {
-              on = [ "m" "m" ];
+              on = [
+                "m"
+                "m"
+              ];
               run = "plugin mediainfo";
               desc = "Media info";
             }
             {
-              on = [ "m" "o" ];
+              on = [
+                "m"
+                "o"
+              ];
               run = "plugin mount";
               desc = "Mount manager";
             }
             {
-              on = [ "f" "s" ];
+              on = [
+                "f"
+                "s"
+              ];
               run = "plugin gvfs";
               desc = "GVFS mounts";
             }
             {
-              on = [ "o" "f" ];
+              on = [
+                "o"
+                "f"
+              ];
               run = "plugin office";
               desc = "Office preview";
             }
             {
-              on = [ "t" "r" ];
+              on = [
+                "t"
+                "r"
+              ];
               run = "plugin omni-trash";
               desc = "Trash actions";
             }
             {
-              on = [ "a" "r" ];
+              on = [
+                "a"
+                "r"
+              ];
               run = "plugin ouch";
               desc = "Archive with ouch";
             }
             {
-              on = [ "r" "s" ];
+              on = [
+                "r"
+                "s"
+              ];
               run = "plugin rsync";
               desc = "Rsync";
             }
             {
-              on = [ "p" "s" ];
+              on = [
+                "p"
+                "s"
+              ];
               run = "plugin smart-paste";
               desc = "Smart paste";
             }
             {
-              on = [ "s" "f" ];
+              on = [
+                "s"
+                "f"
+              ];
               run = "plugin sshfs";
               desc = "SSHFS";
             }
             {
-              on = [ "s" "u" ];
+              on = [
+                "s"
+                "u"
+              ];
               run = "plugin sudo";
               desc = "Sudo actions";
             }
             {
-              on = [ "a" "l" ];
+              on = [
+                "a"
+                "l"
+              ];
               run = "plugin lsar";
               desc = "Archive listing";
             }
