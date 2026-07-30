@@ -88,7 +88,7 @@
           wallpaper = {
             directory = "${config.home.homeDirectory}/nix/wallpapers/monochrome";
             directory_dark = "";
-            default.path = "${config.home.homeDirectory}/nix/wallpapers/monochrome/windows-11-dark-mode-abstract-background-black-background-3840x2160-8710.png";
+            default.path = "${config.home.homeDirectory}/nix/wallpapers/monochrome/wp14931433-3840x2160-black-wallpapers.webp";
             automation = {
               enabled = true;
               interval_seconds = 300; # 5 min
