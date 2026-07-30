@@ -15,7 +15,6 @@ let
     "gpu-nvidia"
     "gui"
     "hyprland"
-    "llama-swap"
     "mounts"
     "mpv"
     "obs"
@@ -35,6 +34,7 @@ let
     "waydroid"
     "wine"
     "wireshark"
+    # "llama-swap"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
