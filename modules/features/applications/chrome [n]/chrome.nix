@@ -6,9 +6,11 @@
       lib,
       pkgs,
       osConfig ? null,
-      isNvidia ? (osConfig != null && lib.elem "nvidia" (osConfig.services.xserver.videoDrivers or [ ])),
       ...
     }:
+    let
+      isNvidia = osConfig != null && lib.elem "nvidia" (osConfig.services.xserver.videoDrivers or [ ]);
+    in
     {
       home.packages = [
         (pkgs.google-chrome.override {
