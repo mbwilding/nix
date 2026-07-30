@@ -86,9 +86,9 @@
           };
 
           wallpaper = {
-            directory = "${config.home.homeDirectory}/nix/wallpapers";
+            directory = "${config.home.homeDirectory}/nix/wallpapers/monochrome";
             directory_dark = "";
-            default.path = "${config.home.homeDirectory}/nix/wallpapers/retrowave/sunset-synthwave-sports-car-city-palm-trees-digital-art-4k-wallpaper-uhdpaper.com-216@1@n.jpg";
+            default.path = "${config.home.homeDirectory}/nix/wallpapers/monochrome/windows-11-dark-mode-abstract-background-black-background-3840x2160-8710.png";
             automation = {
               enabled = true;
               interval_seconds = 300; # 5 min
