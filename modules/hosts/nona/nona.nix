@@ -45,6 +45,15 @@ let
     }
 
     ./_hyprland.nix
+
+    (
+      { pkgs, ... }:
+      {
+        home.packages = with pkgs; [
+          heroic
+        ];
+      }
+    )
   ];
 
   homeManagerModules = featureModules.homeManager ++ homeManagerExtraModules;
