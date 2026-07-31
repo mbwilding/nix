@@ -795,6 +795,17 @@
               tile = true;
               stay_focused = false;
             }
+
+            # Steam
+            {
+              match = {
+                class = "^(steam)$";
+                title = "^(Steam)$";
+              };
+              float = false;
+              tile = true;
+              stay_focused = false;
+            }
           ];
         };
 
