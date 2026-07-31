@@ -49,4 +49,8 @@
         };
       };
     };
+
+  flake.modules.homeManager.gpu-nvidia = {
+    nixpkgs.config.cudaSupport = true;
+  };
 }
