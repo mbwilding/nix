@@ -129,6 +129,14 @@
         }
         {
           match = {
+            class = "^(steam)$";
+            title = "^(Steam)$";
+          };
+          float = false;
+          tile = true;
+        }
+        {
+          match = {
             class = "^(lutris)$";
           };
           workspace = "1";
