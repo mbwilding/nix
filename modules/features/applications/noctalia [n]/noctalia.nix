@@ -11,6 +11,7 @@
         settings = {
           bar.default = {
             auto_hide = true;
+            show_on_workspace_switch = false;
             reserve_space = false;
             layer = "overlay";
             position = "bottom";
@@ -89,6 +90,7 @@
             directory = "${config.home.homeDirectory}/nix/wallpapers/monochrome";
             directory_dark = "";
             default.path = "${config.home.homeDirectory}/nix/wallpapers/monochrome/wp14931433-3840x2160-black-wallpapers.webp";
+            per_monitor_directories = true;
             automation = {
               enabled = true;
               interval_seconds = 300; # 5 min
