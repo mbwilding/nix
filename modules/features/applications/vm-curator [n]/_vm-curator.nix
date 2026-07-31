@@ -9,12 +9,12 @@
 }:
 
 let
-  version = "1.2.3";
+  version = "1.3.0";
 
   sources = {
     "x86_64-linux" = {
       url = "https://github.com/mroboff/vm-curator/releases/download/v${version}/vm-curator-v${version}-linux-x86_64.tar.gz";
-      hash = "sha256-MyMMlGelSyFOSrqMPRpH8UOP1mO4qJGYVGWeK2JjJnw=";
+      hash = "sha256-x5PYNrmE2fi3LopHMcS8ITEcK2xSAKrbaI6IVtOwgLM=";
     };
   };
 
