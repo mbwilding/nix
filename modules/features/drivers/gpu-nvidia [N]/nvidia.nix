@@ -10,8 +10,6 @@
     {
       boot.blacklistedKernelModules = [ "nouveau" ];
 
-      nixpkgs.config.cudaSupport = true;
-
       hardware = {
         graphics = {
           enable = true;
@@ -48,6 +46,8 @@
           LD_LIBRARY_PATH = [ "/run/opengl-driver/lib" ];
         };
       };
+
+      nixpkgs.config.cudaSupport = true;
     };
 
   flake.modules.homeManager.gpu-nvidia = {
