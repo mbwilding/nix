@@ -7,10 +7,12 @@
       personal = {
         IdentitiesOnly = true;
         IdentityFile = [ "~/.ssh/personal" ];
+        User = "mbwilding";
       };
       work = {
         IdentitiesOnly = true;
         IdentityFile = [ "~/.ssh/work" ];
+        User = "git";
       };
     in
     {
@@ -22,38 +24,27 @@
           settings = {
             # Devices
 
-            desktop = personal // {
-              HostName = "192.168.11.254";
-              User = "mbwilding";
-            };
+            anon = personal // { };
 
-            laptop = personal // {
-              HostName = "192.168.11.60";
-              User = "mbwilding";
-            };
+            nona = personal // { };
 
-            truenas = personal // {
-              HostName = "192.168.11.10";
-              User = "mbwilding";
-            };
+            truenas = personal // { };
 
-            server = personal // {
-              HostName = "192.168.11.219";
-              User = "mbwilding";
-            };
+            server = personal // { };
 
             phone = personal // {
-              HostName = "192.168.11.41";
               Port = 8022;
               User = "nix-on-droid";
             };
 
             surface = personal // {
-              HostName = "192.168.11.253";
-              User = "mbwilding";
               TCPKeepAlive = "yes";
               ServerAliveCountMax = 10;
               ServerAliveInterval = 20;
+            };
+
+            ai-sdlc = personal // {
+              User = "root";
             };
 
             # Git
@@ -68,13 +59,11 @@
             };
 
             "gitlab.com" = personal // {
-              HostName = "gitlab.com";
               User = "git";
             };
 
             "${secrets.workName}.gitlab.com" = work // {
               HostName = "gitlab.com";
-              User = "git";
             };
 
             "git.mattwilding.com" = personal // {
@@ -82,12 +71,13 @@
             };
 
             "ssh.dev.azure.com" = work // {
-              User = "git";
               PubkeyAcceptedKeyTypes = "+ssh-rsa";
               PasswordAuthentication = "no";
               ChallengeResponseAuthentication = "no";
               WarnWeakCrypto = "no";
             };
+
+            # Custom
 
             "aur.archlinux.org" = {
               User = "aur";
