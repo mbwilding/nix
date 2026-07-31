@@ -46,6 +46,10 @@ let
 
     ./_hyprland.nix
 
+    {
+      nixpkgs.config.cudaSupport = true;
+    }
+
     (
       { pkgs, ... }:
       {
