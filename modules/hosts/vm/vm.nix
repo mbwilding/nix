@@ -22,6 +22,9 @@ in
 
       networking.hostName = hostName;
       system.stateVersion = stateVersion;
+
+      # NOTE: Required for LXC
+      nix.settings.sandbox = false;
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
