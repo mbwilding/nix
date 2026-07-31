@@ -51,6 +51,7 @@ let
       {
         home.packages = with pkgs; [
           davinci-resolve-studio
+          heroic
         ];
       }
     )
