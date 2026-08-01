@@ -3,8 +3,10 @@
 {
   wayland.windowManager.hyprland = {
     settings = {
-      render = {
-        cm_auto_hdr = 1; # NOTE: Try 2 again?
+      config = {
+        render = {
+          cm_auto_hdr = 1; # NOTE: Try 2 again?
+        };
       };
 
       monitor = lib.mkAfter [
