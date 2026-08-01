@@ -165,7 +165,7 @@
             render = {
               send_content_type = true;
               direct_scanout = 1;
-              cm_auto_hdr = 0;
+              cm_auto_hdr = lib.mkDefault 0;
               new_render_scheduling = false;
             };
 
