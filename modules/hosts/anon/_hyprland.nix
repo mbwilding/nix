@@ -3,6 +3,10 @@
 {
   wayland.windowManager.hyprland = {
     settings = {
+      render = {
+        cm_auto_hdr = 1; # NOTE: Try 2 again?
+      };
+
       monitor = lib.mkAfter [
         {
           output = "desc:LG Electronics LG TV SSCR2 0x01010101";
