@@ -34,7 +34,7 @@
 
             nixos = personal // { };
             nixos-root = personal // {
-              Host = "nixos";
+              HostName = "nixos";
               User = "root";
             };
 
