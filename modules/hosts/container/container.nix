@@ -31,7 +31,7 @@ in
       # home-manager.sharedModules = featureModules.homeManager;
 
       networking = {
-        dhcpd.enable = false;
+        dhcpcd.enable = false;
         useDHCP = false;
         useHostResolvConf = false;
       };
