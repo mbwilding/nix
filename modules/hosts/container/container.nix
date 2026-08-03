@@ -30,6 +30,8 @@ in
 
       # home-manager.sharedModules = featureModules.homeManager;
 
+      nix.settings.sandbox = false;
+
       networking = {
         dhcpcd.enable = false;
         useDHCP = false;
