@@ -22,7 +22,7 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { modulesPath, ... }:
+    { modulesPath, secrets, ... }:
     {
       imports = featureModules.nixos ++ [
         "${modulesPath}/virtualisation/lxc-container.nix"
@@ -56,6 +56,9 @@ in
           linkConfig.RequiredForOnline = "routable";
         };
       };
+
+      users.users.root.openssh.authorizedKeys.keys = [ secrets.personalPublicKey ];
+      users.users.mbwilding.openssh.authorizedKeys.keys = [ secrets.personalPublicKey ];
 
       programs = {
         _1password.enable = true;
