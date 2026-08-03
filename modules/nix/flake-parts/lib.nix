@@ -76,8 +76,14 @@
                 settings = sharedNixSettings;
               };
 
-              _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
-              _module.args.pkgsStable = inputs.nixpkgs-stable.legacyPackages.${system};
+              _module.args.pkgsMaster = import inputs.nixpkgs-master {
+                inherit system;
+                config.allowUnfree = true;
+              };
+              _module.args.pkgsStable = import inputs.nixpkgs-stable {
+                inherit system;
+                config.allowUnfree = true;
+              };
             }
           ];
         };
@@ -103,8 +109,14 @@
 
                 nixpkgs.config.allowUnfree = true;
                 _module.args.secrets = secrets;
-                _module.args.pkgsMaster = inputs.nixpkgs-master.legacyPackages.${system};
-                _module.args.pkgsStable = inputs.nixpkgs-stable.legacyPackages.${system};
+                _module.args.pkgsMaster = import inputs.nixpkgs-master {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+                _module.args.pkgsStable = import inputs.nixpkgs-stable {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
               }
             )
           ]
