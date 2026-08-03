@@ -33,6 +33,9 @@
             server = personal // { };
 
             nixos = personal // { };
+            nixos-root = personal // {
+              User = "root";
+            };
 
             phone = personal // {
               Port = 8022;
