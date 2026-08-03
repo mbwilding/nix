@@ -32,9 +32,9 @@
 
             server = personal // { };
 
-            container = personal // { };
-            container-root = personal // {
-              HostName = "container";
+            lxc = personal // { };
+            lxc-root = personal // {
+              HostName = "lxc";
               User = "root";
             };
 
