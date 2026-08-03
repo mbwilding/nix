@@ -33,10 +33,6 @@
             server = personal // { };
 
             lxc = personal // { };
-            lxc-root = personal // {
-              HostName = "lxc";
-              User = "root";
-            };
 
             phone = personal // {
               Port = 8022;
