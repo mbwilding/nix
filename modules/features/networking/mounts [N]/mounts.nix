@@ -7,6 +7,10 @@
     {
       custom.availableGroups = [ "apps" ];
 
+      boot.extraModprobeConfig = ''
+        options nfs nfs4_disable_idmapping=0
+      '';
+
       users = {
         users = {
           apps = {
@@ -33,7 +37,6 @@
             "x-systemd.automount"
             "x-systemd.device-timeout=10"
             "x-systemd.mount-timeout=10"
-            "X-mount.idmap=b:1000:568:1"
           ];
         };
 
@@ -46,7 +49,6 @@
             "x-systemd.automount"
             "x-systemd.device-timeout=10"
             "x-systemd.mount-timeout=10"
-            "X-mount.idmap=b:1000:3000:1"
           ];
         };
       };
