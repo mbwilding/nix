@@ -6,7 +6,14 @@ let
   stateVersion = "26.05";
 
   features = [
+    "appimage"
+    "claudecode"
+    "development"
+    "podman"
+    "proxy"
+    "proxychains"
     "system-default"
+    "ucodenix"
     "user-mbwilding"
   ];
 
