@@ -2,6 +2,7 @@
 
 let
   user = "mbwilding";
+  userId = 1000;
 in
 {
   flake.modules.nixos."user-${user}" =
@@ -22,12 +23,12 @@ in
           ];
           isNormalUser = true;
           shell = pkgs.fish;
-          uid = 1000;
+          uid = userId;
           group = user;
         };
         groups = {
           ${user} = {
-            gid = 1000;
+            gid = userId;
           };
         };
       };
