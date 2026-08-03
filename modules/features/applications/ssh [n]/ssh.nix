@@ -32,6 +32,8 @@
 
             server = personal // { };
 
+            nixos = personal // { };
+
             phone = personal // {
               Port = 8022;
               User = "nix-on-droid";
