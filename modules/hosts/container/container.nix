@@ -44,7 +44,7 @@ in
             DHCP = "ipv4";
             IPv6AcceptRA = true;
           };
-          linkConfig.RequireForOnline = "routable";
+          linkConfig.RequiredForOnline = "routable";
         };
       };
       system.stateVersion = stateVersion;
