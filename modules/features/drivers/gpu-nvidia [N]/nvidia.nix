@@ -50,7 +50,13 @@
       nixpkgs.config.cudaSupport = true;
     };
 
-  flake.modules.homeManager.gpu-nvidia = {
-    nixpkgs.config.cudaSupport = true;
-  };
+  flake.modules.homeManager.gpu-nvidia =
+    {
+      osConfig ? null,
+      lib,
+      ...
+    }:
+    {
+      nixpkgs.config = lib.mkIf (osConfig == null) { cudaSupport = true; };
+    };
 }

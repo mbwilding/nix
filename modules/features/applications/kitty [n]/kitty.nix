@@ -3,7 +3,6 @@
 {
   flake.modules.homeManager.kitty =
     {
-      lib,
       config,
       ...
     }:
@@ -36,6 +35,7 @@
             hide_window_decorations = true;
             paste_actions = "quote-urls-at-prompt,replace-dangerous-control-codes";
             pixel_scroll = true;
+            placement_strategy = "top-left";
             strip_trailing_spaces = "always";
             window_padding_width = 5;
 
@@ -91,7 +91,8 @@
             "${mod}+q" = "close_window";
             "${mod}+w" = "close_tab";
             "${mod}+z" = "show_scrollback";
-          } // builtins.listToAttrs (
+          }
+          // builtins.listToAttrs (
             builtins.genList (i: {
               name = "${mod}+${toString (i + 1)}";
               value = "goto_tab ${toString (i + 1)}";
