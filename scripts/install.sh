@@ -10,5 +10,10 @@ fi
 
 HOST="${HOST// /}"
 
-sudo nixos-rebuild boot --impure --flake "$HOME/nix#$HOST"
+EXTRA_ARGS=()
+if [ "$HOST" = "container" ]; then
+  EXTRA_ARGS+=(--option sandbox false)
+fi
+
+sudo nixos-rebuild boot --impure --flake "$HOME/nix#$HOST" "${EXTRA_ARGS[@]}"
 echo "Reboot"
