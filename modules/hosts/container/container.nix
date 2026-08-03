@@ -31,7 +31,13 @@ in
 
       home-manager.sharedModules = featureModules.homeManager;
 
-      nix.settings.sandbox = false;
+      nix.settings = {
+        sandbox = false;
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+      };
 
       nixpkgs.config.allowUnfree = true;
 
