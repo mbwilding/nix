@@ -52,6 +52,7 @@
           wifi.powersave = false;
         };
       };
+
       programs = {
         _1password.enable = true;
         _1password-gui = {
