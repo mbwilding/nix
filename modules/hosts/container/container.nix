@@ -26,7 +26,6 @@ in
     {
       imports = featureModules.nixos ++ [
         "${modulesPath}/virtualisation/lxc-container.nix"
-        # ./incus.nix
       ];
 
       home-manager.sharedModules = featureModules.homeManager;
