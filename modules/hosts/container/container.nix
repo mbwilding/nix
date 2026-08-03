@@ -14,7 +14,7 @@ let
     # "proxychains"
     # "system-default" # Don't enable
     # "ucodenix"
-    # "user-mbwilding"
+    "user-mbwilding"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
