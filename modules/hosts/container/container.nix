@@ -13,6 +13,7 @@ let
     # "proxy"
     # "proxychains"
     # "system-default" # Don't enable
+    "system-base"
     # "ucodenix"
     "user-mbwilding"
   ];
@@ -23,7 +24,7 @@ in
   flake.modules.nixos.${hostName} =
     { modulesPath, ... }:
     {
-      imports = [
+      imports = featureModules.nixos ++ [
         "${modulesPath}/virtualisation/lxc-container.nix"
         # ./incus.nix
       ];
@@ -31,6 +32,8 @@ in
       home-manager.sharedModules = featureModules.homeManager;
 
       nix.settings.sandbox = false;
+
+      programs.fish.enable = true;
 
       networking = {
         dhcpcd.enable = false;
