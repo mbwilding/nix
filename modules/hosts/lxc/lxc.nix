@@ -2,7 +2,7 @@
 
 let
   arch = "x86_64-linux";
-  hostName = "container";
+  hostName = "lxc";
   stateVersion = "25.11";
 
   features = [
@@ -68,10 +68,6 @@ in
 
       programs = {
         _1password.enable = true;
-        _1password-gui = {
-          enable = true;
-          polkitPolicyOwners = [ "mbwilding" ];
-        };
         fish.enable = true;
         mtr.enable = true;
         nano.enable = false;
