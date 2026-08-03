@@ -35,6 +35,8 @@ in
 
       programs.fish.enable = true;
 
+      nixpkgs.config.allowUnfree = true;
+
       networking = {
         dhcpcd.enable = false;
         useDHCP = false;
