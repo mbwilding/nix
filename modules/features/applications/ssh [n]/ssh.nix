@@ -32,9 +32,9 @@
 
             server = personal // { };
 
-            nixos = personal // { };
-            nixos-root = personal // {
-              HostName = "nixos";
+            container = personal // { };
+            container-root = personal // {
+              HostName = "container";
               User = "root";
             };
 
