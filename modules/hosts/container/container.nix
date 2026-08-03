@@ -28,7 +28,7 @@ in
         # ./incus.nix
       ];
 
-      # home-manager.sharedModules = featureModules.homeManager;
+      home-manager.sharedModules = featureModules.homeManager;
 
       nix.settings.sandbox = false;
 
