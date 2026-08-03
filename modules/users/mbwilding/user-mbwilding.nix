@@ -22,12 +22,12 @@ in
           ];
           isNormalUser = true;
           shell = pkgs.fish;
-          uid = 3000;
+          uid = 1000;
           group = user;
         };
         groups = {
           ${user} = {
-            gid = 3000;
+            gid = 1000;
           };
         };
       };
