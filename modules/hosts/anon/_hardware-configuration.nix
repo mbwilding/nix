@@ -14,49 +14,26 @@
     "nvme"
     "xhci_pci"
     "ahci"
-    "usbhid"
     "uas"
+    "usbhid"
     "sd_mod"
   ];
   boot.initrd.kernelModules = [ ];
-
-  # Disable the integrated Radeon GPU (Raphael) via PCI Stub
-  boot.kernelModules = [
-    "kvm-amd"
-    "pci-stub"
-  ];
-
+  boot.kernelModules = [ "kvm-amd" ];
   boot.kernelParams = [ "pci-stub.ids=1002:164e" ];
-
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/mapper/luks-5ffb52cf-8bb9-4f4d-8287-2742dbfd1598";
+    device = "/dev/disk/by-uuid/0fe90e91-7e10-4f3f-a2d6-ba54943c2690";
     fsType = "ext4";
   };
 
-  boot.initrd.luks.devices."luks-5ffb52cf-8bb9-4f4d-8287-2742dbfd1598".device =
-    "/dev/disk/by-uuid/5ffb52cf-8bb9-4f4d-8287-2742dbfd1598";
-
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/4F9C-06E8";
+    device = "/dev/disk/by-uuid/BCE0-858C";
     fsType = "vfat";
     options = [
       "fmask=0077"
       "dmask=0077"
-    ];
-  };
-
-  fileSystems."/mnt/windows" = {
-    device = "/dev/disk/by-uuid/3450BB1850BADFB2";
-    fsType = "ntfs";
-    options = [
-      "uid=1000"
-      "gid=1000"
-      "rw"
-      "user"
-      "exec"
-      "umask=000"
     ];
   };
 
@@ -75,5 +52,6 @@
 
   swapDevices = [ ];
 
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
