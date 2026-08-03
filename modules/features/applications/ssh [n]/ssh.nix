@@ -44,7 +44,7 @@
             };
 
             ai-sdlc = personal // {
-              User = "root";
+              User = "agent";
             };
 
             # Git
