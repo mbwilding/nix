@@ -25,7 +25,7 @@ in
     {
       imports = [
         "${modulesPath}/virtualisation/lxc-container.nix"
-        ./incus.nix
+        # ./incus.nix
       ];
 
       home-manager.sharedModules = featureModules.homeManager;
