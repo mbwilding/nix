@@ -7,7 +7,7 @@ let
 
   features = [
     # "appimage"
-    # "claudecode"
+    "claudecode"
     "development"
     # "podman"
     # "proxy"
