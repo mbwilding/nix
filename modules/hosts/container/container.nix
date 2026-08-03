@@ -8,7 +8,7 @@ let
   features = [
     # "appimage"
     # "claudecode"
-    # "development"
+    "development"
     # "podman"
     # "proxy"
     # "proxychains"
@@ -33,14 +33,16 @@ in
 
       nix.settings.sandbox = false;
 
-      programs.fish.enable = true;
-
       nixpkgs.config.allowUnfree = true;
+
+      time.timeZone = "Australia/Perth";
+      i18n.defaultLocale = "en_AU.UTF-8";
 
       networking = {
         dhcpcd.enable = false;
         useDHCP = false;
         useHostResolvConf = false;
+        domain = "localdomain";
       };
 
       systemd.network = {
@@ -54,6 +56,26 @@ in
           linkConfig.RequiredForOnline = "routable";
         };
       };
+
+      programs = {
+        _1password.enable = true;
+        _1password-gui = {
+          enable = true;
+          polkitPolicyOwners = [ "mbwilding" ];
+        };
+        fish.enable = true;
+        mtr.enable = true;
+        nano.enable = false;
+        nix-ld.enable = true;
+      };
+
+      environment = {
+        sessionVariables = {
+          NIXPKGS_ALLOW_INSECURE = 1;
+          NIXPKGS_ALLOW_UNFREE = 1;
+        };
+      };
+
       system.stateVersion = stateVersion;
     };
 
