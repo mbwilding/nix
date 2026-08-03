@@ -83,6 +83,16 @@ in
       host.primaryMonitor = primaryMonitor;
       networking.hostName = hostName;
 
+      systemd.services.wifi-disable-default = {
+        description = "Disable WiFi radio by default on boot";
+        after = [ "NetworkManager.service" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.networkmanager}/bin/nmcli radio wifi off";
+        };
+      };
+
       hardware = {
         xone.enable = true;
         nvidia-container-toolkit.enable = true;
