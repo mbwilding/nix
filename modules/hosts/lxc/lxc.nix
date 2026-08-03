@@ -38,6 +38,16 @@ in
         ];
       };
 
+      # The LXC runtime already provides working /dev and /dev/pts, and
+      # debugfs/tracefs aren't exposed to unprivileged containers, so
+      # remounting/mounting them during activation just fails with EPERM.
+      boot.specialFileSystems."/dev".enable = false;
+      boot.specialFileSystems."/dev/pts".enable = false;
+      systemd.suppressedSystemUnits = [
+        "sys-kernel-debug.mount"
+        "sys-kernel-tracing.mount"
+      ];
+
       nixpkgs.config.allowUnfree = true;
 
       time.timeZone = "Australia/Perth";
