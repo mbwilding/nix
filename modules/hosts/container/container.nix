@@ -44,6 +44,7 @@ in
       i18n.defaultLocale = "en_AU.UTF-8";
 
       networking = {
+        hostName = hostName;
         dhcpcd.enable = false;
         useDHCP = false;
         useHostResolvConf = false;
