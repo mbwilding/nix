@@ -44,12 +44,14 @@
         };
       };
 
-      networking.networkmanager = {
-        enable = true;
-        # NOTE: Prevents wifi sleeping when lid is shut
-        wifi.powersave = false;
+      networking = {
+        domain = "localdomain";
+        networkmanager = {
+          enable = true;
+          # NOTE: Prevents wifi sleeping when lid is shut
+          wifi.powersave = false;
+        };
       };
-
       programs = {
         _1password.enable = true;
         _1password-gui = {
