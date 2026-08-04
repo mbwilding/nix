@@ -17,6 +17,7 @@ let
     "gui"
     "hyprland"
     "keyd"
+    "lutris"
     "mounts"
     "mpv"
     "obs"
