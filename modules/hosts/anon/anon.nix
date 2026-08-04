@@ -15,6 +15,7 @@ let
     "gpu-nvidia"
     "gui"
     "hyprland"
+    "lutris"
     "mounts"
     "mpv"
     "obs"
