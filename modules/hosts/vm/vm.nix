@@ -11,7 +11,6 @@ let
     "development"
     "podman"
     "proxy"
-    "proxychains"
     "system-default"
     "ucodenix"
     "user-mbwilding"

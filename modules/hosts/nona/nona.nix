@@ -24,7 +24,6 @@ let
     "podman"
     "printing"
     "proxy"
-    "proxychains"
     "qemu"
     "steam"
     "swap"

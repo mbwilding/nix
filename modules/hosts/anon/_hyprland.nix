@@ -5,14 +5,16 @@
     settings = {
       config = {
         render = {
-          cm_auto_hdr = 1; # NOTE: Try 2 again?
+          # 1: fullscreen windows
+          # 2: fullscreen and maximised/tiled windows
+          cm_auto_hdr = 1;
         };
       };
 
       monitor = lib.mkAfter [
         {
           output = "desc:LG Electronics LG TV SSCR2 0x01010101";
-          mode = "3840x2160@143.99"; # 119.88
+          mode = "3840x2160@143.99";
           position = "0x0";
           scale = 1.0;
           transform = 0;
@@ -20,7 +22,8 @@
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
-          cm = "wide"; # hdr, hdredid
+          # TODO: Enable?
+          # cm = "wide"; # hdr, hdredid
           sdrbrightness = 1.0;
           sdrsaturation = 1.0;
           sdr_min_luminance = 0.005;
