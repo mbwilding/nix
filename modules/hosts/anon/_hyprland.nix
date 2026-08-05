@@ -7,7 +7,7 @@
         render = {
           # 1: fullscreen windows
           # 2: fullscreen and maximised/tiled windows
-          cm_auto_hdr = 2;
+          cm_auto_hdr = 1;
         };
       };
 
