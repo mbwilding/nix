@@ -35,6 +35,9 @@ in
   # Cargo
   cargoToken = read "cargo";
 
+  # Artifactory
+  artifactory = read "artifactory";
+
   # API keys
   anthropicKey = read "anthropic";
   atlassianKey = read "atlassian";

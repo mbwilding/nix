@@ -31,7 +31,6 @@
         };
 
         shellAliases = {
-          ${secrets.workName} = "proxychains4 -q -f ~/.config/proxychains/proxychains.conf";
           awsl = "aws sso login --sso-session ${secrets.workName}";
           azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
           battery = "cat /sys/class/power_supply/BAT1/capacity";

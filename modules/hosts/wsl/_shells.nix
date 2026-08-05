@@ -4,6 +4,8 @@
   # Disable dconf on WSL (no D-Bus / GNOME session)
   dconf.enable = false;
 
+  programs.fish.enable = true;
+
   programs.fish.interactiveShellInit = ''
     # Windows paths (WSL)
     set -Ux fish_user_paths \
