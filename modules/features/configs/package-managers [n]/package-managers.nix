@@ -12,7 +12,7 @@
             <packageSources>
               <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
               <!-- <add key="github" value="https://nuget.pkg.github.com/${secrets.workName}/index.json" /> -->
-              <add key="artifactory" value="https://artifactory.internal.${secrets.workName}.delivery/artifactory/api/nuget/v3/nuget-github/index.json" />
+              <add key="artifactory" value="https://artifactory.internal.${secrets.workName}.delivery/artifactory/api/nuget/v3/nuget-all/index.json" />
             </packageSources>
             <packageSourceCredentials>
               <github>
