@@ -31,6 +31,8 @@ in
       programs.zsh.enable = false;
       system.stateVersion = stateVersion;
 
+      nixpkgs.config.allowUnfree = true;
+
       wsl = {
         defaultUser = "mbwilding";
         enable = true;
