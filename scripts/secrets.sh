@@ -8,6 +8,7 @@ echo
 secrets=(
   "AWS|json|$HOME/.secrets/aws.json"
   "Anthropic|credential|$HOME/.secrets/anthropic"
+  "Artifactory|credential|$HOME/.secrets/artifactory"
   "Atlassian|credential|$HOME/.secrets/atlassian"
   "Atlassian|rovo|$HOME/.secrets/atlassian-rovo"
   "Cargo|credential|$HOME/.secrets/cargo"

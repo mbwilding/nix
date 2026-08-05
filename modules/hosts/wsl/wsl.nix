@@ -27,6 +27,7 @@ in
 
       home-manager.users.mbwilding.home.stateVersion = stateVersion;
       networking.hostName = hostName;
+      programs.fish.enable = true;
       programs.zsh.enable = false;
       system.stateVersion = stateVersion;
 

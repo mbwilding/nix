@@ -74,6 +74,7 @@
             home-manager
             hostname
             imagemagick
+            jfrog-cli
             jq
             killall
             kubectl
