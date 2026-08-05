@@ -64,6 +64,7 @@
             cifs-utils
             curl
             dapr-cli
+            dig
             exiftool
             eza
             fd
