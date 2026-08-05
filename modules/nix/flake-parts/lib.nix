@@ -98,7 +98,12 @@
 
       mkHomeManager = system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.self.lib.overlays.hyprlandGlaze
+            ];
+          };
           modules = [
             inputs.self.modules.homeManager.${user}
             (

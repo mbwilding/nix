@@ -18,10 +18,11 @@
           CARGO_REGISTRY_TOKEN = secrets.cargoToken;
           DEEPSEEK_API_KEY = secrets.deepSeekKey;
           ELEVENLABS_API_KEY = secrets.elevenLabsKey;
-          # GITHUB_TOKEN = secrets.githubWorkToken;
+          # TODO: Set to personal token
+          GITHUB_TOKEN = secrets.githubWorkToken;
           GITHUB_TOKEN_PERSONAL = secrets.githubPersonalToken;
           GITHUB_TOKEN_WORK = secrets.githubWorkToken;
-          # TODO: add secrets.gitlabPersonalToken ("gitlab-personal") and point GITLAB_TOKEN to it
+          # TODO: Set to personal token
           GITLAB_TOKEN = secrets.gitlabWorkToken;
           GITLAB_TOKEN_WORK = secrets.gitlabWorkToken;
           OPENAI_API_KEY = secrets.openAiKey;

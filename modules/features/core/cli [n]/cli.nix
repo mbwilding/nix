@@ -15,6 +15,7 @@
       fzf
       gh
       git
+      jfrog
       k9s
       lazygit
       lazysql
