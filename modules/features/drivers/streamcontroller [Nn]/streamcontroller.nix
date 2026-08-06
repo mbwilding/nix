@@ -293,27 +293,7 @@
                           }
                       }
                   },
-                  "2x0": {
-                      "states": {
-                          "0": {
-                              "actions": [
-                                  {
-                                      "id": "steam::ChangeStatus",
-                                      "settings": {
-                                          "committed_status": "invisible"
-                                      }
-                                  }
-                              ],
-                              "image-control-action": 0,
-                              "label-control-actions": [
-                                  0,
-                                  0,
-                                  0
-                              ],
-                              "background-control-action": 0
-                          }
-                      }
-                  },
+                  "2x0": {},
                   "0x2": {
                       "states": {
                           "0": {
