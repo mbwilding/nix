@@ -298,7 +298,7 @@
             "new-window" = "Meta+T";
           };
 
-          "firefox.desktop" = {
+          "google-chrome.desktop" = {
             "new-window" = "Meta+B";
             "new-private-window" = [ ];
           };
