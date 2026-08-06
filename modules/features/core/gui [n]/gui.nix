@@ -3,9 +3,9 @@
 {
   flake.modules.homeManager.gui = {
     imports = with inputs.self.modules.homeManager; [
+      chrome
       discord
       dolphin
-      firefox
       jetbrains
       kitty
       obs
