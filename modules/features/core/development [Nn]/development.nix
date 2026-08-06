@@ -175,6 +175,7 @@
       vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
       vscode-langservers-extracted = pkgs.callPackage ./_vscode-langservers-extracted.nix { };
       gh-actions-language-server = pkgs.callPackage ./_gh-actions-language-server.nix { };
+      cfn-lint = pkgs.callPackage ./_cfn-lint.nix { };
     in
     {
       home = {
@@ -249,7 +250,7 @@
           clippy # rust
           eslint_d # js / ts
           markdownlint-cli2 # markdown
-          python313Packages.cfn-lint # python
+          cfn-lint # python
           ruff # python
           yamllint # yaml
 
