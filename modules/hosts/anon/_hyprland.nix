@@ -16,7 +16,7 @@
           supports_hdr = 1;
           cm = "hdredid"; # wide, hdr, hdredid
           sdrbrightness = 1.0;
-          sdrsaturation = 0.87;
+          sdrsaturation = 0.82;
           sdr_min_luminance = 0.005;
           sdr_max_luminance = 350;
           min_luminance = 0;
