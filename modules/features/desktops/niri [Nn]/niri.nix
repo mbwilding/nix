@@ -53,6 +53,7 @@
     let
       screenshotDir = "${import ../../../nix/_home.nix}/Pictures/Screenshots";
       mod = "Mod";
+      terminal = "kitty";
     in
     {
       imports = [
@@ -110,7 +111,9 @@
           border.enable = false;
           focus-ring.enable = false;
           shadow.enable = false;
-          default-column-width = { proportion = 0.5; };
+          default-column-width = {
+            proportion = 0.5;
+          };
 
           struts = {
             left = 0;
@@ -147,149 +150,155 @@
         outputs = { };
         workspaces = { };
 
-        binds =
-          {
-            # Applications
-            "${mod}+B".action.spawn = [ "google-chrome" ];
-            "${mod}+C".action.spawn = [
-              "ghostty"
-              "-e"
-              "btop"
+        binds = {
+          # Applications
+          "${mod}+B".action.spawn = [ "google-chrome" ];
+          "${mod}+C".action.spawn = [
+            terminal
+            "-e"
+            "btop"
+          ];
+          "${mod}+D".action.spawn = [ "vesktop" ];
+          "${mod}+E".action.spawn = [
+            "thunar"
+          ];
+          "${mod}+M".action.spawn = [ "teams-for-linux" ];
+          "${mod}+P".action.spawn = [ "1password" ];
+          "${mod}+R".action.spawn = [
+            "noctalia"
+            "msg"
+            "panel-toggle"
+            "launcher"
+          ];
+          "${mod}+S".action.spawn = [ "spotify" ];
+          "${mod}+T".action.spawn = [ terminal ];
+          "${mod}+Y".action.spawn = [
+            terminal
+            "-e"
+            "yazi"
+          ];
+          "${mod}+Z".action.spawn = [
+            "noctalia"
+            "msg"
+            "session"
+            "lock"
+          ];
+          "${mod}+G".action.spawn = [
+            "systemd-run"
+            "--user"
+            "--scope"
+            "steam"
+            "-beta"
+            "publicbeta"
+          ];
+          "${mod}+Comma".action.spawn = [
+            "noctalia"
+            "msg"
+            "settings-toggle"
+          ];
+          "${mod}+Minus".action.spawn = [
+            "sh"
+            "-c"
+            "ecc toggle"
+          ];
+
+          # Window management
+          "${mod}+F".action.toggle-window-floating = { };
+          "${mod}+O".action.maximize-column = { };
+          "${mod}+Q".action.close-window = { };
+          "${mod}+grave".action.quit.skip-confirmation = true;
+
+          # Screenshots
+          "${mod}+Semicolon".action.screenshot-window = { };
+          "${mod}+Apostrophe".action.screenshot = { };
+          "Print".action.screenshot-screen = { };
+
+          # Focus (vim hjkl)
+          "${mod}+H".action.focus-column-left = { };
+          "${mod}+L".action.focus-column-right = { };
+          "${mod}+K".action.focus-window-up = { };
+          "${mod}+J".action.focus-window-down = { };
+
+          # Move windows
+          "${mod}+Shift+H".action.move-column-left = { };
+          "${mod}+Shift+L".action.move-column-right = { };
+          "${mod}+Shift+K".action.move-window-up = { };
+          "${mod}+Shift+J".action.move-window-down = { };
+
+          # Workspaces (Dvorak home row: h=1 t=2 n=3 s=4 minus=5)
+          "${mod}+Ctrl+H".action.focus-workspace = 1;
+          "${mod}+Ctrl+T".action.focus-workspace = 2;
+          "${mod}+Ctrl+N".action.focus-workspace = 3;
+          "${mod}+Ctrl+S".action.focus-workspace = 4;
+          "${mod}+Ctrl+Minus".action.focus-workspace = 5;
+          "${mod}+Ctrl+Shift+H".action.move-window-to-workspace = 1;
+          "${mod}+Ctrl+Shift+T".action.move-window-to-workspace = 2;
+          "${mod}+Ctrl+Shift+N".action.move-window-to-workspace = 3;
+          "${mod}+Ctrl+Shift+S".action.move-window-to-workspace = 4;
+          "${mod}+Ctrl+Shift+Minus".action.move-window-to-workspace = 5;
+          "${mod}+6".action.focus-workspace = "social";
+          "${mod}+7".action.focus-workspace = "spare";
+          "${mod}+Shift+6".action.move-window-to-workspace = "social";
+          "${mod}+Shift+7".action.move-window-to-workspace = "spare";
+
+          # Column sizing
+          "${mod}+I".action.set-column-width = "+5%";
+          "${mod}+Shift+I".action.set-column-width = "-5%";
+
+          # Media keys
+          "XF86AudioMute" = {
+            action.spawn = [
+              "pactl"
+              "set-sink-mute"
+              "@DEFAULT_SINK@"
+              "toggle"
             ];
-            "${mod}+D".action.spawn = [ "vesktop" ];
-            "${mod}+E".action.spawn = [
-              "ghostty"
-              "-e"
-              "yazi"
-            ];
-            "${mod}+M".action.spawn = [ "teams-for-linux" ];
-            "${mod}+P".action.spawn = [ "1password" ];
-            "${mod}+R".action.spawn = [
-              "noctalia"
-              "msg"
-              "panel-toggle"
-              "launcher"
-            ];
-            "${mod}+S".action.spawn = [ "spotify" ];
-            "${mod}+T".action.spawn = [ "ghostty" ];
-            "${mod}+Z".action.spawn = [
-              "noctalia"
-              "msg"
-              "session"
-              "lock"
-            ];
-            "${mod}+G".action.spawn = [
-              "systemd-run"
-              "--user"
-              "--scope"
-              "steam"
-              "-beta"
-              "publicbeta"
-            ];
-            "${mod}+Comma".action.spawn = [
-              "noctalia"
-              "msg"
-              "settings-toggle"
-            ];
-            "${mod}+Minus".action.spawn = [ "sh" "-c" "ecc toggle" ];
-
-            # Window management
-            "${mod}+F".action.toggle-window-floating = { };
-            "${mod}+O".action.maximize-column = { };
-            "${mod}+Q".action.close-window = { };
-            "${mod}+grave".action.quit.skip-confirmation = true;
-
-            # Screenshots
-            "${mod}+Semicolon".action.screenshot-window = { };
-            "${mod}+Apostrophe".action.screenshot = { };
-            "Print".action.screenshot-screen = { };
-
-            # Focus (vim hjkl)
-            "${mod}+H".action.focus-column-left = { };
-            "${mod}+L".action.focus-column-right = { };
-            "${mod}+K".action.focus-window-up = { };
-            "${mod}+J".action.focus-window-down = { };
-
-            # Move windows
-            "${mod}+Shift+H".action.move-column-left = { };
-            "${mod}+Shift+L".action.move-column-right = { };
-            "${mod}+Shift+K".action.move-window-up = { };
-            "${mod}+Shift+J".action.move-window-down = { };
-
-            # Workspaces (Dvorak home row: h=1 t=2 n=3 s=4 minus=5)
-            "${mod}+Ctrl+H".action.focus-workspace = 1;
-            "${mod}+Ctrl+T".action.focus-workspace = 2;
-            "${mod}+Ctrl+N".action.focus-workspace = 3;
-            "${mod}+Ctrl+S".action.focus-workspace = 4;
-            "${mod}+Ctrl+Minus".action.focus-workspace = 5;
-            "${mod}+Ctrl+Shift+H".action.move-window-to-workspace = 1;
-            "${mod}+Ctrl+Shift+T".action.move-window-to-workspace = 2;
-            "${mod}+Ctrl+Shift+N".action.move-window-to-workspace = 3;
-            "${mod}+Ctrl+Shift+S".action.move-window-to-workspace = 4;
-            "${mod}+Ctrl+Shift+Minus".action.move-window-to-workspace = 5;
-            "${mod}+6".action.focus-workspace = "social";
-            "${mod}+7".action.focus-workspace = "spare";
-            "${mod}+Shift+6".action.move-window-to-workspace = "social";
-            "${mod}+Shift+7".action.move-window-to-workspace = "spare";
-
-            # Column sizing
-            "${mod}+I".action.set-column-width = "+5%";
-            "${mod}+Shift+I".action.set-column-width = "-5%";
-
-            # Media keys
-            "XF86AudioMute" = {
-              action.spawn = [
-                "pactl"
-                "set-sink-mute"
-                "@DEFAULT_SINK@"
-                "toggle"
-              ];
-              allow-when-locked = true;
-            };
-            "XF86AudioMicMute" = {
-              action.spawn = [
-                "pactl"
-                "set-source-mute"
-                "@DEFAULT_SOURCE@"
-                "toggle"
-              ];
-              allow-when-locked = true;
-            };
-            "XF86AudioLowerVolume" = {
-              action.spawn = [
-                "pactl"
-                "set-sink-volume"
-                "@DEFAULT_SINK@"
-                "-5%"
-              ];
-              repeat = true;
-            };
-            "XF86AudioRaiseVolume" = {
-              action.spawn = [
-                "pactl"
-                "set-sink-volume"
-                "@DEFAULT_SINK@"
-                "+5%"
-              ];
-              repeat = true;
-            };
-            "XF86MonBrightnessDown" = {
-              action.spawn = [
-                "brightnessctl"
-                "set"
-                "5%-"
-              ];
-              repeat = true;
-            };
-            "XF86MonBrightnessUp" = {
-              action.spawn = [
-                "brightnessctl"
-                "set"
-                "+5%"
-              ];
-              repeat = true;
-            };
+            allow-when-locked = true;
           };
+          "XF86AudioMicMute" = {
+            action.spawn = [
+              "pactl"
+              "set-source-mute"
+              "@DEFAULT_SOURCE@"
+              "toggle"
+            ];
+            allow-when-locked = true;
+          };
+          "XF86AudioLowerVolume" = {
+            action.spawn = [
+              "pactl"
+              "set-sink-volume"
+              "@DEFAULT_SINK@"
+              "-5%"
+            ];
+            repeat = true;
+          };
+          "XF86AudioRaiseVolume" = {
+            action.spawn = [
+              "pactl"
+              "set-sink-volume"
+              "@DEFAULT_SINK@"
+              "+5%"
+            ];
+            repeat = true;
+          };
+          "XF86MonBrightnessDown" = {
+            action.spawn = [
+              "brightnessctl"
+              "set"
+              "5%-"
+            ];
+            repeat = true;
+          };
+          "XF86MonBrightnessUp" = {
+            action.spawn = [
+              "brightnessctl"
+              "set"
+              "+5%"
+            ];
+            repeat = true;
+          };
+        };
 
         switch-events = {
           lid-close.action.spawn = [

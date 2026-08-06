@@ -73,9 +73,6 @@
 
         services = {
           gnome.gnome-keyring.enable = true;
-          # Registers tumbler as a proper D-Bus service so Thunar's thumbnail
-          # requests are handled reliably instead of a one-off in-process
-          # preview that flashes and reverts to a generic icon.
           tumbler.enable = true;
         };
 
@@ -452,6 +449,12 @@
             {
               _args = [
                 (lua "mod .. \" + e\"")
+                (lua ''hl.dsp.exec_cmd("thunar")'')
+              ];
+            }
+            {
+              _args = [
+                (lua "mod .. \" + y\"")
                 (lua ''hl.dsp.exec_cmd("${terminal} -e yazi")'')
               ];
             }
