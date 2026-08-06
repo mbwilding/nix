@@ -3,14 +3,6 @@
 {
   wayland.windowManager.hyprland = {
     settings = {
-      config = {
-        render = {
-          # 1: fullscreen windows
-          # 2: fullscreen and maximised/tiled windows
-          cm_auto_hdr = 2;
-        };
-      };
-
       monitor = lib.mkAfter [
         {
           output = "desc:LG Electronics LG TV SSCR2 0x01010101";
@@ -22,11 +14,11 @@
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
-          cm = "wide"; # hdr, hdredid
+          cm = "hdredid"; # wide, hdr, hdredid
           sdrbrightness = 1.0;
           sdrsaturation = 1.0;
           sdr_min_luminance = 0.005;
-          sdr_max_luminance = 380;
+          sdr_max_luminance = 350;
           min_luminance = 0;
           max_luminance = 1200;
           max_avg_luminance = 400;
