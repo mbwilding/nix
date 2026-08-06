@@ -15,6 +15,10 @@
               Value = false;
               Status = "locked";
             };
+            "gfx.wayland.hdr" = {
+              Value = true;
+              Status = "default";
+            };
           };
         };
       };
