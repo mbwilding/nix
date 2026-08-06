@@ -45,6 +45,7 @@ let
     }
 
     ./_hyprland.nix
+    ./_kitty.nix
 
     (
       { pkgs, ... }:
