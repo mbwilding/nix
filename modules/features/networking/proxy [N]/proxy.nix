@@ -7,10 +7,14 @@
   # - NetworkManager's own dnsmasq (networking.networkmanager.dns) answers
   #   only the work domains below with a static placeholder IP; every other
   #   domain still forwards to the real upstream exactly as before.
-  # - An nftables rule redirects local TCP:443 traffic to that placeholder IP
+  # - An nftables rule redirects all local TCP traffic to that placeholder IP
   #   into sing-box's "redirect" inbound.
-  # - sing-box sniffs the real hostname from the TLS SNI and dials it via the
-  #   ssh outbound, which resolves it on surface's side.
+  # - sing-box sniffs the real hostname from the TLS SNI or HTTP Host header
+  #   and dials it via the ssh outbound, which resolves it on surface's side.
+  #
+  # This only works for protocols that carry a hostname on the wire (TLS,
+  # HTTP/SOAP-over-HTTP(S)). A protocol without one can't be routed here,
+  # since every matching subdomain shares the one placeholder IP.
   #
   # Everything else on the system (LAN, general internet, DNS) is untouched.
   flake.modules.nixos.proxy =
@@ -51,7 +55,7 @@
           content = ''
             chain output {
               type nat hook output priority -100;
-              ip daddr ${proxyIp} tcp dport 443 redirect to :${toString proxyPort}
+              ip daddr ${proxyIp} meta l4proto tcp redirect to :${toString proxyPort}
             }
           '';
         };
