@@ -73,7 +73,7 @@
             };
           }
         )
-        # NOTE: Left this as nixlang to make it easy to paste in updates
+        # NOTE: Left this as json to make it easy to paste in updates
         + copyOnce "streamcontroller-main-page" "${dataDir}/pages/Main.json" ''
           {
               "keys": {
