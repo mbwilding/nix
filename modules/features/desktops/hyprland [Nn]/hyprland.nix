@@ -398,7 +398,7 @@
             {
               _args = [
                 (lua "mod .. \" + b\"")
-                (lua ''hl.dsp.exec_cmd("firefox")'')
+                (lua ''hl.dsp.exec_cmd("google-chrome")'')
               ];
             }
             {
