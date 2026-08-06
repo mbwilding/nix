@@ -5,7 +5,6 @@
     imports = with inputs.self.modules.homeManager; [
       chrome
       discord
-      dolphin
       jetbrains
       kitty
       obs
@@ -14,6 +13,7 @@
       power-platform-toolbox
       reaper
       teams
+      thunar
       wine
       yabridge
     ];
