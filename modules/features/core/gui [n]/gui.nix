@@ -3,7 +3,6 @@
 {
   flake.modules.homeManager.gui = {
     imports = with inputs.self.modules.homeManager; [
-      chrome
       discord
       dolphin
       jetbrains
@@ -41,6 +40,7 @@
             _1password-gui
             bolt-launcher
             cameractrls-gtk4
+            firefox
             imhex
             imv
             keymapp
