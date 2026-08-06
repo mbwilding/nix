@@ -77,9 +77,10 @@
           };
 
           theme = {
-            source = "community";
             builtin = "Tokyo-Night";
-            community_palette = "Breeze";
+            community_palette = "GitHub Dark";
+            mode = "dark";
+            source = "community";
             templates = {
               enable_builtin_templates = false;
               enable_community_templates = false;
