@@ -29,6 +29,7 @@ secrets=(
   "OpenAI|credential|$HOME/.secrets/openai"
   "Password|credential|$HOME/.secrets/password"
   "Pulumi|credential|$HOME/.secrets/pulumi"
+  "Reaper|reaper-license.rk|$HOME/.config/REAPER/reaper-license.rk"
   "Steam|credential|$HOME/.secrets/steam"
   "Voip|password|$HOME/.secrets/voip-password"
   "Voip|username|$HOME/.secrets/voip-username"
