@@ -5,6 +5,7 @@
     imports = with inputs.self.modules.homeManager; [
       discord
       dolphin
+      firefox
       jetbrains
       kitty
       obs
@@ -40,7 +41,6 @@
             _1password-gui
             bolt-launcher
             cameractrls-gtk4
-            firefox
             imhex
             imv
             keymapp
