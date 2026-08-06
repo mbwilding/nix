@@ -10,14 +10,24 @@
 
     let
       configDir = "$HOME/.config/REAPER";
-      configFiles = [
-        "reaper.ini"
-        "reaper-mouse.ini"
-        "reaper-themeconfig.ini"
-        "reaper-midihw-alsa.ini"
-        "reaper-midihw-linux.ini"
-        "reaper-fxtags.ini"
-      ];
+      walk =
+        relDir: dir:
+        let
+          entries = builtins.readDir dir;
+        in
+        lib.concatMap (
+          name:
+          let
+            relPath = if relDir == "" then name else "${relDir}/${name}";
+          in
+          if name == ".gitignore" then
+            [ ]
+          else if entries.${name} == "directory" then
+            walk relPath (dir + "/${name}")
+          else
+            [ relPath ]
+        ) (builtins.attrNames entries);
+      configFiles = walk "" ./config;
     in
     {
       home = {
@@ -28,17 +38,14 @@
         ];
       };
 
-      # REAPER rewrites its own config files at runtime (window state, recent
-      # projects, plugin scans, colour tweaks, etc), so these are seeded once
-      # as writable copies rather than symlinked from the nix store.
       home.activation.reaperInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "${configDir}/Audio"
+        mkdir -p "${configDir}"
 
         ${lib.concatMapStringsSep "\n" (name: ''
           if [ ! -f "${configDir}/${name}" ]; then
-            $DRY_RUN_CMD mkdir -p "${configDir}"
-            $DRY_RUN_CMD cp ${./config + "/${name}"} "${configDir}/${name}"
-            $DRY_RUN_CMD chmod 644 "${configDir}/${name}"
+            mkdir -p "$(dirname "${configDir}/${name}")"
+            cp "${./config}/${name}" "${configDir}/${name}"
+            chmod 644 "${configDir}/${name}"
           fi
         '') configFiles}
       '';
