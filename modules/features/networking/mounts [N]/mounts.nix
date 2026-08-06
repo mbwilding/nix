@@ -52,8 +52,20 @@
           ];
         };
 
-        "/mnt/applications" = {
-          device = "192.168.11.10:/mnt/main/Applications";
+        "/mnt/mbwilding-old" = {
+          device = "192.168.11.10:/mnt/main/Applications/Nextcloud/UserDataOld/mbwilding/files";
+          fsType = "nfs";
+          options = [
+            "nofail"
+            "_netdev"
+            "x-systemd.automount"
+            "x-systemd.device-timeout=10"
+            "x-systemd.mount-timeout=10"
+          ];
+        };
+
+        "/mnt/bo" = {
+          device = "192.168.11.10:/mnt/main/Applications/Nextcloud/UserDataOld/bo/files/Bo";
           fsType = "nfs";
           options = [
             "nofail"
