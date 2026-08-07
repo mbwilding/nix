@@ -38,6 +38,7 @@
             powerplatform-toolbox
 
             # Packages
+            # prismlauncher # Minecraft
             _1password-gui
             bolt-launcher
             cameractrls-gtk4
@@ -46,7 +47,6 @@
             keymapp
             pavucontrol
             postman
-            prismlauncher
             qbittorrent
             spotify
             tigervnc
