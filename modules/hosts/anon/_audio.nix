@@ -1,6 +1,17 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
+  # Re-apply interface state after waking from sleep
+  hardware.alsa.enablePersistence = true;
+  powerManagement = {
+    powerDownCommands = ''
+      ${pkgs.alsa-utils}/bin/alsactl store
+    '';
+    resumeCommands = ''
+      ${pkgs.alsa-utils}/bin/alsactl restore
+    '';
+  };
+
   services = {
     pipewire = {
       enable = true;
