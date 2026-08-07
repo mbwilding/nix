@@ -44,6 +44,7 @@
             cameractrls-gtk4
             imhex
             imv
+            kdePackages.ark
             keymapp
             pavucontrol
             postman
