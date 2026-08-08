@@ -3,9 +3,7 @@
 {
   flake.modules.homeManager.git =
     {
-      secrets,
       config,
-      lib,
       pkgs,
       ...
     }:
@@ -87,34 +85,6 @@
             difftool.prompt = false;
             merge.tool = "vscode-diff";
             "mergetool \"vscode-diff\"".cmd = "nvim \"$MERGED\" -c 'CodeDiff merge \"$MERGED\"'";
-            url = {
-              "git@${secrets.workName}.github.com:${secrets.workName}/" = {
-                insteadOf = "git@github.com:${secrets.workName}/";
-              };
-              "git@${secrets.workName}.github.com:${secrets.workName}-shared-platform/" = {
-                insteadOf = "git@github.com:${secrets.workName}-shared-platform/";
-              };
-              "git@${secrets.workName}.gitlab.com:${secrets.workName}/" = {
-                insteadOf = "git@gitlab.com:${secrets.workName}/";
-              };
-            };
-            includeIf = {
-              "gitdir:**" = {
-                path = "~/.config/git/config-personal";
-              };
-              "hasconfig:remote.*.url:git@github.com:${secrets.workName}/**" = {
-                path = "~/.config/git/config-work-long";
-              };
-              "hasconfig:remote.*.url:git@github.com:${secrets.workName}-shared-platform/**" = {
-                path = "~/.config/git/config-work-long";
-              };
-              "hasconfig:remote.*.url:git@ssh.dev.azure.com:v*/${lib.toUpper secrets.workName}/**" = {
-                path = "~/.config/git/config-work-long";
-              };
-              "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
-                path = "~/.config/git/config-work-short";
-              };
-            };
           };
         };
       };
@@ -123,32 +93,6 @@
         packages = with pkgs; [
           delta
         ];
-
-        file.".config/git/config-personal".text = ''
-          [user]
-              name = Matthew Wilding
-              email = mbwilding@gmail.com
-              signingkey = ~/.ssh/personal.pub
-        '';
-
-        file.".config/git/config-work-short".text = ''
-          [user]
-              name = Matt Wilding
-              email = ${secrets.workEmailId}
-              signingkey = ~/.ssh/work.pub
-        '';
-
-        file.".config/git/config-work-long".text = ''
-          [user]
-              name = Matt Wilding
-              email = ${secrets.workEmailName}
-              signingkey = ~/.ssh/work.pub
-        '';
-
-        file.".config/git/allowed_signers".text = ''
-          mbwilding@gmail.com ${secrets.personalPublicKey}
-          ${secrets.workEmailName} ${secrets.workPublicKey}
-        '';
       };
     };
 }
