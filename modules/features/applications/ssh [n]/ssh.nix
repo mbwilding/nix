@@ -34,11 +34,6 @@
 
             lxc = personal // { };
 
-            phone = personal // {
-              Port = 8022;
-              User = "nix-on-droid";
-            };
-
             surface = personal // {
               TCPKeepAlive = "yes";
               ServerAliveCountMax = 10;

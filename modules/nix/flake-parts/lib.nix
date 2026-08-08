@@ -15,11 +15,6 @@
     default = { };
   };
 
-  options.flake.nixOnDroidConfigurations = lib.mkOption {
-    type = lib.types.attrsOf lib.types.unspecified;
-    default = { };
-  };
-
   config.flake.lib =
     let
       user = "mbwilding";
@@ -127,22 +122,6 @@
             )
           ]
           ++ extraModules;
-        };
-      };
-
-      mkNixOnDroid = name: {
-        ${name} = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-          pkgs = import inputs.nixpkgs-droid { system = "aarch64-linux"; };
-          modules = [
-            inputs.self.modules.nixOnDroid.${name}
-            {
-              nix.extraOptions = ''
-                extra-substituters = ${builtins.concatStringsSep " " sharedNixSettings.extra-substituters}
-                extra-trusted-public-keys = ${builtins.concatStringsSep " " sharedNixSettings.extra-trusted-public-keys}
-              '';
-            }
-          ];
-          extraSpecialArgs = { inherit inputs; };
         };
       };
     };

@@ -39,9 +39,6 @@ return {
                                 expr = '(builtins.getFlake (builtins.toString ./.)).homeConfigurations.' ..
                                 hostname .. '.options',
                             },
-                            ["nix-on-droid"] = {
-                                expr = '(builtins.getFlake (builtins.toString ./.)).nixOnDroidConfigurations.droid.options',
-                            },
                         },
                     },
                 },
