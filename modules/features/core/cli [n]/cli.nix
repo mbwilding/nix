@@ -23,7 +23,6 @@
       package-managers
       packages-cli
       shells
-      ssh
       yazi
       zellij
       zoxide

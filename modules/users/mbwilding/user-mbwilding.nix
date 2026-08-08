@@ -54,6 +54,8 @@ in
       imports = [
         inputs.self.modules.homeManager.cli
         ./_aws.nix
+        ./_git.nix
+        ./_ssh.nix
       ];
 
       news.display = "silent";
