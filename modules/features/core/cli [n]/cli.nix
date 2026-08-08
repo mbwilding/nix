@@ -14,13 +14,10 @@
       fzf
       gh
       git
-      jfrog
-      k9s
       lazygit
       lazysql
       neovim
       opencode
-      package-managers
       packages-cli
       shells
       yazi
@@ -73,7 +70,6 @@
             home-manager
             hostname
             imagemagick
-            jfrog-cli
             jq
             killall
             kubectl
