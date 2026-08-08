@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-search_dir="$root/modules/features"
+search_dir="$root/modules"
 
 for bin in curl jq nix; do
   command -v "$bin" >/dev/null || {
