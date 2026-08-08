@@ -21,20 +21,20 @@
             permissions = {
               defaultMode = "auto";
             };
-            enabledPlugins = {
-              "clangd-lsp@claude-plugins-official" = true;
-              "csharp-lsp@claude-plugins-official" = true;
-              "gopls-lsp@claude-plugins-official" = true;
-              "jdtls-lsp@claude-plugins-official" = true;
-              "kotlin-lsp@claude-plugins-official" = false;
-              "lua-lsp@claude-plugins-official" = true;
-              "php-lsp@claude-plugins-official" = false;
-              "pyright-lsp@claude-plugins-official" = true;
-              "ruby-lsp@claude-plugins-official" = false;
-              "rust-analyzer-lsp@claude-plugins-official" = true;
-              "swift-lsp@claude-plugins-official" = false;
-              "typescript-lsp@claude-plugins-official" = true;
-            };
+            # enabledPlugins = {
+            #   "clangd-lsp@claude-plugins-official" = false;
+            #   "csharp-lsp@claude-plugins-official" = true;
+            #   "gopls-lsp@claude-plugins-official" = false;
+            #   "jdtls-lsp@claude-plugins-official" = false;
+            #   "kotlin-lsp@claude-plugins-official" = false;
+            #   "lua-lsp@claude-plugins-official" = true;
+            #   "php-lsp@claude-plugins-official" = false;
+            #   "pyright-lsp@claude-plugins-official" = true;
+            #   "ruby-lsp@claude-plugins-official" = false;
+            #   "rust-analyzer-lsp@claude-plugins-official" = true;
+            #   "swift-lsp@claude-plugins-official" = false;
+            #   "typescript-lsp@claude-plugins-official" = true;
+            # };
           };
           mcpServers = {
             github = {
