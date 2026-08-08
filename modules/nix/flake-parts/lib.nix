@@ -109,7 +109,7 @@
 
                 nixpkgs.config.allowUnfree = true;
                 _module.args.secrets = secrets;
-                _module.args.secretsProfile = "personal";
+                _module.args.work = false;
                 _module.args.pkgsMaster = import inputs.nixpkgs-master {
                   inherit system;
                   config.allowUnfree = true;
