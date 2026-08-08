@@ -19,12 +19,6 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
-    nix-on-droid = {
-      url = "github:nix-community/nix-on-droid/testing";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
