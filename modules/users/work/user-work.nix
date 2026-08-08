@@ -92,16 +92,18 @@ in
         ];
 
         sessionVariables = {
-          XDG_CONFIG_HOME = lib.mkForce "$HOME/.config";
-          MANPAGER = "nvim +Man!";
-          MANWIDTH = "999";
-          RUST_LOG = "info";
+          GITHUB_TOKEN = secrets.githubWorkToken;
+          GITLAB_TOKEN = secrets.gitlabWorkToken;
+          PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
           PULUMI_CONFIG_PASSPHRASE = "";
-          NIXOS_OZONE_WL = "1";
+        };
+
+        shellAliases = {
+          awsl = "aws sso login --sso-session ${secrets.workName}";
+          azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
         };
 
         file = {
-          ".hushlogin".text = "";
           ".copilot/mcp-config.json".text = builtins.toJSON {
             mcpServers = mcpServers;
           };

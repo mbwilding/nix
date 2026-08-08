@@ -3,6 +3,7 @@
 {
   flake.modules.homeManager.shells =
     {
+      lib,
       secrets,
       config,
       pkgs,
@@ -12,35 +13,23 @@
       home = {
         sessionPath = [ "$HOME/.cargo/bin" ];
 
+        file = {
+          ".hushlogin".text = "";
+        };
+
         sessionVariables = {
-          ANTHROPIC_API_KEY = secrets.anthropicKey;
-          ATLASSIAN_API_TOKEN = secrets.atlassianKey;
-          CARGO_REGISTRY_TOKEN = secrets.cargoToken;
-          DEEPSEEK_API_KEY = secrets.deepSeekKey;
-          ELEVENLABS_API_KEY = secrets.elevenLabsKey;
-          # TODO: Set to personal token
-          GITHUB_TOKEN = secrets.githubWorkToken;
-          GITHUB_TOKEN_PERSONAL = secrets.githubPersonalToken;
-          GITHUB_TOKEN_WORK = secrets.githubWorkToken;
-          # TODO: Set to personal token
-          GITLAB_TOKEN = secrets.gitlabWorkToken;
-          GITLAB_TOKEN_WORK = secrets.gitlabWorkToken;
-          OPENAI_API_KEY = secrets.openAiKey;
-          PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
-          STEAM_API_KEY = secrets.steamToken;
-          WEATHER_API_TOKEN = secrets.weatherKey;
+          XDG_CONFIG_HOME = lib.mkForce "$HOME/.config";
+          MANPAGER = "nvim +Man!";
+          MANWIDTH = "999";
+          RUST_LOG = "info";
         };
 
         shellAliases = {
-          awsl = "aws sso login --sso-session ${secrets.workName}";
-          azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
           battery = "cat /sys/class/power_supply/BAT1/capacity";
           bios = "systemctl reboot --firmware-setup";
           c = "clear";
           dn = "nvim /mnt/mbwilding/Documents/DailyNotes.md";
           g = "git";
-          ghp = "set -x GITHUB_TOKEN $GITHUB_TOKEN_PERSONAL";
-          ghw = "set -x GITHUB_TOKEN $GITHUB_TOKEN_WORK";
           grep = "grep --color";
           hm-build = "home-manager build --no-out-link -b backup --impure --flake ~/nix#(hostname)";
           hm-build-link = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
@@ -58,7 +47,6 @@
           nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
           nix-update = "nix flake update --flake ~/nix";
           nmr = "nmcli radio wifi off && nmcli radio wifi on";
-          oc = "opencode";
           power-b = "powerprofilesctl set balanced";
           power-p = "powerprofilesctl set performance";
           power-s = "powerprofilesctl set power-saver";

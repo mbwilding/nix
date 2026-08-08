@@ -73,15 +73,17 @@ in
         homeDirectory = "/home/${user}";
 
         sessionVariables = {
-          XDG_CONFIG_HOME = lib.mkForce "$HOME/.config";
-          MANPAGER = "nvim +Man!";
-          MANWIDTH = "999";
-          RUST_LOG = "info";
-          PULUMI_CONFIG_PASSPHRASE = "";
-          NIXOS_OZONE_WL = "1";
+          ANTHROPIC_API_KEY = secrets.anthropicKey;
+          ATLASSIAN_API_TOKEN = secrets.atlassianKey;
+          CARGO_REGISTRY_TOKEN = secrets.cargoToken;
+          DEEPSEEK_API_KEY = secrets.deepSeekKey;
+          ELEVENLABS_API_KEY = secrets.elevenLabsKey;
+          GITHUB_TOKEN = secrets.githubPersonalToken;
+          OPENAI_API_KEY = secrets.openAiKey;
+          PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
+          STEAM_API_KEY = secrets.steamToken;
+          WEATHER_API_TOKEN = secrets.weatherKey;
         };
-
-        file.".hushlogin".text = "";
 
         stateVersion = "25.11";
       };
