@@ -77,6 +77,10 @@ in
         inputs.self.modules.homeManager.cli
         ./_aws.nix
         ./_git.nix
+        ./_jfrog.nix
+        ./_k9s.nix
+        ./_package-managers.nix
+        ./_power-platform-toolbox.nix
         ./_ssh.nix
       ];
 
