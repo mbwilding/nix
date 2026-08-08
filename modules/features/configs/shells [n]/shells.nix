@@ -4,7 +4,6 @@
   flake.modules.homeManager.shells =
     {
       lib,
-      secrets,
       config,
       pkgs,
       ...
@@ -118,7 +117,7 @@
               description = "Custom prompt";
               body = ''
                 set_color cyan
-                echo -n (hostname)' '
+                echo -n (whoami)'@'(hostname)' '
                 set -l last_status $status
                 set_color normal
                 set_color blue
@@ -186,48 +185,6 @@
                 read -sP "Enter Password: " password
                 echo
                 nmcli device wifi connect $ssid password $password
-              '';
-            };
-            ghc = {
-              description = "Clone GitHub";
-              body = ''
-                if test (count $argv) -ge 3
-                  set owner $argv[1]
-                  set repo $argv[2]
-                  set path $argv[3]
-                else if test (count $argv) -eq 2
-                  set owner $argv[1]
-                  set repo $argv[2]
-                  set path ~/dev/misc
-                else if test (count $argv) -eq 1
-                  set owner $argv[1]
-                  set path ~/dev/misc
-                  read -P "Repo: " repo
-                else
-                  read -P "Owner: " owner
-                  read -P "Repo: " repo
-                end
-                mkdir -p "$path"
-                set dest_dir "$path/$repo"
-                if test -d "$dest_dir"
-                  echo "Already cloned, swapping to directory"
-                  cd "$dest_dir"
-                else
-                  git clone --recursive "git@github.com:$owner/$repo" "$dest_dir"
-                  cd "$dest_dir"
-                end
-              '';
-            };
-            ghcp = {
-              description = "Clone GitHub Personal";
-              body = ''
-                ghc mbwilding $argv[1] ~/dev/personal
-              '';
-            };
-            ghcw = {
-              description = "Clone GitHub Work";
-              body = ''
-                ghc ${secrets.workName} $argv[1] ~/dev/work
               '';
             };
             nix-run = {
