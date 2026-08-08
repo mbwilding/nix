@@ -3,6 +3,7 @@
 let
   user = "mbwilding";
   userId = 1000;
+  secrets = import ../../nix/_secrets.nix;
 in
 {
   flake.modules.nixos."user-${user}" =
@@ -13,6 +14,19 @@ in
     }:
     {
       custom.managedUsers = [ user ];
+
+      security.sudo.extraRules = [
+        {
+          users = [ user ];
+          commands = [
+            {
+              command = "/run/wrappers/bin/su - ${secrets.workId}";
+              options = [ "NOPASSWD" ];
+            }
+          ];
+        }
+      ];
+
       users = {
         users.${user} = {
           description = user;
@@ -74,6 +88,10 @@ in
       home = {
         username = user;
         homeDirectory = "/home/${user}";
+
+        shellAliases = {
+          work = "sudo su - ${secrets.workId}";
+        };
 
         sessionVariables = {
           ANTHROPIC_API_KEY = secrets.anthropicKey;
