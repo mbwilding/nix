@@ -73,7 +73,10 @@ in
       };
     in
     {
-      imports = [ inputs.self.modules.homeManager.cli ];
+      imports = [
+        inputs.self.modules.homeManager.cli
+        ./_aws.nix
+      ];
 
       news.display = "silent";
 

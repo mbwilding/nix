@@ -49,9 +49,12 @@ in
     };
 
   flake.modules.homeManager.${user} =
-    { lib, secrets, ... }:
+    { secrets, ... }:
     {
-      imports = [ inputs.self.modules.homeManager.cli ];
+      imports = [
+        inputs.self.modules.homeManager.cli
+        ./_aws.nix
+      ];
 
       news.display = "silent";
 
