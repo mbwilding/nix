@@ -4,14 +4,13 @@
   flake.modules.homeManager.gh =
     {
       secrets,
-      secretsProfile ? "personal",
+      work ? false,
       ...
     }:
 
     let
-      isWork = secretsProfile == "work";
-      username = if isWork then secrets.githubWorkUsername else "mbwilding";
-      token = if isWork then secrets.githubWorkToken else secrets.githubPersonalToken;
+      username = if work then secrets.githubWorkUsername else "mbwilding";
+      token = if work then secrets.githubWorkToken else secrets.githubPersonalToken;
     in
     {
       programs = {
