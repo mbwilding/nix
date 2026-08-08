@@ -4,8 +4,12 @@
   flake.modules.homeManager.opencode =
     {
       secrets,
+      secretsProfile ? "personal",
       ...
     }:
+    let
+      isWork = secretsProfile == "work";
+    in
     {
       programs = {
         opencode = {
@@ -48,20 +52,12 @@
                 type = "remote";
                 url = "https://mcp.atlassian.com/v1/mcp";
               };
-              github-personal = {
+              github = {
                 enabled = false;
                 type = "remote";
                 url = "https://api.githubcopilot.com/mcp";
                 headers = {
-                  Authorization = "Bearer ${secrets.githubPersonalToken}";
-                };
-              };
-              github-work = {
-                enabled = false;
-                type = "remote";
-                url = "https://api.githubcopilot.com/mcp";
-                headers = {
-                  Authorization = "Bearer ${secrets.githubWorkToken}";
+                  Authorization = "Bearer ${if isWork then secrets.githubWorkToken else secrets.githubPersonalToken}";
                 };
               };
               lucid = {

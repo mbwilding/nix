@@ -30,6 +30,7 @@ let
     "system-default"
     "ucodenix"
     "user-mbwilding"
+    "user-work"
     "vm-curator"
     "waydroid"
     "wine"

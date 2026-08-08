@@ -21,20 +21,22 @@
 
   flake.modules.homeManager.packages-gui =
     {
+      config,
+      lib,
       pkgs,
+      secrets,
       ...
     }:
+    let
+      github-copilot = pkgs.callPackage ./_github-copilot.nix { };
+      powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
+      isWork = config.home.username == secrets.workId;
+    in
     {
       home = {
         packages =
-          let
-            github-copilot = pkgs.callPackage ./_github-copilot.nix { };
-            powerplatform-toolbox = pkgs.callPackage ./_power-platform-toolbox.nix { };
-          in
-          with pkgs;
-          [
+          (with pkgs; [
             # Custom
-            github-copilot
             powerplatform-toolbox
 
             # Packages
@@ -52,6 +54,9 @@
             spotify
             tigervnc
             wev
+          ])
+          ++ lib.optionals isWork [
+            github-copilot
           ];
       };
     };
