@@ -2,11 +2,16 @@
 
 {
   flake.modules.homeManager.gh =
-    { secrets, ... }:
+    {
+      secrets,
+      secretsProfile ? "personal",
+      ...
+    }:
 
     let
-      usernamePersonal = "mbwilding";
-      usernameWork = secrets.githubWorkUsername;
+      isWork = secretsProfile == "work";
+      username = if isWork then secrets.githubWorkUsername else "mbwilding";
+      token = if isWork then secrets.githubWorkToken else secrets.githubPersonalToken;
     in
     {
       programs = {
@@ -14,13 +19,10 @@
           enable = true;
           hosts = {
             "github.com" = {
-              user = usernameWork;
+              user = username;
               users = {
-                "${usernamePersonal}" = {
-                  oauth_token = secrets.githubPersonalToken;
-                };
-                "${usernameWork}" = {
-                  oauth_token = secrets.githubWorkToken;
+                "${username}" = {
+                  oauth_token = token;
                 };
               };
             };
