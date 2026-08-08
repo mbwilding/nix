@@ -6,8 +6,12 @@
       lib,
       config,
       pkgs,
+      work ? false,
       ...
     }:
+    let
+      hostnameExpr = if work then "'RWMP4914'" else "(hostname)";
+    in
     {
       home = {
         sessionPath = [ "$HOME/.cargo/bin" ];
@@ -117,7 +121,7 @@
               description = "Custom prompt";
               body = ''
                 set_color cyan
-                echo -n (whoami)'@'(hostname)' '
+                echo -n (whoami)'@'${hostnameExpr}' '
                 set -l last_status $status
                 set_color normal
                 set_color blue

@@ -4,12 +4,9 @@
   flake.modules.homeManager.opencode =
     {
       secrets,
-      secretsProfile ? "personal",
+      work ? false,
       ...
     }:
-    let
-      isWork = secretsProfile == "work";
-    in
     {
       programs = {
         opencode = {
@@ -57,7 +54,7 @@
                 type = "remote";
                 url = "https://api.githubcopilot.com/mcp";
                 headers = {
-                  Authorization = "Bearer ${if isWork then secrets.githubWorkToken else secrets.githubPersonalToken}";
+                  Authorization = "Bearer ${if work then secrets.githubWorkToken else secrets.githubPersonalToken}";
                 };
               };
               lucid = {

@@ -36,7 +36,7 @@ in
       home-manager.users.${user} = {
         imports = [ inputs.self.modules.homeManager.${moduleName} ];
         _module.args.secrets = config._module.args.secrets;
-        _module.args.secretsProfile = "work";
+        _module.args.work = true;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
@@ -94,6 +94,7 @@ in
         packages = [
           # AI
           pkgs.github-copilot-cli
+          (pkgs.callPackage ./_github-copilot.nix { })
         ];
 
         sessionVariables = {

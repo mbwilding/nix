@@ -42,7 +42,7 @@ in
       home-manager.users.${user} = {
         imports = [ inputs.self.modules.homeManager.${user} ];
         _module.args.secrets = config._module.args.secrets;
-        _module.args.secretsProfile = "personal";
+        _module.args.work = false;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
