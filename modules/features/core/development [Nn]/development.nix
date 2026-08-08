@@ -186,9 +186,6 @@
           # Utilities
           scc # Code counter and complexity calculator
 
-          # AI
-          github-copilot-cli
-
           # Language Tools
           bun # js / ts
           cargo # rust

@@ -29,6 +29,7 @@ in
         config = inputs.self.modules.homeManager."user-${hostName}";
         extraSpecialArgs = {
           secrets = import ../../nix/_secrets.nix;
+          secretsProfile = "personal";
         };
       };
     };

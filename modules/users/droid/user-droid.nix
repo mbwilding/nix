@@ -2,7 +2,7 @@
 
 {
   flake.modules.homeManager.user-droid =
-    { ... }:
+    { secrets, ... }:
     {
       imports = with inputs.self.modules.homeManager; [
         atuin
@@ -14,13 +14,23 @@
         gh
         git
         lazygit
-        mcp
         # opencode
         shells
         ssh
         yazi
         zoxide
       ];
+
+      programs.mcp = {
+        enable = true;
+        servers.github = {
+          type = "http";
+          url = "https://api.githubcopilot.com/mcp";
+          headers = {
+            Authorization = "Bearer ${secrets.githubPersonalToken}";
+          };
+        };
+      };
 
       home = {
         username = "nix-on-droid";

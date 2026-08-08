@@ -4,6 +4,7 @@ let
   arch = "x86_64-linux";
   hostName = "wsl";
   stateVersion = "25.11";
+  secrets = import ../../nix/_secrets.nix;
 
   homeManagerModules = [ ./_shells.nix ];
 in
@@ -17,6 +18,7 @@ in
           system-base
           fonts
           user-mbwilding
+          user-work
           docker
         ]
         ++ [
@@ -26,6 +28,7 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       home-manager.users.mbwilding.home.stateVersion = stateVersion;
+      home-manager.users.${secrets.workId}.home.stateVersion = stateVersion;
       networking.hostName = hostName;
       programs.fish.enable = true;
       programs.zsh.enable = false;

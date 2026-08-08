@@ -19,7 +19,6 @@
       k9s
       lazygit
       lazysql
-      mcp
       neovim
       opencode
       package-managers

@@ -5,8 +5,12 @@
     {
       pkgsMaster,
       secrets,
+      secretsProfile ? "personal",
       ...
     }:
+    let
+      isWork = secretsProfile == "work";
+    in
     {
       programs = {
         claude-code = {
@@ -41,7 +45,7 @@
               type = "http";
               url = "https://api.githubcopilot.com/mcp";
               headers = {
-                Authorization = "Bearer ${secrets.githubPersonalToken}";
+                Authorization = "Bearer ${if isWork then secrets.githubWorkToken else secrets.githubPersonalToken}";
               };
             };
           };

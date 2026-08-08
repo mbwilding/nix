@@ -6,7 +6,12 @@ let
 in
 {
   flake.modules.nixos."user-${user}" =
-    { config, pkgs, ... }:
+    {
+      config,
+      pkgs,
+      secrets,
+      ...
+    }:
     {
       custom.managedUsers = [ user ];
       users = {
@@ -14,6 +19,7 @@ in
           description = user;
           extraGroups = [
             user
+            secrets.workId
             "audio"
             "dialout"
             "networkmanager"
@@ -36,17 +42,31 @@ in
       home-manager.users.${user} = {
         imports = [ inputs.self.modules.homeManager.${user} ];
         _module.args.secrets = config._module.args.secrets;
+        _module.args.secretsProfile = "personal";
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 
   flake.modules.homeManager.${user} =
-    { lib, ... }:
+    { lib, secrets, ... }:
     {
       imports = [ inputs.self.modules.homeManager.cli ];
 
       news.display = "silent";
+
+      programs.mcp = {
+        enable = true;
+        servers = {
+          github = {
+            type = "http";
+            url = "https://api.githubcopilot.com/mcp";
+            headers = {
+              Authorization = "Bearer ${secrets.githubPersonalToken}";
+            };
+          };
+        };
+      };
 
       home = {
         username = user;
