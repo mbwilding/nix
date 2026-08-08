@@ -100,6 +100,7 @@ in
           DEEPSEEK_API_KEY = secrets.deepSeekKey;
           ELEVENLABS_API_KEY = secrets.elevenLabsKey;
           GITHUB_TOKEN = secrets.githubPersonalToken;
+          GITLAB_TOKEN = secrets.gitlabPersonalToken;
           OPENAI_API_KEY = secrets.openAiKey;
           PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
           STEAM_API_KEY = secrets.steamToken;

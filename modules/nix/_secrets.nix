@@ -31,6 +31,7 @@ in
 
   # GitLab
   gitlabWorkToken = read "gitlab-work";
+  gitlabPersonalToken = read "gitlab-personal";
 
   # Cargo
   cargoToken = read "cargo";

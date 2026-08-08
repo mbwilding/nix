@@ -19,6 +19,7 @@ secrets=(
   "GitHub Personal|credential|$HOME/.secrets/github-personal"
   "GitHub Work|credential|$HOME/.secrets/github-work"
   "GitHub Work|username|$HOME/.secrets/github-work-username"
+  "GitLab Personal|credential|$HOME/.secrets/gitlab-personal"
   "GitLab Work|credential|$HOME/.secrets/gitlab-work"
   "Home|ip|$HOME/.secrets/home-ip"
   "Home|wireguardEndpoint|$HOME/.secrets/home-wireguard-endpoint"
