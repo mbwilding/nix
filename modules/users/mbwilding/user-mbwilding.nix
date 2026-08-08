@@ -9,7 +9,6 @@ in
     {
       config,
       pkgs,
-      secrets,
       ...
     }:
     {
@@ -19,7 +18,6 @@ in
           description = user;
           extraGroups = [
             user
-            secrets.workId
             "audio"
             "dialout"
             "networkmanager"
