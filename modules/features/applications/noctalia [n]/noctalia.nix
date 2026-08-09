@@ -6,6 +6,55 @@
     {
       imports = [ inputs.noctalia.homeModules.default ];
 
+      home.file.".config/noctalia/palettes/gronk.json".text = builtins.toJSON {
+        dark = {
+          mPrimary = "#7dd3fc";
+          mOnPrimary = "#00283d";
+          mSecondary = "#93c5fd";
+          mOnSecondary = "#0b1f33";
+          mTertiary = "#a5b4fc";
+          mOnTertiary = "#1e1b3a";
+          mError = "#f87171";
+          mOnError = "#450a0a";
+          mSurface = "#000000";
+          mOnSurface = "#e6e6e6";
+          mSurfaceVariant = "#0d0d0d";
+          mOnSurfaceVariant = "#9a9a9a";
+          mOutline = "#262626";
+          mShadow = "#000000";
+          mHover = "#1a1a1a";
+          mOnHover = "#e6e6e6";
+          terminal = {
+            foreground = "#e6e6e6";
+            background = "#000000";
+            normal = {
+              black = "#1a1a1a";
+              red = "#f87171";
+              green = "#4ade80";
+              yellow = "#facc15";
+              blue = "#7dd3fc";
+              magenta = "#c4b5fd";
+              cyan = "#67e8f9";
+              white = "#d4d4d8";
+            };
+            bright = {
+              black = "#3f3f46";
+              red = "#fca5a5";
+              green = "#86efac";
+              yellow = "#fde047";
+              blue = "#bae6fd";
+              magenta = "#ddd6fe";
+              cyan = "#a5f3fc";
+              white = "#f4f4f5";
+            };
+            cursor = "#7dd3fc";
+            cursorText = "#00283d";
+            selectionFg = "#e6e6e6";
+            selectionBg = "#1e3a5f";
+          };
+        };
+      };
+
       programs.noctalia = {
         enable = true;
         settings = {
@@ -79,8 +128,9 @@
           theme = {
             builtin = "Tokyo-Night";
             community_palette = "GitHub Dark";
+            custom_palette = "gronk";
             mode = "dark";
-            source = "community";
+            source = "custom";
             templates = {
               enable_builtin_templates = false;
               enable_community_templates = false;
