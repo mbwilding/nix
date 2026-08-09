@@ -2,8 +2,22 @@
 
 set -euo pipefail
 
-read -s -p "Enter service account token: " OP_SERVICE_ACCOUNT_TOKEN
-echo
+refresh=false
+if [[ "${1:-}" == "--refresh" ]]; then
+  refresh=true
+fi
+
+token_file="$HOME/.secrets/1password"
+mkdir -p "$(dirname "$token_file")"
+
+if [[ -s "$token_file" ]]; then
+  OP_SERVICE_ACCOUNT_TOKEN=$(<"$token_file")
+else
+  read -s -p "Enter service account token: " OP_SERVICE_ACCOUNT_TOKEN
+  echo
+  printf '%s' "$OP_SERVICE_ACCOUNT_TOKEN" > "$token_file"
+  chmod 600 "$token_file"
+fi
 
 secrets=(
   "AWS|json|$HOME/.secrets/aws.json"
@@ -61,14 +75,34 @@ done
 op_commands=""
 for entry in "${secrets[@]}"; do
   IFS='|' read -r item field path <<< "$entry"
-  if [[ "$path" == $HOME/.ssh/* ]]; then
-    op_commands+="op read 'op://Vault/$item/$field' > '$path' && chmod 600 '$path' || exit 1;"
-  else
-    op_commands+="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path' || exit 1;"
+  if [[ "$refresh" == false && -e "$path" ]]; then
+    op_commands+="echo 'SKIP: $item ($field) (already exists)';"
+    continue
   fi
+  if [[ "$path" == $HOME/.ssh/* ]]; then
+    cmd="op read 'op://Vault/$item/$field' > '$path' && chmod 600 '$path'"
+  else
+    cmd="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path'"
+  fi
+  op_commands+="if $cmd; then echo 'OK: $item ($field)'; else echo 'FAIL: $item ($field)' >&2; failures+=(\"$item ($field)\"); fi;"
 done
+
+summary=$(cat <<'EOF'
+if [ ${#failures[@]} -gt 0 ]; then
+  echo
+  echo "Failed (${#failures[@]}):" >&2
+  printf '  - %s\n' "${failures[@]}" >&2
+  exit 1
+else
+  echo
+  echo "All secrets synced successfully."
+fi
+EOF
+)
 
 NIXPKGS_ALLOW_UNFREE=1 nix-shell --extra-experimental-features flakes -p coreutils _1password-cli --run "
   export OP_SERVICE_ACCOUNT_TOKEN='$OP_SERVICE_ACCOUNT_TOKEN';
+  failures=();
   $op_commands
+  $summary
 "
