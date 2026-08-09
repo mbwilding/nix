@@ -91,6 +91,14 @@ in
         servers = mcpServers;
       };
 
+      programs.fish.functions.awsl = ''
+        if test -z "$XDG_RUNTIME_DIR"
+          aws sso login --sso-session ${secrets.workName} --use-device-code
+        else
+          aws sso login --sso-session ${secrets.workName}
+        end
+      '';
+
       home = {
         username = user;
         homeDirectory = "/home/${user}";
@@ -109,7 +117,6 @@ in
         };
 
         shellAliases = {
-          awsl = "aws sso login --sso-session ${secrets.workName}";
           azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
         };
 
