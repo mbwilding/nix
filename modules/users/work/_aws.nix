@@ -60,7 +60,6 @@ let
 in
 {
   home.sessionVariables = {
-    AWS_PROFILE = "default";
     AWS_REGION = s.region;
   };
 
