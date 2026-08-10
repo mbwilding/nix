@@ -24,6 +24,9 @@
           "hasconfig:remote.*.url:git@gitlab.com:${secrets.workName}/**" = {
             path = "~/.config/git/config-gitlab";
           };
+          "hasconfig:remote.*.url:git@github.com:mbwilding/**" = {
+            path = "~/.config/git/config-personal";
+          };
         };
       };
     };
@@ -38,9 +41,17 @@
             signingkey = ~/.ssh/work.pub
       '';
 
+      ".config/git/config-personal".text = ''
+        [user]
+            name = Matthew Wilding
+            email = mbwilding@gmail.com
+            signingkey = ~/.ssh/personal.pub
+      '';
+
       ".config/git/allowed_signers".text = ''
         ${secrets.workEmailName} ${secrets.workPublicKey}
         ${secrets.workEmailId} ${secrets.workPublicKey}
+        mbwilding@gmail.com ${secrets.personalPublicKey}
       '';
     };
   };

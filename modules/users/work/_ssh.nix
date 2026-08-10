@@ -25,6 +25,12 @@ in
           HostName = "gitlab.com";
         };
 
+        "github.com" = {
+          IdentitiesOnly = true;
+          IdentityFile = [ "~/.ssh/personal" ];
+          User = "git";
+        };
+
         "ssh.dev.azure.com" = work // {
           PubkeyAcceptedKeyTypes = "+ssh-rsa";
           PasswordAuthentication = "no";
