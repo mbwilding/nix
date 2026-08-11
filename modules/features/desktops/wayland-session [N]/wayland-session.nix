@@ -62,7 +62,7 @@
         };
 
         # A second greeter on VT2, so a session can be started there without
-        # ending the one on VT1. Switch between them with `loginctl switch-vt`
+        # ending the one on VT1. Switch between them via logind's Seat.SwitchTo
         # (bound to mod+F1/mod+F2 in hyprland.nix), giving fast user switching.
         systemd.services."autovt@tty2".enable = false;
 
