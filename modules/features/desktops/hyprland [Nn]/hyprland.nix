@@ -496,22 +496,6 @@
             }
             {
               _args = [
-                (lua "mod .. \" + F1\"")
-                (lua
-                  ''hl.dsp.exec_cmd("busctl call org.freedesktop.login1 /org/freedesktop/login1/seat/seat0 org.freedesktop.login1.Seat SwitchTo u 1")''
-                )
-              ];
-            }
-            {
-              _args = [
-                (lua "mod .. \" + F2\"")
-                (lua
-                  ''hl.dsp.exec_cmd("busctl call org.freedesktop.login1 /org/freedesktop/login1/seat/seat0 org.freedesktop.login1.Seat SwitchTo u 2")''
-                )
-              ];
-            }
-            {
-              _args = [
                 (lua "mod .. \" + g\"")
                 (lua ''hl.dsp.exec_cmd("systemd-run --user --scope steam -beta publicbeta")'')
               ];
