@@ -60,6 +60,54 @@
           TTYVHangup = true;
           TTYVTDisallocate = true;
         };
+
+        # A second greeter on VT2, so a session can be started there without
+        # ending the one on VT1. Switch between them with `loginctl switch-vt`
+        # (bound to mod+F1/mod+F2 in hyprland.nix), giving fast user switching.
+        systemd.services."autovt@tty2".enable = false;
+
+        systemd.services.greetd-vt2 = {
+          description = "greetd on vt2 (secondary session, for switching users)";
+          unitConfig = {
+            Wants = [ "systemd-user-sessions.service" ];
+            After = [
+              "systemd-user-sessions.service"
+              "getty@tty2.service"
+              "plymouth-quit-wait.service"
+            ];
+            Conflicts = [ "getty@tty2.service" ];
+          };
+          serviceConfig = {
+            ExecStart =
+              let
+                settingsFormat = pkgs.formats.toml { };
+              in
+              "${pkgs.greetd}/bin/greetd --config ${
+                settingsFormat.generate "greetd-vt2.toml" {
+                  terminal.vt = 2;
+                  default_session = {
+                    command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${config.host.waylandSession.sessionPackage}/share/wayland-sessions";
+                    user = "greeter";
+                  };
+                }
+              }";
+            Restart = "on-success";
+            IgnoreSIGPIPE = false;
+            SendSIGHUP = true;
+            TimeoutStopSec = "30s";
+            KeyringMode = "shared";
+            Type = "idle";
+            StandardInput = "tty";
+            StandardOutput = "tty";
+            StandardError = "journal";
+            TTYPath = "/dev/tty2";
+            TTYReset = true;
+            TTYVHangup = true;
+            TTYVTDisallocate = true;
+          };
+          restartIfChanged = false;
+          wantedBy = [ "graphical.target" ];
+        };
       };
     };
 }
