@@ -496,6 +496,18 @@
             }
             {
               _args = [
+                (lua "mod .. \" + F1\"")
+                (lua ''hl.dsp.exec_cmd("loginctl switch-vt 1")'')
+              ];
+            }
+            {
+              _args = [
+                (lua "mod .. \" + F2\"")
+                (lua ''hl.dsp.exec_cmd("loginctl switch-vt 2")'')
+              ];
+            }
+            {
+              _args = [
                 (lua "mod .. \" + g\"")
                 (lua ''hl.dsp.exec_cmd("systemd-run --user --scope steam -beta publicbeta")'')
               ];
