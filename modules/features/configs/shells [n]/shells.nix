@@ -25,18 +25,18 @@
 
         shellAliases = {
           # Nix
-          nix-boot = lib.mkDefault "sudo nixos-rebuild boot --impure --flake ~/nix";
-          nix-build = lib.mkDefault "nixos-rebuild build --no-link --impure --flake ~/nix";
-          nix-build-link = lib.mkDefault "sudo nixos-rebuild build --impure --flake ~/nix";
-          nix-clean = lib.mkDefault "sudo nix-collect-garbage -d";
-          nix-switch = lib.mkDefault "sudo nixos-rebuild switch --impure --flake ~/nix";
-          nix-update = lib.mkDefault "nix flake update --flake ~/nix";
+          nix-boot = "sudo nixos-rebuild boot --impure --flake /home/mbwilding/nix";
+          nix-build = "nixos-rebuild build --no-link --impure --flake /home/mbwilding/nix";
+          nix-build-link = "sudo nixos-rebuild build --impure --flake /home/mbwilding/nix";
+          nix-clean = "sudo nix-collect-garbage -d";
+          nix-switch = "sudo nixos-rebuild switch --impure --flake /home/mbwilding/nix";
+          nix-update = "nix flake update --flake /home/mbwilding/nix";
 
           # Home Manager
-          hm-build = "home-manager build --no-out-link -b backup --impure --flake ~/nix#(hostname)";
-          hm-build-link = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
+          hm-build = "home-manager build --no-out-link -b backup --impure --flake /home/mbwilding/nix#(hostname)";
+          hm-build-link = "home-manager build -b backup --impure --flake /home/mbwilding/nix#(hostname)";
           hm-clean = "home-manager expire-generations -days";
-          hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
+          hm-switch = "home-manager switch -b backup --impure --flake /home/mbwilding/nix#(hostname)";
 
           # Power
           power-s = "powerprofilesctl set power-saver";
