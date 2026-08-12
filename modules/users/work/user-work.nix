@@ -96,6 +96,10 @@ in
         username = user;
         homeDirectory = "/home/${user}";
 
+        shellAliases = {
+          mbwilding = "sudo su - mbwilding";
+        };
+
         packages = [
           # AI
           pkgs.github-copilot-cli
