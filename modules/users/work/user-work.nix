@@ -97,7 +97,9 @@ in
         homeDirectory = "/home/${user}";
 
         shellAliases = {
+          azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
           mbwilding = "sudo su - mbwilding";
+          nix-switch = "sudo nixos-rebuild switch --impure --flake /home/mbwilding/nix";
         };
 
         packages = [
@@ -111,10 +113,6 @@ in
           GITLAB_TOKEN = secrets.gitlabWorkToken;
           PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
           PULUMI_CONFIG_PASSPHRASE = "";
-        };
-
-        shellAliases = {
-          azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
         };
 
         file = {
