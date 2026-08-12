@@ -64,6 +64,14 @@ in
   };
 
   programs = {
+    fish.functions.awsl = ''
+      if test -z "$XDG_RUNTIME_DIR"
+        aws sso login --sso-session ${secrets.workName} --use-device-code
+      else
+        aws sso login --sso-session ${secrets.workName}
+      end
+    '';
+
     awscli = {
       enable = true;
       settings = {
