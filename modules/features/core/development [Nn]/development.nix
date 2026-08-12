@@ -54,6 +54,7 @@
         "${pkgs.libxrender}/lib"
         "${pkgs.libxshmfence}/lib"
         "${pkgs.libsoup_3}/lib"
+        "${pkgs.openssl}/lib"
         "${pkgs.pango}/lib"
         "${pkgs.pipewire}/lib"
         "${pkgs.webkitgtk_4_1}/lib"
