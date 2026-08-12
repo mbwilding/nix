@@ -99,7 +99,6 @@ in
         shellAliases = {
           azl = "az login --scope https://graph.microsoft.com/.default --allow-no-subscriptions";
           mbwilding = "sudo su - mbwilding";
-          nix-switch = "sudo nixos-rebuild switch --impure --flake /home/mbwilding/nix";
         };
 
         packages = [
