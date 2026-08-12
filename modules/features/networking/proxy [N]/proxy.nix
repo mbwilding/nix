@@ -27,8 +27,8 @@
     let
       workDomains = [
         ".gr7.ap-southeast-2.eks.amazonaws.com"
-        ".internal.${secrets.workName}.delivery"
-        ".internal.${secrets.workName}.services"
+        ".${secrets.workName}.services"
+        ".${secrets.workName}.delivery"
       ];
       proxyIp = "198.18.0.1";
       proxyPort = 18081;
