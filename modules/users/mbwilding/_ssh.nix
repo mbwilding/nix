@@ -26,12 +26,6 @@ in
 
         lxc = personal // { };
 
-        surface = personal // {
-          TCPKeepAlive = "yes";
-          ServerAliveCountMax = 10;
-          ServerAliveInterval = 20;
-        };
-
         ai-sdlc = personal // {
           User = "agent";
         };
