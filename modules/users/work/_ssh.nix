@@ -14,6 +14,17 @@ in
       enableDefaultConfig = false;
 
       settings = {
+        # Devices
+
+        surface = {
+          User = "mbwilding";
+          IdentityFile = [ "~/.ssh/personal" ];
+          IdentitiesOnly = true;
+          TCPKeepAlive = "yes";
+          ServerAliveCountMax = 10;
+          ServerAliveInterval = 20;
+        };
+
         # Git
 
         "${secrets.workName}.github.com" = work // {
