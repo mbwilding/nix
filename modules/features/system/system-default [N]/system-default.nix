@@ -79,6 +79,10 @@
           '';
           mode = "0755";
         };
+        etc."gitconfig".text = ''
+          [safe]
+            directory = /home/mbwilding/nix
+        '';
       };
 
       nixpkgs = {
