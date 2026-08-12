@@ -76,4 +76,7 @@ in
 
   # Dynamics
   dynamicsCredentials = readJSON "dynamics.json";
+
+  # Database
+  databases = readJSON "databases.json";
 }
