@@ -29,6 +29,7 @@ in
 
       users = {
         users.${user} = {
+          openssh.authorizedKeys.keys = [ secrets.personalPublicKey ];
           description = user;
           extraGroups = [
             user
