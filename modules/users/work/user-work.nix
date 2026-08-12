@@ -8,11 +8,12 @@ let
 in
 {
   flake.modules.nixos."user-${moduleName}" =
-    { config, pkgs, ... }:
+    { config, pkgs, secrets, ... }:
     {
       custom.managedUsers = [ user ];
       users = {
         users.${user} = {
+          openssh.authorizedKeys.keys = [ secrets.personalPublicKey ];
           description = user;
           extraGroups = [
             user
