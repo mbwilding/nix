@@ -45,7 +45,6 @@ in
 
   flake.modules.homeManager.${moduleName} =
     {
-      lib,
       pkgs,
       secrets,
       ...
@@ -80,6 +79,7 @@ in
         ./_git.nix
         ./_jfrog.nix
         ./_k9s.nix
+        ./_lazysql.nix
         ./_package-managers.nix
         ./_power-platform-toolbox.nix
         ./_ssh.nix
@@ -91,14 +91,6 @@ in
         enable = true;
         servers = mcpServers;
       };
-
-      programs.fish.functions.awsl = ''
-        if test -z "$XDG_RUNTIME_DIR"
-          aws sso login --sso-session ${secrets.workName} --use-device-code
-        else
-          aws sso login --sso-session ${secrets.workName}
-        end
-      '';
 
       home = {
         username = user;
