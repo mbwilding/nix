@@ -81,7 +81,7 @@
         };
         etc."gitconfig".text = ''
           [safe]
-            directory = /home/mbwilding/nix
+            directory = /etc/nixos
         '';
       };
 
