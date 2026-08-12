@@ -54,7 +54,7 @@
         "${pkgs.libxrender}/lib"
         "${pkgs.libxshmfence}/lib"
         "${pkgs.libsoup_3}/lib"
-        "${pkgs.openssl}/lib"
+        "${pkgs.openssl.out}/lib"
         "${pkgs.pango}/lib"
         "${pkgs.pipewire}/lib"
         "${pkgs.webkitgtk_4_1}/lib"
@@ -68,7 +68,7 @@
         sessionVariables = {
           PKG_CONFIG_PATH = builtins.concatStringsSep ":" buildInputs;
         };
-        extraInit = ''
+        shellInit = ''
           export LD_LIBRARY_PATH="${builtins.concatStringsSep ":" runtimeLibs}:$LD_LIBRARY_PATH"
         '';
         systemPackages = with pkgs; [
