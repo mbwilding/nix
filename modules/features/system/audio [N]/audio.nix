@@ -9,6 +9,16 @@
         pkgs.qastools
       ];
 
+      # Single shared PipeWire graph for all users on this seat, so audio
+      # mixes together regardless of which VT (tty1/tty2) is active. Clients
+      # need to be pointed at the system socket instead of the (disabled)
+      # per-user one.
+      services.pipewire.systemWide = true;
+      environment.sessionVariables = {
+        PIPEWIRE_RUNTIME_DIR = "/run/pipewire";
+        PULSE_SERVER = "unix:/run/pulse/native";
+      };
+
       security.pam.loginLimits = [
         {
           domain = "@audio";

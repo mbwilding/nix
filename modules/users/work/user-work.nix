@@ -19,6 +19,7 @@ in
             "audio"
             "dialout"
             "networkmanager"
+            "pipewire"
             "render"
             "video"
             "wheel"
