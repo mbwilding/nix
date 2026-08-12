@@ -91,7 +91,7 @@ in
         homeDirectory = "/home/${user}";
 
         shellAliases = {
-          ${secrets.workName} = "sudo su - ${secrets.workId}";
+          ${secrets.workId} = "sudo su - ${secrets.workId}";
         };
 
         sessionVariables = {
