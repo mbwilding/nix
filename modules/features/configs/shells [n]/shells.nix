@@ -24,37 +24,52 @@
         };
 
         shellAliases = {
-          battery = "cat /sys/class/power_supply/BAT1/capacity";
-          bios = "systemctl reboot --firmware-setup";
-          c = "clear";
-          dn = "nvim /mnt/mbwilding/Documents/DailyNotes.md";
-          g = "git";
-          grep = "grep --color";
-          hm-build = "home-manager build --no-out-link -b backup --impure --flake ~/nix#(hostname)";
-          hm-build-link = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
-          hm-clean = "home-manager expire-generations -days";
-          hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
-          lg = "lazygit";
-          ll = "eza -lhg";
-          lla = "eza -alhg";
-          ls = "eza";
-          n = "nvim";
+          # Nix
           nix-boot = "sudo nixos-rebuild boot --impure --flake ~/nix";
           nix-build = "nixos-rebuild build --no-link --impure --flake ~/nix";
           nix-build-link = "sudo nixos-rebuild build --impure --flake ~/nix";
           nix-clean = "sudo nix-collect-garbage -d";
           nix-switch = "sudo nixos-rebuild switch --impure --flake ~/nix";
           nix-update = "nix flake update --flake ~/nix";
-          nmr = "nmcli radio wifi off && nmcli radio wifi on";
+
+          # Home Manager
+          hm-build = "home-manager build --no-out-link -b backup --impure --flake ~/nix#(hostname)";
+          hm-build-link = "home-manager build -b backup --impure --flake ~/nix#(hostname)";
+          hm-clean = "home-manager expire-generations -days";
+          hm-switch = "home-manager switch -b backup --impure --flake ~/nix#(hostname)";
+
+          # Power
+          power-s = "powerprofilesctl set power-saver";
           power-b = "powerprofilesctl set balanced";
           power-p = "powerprofilesctl set performance";
-          power-s = "powerprofilesctl set power-saver";
-          q = "exit";
-          t = "zellij";
-          tree = "eza --tree";
+
+          # Network
+          nmr = "nmcli radio wifi off && nmcli radio wifi on";
           wgd = "sudo systemctl stop wg-quick-Home";
           wgu = "sudo systemctl start wg-quick-Home";
           wifi-list = "nmcli device wifi list";
+
+          # Shell
+          c = "clear";
+          grep = "grep --color";
+          ll = "eza -lhg";
+          lla = "eza -alhg";
+          ls = "eza";
+          n = "nvim";
+          q = "exit";
+          tree = "eza --tree";
+
+          # Apps
+          g = "git";
+          lg = "lazygit";
+          t = "zellij";
+
+          # Misc
+          battery = "cat /sys/class/power_supply/BAT1/capacity";
+          bios = "systemctl reboot --firmware-setup";
+
+          # Documents
+          dn = "nvim /mnt/mbwilding/Documents/DailyNotes.md";
         };
       };
 
