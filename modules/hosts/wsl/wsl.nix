@@ -5,7 +5,6 @@ let
   hostName = "wsl";
   stateVersion = "25.11";
   secrets = import ../../nix/_secrets.nix;
-
   homeManagerModules = [ ./_shells.nix ];
 in
 {
@@ -17,7 +16,6 @@ in
         [
           system-base
           fonts
-          user-mbwilding
           user-work
           docker
         ]
@@ -37,7 +35,7 @@ in
       nixpkgs.config.allowUnfree = true;
 
       wsl = {
-        defaultUser = "mbwilding";
+        defaultUser = secrets.workId;
         enable = true;
       };
     };
