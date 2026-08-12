@@ -24,6 +24,7 @@
         home = {
           packages = with pkgs; [
             msbuild
+            nssTools # certutil, needed for `dotnet dev-certs https --trust`
           ];
 
           sessionPath = [
