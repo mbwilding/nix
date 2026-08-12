@@ -17,7 +17,7 @@ in
         # Devices
 
         surface = {
-          User = "mbwilding";
+          User = secrets.workId;
           IdentityFile = [ "~/.ssh/personal" ];
           IdentitiesOnly = true;
           TCPKeepAlive = "yes";
