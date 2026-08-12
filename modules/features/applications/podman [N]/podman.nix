@@ -29,6 +29,8 @@
             dates = "weekly";
           };
         };
+
+        containers.registries.search = [ "docker.io" ];
       };
     };
 }
