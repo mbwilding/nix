@@ -14,7 +14,7 @@
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
-          cm = "hdredid"; # wide, hdr, hdredid
+          cm = "wide"; # wide, hdr, hdredid
           sdrbrightness = 1.0;
           sdrsaturation = 0.85; # 0.82
           sdr_min_luminance = 0.005;
