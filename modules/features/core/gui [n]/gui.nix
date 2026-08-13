@@ -28,6 +28,7 @@
           _1password-gui
           bolt-launcher
           cameractrls-gtk4
+          gimp
           imhex
           imv
           kdePackages.ark
