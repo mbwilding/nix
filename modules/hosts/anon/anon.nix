@@ -19,6 +19,7 @@ let
     "mounts"
     "mpv"
     "obs"
+    "open-design"
     "podman"
     "printing"
     "proxy"
