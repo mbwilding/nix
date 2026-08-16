@@ -9,6 +9,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     yazi.url = "github:sxyazi/yazi";
     ucodenix.url = "github:e-tho/ucodenix";
+    cloakbrowser.url = "github:CloakHQ/CloakBrowser";
 
     # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
