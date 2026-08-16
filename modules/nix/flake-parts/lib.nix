@@ -45,6 +45,7 @@
               inherit system;
               overlays = [
                 inputs.self.lib.overlays.hyprlandGlaze
+                inputs.self.lib.overlays.cloakbrowser
               ];
             };
             modules = [
