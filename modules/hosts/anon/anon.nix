@@ -10,7 +10,6 @@ let
     "audio"
     "claude-desktop"
     "claudecode"
-    "cloakbrowser"
     "development"
     "flatpak"
     "gpu-nvidia"
