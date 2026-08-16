@@ -37,42 +37,39 @@
         max-jobs = 1;
         # cores = 2;
       };
-      mkHomeManagerFor =
-        moduleName: work: system: name: extraModules:
-        {
-          ${name} = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs {
-              inherit system;
-              overlays = [
-                inputs.self.lib.overlays.hyprlandGlaze
-                inputs.self.lib.overlays.cloakbrowser
-              ];
-            };
-            modules = [
-              inputs.self.modules.homeManager.${moduleName}
-              (
-                { pkgs, ... }:
-                {
-                  nix.package = lib.mkDefault pkgs.nix;
-                  nix.settings = sharedNixSettings;
-
-                  nixpkgs.config.allowUnfree = true;
-                  _module.args.secrets = secrets;
-                  _module.args.work = work;
-                  _module.args.pkgsMaster = import inputs.nixpkgs-master {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                  _module.args.pkgsStable = import inputs.nixpkgs-stable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                }
-              )
-            ]
-            ++ extraModules;
+      mkHomeManagerFor = moduleName: work: system: name: extraModules: {
+        ${name} = inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.self.lib.overlays.hyprlandGlaze
+            ];
           };
+          modules = [
+            inputs.self.modules.homeManager.${moduleName}
+            (
+              { pkgs, ... }:
+              {
+                nix.package = lib.mkDefault pkgs.nix;
+                nix.settings = sharedNixSettings;
+
+                nixpkgs.config.allowUnfree = true;
+                _module.args.secrets = secrets;
+                _module.args.work = work;
+                _module.args.pkgsMaster = import inputs.nixpkgs-master {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+                _module.args.pkgsStable = import inputs.nixpkgs-stable {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+              }
+            )
+          ]
+          ++ extraModules;
         };
+      };
     in
     {
       symlinkDir =
