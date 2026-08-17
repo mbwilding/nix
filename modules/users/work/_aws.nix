@@ -60,6 +60,7 @@ let
 in
 {
   home.sessionVariables = {
+    AWS_PROFILE = "md";
     AWS_REGION = s.region;
   };
 
