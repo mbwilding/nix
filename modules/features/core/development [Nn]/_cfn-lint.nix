@@ -8,14 +8,14 @@
 # upstream instead. See update-custom-packages.sh's fetchFromGitHub-by-tag path.
 python314Packages.buildPythonApplication rec {
   pname = "cfn-lint";
-  version = "1.54.0";
+  version = "1.55.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "aws-cloudformation";
     repo = "cfn-lint";
     tag = "v${version}";
-    hash = "sha256-8wQqk1pghdMF+CQuDnrBNRSvZBLmV0REZ7vNnAMjbDY=";
+    hash = "sha256-ulrWdGPm/OUrboPV98XxjV4AAdbEDCRnRaOpB1qyQRI=";
   };
 
   build-system = [ python314Packages.setuptools ];

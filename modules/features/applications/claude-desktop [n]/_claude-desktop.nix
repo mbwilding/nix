@@ -42,16 +42,16 @@
 
 let
   pname = "claude-desktop";
-  version = "1.24012.11";
+  version = "1.32352.1";
 
   sources = {
     "x86_64-linux" = {
       url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_${version}_amd64.deb";
-      hash = "sha256-mcS89eP30OxEpJ+/JNfWWfLqRuKcfsYcd8cphSL1fnY=";
+      hash = "sha256-nQDE6obQNwYeHKHxcJ+TDsSk13N9h7L2i4e8PofjgYY=";
     };
     "aarch64-linux" = {
       url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_${version}_arm64.deb";
-      hash = "sha256-iWGF5pUfrxEVLL32EhzJX5kzArqoUHfa/hWMIUBRddk=";
+      hash = "sha256-qkXl94QAC8KZXGrlEaia07fZ4NY7rtolY/rs1aiFCQY=";
     };
   };
 
