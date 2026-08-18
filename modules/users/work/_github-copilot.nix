@@ -8,24 +8,24 @@
 
 let
   pname = "github-copilot";
-  version = "1.1.5";
+  version = "1.1.10";
 
   sources = {
     "x86_64-linux" = {
       url = "https://github.com/github/app/releases/download/v${version}/GitHub-Copilot-linux-x64.AppImage";
-      hash = "sha256-rw3s0q8w4t1GlYHTdoj2P+clzRw8sI3e64SK6OFDDv8=";
+      hash = "sha256-2NGSzwx99SkTnqpfO5/XquGCisTlYdBwEkZiv7HmXek=";
     };
     "aarch64-linux" = {
       url = "https://github.com/github/app/releases/download/v${version}/GitHub-Copilot-linux-arm64.AppImage";
-      hash = "sha256-zmEs1LaePn71ym/t0MFd486HYvGZ8Todtehms0RyC1g=";
+      hash = "sha256-BMWQvqaZrzTG1nJLyQUVXWm2OwvhfN2qbRoAlXd7VNE=";
     };
     "aarch64-darwin" = {
       url = "https://github.com/github/app/releases/download/v${version}/GitHub-Copilot-darwin-arm64.tar.gz";
-      hash = "sha256-sGXR7Q2teJxWwo5iXG8v4iZqN9XnMsRnLvRD0M3ptro=";
+      hash = "sha256-bDSnBevQCG99nvcdi4yh/HPo2kuVXPA1dLqL1ezfz+8=";
     };
     "x86_64-darwin" = {
       url = "https://github.com/github/app/releases/download/v${version}/GitHub-Copilot-darwin-x64.tar.gz";
-      hash = "sha256-WPVBkXfXAs0hlIx3mgHucYWyTRDQ1wkJC7La2gGAssY=";
+      hash = "sha256-ot8OOHlkahgv8tgSVUiSpmlIPvOljtk/+MUBXr3iNGU=";
     };
   };
 
