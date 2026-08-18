@@ -18,10 +18,13 @@
         };
       };
 
-      config = lib.mkIf (config.custom.managedUsers != [ ]) {
-        users.users = lib.genAttrs config.custom.managedUsers (_user: {
-          extraGroups = config.custom.availableGroups;
-        });
-      };
+      config = lib.mkMerge [
+        { custom.availableGroups = [ "users" ]; }
+        (lib.mkIf (config.custom.managedUsers != [ ]) {
+          users.users = lib.genAttrs config.custom.managedUsers (_user: {
+            extraGroups = config.custom.availableGroups;
+          });
+        })
+      ];
     };
 }
