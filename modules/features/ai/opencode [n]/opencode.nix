@@ -50,7 +50,7 @@
                 url = "https://mcp.atlassian.com/v1/mcp";
               };
               github = {
-                enabled = false;
+                enabled = true;
                 type = "remote";
                 url = "https://api.githubcopilot.com/mcp";
                 headers = {
