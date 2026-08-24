@@ -65,6 +65,12 @@
         nix-ld.enable = true;
       };
 
+      system.activationScripts.binbash = lib.stringAfter [ "binsh" ] ''
+        if [ ! -e /bin/bash ]; then
+          ln -sf ${pkgs.bash}/bin/bash /bin/bash
+        fi
+      '';
+
       environment = {
         sessionVariables = {
           NIXOS_OZONE_WL = "1";
