@@ -2,9 +2,13 @@
 
 {
   flake.modules.homeManager.noctalia =
-    { config, ... }:
     {
-      imports = [ inputs.noctalia.homeModules.default ];
+      config,
+      pkgs,
+      ...
+    }:
+    {
+      programs.noctalia.package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       home.file.".config/noctalia/palettes/gronk.json".text = builtins.toJSON {
         dark = {
