@@ -10,6 +10,7 @@ let
     "audio"
     "claude-desktop"
     "claudecode"
+    "copilot-cli"
     "development"
     "flatpak"
     "gpu-nvidia"

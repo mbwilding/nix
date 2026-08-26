@@ -8,7 +8,12 @@ let
 in
 {
   flake.modules.nixos."user-${moduleName}" =
-    { config, pkgs, secrets, ... }:
+    {
+      config,
+      pkgs,
+      secrets,
+      ...
+    }:
     {
       custom.managedUsers = [ user ];
       users = {
@@ -76,6 +81,7 @@ in
     {
       imports = [
         inputs.self.modules.homeManager.cli
+        inputs.self.modules.homeManager.copilot-cli
         ./_aws.nix
         ./_git.nix
         ./_jfrog.nix
@@ -88,9 +94,13 @@ in
 
       news.display = "silent";
 
-      programs.mcp = {
-        enable = true;
-        servers = mcpServers;
+      programs = {
+        mcp = {
+          enable = true;
+          servers = mcpServers;
+        };
+
+        github-copilot-cli.mcpServers = removeAttrs mcpServers [ "github" ];
       };
 
       home = {
@@ -104,7 +114,6 @@ in
 
         packages = [
           # AI
-          pkgs.github-copilot-cli
           (pkgs.callPackage ./_github-copilot.nix { })
         ];
 
@@ -113,12 +122,6 @@ in
           GITLAB_TOKEN = secrets.gitlabWorkToken;
           PULUMI_ACCESS_TOKEN = secrets.pulumiToken;
           PULUMI_CONFIG_PASSPHRASE = "";
-        };
-
-        file = {
-          ".copilot/mcp-config.json".text = builtins.toJSON {
-            mcpServers = mcpServers;
-          };
         };
 
         stateVersion = "25.11";
