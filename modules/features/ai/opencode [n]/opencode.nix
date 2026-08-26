@@ -65,7 +65,7 @@
               radar = {
                 enabled = false;
                 type = "remote";
-                url = "https://mcp.lucid.app/mcp";
+                url = "https://radar.md.rwwa.services/mcp";
               };
             };
           };
