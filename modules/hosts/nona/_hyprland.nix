@@ -28,7 +28,7 @@
           bitdepth = 10;
           supports_wide_color = 1;
           supports_hdr = 1;
-          cm = "wide";
+          # cm = "wide";
         }
         # Work
         {
