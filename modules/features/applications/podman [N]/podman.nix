@@ -33,6 +33,8 @@
         containers.registries.settings = {
           unqualified-search-registries = [ "docker.io" ];
         };
+
+        containers.containersConf.settings.engine.cgroup_manager = "cgroupfs";
       };
     };
 }
