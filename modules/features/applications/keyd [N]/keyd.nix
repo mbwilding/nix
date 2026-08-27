@@ -21,6 +21,8 @@ in
               space = "overload(shift, space)";
               capslock = "overload(capslock, backspace)";
               leftshift = "esc";
+              leftalt = "C-A-f1";
+              rightalt = "C-A-f2";
               # rightalt = "layer(symbols)";
 
               a = "overloadt(control, a, ${keyThreshold})";
