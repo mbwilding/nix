@@ -6,6 +6,11 @@ let
     IdentityFile = [ "~/.ssh/work" ];
     User = "git";
   };
+  personal = {
+    IdentitiesOnly = true;
+    IdentityFile = [ "~/.ssh/personal" ];
+    User = "mbwilding";
+  };
 in
 {
   programs = {
@@ -47,6 +52,10 @@ in
           PasswordAuthentication = "no";
           ChallengeResponseAuthentication = "no";
           WarnWeakCrypto = "no";
+        };
+
+        "git.mattwilding.com" = personal // {
+          User = "git";
         };
       };
     };

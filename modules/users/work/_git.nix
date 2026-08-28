@@ -27,6 +27,9 @@
           "hasconfig:remote.*.url:git@github.com:mbwilding/**" = {
             path = "~/.config/git/config-personal";
           };
+          "hasconfig:remote.*.url:git@git.mattwilding.com/**" = {
+            path = "~/.config/git/config-personal";
+          };
         };
       };
     };
