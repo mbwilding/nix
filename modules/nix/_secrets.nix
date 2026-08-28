@@ -35,6 +35,7 @@ in
 
   # Cargo
   cargoToken = read "cargo";
+  cratesWorkToken = read "crates-work";
 
   # Artifactory
   artifactory = read "artifactory";

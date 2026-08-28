@@ -26,6 +26,7 @@ secrets=(
   "Atlassian|credential|$HOME/.secrets/atlassian"
   "Atlassian|rovo|$HOME/.secrets/atlassian-rovo"
   "Cargo|credential|$HOME/.secrets/cargo"
+  "Crates Work|password|$HOME/.secrets/crates-work"
   "Databases|json|$HOME/.secrets/databases.json"
   "DeepSeek|credential|$HOME/.secrets/deepseek"
   "Dynamics|credentials|$HOME/.secrets/dynamics.json"
