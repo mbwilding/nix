@@ -41,6 +41,20 @@
             npmRegistryServer: "https://npm.pkg.github.com"
             npmAuthToken: "${secrets.githubWorkToken}"
       '';
+
+      ".cargo/config.toml".text = ''
+        [registries.kellnr]
+        index = "sparse+https://crates.internal.${secrets.workName}.delivery/api/v1/crates/"
+        credential-provider = ["cargo:token"]
+
+        [registry]
+        default = "kellnr"
+      '';
+
+      ".cargo/credentials.toml".text = ''
+        [registries.kellnr]
+        token = "${secrets.cratesWorkToken}"
+      '';
     };
   };
 }
