@@ -38,6 +38,9 @@ let
     {
       _module.args.primaryMonitor = primaryMonitor;
     }
+
+    ./_hyprland.nix
+
     (
       { pkgs, ... }:
       {
@@ -54,6 +57,7 @@ in
     {
       imports = featureModules.nixos ++ [
         ./_hardware-configuration.nix
+        ./_audio.nix
         inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
       ];
 
