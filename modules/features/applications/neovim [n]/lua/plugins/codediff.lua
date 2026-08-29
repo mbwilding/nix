@@ -1,7 +1,6 @@
 ---@type zpack.Spec
 return {
-    "esmuellert/vscode-diff.nvim",
-    branch = "next",
+    "esmuellert/codediff.nvim",
     dependencies = {
         "MunifTanjim/nui.nvim",
         "folke/snacks.nvim", -- For custom logic below
