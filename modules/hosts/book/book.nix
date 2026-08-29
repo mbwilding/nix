@@ -57,6 +57,7 @@ in
         inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
       ];
 
+      hardware.microsoft-surface.kernelVersion = "stable";
       home-manager.sharedModules = homeManagerModules;
       console.keyMap = keymap;
       networking.hostName = hostName;
@@ -66,11 +67,6 @@ in
         upower.enable = true;
       };
 
-      hardware.microsoft-surface.kernelVersion = "stable";
-      config.microsoft-surface = {
-        ipts.enable = true;
-        surface-control.enable = true;
-      };
 
       system.stateVersion = "26.05";
     };
