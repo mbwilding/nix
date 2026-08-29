@@ -58,13 +58,18 @@ in
       ];
 
       home-manager.sharedModules = homeManagerModules;
-      hardware.microsoft-surface.kernelVersion = "stable";
       console.keyMap = keymap;
       networking.hostName = hostName;
       services.xserver.xkb.variant = keymap;
 
       services = {
         upower.enable = true;
+      };
+
+      hardware.microsoft-surface.kernelVersion = "stable";
+      config.microsoft-surface = {
+        ipts.enable = true;
+        surface-control.enable = true;
       };
 
       system.stateVersion = "26.05";
