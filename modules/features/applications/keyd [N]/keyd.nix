@@ -13,7 +13,7 @@ in
           ids = [
             "0001:0001:09b4e68d"
             "413c:2110:a6c37897"
-            "045e:09ae:8321576b" # Surface Book 3
+            "045e:09ae" # Surface Book 3
           ];
 
           settings = {
