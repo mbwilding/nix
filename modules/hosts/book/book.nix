@@ -15,7 +15,7 @@ let
     "development"
     "flatpak"
     "gui"
-    "kde"
+    "hyprland"
     "keyd"
     "mounts"
     "mpv"
@@ -60,6 +60,7 @@ in
       hardware.microsoft-surface.kernelVersion = "stable";
       home-manager.sharedModules = homeManagerModules;
       console.keyMap = keymap;
+      host.primaryMonitor = primaryMonitor;
       networking.hostName = hostName;
       services.xserver.xkb.variant = keymap;
 
