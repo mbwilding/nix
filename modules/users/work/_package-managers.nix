@@ -43,16 +43,16 @@
       '';
 
       ".cargo/config.toml".text = ''
-        [registries.kellnr]
+        [registries.${secrets.workName}]
         index = "sparse+https://crates.internal.${secrets.workName}.delivery/api/v1/crates/"
         credential-provider = ["cargo:token"]
 
         [registry]
-        default = "kellnr"
+        default = "${secrets.workName}"
       '';
 
       ".cargo/credentials.toml".text = ''
-        [registries.kellnr]
+        [registries.${secrets.workName}]
         token = "${secrets.cratesWorkToken}"
       '';
     };
