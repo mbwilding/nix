@@ -4,11 +4,12 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-master.url = "github:NixOS/nixpkgs";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/release-26.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    yazi.url = "github:sxyazi/yazi";
     ucodenix.url = "github:e-tho/ucodenix";
+    yazi.url = "github:sxyazi/yazi";
 
     # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
