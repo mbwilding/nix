@@ -50,19 +50,15 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    {
-      lib,
-      pkgs,
-      ...
-    }:
+    { ... }:
     {
       imports = featureModules.nixos ++ [
         ./_hardware-configuration.nix
+        inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
       ];
 
       home-manager.sharedModules = homeManagerModules;
-
-      boot.kernelPackages = pkgs.linuxPackages_latest;
+      hardware.microsoft-surface.kernelVersion = "stable";
       console.keyMap = keymap;
       networking.hostName = hostName;
       services.xserver.xkb.variant = keymap;
