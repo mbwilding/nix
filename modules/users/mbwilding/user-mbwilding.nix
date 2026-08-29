@@ -57,8 +57,10 @@ in
         imports = [ inputs.self.modules.homeManager.${user} ];
         _module.args.secrets = config._module.args.secrets;
         _module.args.work = false;
-        _module.args.pkgsMaster =
-          inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
+        _module.args.pkgsMaster = import inputs.nixpkgs-master {
+          system = config.nixpkgs.hostPlatform.system;
+          config.allowUnfree = true;
+        };
       };
     };
 
