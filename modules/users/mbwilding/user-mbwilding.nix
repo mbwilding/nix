@@ -38,6 +38,7 @@ in
             "networkmanager"
             "pipewire"
             "render"
+            "surface-control"
             "video"
             "wheel"
           ];
