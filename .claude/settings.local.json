@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -sL https://api.github.com/repos/NixOS/nixos-hardware/contents/microsoft/surface/common)",
+      "Bash(curl -sL https://raw.githubusercontent.com/NixOS/nixos-hardware/master/microsoft/surface/common/default.nix)",
+      "Bash(curl -sL https://raw.githubusercontent.com/NixOS/nixos-hardware/master/microsoft/surface/surface-pro-intel/default.nix)",
+      "Bash(sudo nix-channel --add https://github.com/NixOS/nixos-hardware/archive/master.tar.gz nixos-hardware)",
+      "Bash(sudo nix-channel --update nixos-hardware)",
+      "Bash(nix-instantiate '<nixpkgs/nixos>' -A system --arg configuration /etc/nixos/configuration.nix)",
+      "Bash([ -f \"$f\" ])",
+      "Bash(nix --extra-experimental-features 'nix-command flakes' eval .#nixosConfigurations.book.config.system.build.toplevel.drvPath --impure)",
+      "Bash(git add *)",
+      "Bash(nix --extra-experimental-features 'nix-command flakes' eval .#nixosConfigurations.book.config.system.build.toplevel.drvPath --impure --show-trace)",
+      "Bash(nix --extra-experimental-features 'nix-command flakes' eval .#nixosConfigurations.book.pkgs.cachyosKernels --apply builtins.attrNames --impure)"
+    ]
+  }
+}
