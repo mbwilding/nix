@@ -10,9 +10,10 @@
     }:
     let
       workDomains = [
-        ".gr7.ap-southeast-2.eks.amazonaws.com"
-        ".${secrets.workName}.services"
+        ".${secrets.workName}.com.au"
         ".${secrets.workName}.delivery"
+        ".${secrets.workName}.services"
+        ".gr7.ap-southeast-2.eks.amazonaws.com"
       ];
       fakeIpRange = "198.18.0.0/15";
       dnsPort = 15353;
