@@ -35,7 +35,7 @@
         //npm.pkg.github.com/:_authToken=${secrets.githubWorkToken}
       '';
 
-      ".config/.yarnrc.yml".text = ''
+      ".yarnrc.yml".text = ''
         npmScopes:
           "${secrets.workName}":
             npmRegistryServer: "https://npm.pkg.github.com"
