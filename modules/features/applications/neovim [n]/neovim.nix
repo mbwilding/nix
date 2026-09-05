@@ -2,12 +2,12 @@
 
 {
   flake.modules.homeManager.neovim =
-    { pkgs, pkgsMaster, ... }:
+    { pkgs, ... }:
 
     {
       programs.neovim = {
         enable = true;
-        package = pkgsMaster.neovim-unwrapped;
+        package = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
         defaultEditor = true;
         withNodeJs = false;
         withPerl = false;
