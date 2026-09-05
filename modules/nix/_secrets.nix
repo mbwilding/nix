@@ -80,4 +80,7 @@ in
 
   # Database
   databases = readJSON "databases.json";
+
+  # Packages
+  packages = readJSON "packages.json";
 }

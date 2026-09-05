@@ -71,6 +71,9 @@
           };
         };
 
+        # NOTE: GSettings
+        programs.dconf.enable = true;
+
         services = {
           gnome.gnome-keyring.enable = true;
           tumbler.enable = true;

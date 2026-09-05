@@ -50,11 +50,19 @@ let
     ./_hyprland.nix
 
     (
-      { pkgs, ... }:
       {
-        home.packages = with pkgs; [
-          heroic
-        ];
+        pkgs,
+        lib,
+        secrets,
+        ...
+      }:
+      {
+        home.packages =
+          with pkgs;
+          [
+            heroic
+          ]
+          ++ map (name: lib.attrByPath (lib.splitString "." name) null pkgs) secrets.packages;
       }
     )
   ];
