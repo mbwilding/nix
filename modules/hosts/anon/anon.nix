@@ -6,6 +6,7 @@ let
   primaryMonitor = "HDMI-A-1";
 
   features = [
+    "affinity"
     "appimage"
     "audio"
     "claude-desktop"
