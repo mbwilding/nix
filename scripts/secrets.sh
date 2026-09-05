@@ -44,6 +44,7 @@ secrets=(
   "Kubectl|file|$HOME/.kube/config"
   "Lucid|credential|$HOME/.secrets/lucid"
   "OpenAI|credential|$HOME/.secrets/openai"
+  "Packages|json|$HOME/.secrets/packages.json"
   "Password|credential|$HOME/.secrets/password"
   "Pulumi|credential|$HOME/.secrets/pulumi"
   "Reaper|reaper-license.rk|$HOME/.config/REAPER/reaper-license.rk"
