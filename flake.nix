@@ -15,6 +15,7 @@
     # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
     niri.url = "github:sodiboo/niri-flake";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
