@@ -11,10 +11,9 @@
 
     let
       dotnet = config.custom.dotnet.sdk;
-      riderPkg = pkgs.jetbrains.rider.override { forceWayland = true; };
       rider = pkgs.symlinkJoin {
         name = "rider-wrapped";
-        paths = [ riderPkg ];
+        paths = [ pkgs.jetbrains.rider ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/rider/bin/rider \
@@ -31,7 +30,7 @@
     in
     {
       home.packages = [
-        (pkgs.jetbrains.datagrip.override { forceWayland = true; })
+        pkgs.jetbrains.datagrip
         rider
       ];
     };
