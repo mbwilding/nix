@@ -1,5 +1,6 @@
 {
   inputs = {
+    affinity-nix.url = "github:mrshmllow/affinity-nix";
     flake-compat.url = "github:NixOS/flake-compat";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
