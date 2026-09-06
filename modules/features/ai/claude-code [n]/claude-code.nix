@@ -12,7 +12,6 @@
       programs = {
         claude-code = {
           enable = true;
-          package = pkgsMaster.claude-code;
           context = ../context.md;
           settings = {
             includeCoAuthoredBy = false;

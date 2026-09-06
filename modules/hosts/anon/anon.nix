@@ -68,7 +68,6 @@ in
     {
       lib,
       pkgs,
-      pkgsMaster,
       ...
     }:
     let
@@ -111,7 +110,7 @@ in
       programs = {
         bazecor = {
           enable = true;
-          package = pkgsMaster.bazecor.overrideAttrs (old: {
+          package = pkgs.bazecor.overrideAttrs (old: {
             buildCommand =
               lib.replaceStrings
                 [
