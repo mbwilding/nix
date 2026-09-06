@@ -166,12 +166,7 @@
     };
 
   flake.modules.homeManager.development =
-    {
-      pkgs,
-      # pkgsStable,
-      pkgsMaster,
-      ...
-    }:
+    { pkgs, ... }:
     let
       vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
       vscode-langservers-extracted = pkgs.callPackage ./_vscode-langservers-extracted.nix { };
