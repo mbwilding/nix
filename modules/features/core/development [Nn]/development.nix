@@ -226,7 +226,7 @@
           sqls # sql
           tailwindcss-language-server # tailwind
           tombi # toml
-          typescript # js / ts
+          typescript-go # js / ts
           vscode-langservers-extracted # css / html / json (vscode-*-language-server)
           vue-language-server # vue
           yaml-language-server # yaml
