@@ -7,10 +7,8 @@ local function codecompanion_prompt(command_prefix)
     end)
 end
 
--- local adapter = "copilot"
--- local model = "claude-sonnet-4-6"
-local adapter = "llama-swap"
-local model = "qwythos-9b-abliterated"
+local adapter = "copilot"       -- "llama-swap"
+local model = "claude-sonnet-5" -- "qwythos-9b-abliterated"
 
 ---@type zpack.Spec
 return {
@@ -52,22 +50,22 @@ return {
         },
     },
     opts = {
-        adapters = {
-            ["llama-swap"] = function()
-                return require("codecompanion.adapters").extend("openai_compatible", {
-                    name = "llama-swap",
-                    formatted_name = "LlamaSwap",
-                    schema = {
-                        model = {
-                            default = "qwythos-9b-abliterated",
-                        },
-                    },
-                    env = {
-                        url = "http://192.168.11.254:60000",
-                    },
-                })
-            end,
-        },
+        -- adapters = {
+        --     ["llama-swap"] = function()
+        --         return require("codecompanion.adapters").extend("openai_compatible", {
+        --             name = "llama-swap",
+        --             formatted_name = "LlamaSwap",
+        --             schema = {
+        --                 model = {
+        --                     default = "qwythos-9b-abliterated",
+        --                 },
+        --             },
+        --             env = {
+        --                 url = "http://192.168.11.254:60000",
+        --             },
+        --         })
+        --     end,
+        -- },
         strategies = {
             chat = {
                 adapter = adapter,
