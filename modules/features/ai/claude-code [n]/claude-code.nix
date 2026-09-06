@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.homeManager.claudecode =
+  flake.modules.homeManager.claude-code =
     {
       pkgsMaster,
       secrets,

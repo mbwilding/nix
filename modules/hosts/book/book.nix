@@ -10,7 +10,7 @@ let
     "appimage"
     "audio"
     "claude-desktop"
-    "claudecode"
+    "claude-code"
     "copilot-cli"
     "development"
     "flatpak"
