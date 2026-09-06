@@ -11,8 +11,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     ucodenix.url = "github:e-tho/ucodenix";
     yazi.url = "github:sxyazi/yazi";
-
-    # nixpkgs.follows omitted for cachix binary cache
     noctalia.url = "github:noctalia-dev/noctalia-shell";
     niri.url = "github:sodiboo/niri-flake";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
