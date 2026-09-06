@@ -3,7 +3,6 @@
 {
   flake.modules.homeManager.claude-code =
     {
-      pkgsMaster,
       secrets,
       work ? false,
       ...
@@ -17,7 +16,9 @@
             includeCoAuthoredBy = false;
             disableClaudeAiConnectors = true;
             model = "claude-sonnet-5";
+            effortLevel = "medium";
             theme = "dark";
+            enableAllProjectMcpServers = true;
             permissions = {
               defaultMode = "auto";
             };
