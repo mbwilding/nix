@@ -28,5 +28,16 @@ return {
         },
     },
     ---@type UfoConfig
-    opts = {},
+    opts = {
+        -- Without this, ufo's default {'lsp','indent'} provider attaches to every
+        -- buffer, including acwrite/custom-UI buffers (e.g. dotnet.nvim's solution
+        -- tree) that manage their own manual folds — the two fought over fold state
+        -- via the same TextChanged/BufWinEnter events, producing wrong fold ranges.
+        provider_selector = function(_, filetype, buftype)
+            if buftype == "acwrite" or filetype == "dotnet-sln" then
+                return ""
+            end
+            return { "lsp", "indent" }
+        end,
+    },
 }
