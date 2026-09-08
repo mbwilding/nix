@@ -25,7 +25,9 @@
             "*~"
             "*.swp"
             "*.idea/"
-            "*.claude/"
+            ".claude/*"
+            "!.claude/skills"
+            "!.claude/skills/**"
           ];
           settings = {
             gpg = {
