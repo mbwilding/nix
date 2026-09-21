@@ -19,6 +19,14 @@
       systemd = {
         packages = [ pkgs.waydroid-helper ];
         services.waydroid-mount.wantedBy = [ "multi-user.target" ];
+
+        # Audio runs as a system-wide pipewire instance (see host _audio.nix), so the
+        # per-user pipewire-pulse socket waydroid's lxc hook expects doesn't exist.
+        # Recreate it as a symlink to the real system socket on every user login.
+        user.tmpfiles.rules = [
+          "d %t/pulse 0755 - - -"
+          "L+ %t/pulse/native - - - - /run/pulse/native"
+        ];
       };
     };
 }
