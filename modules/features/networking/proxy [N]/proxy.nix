@@ -89,6 +89,11 @@
                 tag = "local";
               }
               {
+                type = "udp";
+                tag = "direct-dns";
+                server = "1.1.1.1";
+              }
+              {
                 type = "fakeip";
                 tag = "fakeip";
                 inet4_range = fakeIpRange;
@@ -96,8 +101,10 @@
             ];
             rules = [
               {
+                # "local" would ask 127.0.0.1 (dnsmasq), which forwards *.rwwa.com.au back to
+                # sing-box on dnsPort, looping forever. Query a real resolver directly instead.
                 domain_regex = excludeDomains;
-                server = "local";
+                server = "direct-dns";
               }
               {
                 domain_suffix = includeDomains;
