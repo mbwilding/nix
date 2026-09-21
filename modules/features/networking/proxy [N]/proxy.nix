@@ -89,6 +89,11 @@
                 tag = "local";
               }
               {
+                type = "udp";
+                tag = "direct-dns";
+                server = "1.1.1.1";
+              }
+              {
                 type = "fakeip";
                 tag = "fakeip";
                 inet4_range = fakeIpRange;
@@ -97,7 +102,7 @@
             rules = [
               {
                 domain_regex = excludeDomains;
-                server = "local";
+                server = "direct-dns";
               }
               {
                 domain_suffix = includeDomains;
