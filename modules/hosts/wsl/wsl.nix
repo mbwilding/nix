@@ -25,7 +25,6 @@ in
 
       home-manager.sharedModules = homeManagerModules;
 
-      home-manager.users.mbwilding.home.stateVersion = stateVersion;
       home-manager.users.${secrets.workId}.home.stateVersion = stateVersion;
       networking.hostName = hostName;
       programs.fish.enable = true;
