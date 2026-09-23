@@ -10,6 +10,10 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/release-26.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     ucodenix.url = "github:e-tho/ucodenix";
+    waydroid-nvidia-nix = {
+      url = "github:yigexuanmu/waydroid-nvidia-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     yazi.url = "github:sxyazi/yazi";
     noctalia.url = "github:noctalia-dev/noctalia-shell";
     niri.url = "github:sodiboo/niri-flake";
