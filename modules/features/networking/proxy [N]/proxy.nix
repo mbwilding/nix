@@ -57,7 +57,7 @@
               tag = "work-ssh";
               server = "surface";
               server_port = 22;
-              user = "mbwilding";
+              user = secrets.workId;
               private_key_path = "/home/mbwilding/.ssh/personal";
               connect_timeout = "5s";
             }
