@@ -35,6 +35,7 @@ let
     "user-work"
     "vm-curator"
     "waydroid"
+    "waydroid-nvidia"
     "wine"
     "wireshark"
     # "llama-swap"
