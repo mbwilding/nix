@@ -776,6 +776,7 @@
         "noctalia": "noctalia",
         "plasma-manager": "plasma-manager",
         "ucodenix": "ucodenix",
+        "waydroid-nvidia-nix": "waydroid-nvidia-nix",
         "yazi": "yazi"
       }
     },
@@ -851,6 +852,27 @@
         "type": "github"
       }
     },
+    "waydroid-nvidia-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "wnv-src": "wnv-src"
+      },
+      "locked": {
+        "lastModified": 1784900959,
+        "narHash": "sha256-wh11g5RcmQR/vSPBG1q08wA9F9ZmS5IkJ97+OUVo9RU=",
+        "owner": "yigexuanmu",
+        "repo": "waydroid-nvidia-nix",
+        "rev": "180697edb1ea2c53fed49d6a07d20a39af563083",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yigexuanmu",
+        "repo": "waydroid-nvidia-nix",
+        "type": "github"
+      }
+    },
     "windows-rs": {
       "flake": false,
       "locked": {
@@ -881,6 +903,23 @@
       "original": {
         "owner": "ElementalWarrior",
         "repo": "wine-wintypes.dll-for-affinity",
+        "type": "github"
+      }
+    },
+    "wnv-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784896711,
+        "narHash": "sha256-D1qG0+t9+6bdIEGZw6LaiIsU3yzASwY/VF0U2PM1Pcw=",
+        "owner": "Shiro836",
+        "repo": "waydroid-nvidia",
+        "rev": "4239f9055d9ecee765cf6890227cf4d1d9f7b13e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Shiro836",
+        "ref": "v0.1.2",
+        "repo": "waydroid-nvidia",
         "type": "github"
       }
     },
