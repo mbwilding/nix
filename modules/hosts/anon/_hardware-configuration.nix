@@ -18,10 +18,11 @@
     "usbhid"
     "sd_mod"
   ];
+  boot.blacklistedKernelModules = [ "amdgpu" ];
+  boot.extraModulePackages = [ ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.kernelParams = [ "pci-stub.ids=1002:164e" ];
-  boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/0fe90e91-7e10-4f3f-a2d6-ba54943c2690";
