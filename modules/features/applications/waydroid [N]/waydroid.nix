@@ -9,22 +9,6 @@
       services.geoclue2.enable = true;
       programs.kdeconnect.enable = true;
 
-      # Waydroid hardcodes nvidia as an unsupported render GPU and falls back to
-      # the first other /dev/dri/renderD* node, even when nvidia is the GPU
-      # actually driving the display (hybrid amdgpu+nvidia). That mismatch
-      # produces a running but blank Waydroid window. Drop nvidia from the
-      # blocklist so init/auto-detection picks the right node.
-      nixpkgs.overlays = [
-        (_final: prev: {
-          waydroid = prev.waydroid.overrideAttrs (old: {
-            postPatch = (old.postPatch or "") + ''
-              substituteInPlace tools/helpers/gpu.py \
-                --replace-fail 'unsupported = ["nvidia"]' 'unsupported = []'
-            '';
-          });
-        })
-      ];
-
       environment = {
         systemPackages = with pkgs; [
           android-tools
