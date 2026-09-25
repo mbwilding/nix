@@ -1,7 +1,7 @@
 ---@type zpack.Spec
 return {
     -- "stevearc/oil.nvim",
-    "barrettruth/canola.nvim", -- Drop in replacement with additional functionality
+    "https://forge.barrettruth.com/barrettruth/canola.nvim",
     lazy = false,
     dependencies = {
         "nvim-tree/nvim-web-devicons",
