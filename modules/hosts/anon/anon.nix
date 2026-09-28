@@ -9,8 +9,8 @@ let
     "affinity"
     "appimage"
     "audio"
-    "claude-desktop"
     "claude-code"
+    "claude-desktop"
     "copilot-cli"
     "development"
     "flatpak"
@@ -34,11 +34,11 @@ let
     "user-mbwilding"
     "user-work"
     "vm-curator"
+    "vscode"
     "waydroid"
     "waydroid-nvidia"
     "wine"
     "wireshark"
-    # "llama-swap"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
