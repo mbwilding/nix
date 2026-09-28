@@ -1,0 +1,13 @@
+{ vscode-extensions }:
+
+{
+  extension = vscode-extensions.esbenp.prettier-vscode;
+
+  settings = {
+    "[typescript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+    "[typescriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+    "[javascript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+    "[javascriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+    "[json]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+  };
+}
