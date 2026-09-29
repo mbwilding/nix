@@ -7,11 +7,11 @@
 
 let
   pname = "power-platform-toolbox";
-  version = "1.2.5";
+  version = "1.2.6";
 
   src = fetchurl {
     url = "https://github.com/PowerPlatformToolBox/desktop-app/releases/download/v${version}/Power-Platform-ToolBox-${version}-x86_64-linux.AppImage";
-    hash = "sha256-2e/mPRp8gYb+aC3MRY3P+MBPkk1YgyiAlukTr4p6PKc=";
+    hash = "sha256-LRoEo3w+Yj/3UW5xnvvponWgUwbPu9DChD6Mj4zOepA=";
   };
 
   appimageContents = appimageTools.extract {
