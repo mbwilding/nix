@@ -256,6 +256,7 @@
 
           # Extras
           cargo-lambda
+          resterm
         ];
       };
     };
