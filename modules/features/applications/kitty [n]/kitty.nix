@@ -4,6 +4,7 @@
   flake.modules.homeManager.kitty =
     {
       config,
+      pkgsMaster,
       ...
     }:
 
@@ -14,6 +15,7 @@
       programs = {
         kitty = {
           enable = true;
+          package = pkgsMaster.kitty;
           shellIntegration = {
             enableFishIntegration = config.programs.fish.enable;
             enableZshIntegration = config.programs.zsh.enable;
