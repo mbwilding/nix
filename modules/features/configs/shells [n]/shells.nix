@@ -10,7 +10,10 @@
     }:
     {
       home = {
-        sessionPath = [ "$HOME/.cargo/bin" ];
+        sessionPath = [
+          "$HOME/.cargo/bin"
+          "$HOME/.cache/.bun/bin"
+        ];
 
         file = {
           ".hushlogin".text = "";
