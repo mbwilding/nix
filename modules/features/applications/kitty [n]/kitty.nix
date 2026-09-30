@@ -38,6 +38,7 @@
             paste_actions = "quote-urls-at-prompt,replace-dangerous-control-codes";
             pixel_scroll = true;
             placement_strategy = "top-left";
+            remember_window_size = false;
             strip_trailing_spaces = "always";
             window_padding_width = 5;
 
