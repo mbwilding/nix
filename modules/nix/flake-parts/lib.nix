@@ -20,6 +20,7 @@
       user = "mbwilding";
       secrets = import ../_secrets.nix;
       sharedNixSettings = {
+        nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
         trusted-users = [ user ];
         extra-substituters = [
@@ -96,15 +97,11 @@
           modules = [
             inputs.self.modules.nixos.${name}
             {
+              nix.settings = sharedNixSettings;
               nixpkgs.hostPlatform = lib.mkDefault system;
               nixpkgs.overlays = [
                 inputs.nix-cachyos-kernel.overlays.default
               ];
-
-              nix = {
-                nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-                settings = sharedNixSettings;
-              };
 
               _module.args.pkgsMaster = import inputs.nixpkgs-master {
                 inherit system;
