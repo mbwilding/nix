@@ -4,7 +4,7 @@
   flake.modules.nixos.waydroid-nvidia =
     { pkgs, ... }:
     let
-      wnv = inputs.waydroid-nvidia-nix.packages.${pkgs.system}.waydroid-nvidia-full;
+      wnv = inputs.waydroid-nvidia-nix.packages.${pkgs.stdenv.hostPlatform.system}.waydroid-nvidia-full;
     in
     {
       # Stock Waydroid's hwcomposer can't render on nvidia proprietary drivers
