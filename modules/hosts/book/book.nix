@@ -11,7 +11,6 @@ let
     "audio"
     "claude-desktop"
     "claude-code"
-    "copilot-cli"
     "development"
     "flatpak"
     "gui"

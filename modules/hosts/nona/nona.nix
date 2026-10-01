@@ -12,7 +12,6 @@ let
     "audio"
     "claude-code"
     "claude-desktop"
-    "copilot-cli"
     "development"
     "flatpak"
     "gpu-amd"
