@@ -85,8 +85,8 @@
             };
             "difftool \"nvim\"".cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" -c \"CodeDiff\"";
             difftool.prompt = false;
-            merge.tool = "vscode-diff";
-            "mergetool \"vscode-diff\"".cmd = "nvim \"$MERGED\" -c 'CodeDiff merge \"$MERGED\"'";
+            merge.tool = "codediff";
+            "mergetool \"codediff\"".cmd = "nvim \"$MERGED\" -c 'CodeDiff merge \"$MERGED\"'";
           };
         };
       };
