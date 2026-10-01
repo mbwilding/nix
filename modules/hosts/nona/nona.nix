@@ -3,7 +3,6 @@
 let
   arch = "x86_64-linux";
   hostName = "nona";
-  # keymap = "dvorak";
   primaryMonitor = "eDP-1";
 
   features = [
@@ -85,10 +84,11 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
-      # console.keyMap = keymap;
-      host.primaryMonitor = primaryMonitor;
+      host = {
+        # keymap = "dvorak";
+        primaryMonitor = primaryMonitor;
+      };
       networking.hostName = hostName;
-      # services.xserver.xkb.variant = keymap;
 
       hardware = {
         xone.enable = true;

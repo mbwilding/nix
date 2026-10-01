@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.wayland-session =
@@ -9,6 +9,8 @@
       ...
     }:
     {
+      imports = [ inputs.self.modules.nixos.keymap ];
+
       options.host = {
         primaryMonitor = lib.mkOption {
           type = lib.types.str;
