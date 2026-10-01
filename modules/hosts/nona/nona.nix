@@ -3,7 +3,7 @@
 let
   arch = "x86_64-linux";
   hostName = "nona";
-  keymap = "dvorak";
+  # keymap = "dvorak";
   primaryMonitor = "eDP-1";
 
   features = [
@@ -17,7 +17,7 @@ let
     "gpu-amd"
     "gui"
     "hyprland"
-    "keyd"
+    # "keyd"
     "lutris"
     "mounts"
     "mpv"
@@ -85,10 +85,10 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
-      console.keyMap = keymap;
+      # console.keyMap = keymap;
       host.primaryMonitor = primaryMonitor;
       networking.hostName = hostName;
-      services.xserver.xkb.variant = keymap;
+      # services.xserver.xkb.variant = keymap;
 
       hardware = {
         xone.enable = true;
