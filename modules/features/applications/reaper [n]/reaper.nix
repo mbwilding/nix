@@ -33,8 +33,16 @@
       home = {
         packages = with pkgs; [
           reaper
-          reaper-sws-extension
-          reaper-reapack-extension
+          (reaper-sws-extension.overrideAttrs (old: {
+            env = (old.env or { }) // {
+              NIX_CFLAGS_COMPILE = "${old.env.NIX_CFLAGS_COMPILE or ""} -std=gnu++17";
+            };
+          }))
+          (reaper-reapack-extension.overrideAttrs (old: {
+            env = (old.env or { }) // {
+              NIX_CFLAGS_COMPILE = "${old.env.NIX_CFLAGS_COMPILE or ""} -Wno-error=deprecated";
+            };
+          }))
         ];
       };
 
