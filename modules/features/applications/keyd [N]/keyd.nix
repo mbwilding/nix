@@ -2,11 +2,45 @@
 
 let
   keyThreshold = "200";
+
+  polkit = {
+    security.polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (
+          action.id == "org.freedesktop.systemd1.manage-units" &&
+          action.lookup("unit") == "keyd.service" &&
+          subject.isInGroup("wheel")
+        ) {
+          return polkit.Result.YES;
+        }
+      });
+    '';
+  };
 in
 {
-  flake.modules.nixos.keyd =
+  flake.modules.nixos.keyd-qwerty =
     { ... }:
     {
+      imports = [ polkit ];
+
+      services.keyd = {
+        enable = true;
+        keyboards.default = {
+          ids = [ "*" ];
+          settings = {
+            main = {
+              capslock = "esc";
+            };
+          };
+        };
+      };
+    };
+
+  flake.modules.nixos.keyd-dvorak =
+    { ... }:
+    {
+      imports = [ polkit ];
+
       services.keyd = {
         enable = true;
         keyboards.default = {
@@ -113,17 +147,5 @@ in
           };
         };
       };
-
-      security.polkit.extraConfig = ''
-        polkit.addRule(function(action, subject) {
-          if (
-            action.id == "org.freedesktop.systemd1.manage-units" &&
-            action.lookup("unit") == "keyd.service" &&
-            subject.isInGroup("wheel")
-          ) {
-            return polkit.Result.YES;
-          }
-        });
-      '';
     };
 }

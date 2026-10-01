@@ -17,7 +17,7 @@ let
     "gpu-amd"
     "gui"
     "hyprland"
-    # "keyd"
+    "keyd-qwerty"
     "lutris"
     "mounts"
     "mpv"
