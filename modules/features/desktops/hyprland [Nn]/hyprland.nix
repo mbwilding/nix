@@ -86,6 +86,7 @@
   flake.modules.homeManager.hyprland =
     {
       lib,
+      config,
       pkgs,
       osConfig ? null,
       primaryMonitor ? (if osConfig != null then osConfig.host.primaryMonitor else ""),
@@ -101,6 +102,7 @@
     in
     {
       imports = [
+        inputs.self.modules.homeManager.keymap
         inputs.self.modules.homeManager.noctalia
         inputs.self.modules.homeManager.udiskie
         inputs.self.modules.homeManager.desktop-theme
@@ -201,7 +203,7 @@
 
             input = {
               kb_layout = "us";
-              kb_variant = "dvorak";
+              kb_variant = config.keymap.xkbVariant;
 
               resolve_binds_by_sym = true;
 

@@ -3,7 +3,6 @@
 let
   arch = "x86_64-linux";
   hostName = "book";
-  keymap = "dvorak";
   primaryMonitor = "eDP-1";
 
   features = [
@@ -60,10 +59,11 @@ in
 
       hardware.microsoft-surface.kernelVersion = "stable";
       home-manager.sharedModules = homeManagerModules;
-      console.keyMap = keymap;
-      host.primaryMonitor = primaryMonitor;
+      host = {
+        # keymap = "dvorak";
+        inherit primaryMonitor;
+      };
       networking.hostName = hostName;
-      services.xserver.xkb.variant = keymap;
 
       services = {
         upower.enable = true;

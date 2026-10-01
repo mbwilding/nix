@@ -44,6 +44,7 @@
   flake.modules.homeManager.niri =
     {
       lib,
+      config,
       pkgs,
       osConfig ? null,
       primaryMonitor ? (if osConfig != null then osConfig.host.primaryMonitor else ""),
@@ -57,6 +58,7 @@
     in
     {
       imports = [
+        inputs.self.modules.homeManager.keymap
         inputs.niri.homeModules.config
         inputs.self.modules.homeManager.noctalia
         inputs.self.modules.homeManager.udiskie
@@ -81,7 +83,7 @@
           keyboard = {
             xkb = {
               layout = "us";
-              variant = "dvorak";
+              variant = config.keymap.xkbVariant;
             };
             repeat-rate = 63;
             repeat-delay = 195;
