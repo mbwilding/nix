@@ -15,7 +15,6 @@ let
     "flatpak"
     "gui"
     "hyprland"
-    "keyd"
     "mounts"
     "mpv"
     "podman"
@@ -28,7 +27,6 @@ let
     "waydroid"
     "wine"
     "wireshark"
-    # "llama-swap"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
@@ -43,7 +41,7 @@ let
     (
       { pkgs, ... }:
       {
-        home.packages = with pkgs; [];
+        home.packages = with pkgs; [ ];
       }
     )
   ];
@@ -70,7 +68,6 @@ in
       services = {
         upower.enable = true;
       };
-
 
       system.stateVersion = "26.05";
     };
