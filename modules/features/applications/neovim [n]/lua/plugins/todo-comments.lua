@@ -25,7 +25,7 @@ local opts = {
         TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
         test = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
         Test = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
-    }
+    },
 }
 
 ---@type zpack.Spec

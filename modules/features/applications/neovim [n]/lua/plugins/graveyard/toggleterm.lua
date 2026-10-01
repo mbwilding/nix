@@ -50,7 +50,7 @@ return {
             opts.shell = "pwsh -NoLogo"
         else
             ---@diagnostic disable-next-line: assign-type-mismatch
-            opts.shell = os.getenv('SHELL')
+            opts.shell = os.getenv("SHELL")
         end
 
         toggle_term.setup(opts)

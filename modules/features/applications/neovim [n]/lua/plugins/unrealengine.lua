@@ -1,5 +1,5 @@
 local uname = vim.loop.os_uname()
-local engine_path = uname.sysname == "Windows_NT" and [[C:\UE\UE_5.7]] or vim.fn.expand('~') .. '/UnrealEngine'
+local engine_path = uname.sysname == "Windows_NT" and [[C:\UE\UE_5.7]] or vim.fn.expand("~") .. "/UnrealEngine"
 
 ---@type zpack.Spec
 return {
@@ -60,7 +60,7 @@ return {
             function()
                 require("unrealengine.commands").build_plugin()
             end,
-            desc = "UnrealEngine: Build Plugin"
+            desc = "UnrealEngine: Build Plugin",
         },
     },
     build = function()

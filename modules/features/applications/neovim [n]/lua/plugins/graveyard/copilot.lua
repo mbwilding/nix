@@ -45,7 +45,7 @@ return {
             },
         },
         nes = {
-            enabled = false
+            enabled = false,
         },
         filetypes = {
             yaml = true,
