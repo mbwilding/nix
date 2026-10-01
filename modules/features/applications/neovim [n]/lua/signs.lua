@@ -11,8 +11,8 @@ local signs = {
         "DapBreakpointRejected",
         { text = "", texthl = "DapBreakpoint", numhl = "DapBreakpoint" },
     },
-    { "DapLogPoint",   { text = "", texthl = "DapLogPoint", numhl = "DapLogPoint" } },
-    { "DapStopped",    { text = "", texthl = "DapStopped", numhl = "DapStopped" } },
+    { "DapLogPoint", { text = "", texthl = "DapLogPoint", numhl = "DapLogPoint" } },
+    { "DapStopped", { text = "", texthl = "DapStopped", numhl = "DapStopped" } },
     { "DapBreakpoint", { text = "", texthl = "DapBreakpoint", numhl = "DapBreakpoint" } },
 }
 

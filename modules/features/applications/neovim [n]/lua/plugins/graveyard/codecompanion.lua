@@ -7,7 +7,7 @@ local function codecompanion_prompt(command_prefix)
     end)
 end
 
-local adapter = "copilot"       -- "llama-swap"
+local adapter = "copilot" -- "llama-swap"
 local model = "claude-sonnet-5" -- "qwythos-9b-abliterated"
 
 ---@type zpack.Spec

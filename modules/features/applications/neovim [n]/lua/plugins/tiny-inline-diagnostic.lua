@@ -18,8 +18,8 @@ return {
     ---@diagnostic disable-next-line: missing-fields
     opts = {
         preset = "powerline", -- classic, minimal, powerline, ghost, simple, nonerdfont, amongus
-        throttle = 0,         -- 20
-        softwrap = 30,        -- min number of chars before wrap
+        throttle = 0, -- 20
+        softwrap = 30, -- min number of chars before wrap
         options = {
             multilines = {
                 enabled = true,
