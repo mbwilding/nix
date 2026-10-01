@@ -16,7 +16,7 @@ let
     "gpu-amd"
     "gui"
     "hyprland"
-    "keyd-qwerty"
+    "keyd-dvorak"
     "lutris"
     "mounts"
     "mpv"
@@ -85,7 +85,7 @@ in
 
       boot.kernelPackages = kernel;
       host = {
-        # keymap = "dvorak";
+        keymap = "dvorak";
         primaryMonitor = primaryMonitor;
       };
       networking.hostName = hostName;
