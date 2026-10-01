@@ -39,11 +39,14 @@
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         ];
       };
+      sharedOverlays = [
+        inputs.nur.overlays.default
+      ];
       mkHomeManagerFor = moduleName: work: system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = [
+            overlays = sharedOverlays ++ [
               inputs.self.lib.overlays.hyprlandGlaze
             ];
           };
@@ -98,7 +101,7 @@
             {
               nix.settings = sharedNixSettings;
               nixpkgs.hostPlatform = lib.mkDefault system;
-              nixpkgs.overlays = [
+              nixpkgs.overlays = sharedOverlays ++ [
                 inputs.nix-cachyos-kernel.overlays.default
               ];
 

@@ -4,6 +4,7 @@
   flake.modules.homeManager.claude-code =
     {
       secrets,
+      pkgsMaster,
       work ? false,
       ...
     }:
@@ -11,11 +12,12 @@
       programs = {
         claude-code = {
           enable = true;
+          package = pkgsMaster.claude-code;
           context = ../context.md;
           settings = {
             includeCoAuthoredBy = false;
             disableClaudeAiConnectors = true;
-            model = "claude-sonnet-5";
+            model = "claude-sonnet-5-5";
             effortLevel = "medium";
             theme = "dark";
             enableAllProjectMcpServers = true;
