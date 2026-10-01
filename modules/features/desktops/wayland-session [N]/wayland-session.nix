@@ -20,6 +20,12 @@
           type = lib.types.package;
           description = "The compositor package whose share/wayland-sessions tuigreet will list.";
         };
+
+        waylandSession.secondTty.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable a second greetd session on tty2, so a session can be started there without ending the one on tty1.";
+        };
       };
 
       config = {
@@ -63,9 +69,9 @@
 
         # A second greeter on VT2, so a session can be started there without
         # ending the one on VT1. Switch between them with Ctrl+Alt+F1/F2.
-        systemd.services."autovt@tty2".enable = false;
+        systemd.services."autovt@tty2".enable = lib.mkIf config.host.waylandSession.secondTty.enable false;
 
-        systemd.services.greetd-vt2 = {
+        systemd.services.greetd-vt2 = lib.mkIf config.host.waylandSession.secondTty.enable {
           description = "greetd on vt2 (secondary session, for switching users)";
           unitConfig = {
             Wants = [ "systemd-user-sessions.service" ];

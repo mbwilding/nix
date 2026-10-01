@@ -83,8 +83,11 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
-      host.primaryMonitor = primaryMonitor;
       networking.hostName = hostName;
+      host = {
+        primaryMonitor = primaryMonitor;
+        waylandSession.secondTty.enable = true;
+      };
 
       systemd.services.wifi-disable-default = {
         description = "Disable WiFi radio by default on boot";
