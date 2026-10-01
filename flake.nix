@@ -19,6 +19,11 @@
     niri.url = "github:sodiboo/niri-flake";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.flake-compat.follows = "flake-compat";
