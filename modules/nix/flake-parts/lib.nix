@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  pkgsMaster,
   ...
 }:
 {
@@ -20,6 +19,8 @@
       user = "mbwilding";
       secrets = import ../_secrets.nix;
       sharedNixSettings = {
+        # max-jobs = "auto";
+        # cores = 2;
         nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
         trusted-users = [ user ];
@@ -37,8 +38,6 @@
           "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         ];
-        max-jobs = 1;
-        # cores = 2;
       };
       mkHomeManagerFor = moduleName: work: system: name: extraModules: {
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
