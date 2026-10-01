@@ -4,7 +4,6 @@ let
   arch = "x86_64-linux";
   hostName = "anon";
   primaryMonitor = "HDMI-A-1";
-
   features = [
     "affinity"
     "appimage"
@@ -85,7 +84,8 @@ in
       boot.kernelPackages = kernel;
       networking.hostName = hostName;
       host = {
-        primaryMonitor = primaryMonitor;
+        inherit primaryMonitor;
+        # keymap = "dvorak";
         waylandSession.secondTty.enable = true;
       };
 
