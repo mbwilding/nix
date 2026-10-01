@@ -22,11 +22,11 @@ in
               space = "overload(shift, space)";
               capslock = "overload(capslock, backspace)";
               leftshift = "esc";
-              # rightalt = "layer(symbols)";
+              rightalt = "layer(symbols)";
 
               # TTY
-              leftalt = "C-A-f1";
-              rightalt = "C-A-f2";
+              # leftalt = "C-A-f1";
+              # rightalt = "C-A-f2";
 
               a = "overloadt(control, a, ${keyThreshold})";
               ";" = "overloadt(control, ;, ${keyThreshold})";
