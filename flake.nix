@@ -4,20 +4,25 @@
     flake-compat.url = "github:NixOS/flake-compat";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    niri.url = "github:sodiboo/niri-flake";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-master.url = "github:NixOS/nixpkgs";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/release-26.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     ucodenix.url = "github:e-tho/ucodenix";
+    yazi.url = "github:sxyazi/yazi";
+
     waydroid-nvidia-nix = {
       url = "github:yigexuanmu/waydroid-nvidia-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    yazi.url = "github:sxyazi/yazi";
-    noctalia.url = "github:noctalia-dev/noctalia-shell";
-    niri.url = "github:sodiboo/niri-flake";
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nur = {
       url = "github:nix-community/NUR";
