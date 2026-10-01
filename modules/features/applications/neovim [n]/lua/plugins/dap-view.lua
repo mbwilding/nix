@@ -7,7 +7,7 @@ return {
         {
             "<leader>dap",
             "<cmd>DapViewToggle<cr>",
-            desc = "Debug: Toggle UI"
+            desc = "Debug: Toggle UI",
         },
     },
     ---@module 'dap-view'
@@ -21,7 +21,7 @@ return {
                 "exceptions",
                 "breakpoints",
                 "threads",
-                "repl"
+                "repl",
             },
             controls = {
                 enabled = true,

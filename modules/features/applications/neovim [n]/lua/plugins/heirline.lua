@@ -152,8 +152,12 @@ return {
                     local suffix = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }
                     local fsize = vim.fn.getfsize(vim.api.nvim_buf_get_name(0))
                     fsize = (fsize < 0 and 0) or fsize
-                    if fsize == 0 then return "" end
-                    if fsize < 1024 then return " " .. fsize .. suffix[1] end
+                    if fsize == 0 then
+                        return ""
+                    end
+                    if fsize < 1024 then
+                        return " " .. fsize .. suffix[1]
+                    end
                     local i = math.floor((math.log(fsize) / math.log(1024)))
                     return " " .. string.format("%.2f%s", fsize / (1024 ^ i), suffix[i + 1])
                 end,
@@ -206,12 +210,17 @@ return {
                     local devicons_ok, devicons = pcall(require, "nvim-web-devicons")
                     local icon = ""
                     if devicons_ok then
-                        local di = devicons.get_icon(vim.fs.basename(path), vim.fn.fnamemodify(path, ":e"),
-                            { default = false })
+                        local di = devicons.get_icon(
+                            vim.fs.basename(path),
+                            vim.fn.fnamemodify(path, ":e"),
+                            { default = false }
+                        )
                         if not di then
                             di = devicons.get_icon_by_filetype(ft, { default = false })
                         end
-                        if di then icon = di end
+                        if di then
+                            icon = di
+                        end
                     end
                     local label = ft ~= "" and ft or ""
                     if label ~= "" then
@@ -242,8 +251,8 @@ return {
             if git_branch_cache[cwd] ~= nil then
                 return git_branch_cache[cwd]
             end
-            local result = vim.fn.systemlist("git -C " ..
-                vim.fn.shellescape(cwd) .. " rev-parse --abbrev-ref HEAD 2>/dev/null")
+            local result =
+                vim.fn.systemlist("git -C " .. vim.fn.shellescape(cwd) .. " rev-parse --abbrev-ref HEAD 2>/dev/null")
             local branch = (result and result[1] and result[1] ~= "" and vim.v.shell_error == 0) and result[1] or false
             git_branch_cache[cwd] = branch
             return branch
@@ -317,7 +326,9 @@ return {
                     hl = { fg = colors.method, bg = bg },
                 },
                 {
-                    condition = function(self) return self.info_space end,
+                    condition = function(self)
+                        return self.info_space
+                    end,
                     provider = " ",
                 },
                 {
@@ -327,7 +338,9 @@ return {
                     hl = { fg = colors.macro, bg = bg },
                 },
                 {
-                    condition = function(self) return self.hint_space end,
+                    condition = function(self)
+                        return self.hint_space
+                    end,
                     provider = " ",
                 },
                 {
@@ -337,7 +350,9 @@ return {
                     hl = { fg = colors.namespace, bg = bg },
                 },
                 {
-                    condition = function(self) return self.warn_space end,
+                    condition = function(self)
+                        return self.warn_space
+                    end,
                     provider = " ",
                 },
                 {
@@ -536,17 +551,17 @@ return {
 
         local sections = {
             { primary = colors.window_accent, contents = { vim_mode } },
-            { primary = colors.window_bg,     contents = { git } },
+            { primary = colors.window_bg, contents = { git } },
             { primary = colors.window_accent, contents = { file_format } },
-            { primary = colors.window_bg,     contents = { file_size } },
+            { primary = colors.window_bg, contents = { file_size } },
             { primary = colors.window_accent, contents = { file_encoding } },
-            { primary = colors.window_bg,     contents = { file_type } },
+            { primary = colors.window_bg, contents = { file_type } },
             { primary = colors.window_accent, contents = { lint } },
-            { primary = colors.window_bg,     contents = { lsp } },
+            { primary = colors.window_bg, contents = { lsp } },
             { primary = colors.window_accent, contents = { diagnostics } },
-            { primary = colors.window_bg,     contents = { debug } },
+            { primary = colors.window_bg, contents = { debug } },
             align_cut,
-            { primary = colors.window_bg,     contents = { ruler } },
+            { primary = colors.window_bg, contents = { ruler } },
             { primary = colors.window_accent, contents = { date_time } },
         }
 
