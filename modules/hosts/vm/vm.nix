@@ -8,7 +8,6 @@ let
   features = [
     "appimage"
     "claude-code"
-    "copilot-cli"
     "development"
     "podman"
     "proxy"
