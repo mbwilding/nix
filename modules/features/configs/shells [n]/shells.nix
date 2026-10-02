@@ -27,6 +27,9 @@
         };
 
         shellAliases = {
+          z = "cd";
+          zi = "cdi";
+
           # Nix
           nix-boot = "sudo nixos-rebuild boot --impure --flake /etc/nixos";
           nix-build = "nixos-rebuild build --no-link --impure --flake /etc/nixos";
