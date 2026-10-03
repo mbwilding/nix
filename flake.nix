@@ -51,6 +51,16 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    gronk = {
+      url = "github:mbwilding/gronk.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    neospleen = {
+      url = "github:mbwilding/neospleen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     open-ecc = {
       url = "github:mbwilding/open-ecc";
       inputs.nixpkgs.follows = "nixpkgs";
