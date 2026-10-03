@@ -234,6 +234,26 @@
         "type": "github"
       }
     },
+    "gronk": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791022216,
+        "narHash": "sha256-nESVPZUPCI5Q1T9/OTJwFVdrTbzKKEQLmYPlA4G/wJc=",
+        "owner": "mbwilding",
+        "repo": "gronk.nvim",
+        "rev": "3d2295f8afc2ba82434a44d1c9391ede39f4e0bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "repo": "gronk.nvim",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -266,6 +286,26 @@
       "original": {
         "owner": "vic",
         "repo": "import-tree",
+        "type": "github"
+      }
+    },
+    "neospleen": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791022213,
+        "narHash": "sha256-cchNLV607iKRwP0+b1wrzzayKKPhtGE96J6+iWThqxk=",
+        "owner": "mbwilding",
+        "repo": "neospleen",
+        "rev": "97844a1feebbb243236849cd72a8957364aea9f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "repo": "neospleen",
         "type": "github"
       }
     },
@@ -796,8 +836,10 @@
         "affinity-nix": "affinity-nix",
         "flake-compat": "flake-compat_3",
         "flake-parts": "flake-parts_2",
+        "gronk": "gronk",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "neospleen": "neospleen",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "niri": "niri",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
