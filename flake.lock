@@ -536,11 +536,11 @@
     "nixpkgs-cfn-lint": {
       "flake": false,
       "locked": {
-        "lastModified": 1791025209,
-        "narHash": "sha256-sUTvlGzqaNRXmMuBO1vySjxfBAmyCbeyVEERViEdFbQ=",
+        "lastModified": 1791026443,
+        "narHash": "sha256-8a7MtY3bdw27Jf1q1BA7zphdVR9xlDpAPLrkmkilHaw=",
         "owner": "mbwilding",
         "repo": "nixpkgs",
-        "rev": "c8efa0345f6881f32702a9384fb75bc55e0cb874",
+        "rev": "cf66f7cc03d6b62bda4d90ed3175337a11fa1aa4",
         "type": "github"
       },
       "original": {
