@@ -75,6 +75,26 @@
         "type": "github"
       }
     },
+    "dtctl": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791023654,
+        "narHash": "sha256-axMzfiV59Zfg56PHxf3BiGf+o/LyVOFjf6EjqFc7i64=",
+        "owner": "mbwilding",
+        "repo": "dtctl",
+        "rev": "3c8009d0401807a0e8551a63596cfb93ef830eef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "repo": "dtctl",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "locked": {
         "lastModified": 1751685974,
@@ -834,6 +854,7 @@
     "root": {
       "inputs": {
         "affinity-nix": "affinity-nix",
+        "dtctl": "dtctl",
         "flake-compat": "flake-compat_3",
         "flake-parts": "flake-parts_2",
         "gronk": "gronk",
