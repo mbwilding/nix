@@ -1,14 +1,11 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.fonts =
     { pkgs, ... }:
     let
-      neospleen = pkgs.callPackage ./_neospleen.nix { };
-      neospleen-nerdfont = pkgs.callPackage ./_neospleen-nerdfont.nix { };
+      inherit (inputs.neospleen.packages.${pkgs.stdenv.hostPlatform.system}) neospleen neospleen-nerdfont;
       microsoft-fonts = pkgs.callPackage ./_microsoft-fonts.nix { };
-      # neospleen-local = pkgs.callPackage ./_neospleen-local.nix { };
-      # neospleen-nerdfont-local = pkgs.callPackage ./_neospleen-nerdfont-local.nix { };
     in
     {
       fonts = {
