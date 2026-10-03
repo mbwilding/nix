@@ -51,6 +51,11 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    dtctl = {
+      url = "github:dynatrace-oss/dtctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     gronk = {
       url = "github:mbwilding/gronk.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -58,6 +63,11 @@
 
     neospleen = {
       url = "github:mbwilding/neospleen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    vm-curator = {
+      url = "github:mroboff/vm-curator";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
