@@ -88,7 +88,7 @@ in
         ./_k9s.nix
         ./_lazysql.nix
         ./_package-managers.nix
-        ./_power-platform-toolbox.nix
+        (import ./_power-platform-toolbox.nix { inherit inputs; })
         ./_ssh.nix
       ];
 
