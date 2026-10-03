@@ -61,6 +61,7 @@
                 nixpkgs.config.allowUnfree = true;
                 _module.args.secrets = secrets;
                 _module.args.work = work;
+                _module.args.hostKeymap = inputs.self.nixosConfigurations.${name}.config.host.keymap or "qwerty";
                 _module.args.pkgsMaster = import inputs.nixpkgs-master {
                   inherit system;
                   config.allowUnfree = true;
