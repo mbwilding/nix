@@ -79,16 +79,17 @@ done
 op_commands=""
 for entry in "${secrets[@]}"; do
   IFS='|' read -r item field path <<< "$entry"
-  if [[ "$refresh" == false && -e "$path" ]]; then
+  if [[ "$refresh" == false && -s "$path" ]]; then
     op_commands+="echo 'SKIP: $item ($field) (already exists)';"
     continue
   fi
+  tmp="$path.tmp"
   if [[ "$path" == $HOME/.ssh/* ]]; then
-    cmd="op read 'op://Vault/$item/$field' > '$path' && chmod 600 '$path'"
+    cmd="op read 'op://Vault/$item/$field' > '$tmp' && chmod 600 '$tmp' && mv -f '$tmp' '$path'"
   else
-    cmd="op read 'op://Vault/$item/$field' > '$path' && sed -zi 's/\n$//' '$path' && chmod 600 '$path'"
+    cmd="op read 'op://Vault/$item/$field' > '$tmp' && sed -zi 's/\n$//' '$tmp' && chmod 600 '$tmp' && mv -f '$tmp' '$path'"
   fi
-  op_commands+="if $cmd; then echo 'OK: $item ($field)'; else echo 'FAIL: $item ($field)' >&2; failures+=(\"$item ($field)\"); fi;"
+  op_commands+="if $cmd; then echo 'OK: $item ($field)'; else rm -f '$tmp'; echo 'FAIL: $item ($field)' >&2; failures+=(\"$item ($field)\"); fi;"
 done
 
 summary=$(cat <<'EOF'
