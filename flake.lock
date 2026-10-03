@@ -731,6 +731,26 @@
         "type": "github"
       }
     },
+    "open-ecc": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791021686,
+        "narHash": "sha256-tQHvgC12F4fNiV0i5eVDuyEc+vw4hYvGcm7Gf/wzJfI=",
+        "owner": "mbwilding",
+        "repo": "open-ecc",
+        "rev": "f6075e483d7b64a45edc6d1c6e1eb0c97de2c9fa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "repo": "open-ecc",
+        "type": "github"
+      }
+    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -789,7 +809,9 @@
         "nixpkgs-stable": "nixpkgs-stable_2",
         "noctalia": "noctalia",
         "nur": "nur",
+        "open-ecc": "open-ecc",
         "plasma-manager": "plasma-manager",
+        "steam-achievement-manager": "steam-achievement-manager",
         "ucodenix": "ucodenix",
         "unifi-cli": "unifi-cli",
         "waydroid-nvidia-nix": "waydroid-nvidia-nix",
@@ -814,6 +836,26 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "steam-achievement-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791021689,
+        "narHash": "sha256-Tb0G6TUslSje49YrIeQ+wLJgCVnZFnrvuS+mcchTKZ4=",
+        "owner": "mbwilding",
+        "repo": "steam-achievement-manager",
+        "rev": "b48e1b021fa00f2572d1217de5317dbb9403d311",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "repo": "steam-achievement-manager",
         "type": "github"
       }
     },
