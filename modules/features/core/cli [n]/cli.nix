@@ -20,6 +20,7 @@
       opencode
       packages-cli
       shells
+      unifi
       yazi
       zellij
       zoxide

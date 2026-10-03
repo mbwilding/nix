@@ -50,6 +50,7 @@ secrets=(
   "Reaper|reaper-license.rk|$HOME/.config/REAPER/reaper-license.rk"
   "Reaper|reaper-reginfo2.ini|$HOME/.config/REAPER/reaper-reginfo2.ini"
   "Steam|credential|$HOME/.secrets/steam"
+  "Unifi|credential|$HOME/.secrets/unifi"
   "Voip|password|$HOME/.secrets/voip-password"
   "Voip|username|$HOME/.secrets/voip-username"
   "Weather|credential|$HOME/.secrets/weather"

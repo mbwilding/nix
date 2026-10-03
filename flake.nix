@@ -50,6 +50,13 @@
       inputs.flake-parts.follows = "flake-parts";
       inputs.flake-compat.follows = "flake-compat";
     };
+
+    unifi-cli = {
+      # TODO: Once PR https://github.com/rvben/unifi-cli/pull/15 merges switch to:
+      # github:rvben/unifi-cli
+      url = "github:mbwilding/unifi-cli/feat/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
