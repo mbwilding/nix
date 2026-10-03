@@ -7,6 +7,7 @@
     {
       programs.vscode.profiles.default.userSettings = {
         # Theme
+        "workbench.colorTheme" = "Gronk";
         "workbench.startupEditor" = "none";
 
         # Editor
