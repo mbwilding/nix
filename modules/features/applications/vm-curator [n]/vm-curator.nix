@@ -5,7 +5,7 @@
     { pkgs, ... }:
     {
       home.packages = [
-        (pkgs.callPackage ./_vm-curator.nix { })
+        pkgs.vm-curator
         pkgs.qemu
       ];
     };
