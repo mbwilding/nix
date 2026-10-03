@@ -49,6 +49,7 @@ in
   figmaKey = read "figma";
   lucidKey = read "lucid";
   openAiKey = read "openai";
+  unifiKey = read "unifi";
   weatherKey = read "weather";
 
   # Networks
