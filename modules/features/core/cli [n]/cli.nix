@@ -39,8 +39,9 @@
         packages =
           let
             dtctl = pkgs.callPackage ./_dtctl.nix { };
-            open-ecc = pkgs.callPackage ./_open-ecc.nix { };
-            steam-achievement-manager = pkgs.callPackage ./_steam-achievement-manager.nix { };
+            system = pkgs.stdenv.hostPlatform.system;
+            open-ecc = inputs.open-ecc.packages.${system}.default;
+            steam-achievement-manager = inputs.steam-achievement-manager.packages.${system}.default;
           in
           with pkgs;
           [

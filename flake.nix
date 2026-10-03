@@ -51,6 +51,16 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    open-ecc = {
+      url = "github:mbwilding/open-ecc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    steam-achievement-manager = {
+      url = "github:mbwilding/steam-achievement-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     unifi-cli = {
       url = "github:rvben/unifi-cli";
       inputs.nixpkgs.follows = "nixpkgs";
