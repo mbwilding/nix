@@ -26,13 +26,14 @@ in
     {
       lib,
       osConfig ? null,
+      hostKeymap ? "qwerty",
       ...
     }:
     {
       options.keymap.xkbVariant = lib.mkOption {
         type = lib.types.str;
         readOnly = true;
-        default = variantOf (if osConfig != null then osConfig.host.keymap else "qwerty");
+        default = variantOf (if osConfig != null then osConfig.host.keymap else hostKeymap);
         description = "XKB variant derived from host.keymap.";
       };
     };
