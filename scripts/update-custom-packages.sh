@@ -206,92 +206,6 @@ update_fetchfromgithub_file() {
   sed -i "s#$cur_hash#$new_hash#" "$file"
 }
 
-update_fetchfromgithub_release_file() {
-  local file="$1" owner repo cur_version cur_hash latest new_hash
-
-  owner=$(first_match '(?<=owner = ")[^"]+' "$file")
-  repo=$(first_match '(?<=repo = ")[^"]+' "$file")
-  cur_version=$(first_match '(?<=version = ")[^"]+' "$file")
-  cur_hash=$(first_match '(?<=hash = ")[^"]+' "$file")
-
-  if [[ -z "$owner" || -z "$repo" || -z "$cur_version" ]]; then
-    echo "  skip: could not parse fetchFromGitHub release fields"
-    return
-  fi
-
-  latest=$(curl_github "https://api.github.com/repos/$owner/$repo/releases/latest" | jq -r '.tag_name // empty' || true)
-  latest="${latest#v}"
-
-  if [[ -z "$latest" ]]; then
-    echo "  skip: could not resolve latest release for $owner/$repo"
-    return
-  fi
-
-  if [[ "$latest" == "$cur_version" ]]; then
-    echo "  up to date ($cur_version) [$owner/$repo]"
-    return
-  fi
-
-  echo "  $owner/$repo: $cur_version -> $latest"
-
-  new_hash=$(nix flake prefetch "github:$owner/$repo/v$latest" --json 2>/dev/null | jq -r '.hash // empty' || true)
-  if [[ -z "$new_hash" ]]; then
-    echo "    FAILED to prefetch github source"
-    return
-  fi
-
-  sed -i "s/version = \"$cur_version\"/version = \"$latest\"/g" "$file"
-  sed -i "s#$cur_hash#$new_hash#" "$file"
-}
-
-update_pypi_file() {
-  local file="$1" pname cur_version cur_hash pypi_name latest sdist_url new_hash
-
-  pname=$(first_match '(?<=pname = ")[^"]+' "$file")
-  cur_version=$(first_match '(?<=version = ")[^"]+' "$file")
-  cur_hash=$(first_match '(?<=hash = ")[^"]+' "$file")
-
-  # fetchPypi can rename the project via its own pname; prefer that if present.
-  pypi_name=$(sed -n '/fetchPypi/,/};/p' "$file" | grep -oP '(?<=pname = ")[^"]+' | head -1)
-  pypi_name="${pypi_name:-$pname}"
-
-  if [[ -z "$pypi_name" || -z "$cur_version" ]]; then
-    echo "  skip: could not parse PyPI package fields"
-    return
-  fi
-
-  latest=$(curl -sf "https://pypi.org/pypi/$pypi_name/json" 2>/dev/null | jq -r '.info.version // empty' || true)
-
-  if [[ -z "$latest" ]]; then
-    echo "  skip: could not resolve latest PyPI version for $pypi_name"
-    return
-  fi
-
-  if [[ "$latest" == "$cur_version" ]]; then
-    echo "  up to date ($cur_version) [$pypi_name]"
-    return
-  fi
-
-  echo "  $pypi_name: $cur_version -> $latest"
-
-  sdist_url=$(curl -sf "https://pypi.org/pypi/$pypi_name/$latest/json" 2>/dev/null |
-    jq -r '[.urls[] | select(.packagetype == "sdist")][0].url // empty' || true)
-
-  if [[ -z "$sdist_url" ]]; then
-    echo "    FAILED: no sdist found for $pypi_name $latest"
-    return
-  fi
-
-  new_hash=$(prefetch_hash sha256 "$sdist_url")
-  if [[ -z "$new_hash" ]]; then
-    echo "    FAILED to prefetch sdist"
-    return
-  fi
-
-  sed -i "s/version = \"$cur_version\"/version = \"$latest\"/g" "$file"
-  sed -i "s#$cur_hash#$new_hash#" "$file"
-}
-
 update_vscode_marketplace_file() {
   local file="$1" publisher name cur_version cur_hash latest url new_hash query
 
@@ -446,10 +360,6 @@ main() {
       update_vscode_marketplace_file "$file"
     elif grep -q 'registry\.npmjs\.org' "$file"; then
       update_npm_file "$file"
-    elif grep -q 'fetchPypi' "$file"; then
-      update_pypi_file "$file"
-    elif grep -q 'fetchFromGitHub' "$file" && grep -q 'tag = "v\${version}"' "$file"; then
-      update_fetchfromgithub_release_file "$file"
     elif grep -q 'fetchFromGitHub' "$file" && grep -q 'rev = "' "$file"; then
       update_fetchfromgithub_file "$file"
     elif grep -q 'downloads\.claude\.ai/claude-desktop/apt' "$file"; then
