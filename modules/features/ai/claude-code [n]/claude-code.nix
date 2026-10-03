@@ -22,7 +22,7 @@
             theme = "dark";
             enableAllProjectMcpServers = true;
             permissions = {
-              defaultMode = "auto";
+              defaultMode = "bypassPermissions";
             };
             # enabledPlugins = {
             #   "clangd-lsp@claude-plugins-official" = false;
