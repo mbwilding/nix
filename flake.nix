@@ -51,6 +51,12 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    # TODO: github:robbert-vdh/yabridge once https://github.com/robbert-vdh/yabridge/pull/519 is merged
+    yabridge = {
+      url = "github:mbwilding/yabridge/chore/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # TODO: github:PowerPlatformToolBox/desktop-app once https://github.com/PowerPlatformToolBox/desktop-app/pull/699 is merged
     power-platform-toolbox = {
       url = "github:mbwilding/desktop-app/chore/nix-flake";
