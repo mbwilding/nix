@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.development =
@@ -168,7 +168,9 @@
   flake.modules.homeManager.development =
     { pkgs, ... }:
     let
-      vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { };
+      bash-debug = pkgs.callPackage "${inputs.nixpkgs-bash-debug}/pkgs/applications/editors/vscode/extensions/rogalmic.bash-debug" { };
+      vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { inherit bash-debug; };
+      cfn-lint = pkgs.python3Packages.callPackage "${inputs.nixpkgs-cfn-lint}/pkgs/development/python-modules/cfn-lint/default.nix" { };
       gh-actions-language-server = pkgs.callPackage ./_gh-actions-language-server.nix { };
     in
     {
@@ -241,7 +243,7 @@
           clippy # rust
           eslint_d # js / ts
           markdownlint-cli2 # markdown
-          python3Packages.cfn-lint # python
+          cfn-lint # python
           ruff # python
           yamllint # yaml
 

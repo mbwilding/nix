@@ -1,24 +1,14 @@
 {
   lib,
   stdenvNoCC,
-  vscode-utils,
   makeWrapper,
   nodejs,
+  bash-debug,
 }:
 
-let
-  ext = vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      publisher = "rogalmic";
-      name = "bash-debug";
-      version = "0.3.9";
-      hash = "sha256-f8FUZCvz/PonqQP9RCNbyQLZPnN5Oce0Eezm/hD19Fg=";
-    };
-  };
-in
 stdenvNoCC.mkDerivation {
   pname = "vscode-bash-debug";
-  version = "0.3.9";
+  inherit (bash-debug) version;
 
   dontUnpack = true;
 
@@ -26,7 +16,7 @@ stdenvNoCC.mkDerivation {
 
   installPhase = ''
     makeWrapper ${nodejs}/bin/node $out/bin/vscode-bash-debug \
-      --add-flags "${ext}/share/vscode/extensions/rogalmic.bash-debug/out/bashDebug.js"
+      --add-flags "${bash-debug}/share/vscode/extensions/rogalmic.bash-debug/out/bashDebug.js"
   '';
 
   meta = with lib; {
