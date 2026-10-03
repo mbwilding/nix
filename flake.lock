@@ -75,6 +75,26 @@
         "type": "github"
       }
     },
+    "dtctl": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790972461,
+        "narHash": "sha256-vL7OoQbyvTjAXhfWUSHO2QwmW+F8+9sM6YFpBJPKv9c=",
+        "owner": "dynatrace-oss",
+        "repo": "dtctl",
+        "rev": "c7489160f1cc8e551e82fde53ab0d2c35268098a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dynatrace-oss",
+        "repo": "dtctl",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "locked": {
         "lastModified": 1751685974,
@@ -834,6 +854,7 @@
     "root": {
       "inputs": {
         "affinity-nix": "affinity-nix",
+        "dtctl": "dtctl",
         "flake-compat": "flake-compat_3",
         "flake-parts": "flake-parts_2",
         "gronk": "gronk",
@@ -856,6 +877,7 @@
         "steam-achievement-manager": "steam-achievement-manager",
         "ucodenix": "ucodenix",
         "unifi-cli": "unifi-cli",
+        "vm-curator": "vm-curator",
         "waydroid-nvidia-nix": "waydroid-nvidia-nix",
         "yazi": "yazi"
       }
@@ -969,6 +991,26 @@
       "original": {
         "owner": "rvben",
         "repo": "unifi-cli",
+        "type": "github"
+      }
+    },
+    "vm-curator": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786476083,
+        "narHash": "sha256-W0UsPEsUQfAfnQ6rkgBX1L23Fr2iPQ1Z7la9yzKl1ZA=",
+        "owner": "mroboff",
+        "repo": "vm-curator",
+        "rev": "cdcf2acc2027a4db07e9f65b046d4e3119ee8a08",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mroboff",
+        "repo": "vm-curator",
         "type": "github"
       }
     },

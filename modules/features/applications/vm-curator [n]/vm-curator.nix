@@ -1,11 +1,11 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.homeManager.vm-curator =
     { pkgs, ... }:
     {
       home.packages = [
-        pkgs.vm-curator
+        inputs.vm-curator.packages.${pkgs.stdenv.hostPlatform.system}.default
         pkgs.qemu
       ];
     };
