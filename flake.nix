@@ -51,36 +51,6 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
-    # TODO: github:robbert-vdh/yabridge once https://github.com/robbert-vdh/yabridge/pull/519 is merged
-    yabridge = {
-      url = "github:mbwilding/yabridge/chore/nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # TODO: github:PowerPlatformToolBox/desktop-app once https://github.com/PowerPlatformToolBox/desktop-app/pull/699 is merged
-    power-platform-toolbox = {
-      url = "github:mbwilding/desktop-app/chore/nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # TODO: use nixpkgs' python3Packages.cfn-lint once https://github.com/NixOS/nixpkgs/pull/569751 is merged and in nixos-unstable
-    nixpkgs-cfn-lint = {
-      url = "github:mbwilding/nixpkgs/cfn-lint-1.57.1";
-      flake = false;
-    };
-
-    # TODO: use nixpkgs' vscode-extensions.rogalmic.bash-debug once https://github.com/NixOS/nixpkgs/pull/569754 is merged and in nixos-unstable
-    nixpkgs-bash-debug = {
-      url = "github:mbwilding/nixpkgs/vscode-bash-debug";
-      flake = false;
-    };
-
-    # TODO: github:dynatrace-oss/dtctl once https://github.com/dynatrace-oss/dtctl/pull/670 is merged
-    dtctl = {
-      url = "github:mbwilding/dtctl/fix-nix-build";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     gronk = {
       url = "github:mbwilding/gronk.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -108,6 +78,36 @@
 
     unifi-cli = {
       url = "github:rvben/unifi-cli";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # TODO: github:robbert-vdh/yabridge once https://github.com/robbert-vdh/yabridge/pull/519 is merged
+    yabridge = {
+      url = "github:mbwilding/yabridge/chore/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # TODO: github:PowerPlatformToolBox/desktop-app once https://github.com/PowerPlatformToolBox/desktop-app/pull/699 is merged
+    power-platform-toolbox = {
+      url = "github:mbwilding/desktop-app/chore/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # TODO: use nixpkgs' python3Packages.cfn-lint once https://github.com/NixOS/nixpkgs/pull/569751 is merged and in nixos-unstable
+    nixpkgs-cfn-lint = {
+      url = "github:mbwilding/nixpkgs/cfn-lint-1.57.1";
+      flake = false;
+    };
+
+    # TODO: use nixpkgs' vscode-extensions.rogalmic.bash-debug once https://github.com/NixOS/nixpkgs/pull/569754 is merged and in nixos-unstable
+    nixpkgs-bash-debug = {
+      url = "github:mbwilding/nixpkgs/vscode-bash-debug";
+      flake = false;
+    };
+
+    # TODO: github:dynatrace-oss/dtctl once https://github.com/dynatrace-oss/dtctl/pull/670 is merged
+    dtctl = {
+      url = "github:mbwilding/dtctl/fix-nix-build";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
