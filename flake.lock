@@ -516,6 +516,40 @@
         "type": "github"
       }
     },
+    "nixpkgs-bash-debug": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791025275,
+        "narHash": "sha256-SRcdVbcsZyfoocJ+bRtQOpF0ZCNYO01YBPSitOn7CjQ=",
+        "owner": "mbwilding",
+        "repo": "nixpkgs",
+        "rev": "c2d7fa8ef69c7e0532867a82e7aaaebd873e4525",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "ref": "vscode-bash-debug",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-cfn-lint": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791025209,
+        "narHash": "sha256-sUTvlGzqaNRXmMuBO1vySjxfBAmyCbeyVEERViEdFbQ=",
+        "owner": "mbwilding",
+        "repo": "nixpkgs",
+        "rev": "c8efa0345f6881f32702a9384fb75bc55e0cb874",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "ref": "cfn-lint-1.57.1",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1788057806,
@@ -868,6 +902,8 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_9",
+        "nixpkgs-bash-debug": "nixpkgs-bash-debug",
+        "nixpkgs-cfn-lint": "nixpkgs-cfn-lint",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "noctalia": "noctalia",
