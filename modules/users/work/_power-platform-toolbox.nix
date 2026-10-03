@@ -1,3 +1,4 @@
+{ inputs }:
 {
   lib,
   pkgs,
@@ -45,7 +46,7 @@ let
   configDir = "$HOME/.config/powerplatform-toolbox";
 in
 {
-  home.packages = [ (pkgs.callPackage ./_power-platform-toolbox-pkg.nix { }) ];
+  home.packages = [ inputs.power-platform-toolbox.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   home.activation.powerPlatformToolbox = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p "${configDir}"
