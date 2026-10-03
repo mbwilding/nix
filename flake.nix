@@ -52,9 +52,7 @@
     };
 
     unifi-cli = {
-      # TODO: Once PR https://github.com/rvben/unifi-cli/pull/15 merges switch to:
-      # github:rvben/unifi-cli
-      url = "github:mbwilding/unifi-cli/feat/nix-flake";
+      url = "github:rvben/unifi-cli";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

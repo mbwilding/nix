@@ -488,11 +488,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1791011234,
-        "narHash": "sha256-PoQxxJhQAhYKmSf9JEVxcu27zBCsYvY4T6186esw/dI=",
+        "lastModified": 1791019154,
+        "narHash": "sha256-Hq/GeEOQPr5+5X/9HHNjYsf4D4TfnlcPdcGnZhz3E7E=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1367b2354264ca71f0ceef4845eb885a441be29b",
+        "rev": "4c59ceaccafe13aa7a3f11a8e3ab4132d804af4d",
         "type": "github"
       },
       "original": {
@@ -519,11 +519,11 @@
     },
     "nixpkgs-stable_2": {
       "locked": {
-        "lastModified": 1790987568,
-        "narHash": "sha256-q5UvZT7SiqJaV3i2MgX4c/9gsqC8JvJiROoRECZzuCk=",
+        "lastModified": 1791020744,
+        "narHash": "sha256-idPqFAgxr+jcerO+hHMAyZYL0IdleU9KVc/fd4YVGGk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d01b2422772931db2474ccad36b5ac05b53e8582",
+        "rev": "d884c68ac0429cefb7b1515c0d3b8012f93de3e4",
         "type": "github"
       },
       "original": {
@@ -681,11 +681,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790967847,
-        "narHash": "sha256-zjTq+MSL+B7GpRx/gEpj3y+OqonsdZBuA1OGrBQdlXw=",
+        "lastModified": 1791018977,
+        "narHash": "sha256-UHAFGbCYxT5NKcN38SAPbuxl2KZ455eDFLIUC8oQdZo=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "63685992f8cfef008de338ff769c8f44df3bcdaa",
+        "rev": "34cc01941808beae2f6282f00668f1f3ca47aac0",
         "type": "github"
       },
       "original": {
@@ -702,11 +702,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791011012,
-        "narHash": "sha256-9NDXUJuySAPhJGiWsWTwsbDTeg/bWM2T1rqRwcWbVEI=",
+        "lastModified": 1791021022,
+        "narHash": "sha256-WfAvhnr2Bfd5h09NoO3gVIlGpiZyWLZUs7iA+RyqI8A=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "bafbab4b3e77b40d1c6b438b9e77c8ce34b0dd79",
+        "rev": "5ddabfa07d7d27b3ef3f80744452fa710ba12bc5",
         "type": "github"
       },
       "original": {
@@ -875,16 +875,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1791011431,
-        "narHash": "sha256-yNzjAJ7mecBk0k0cc2HRkGRSzwQtffmX5TnR/ClvLsI=",
-        "owner": "mbwilding",
+        "lastModified": 1791020503,
+        "narHash": "sha256-haKgzm9mHpwEnvJmVdqPkQcqXMoNhhIYu5NTNTxDpBk=",
+        "owner": "rvben",
         "repo": "unifi-cli",
-        "rev": "f51bd87153270ab50b72126a21d6323e1336f2db",
+        "rev": "4b1b296ead663cecce2e63801c6955824ea75f9f",
         "type": "github"
       },
       "original": {
-        "owner": "mbwilding",
-        "ref": "feat/nix-flake",
+        "owner": "rvben",
         "repo": "unifi-cli",
         "type": "github"
       }
