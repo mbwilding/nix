@@ -38,8 +38,8 @@
       home = {
         packages =
           let
-            dtctl = pkgs.callPackage ./_dtctl.nix { };
             system = pkgs.stdenv.hostPlatform.system;
+            dtctl = inputs.dtctl.packages.${system}.default;
             open-ecc = inputs.open-ecc.packages.${system}.default;
             steam-achievement-manager = inputs.steam-achievement-manager.packages.${system}.default;
           in
