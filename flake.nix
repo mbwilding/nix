@@ -51,6 +51,11 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    dtctl = {
+      url = "github:mbwilding/dtctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     gronk = {
       url = "github:mbwilding/gronk.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
