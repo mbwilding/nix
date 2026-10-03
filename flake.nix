@@ -75,9 +75,9 @@
       flake = false;
     };
 
-    # TODO: github:dynatrace-oss/dtctl once nixpkgs ships a Go matching its go.mod or upstream PR #670 is merged
+    # TODO: github:dynatrace-oss/dtctl once https://github.com/dynatrace-oss/dtctl/pull/670 is merged
     dtctl = {
-      url = "github:mbwilding/dtctl";
+      url = "github:mbwilding/dtctl/fix-nix-build";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
