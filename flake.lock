@@ -885,6 +885,27 @@
         "type": "github"
       }
     },
+    "power-platform-toolbox": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791027485,
+        "narHash": "sha256-m9GWzPhSqioRbHrPZ26pByeuKhON8o/mFUfSGclsijI=",
+        "owner": "mbwilding",
+        "repo": "desktop-app",
+        "rev": "0512562a4974d5da64a4f8966a6a67f5f4a4b317",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "ref": "chore/nix-flake",
+        "repo": "desktop-app",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "affinity-nix": "affinity-nix",
@@ -910,6 +931,7 @@
         "nur": "nur",
         "open-ecc": "open-ecc",
         "plasma-manager": "plasma-manager",
+        "power-platform-toolbox": "power-platform-toolbox",
         "steam-achievement-manager": "steam-achievement-manager",
         "ucodenix": "ucodenix",
         "unifi-cli": "unifi-cli",

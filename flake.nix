@@ -51,6 +51,12 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    # TODO: github:PowerPlatformToolBox/desktop-app once https://github.com/PowerPlatformToolBox/desktop-app/pull/699 is merged
+    power-platform-toolbox = {
+      url = "github:mbwilding/desktop-app/chore/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # TODO: use nixpkgs' python3Packages.cfn-lint once https://github.com/NixOS/nixpkgs/pull/569751 is merged and in nixos-unstable
     nixpkgs-cfn-lint = {
       url = "github:mbwilding/nixpkgs/cfn-lint-1.57.1";
