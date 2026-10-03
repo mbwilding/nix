@@ -112,11 +112,6 @@ in
           mbwilding = "sudo su - mbwilding";
         };
 
-        packages = [
-          # AI
-          (pkgs.callPackage ./_github-copilot.nix { })
-        ];
-
         sessionVariables = {
           GITHUB_TOKEN = secrets.githubWorkToken;
           GITLAB_TOKEN = secrets.gitlabWorkToken;
