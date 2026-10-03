@@ -937,6 +937,7 @@
         "unifi-cli": "unifi-cli",
         "vm-curator": "vm-curator",
         "waydroid-nvidia-nix": "waydroid-nvidia-nix",
+        "yabridge": "yabridge",
         "yazi": "yazi"
       }
     },
@@ -1173,6 +1174,27 @@
       "original": {
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
+        "type": "github"
+      }
+    },
+    "yabridge": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791028945,
+        "narHash": "sha256-XVxolQTMKoMGcPJ0FA1v/X0ARHjPjfn7RxM/kPab0hs=",
+        "owner": "mbwilding",
+        "repo": "yabridge",
+        "rev": "11702d7859879a03c79f340debc6e9c981f4cda7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mbwilding",
+        "ref": "chore/nix-flake",
+        "repo": "yabridge",
         "type": "github"
       }
     },
