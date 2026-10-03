@@ -19,8 +19,8 @@
       yabridgeSrc = pkgs.fetchFromGitHub {
         owner = "robbert-vdh";
         repo = "yabridge";
-        rev = "48ea9749b682c48875366134a42073d6b3d0a8c4";
-        hash = "sha256-J3qyTNMyMqDpc2pijJn4E9Q1ZYUOQ5JIEeq4ueMmrII=";
+        rev = "b580a9f7fc46509767ca156d4f92872552b9e571";
+        hash = "sha256-TiKiyE3GZYCX1+vooHdD03fAhNQPAA1IzTfkG++I7TY=";
       };
 
       yabridge =
