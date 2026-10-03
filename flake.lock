@@ -82,15 +82,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1791023654,
+        "lastModified": 1791023899,
         "narHash": "sha256-axMzfiV59Zfg56PHxf3BiGf+o/LyVOFjf6EjqFc7i64=",
         "owner": "mbwilding",
         "repo": "dtctl",
-        "rev": "3c8009d0401807a0e8551a63596cfb93ef830eef",
+        "rev": "6e780563480da4e3e0f2d4cc5bea3b62ffd4032e",
         "type": "github"
       },
       "original": {
         "owner": "mbwilding",
+        "ref": "fix-nix-build",
         "repo": "dtctl",
         "type": "github"
       }
