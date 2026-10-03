@@ -51,6 +51,7 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    # TODO: github:dynatrace-oss/dtctl once nixpkgs ships a Go matching its go.mod or upstream PR #670 is merged
     dtctl = {
       url = "github:mbwilding/dtctl";
       inputs.nixpkgs.follows = "nixpkgs";
