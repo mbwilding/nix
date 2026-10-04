@@ -87,6 +87,7 @@
             p7zip
             postgresql
             powershell
+            powertop
             psmisc
             pulumi-bin
             ripgrep
