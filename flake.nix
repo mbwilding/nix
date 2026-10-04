@@ -81,6 +81,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    dtctl = {
+      url = "github:dynatrace-oss/dtctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # TODO: github:robbert-vdh/yabridge once https://github.com/robbert-vdh/yabridge/pull/519 is merged
     yabridge = {
       url = "github:mbwilding/yabridge/chore/nix-flake";
@@ -103,12 +108,6 @@
     nixpkgs-bash-debug = {
       url = "github:mbwilding/nixpkgs/vscode-bash-debug";
       flake = false;
-    };
-
-    # TODO: github:dynatrace-oss/dtctl once https://github.com/dynatrace-oss/dtctl/pull/670 is merged
-    dtctl = {
-      url = "github:mbwilding/dtctl/fix-nix-build";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
