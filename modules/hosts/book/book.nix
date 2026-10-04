@@ -23,6 +23,7 @@ let
     "user-mbwilding"
     "vm-curator"
     "waydroid"
+    "wifi"
     "wine"
     "wireshark"
   ];
