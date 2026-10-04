@@ -23,7 +23,33 @@
             enableAllProjectMcpServers = true;
             permissions = {
               defaultMode = "auto";
-              allow = [ "*" ];
+              allow = [
+                "Bash"
+                "Read"
+                "Edit"
+                "Write"
+                "NotebookEdit"
+                "WebFetch"
+                "WebSearch"
+                "Agent"
+                "Skill"
+                "ToolSearch"
+                "Monitor"
+                "TaskStop"
+                "EnterPlanMode"
+                "ExitPlanMode"
+                "EnterWorktree"
+                "ExitWorktree"
+                "CronCreate"
+                "CronDelete"
+                "CronList"
+                "ScheduleWakeup"
+                "ListMcpResourcesTool"
+                "ReadMcpResourceTool"
+                "ReadMcpResourceDirTool"
+                "mcp__plugin_hm_github__*"
+                "mcp__claude-in-chrome__*"
+              ];
             };
             # enabledPlugins = {
             #   "clangd-lsp@claude-plugins-official" = false;
