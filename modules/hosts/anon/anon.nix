@@ -34,6 +34,7 @@ let
     "vscode"
     "waydroid"
     "waydroid-nvidia"
+    "wifi"
     "wine"
     "wireshark"
   ];

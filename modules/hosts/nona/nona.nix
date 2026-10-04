@@ -33,6 +33,7 @@ let
     "vm-curator"
     "vscode"
     "waydroid"
+    "wifi"
     "wine"
     "wireguard-nona"
     "wireshark"
