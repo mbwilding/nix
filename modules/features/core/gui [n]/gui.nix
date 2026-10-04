@@ -37,7 +37,6 @@
           pavucontrol
           postman
           qbittorrent
-          rustdesk
           spotify
           tigervnc
           wev
