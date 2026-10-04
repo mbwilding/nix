@@ -9,7 +9,6 @@ let
     "appimage"
     "audio"
     "claude-code"
-    "claude-desktop"
     "development"
     "flatpak"
     "gpu-nvidia"
