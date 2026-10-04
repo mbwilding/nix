@@ -46,9 +46,7 @@
         ${name} = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = sharedOverlays ++ [
-              inputs.self.lib.overlays.hyprlandGlaze
-            ];
+            overlays = sharedOverlays;
           };
           modules = [
             inputs.self.modules.homeManager.${moduleName}
