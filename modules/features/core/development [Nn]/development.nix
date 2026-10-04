@@ -171,7 +171,7 @@
       bash-debug = pkgs.callPackage "${inputs.nixpkgs-bash-debug}/pkgs/applications/editors/vscode/extensions/rogalmic.bash-debug" { };
       vscode-bash-debug = pkgs.callPackage ./_vscode-bash-debug.nix { inherit bash-debug; };
       cfn-lint = pkgs.python3Packages.callPackage "${inputs.nixpkgs-cfn-lint}/pkgs/development/python-modules/cfn-lint/default.nix" { };
-      gh-actions-language-server = pkgs.callPackage ./_gh-actions-language-server.nix { };
+      actions-languageserver = pkgs.callPackage ./_actions-languageserver.nix { };
     in
     {
       home = {
@@ -202,10 +202,10 @@
           yarn-berry # js / ts
 
           # Language Servers
+          actions-languageserver # yaml
           bash-language-server # bash
           docker-compose-language-service # yaml
           docker-language-server # docker
-          gh-actions-language-server # yaml
           gopls # go
           jdt-language-server # java
           lemminx # xml
