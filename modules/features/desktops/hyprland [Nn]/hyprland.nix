@@ -1,26 +1,6 @@
 { inputs, ... }:
 
 {
-  # TODO: nixpkgs bumped glaze to 8.0.0, but Hyprland 0.56.1 requires <8.
-  # CMake then tries to FetchContent glaze from git, which fails in
-  # the sandboxed build (no network). Pin glaze back to 7.2.0 until
-  # Hyprland or nixpkgs catches up. Used by both the NixOS module below
-  # and mkHomeManager (modules/nix/flake-parts/lib.nix) so standalone
-  # `home-manager switch` also gets the pin.
-  flake.lib.overlays.hyprlandGlaze = final: prev: {
-    hyprland = prev.hyprland.override {
-      glaze = prev.glaze.overrideAttrs (_: {
-        version = "7.2.0";
-        src = prev.fetchFromGitHub {
-          owner = "stephenberry";
-          repo = "glaze";
-          tag = "v7.2.0";
-          hash = "sha256-f3NVRi3SXKo42hn0WCw7JsOK3EkdOVJIcuzhPorKjFY=";
-        };
-      });
-    };
-  };
-
   flake.modules.nixos.hyprland =
     { pkgs, ... }:
     {
@@ -30,10 +10,6 @@
       ];
 
       config = {
-        nixpkgs.overlays = [
-          inputs.self.lib.overlays.hyprlandGlaze
-        ];
-
         host.waylandSession.sessionPackage = pkgs.hyprland;
 
         programs = {
