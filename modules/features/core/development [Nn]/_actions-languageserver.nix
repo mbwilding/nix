@@ -6,12 +6,12 @@
   makeWrapper,
 }:
 
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "actions-languageserver";
   version = "0.3.61";
 
   src = fetchurl {
-    url = "https://registry.npmjs.org/@actions/languageserver/-/languageserver-0.3.61.tgz";
+    url = "https://registry.npmjs.org/@actions/languageserver/-/languageserver-${finalAttrs.version}.tgz";
     hash = "sha512-L5Vf3zc3yD11xUSM8zMxrNwYLZpiUNG6U8kFK2BsxVyRKhU8gQEt02ydR+FZgidkrHSQO/2P7eU9vHPcOwwsOQ==";
   };
 
@@ -35,4 +35,4 @@ stdenvNoCC.mkDerivation {
     license = lib.licenses.mit;
     mainProgram = "actions-languageserver";
   };
-}
+})
