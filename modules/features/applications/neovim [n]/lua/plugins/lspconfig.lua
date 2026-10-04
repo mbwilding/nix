@@ -86,7 +86,9 @@ return {
                     },
                 },
             },
-            gh_actions_ls = {},
+            gh_actions_ls = {
+                cmd = { "actions-languageserver", "--stdio" },
+            },
             ruff = {},
             sqls = {},
             zls = {},
