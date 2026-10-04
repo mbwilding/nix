@@ -8,7 +8,6 @@ let
   features = [
     "appimage"
     "audio"
-    "claude-desktop"
     "claude-code"
     "development"
     "flatpak"
