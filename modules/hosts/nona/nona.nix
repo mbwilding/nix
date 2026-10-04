@@ -83,6 +83,10 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
+      boot.extraModprobeConfig = ''
+        options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y disable_clkreq=Y
+        options rtw89_core disable_ps_mode=Y
+      '';
       host = {
         keymap = "dvorak";
         primaryMonitor = primaryMonitor;
