@@ -33,6 +33,7 @@
           imv
           kdePackages.ark
           keymapp
+          nur.repos.souheab.claude-desktop
           pavucontrol
           postman
           qbittorrent
