@@ -92,7 +92,7 @@ return {
             ruff = {},
             sqls = {},
             zls = {},
-            tsgo = {},
+            tsc = {},
             marksman = {},
             stylua = {},
             lua_ls = {
