@@ -9,11 +9,15 @@
       ...
     }:
     let
-      workDomains = [
+      include = [
         ".${secrets.workName}.com.au"
         ".${secrets.workName}.delivery"
         ".${secrets.workName}.services"
+        # ".${secrets.workNameAlt}.com.au"
         ".gr7.ap-southeast-2.eks.amazonaws.com"
+      ];
+      exclude = [
+        "^identity\\..+\\.${secrets.workName}\\.com\\.au$"
       ];
       fakeIpRange = "198.18.0.0/15";
       dnsPort = 15353;
@@ -24,7 +28,7 @@
       environment.etc."NetworkManager/dnsmasq.d/work-proxy.conf".text =
         lib.concatMapStringsSep "\n" (
           d: "server=/${lib.removePrefix "." d}/127.0.0.1#${toString dnsPort}"
-        ) workDomains
+        ) include
         + "\n";
 
       systemd.services.NetworkManager.restartTriggers = [
@@ -86,6 +90,11 @@
                 tag = "local";
               }
               {
+                type = "udp";
+                tag = "upstream";
+                server = "1.1.1.1";
+              }
+              {
                 type = "fakeip";
                 tag = "fakeip";
                 inet4_range = fakeIpRange;
@@ -93,7 +102,11 @@
             ];
             rules = [
               {
-                domain_suffix = workDomains;
+                domain_regex = exclude;
+                server = "upstream";
+              }
+              {
+                domain_suffix = include;
                 server = "fakeip";
               }
             ];

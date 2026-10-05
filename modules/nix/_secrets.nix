@@ -20,6 +20,7 @@ in
 
   # Work identity
   workName = read "work-name";
+  workNameAlt = read "work-name-alt";
   workId = read "work-id";
   workEmailName = read "work-email-name";
   workEmailId = read "work-email-id";

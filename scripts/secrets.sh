@@ -62,6 +62,7 @@ secrets=(
   "Work Info|emailName|$HOME/.secrets/work-email-name"
   "Work Info|id|$HOME/.secrets/work-id"
   "Work Info|name|$HOME/.secrets/work-name"
+  "Work Info|nameAlt|$HOME/.secrets/work-name-alt"
   "aur|private key|$HOME/.ssh/aur"
   "aur|public key|$HOME/.ssh/aur.pub"
   "personal|private key|$HOME/.ssh/personal"
