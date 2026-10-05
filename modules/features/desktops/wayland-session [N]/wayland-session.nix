@@ -9,7 +9,10 @@
       ...
     }:
     {
-      imports = [ inputs.self.modules.nixos.keymap ];
+      imports = [
+        inputs.self.modules.nixos.gui
+        inputs.self.modules.nixos.keymap
+      ];
 
       options.host = {
         primaryMonitor = lib.mkOption {
@@ -31,6 +34,8 @@
       };
 
       config = {
+        host.gui.enable = true;
+
         environment.sessionVariables.WAYLANDDRV_PRIMARY_MONITOR = config.host.primaryMonitor;
 
         services = {
