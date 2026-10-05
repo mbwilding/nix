@@ -1,9 +1,16 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.podman =
-    { pkgs, ... }:
     {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      imports = [ inputs.self.modules.nixos.gui ];
+
       custom.availableGroups = [ "docker" ];
 
       environment = {
@@ -11,11 +18,13 @@
           DOTNET_ASPIRE_CONTAINER_RUNTIME = "podman";
         };
 
-        systemPackages = with pkgs; [
-          # podman-desktop
-          podman-compose
-          podman-tui
-        ];
+        systemPackages =
+          with pkgs;
+          [
+            podman-compose
+            podman-tui
+          ]
+          ++ lib.optional config.host.gui.enable podman-desktop;
       };
 
       virtualisation = {
