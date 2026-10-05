@@ -4,6 +4,10 @@
   flake.modules.nixos.kde =
     { pkgs, ... }:
     {
+      imports = [ inputs.self.modules.nixos.gui ];
+
+      host.gui.enable = true;
+
       hardware.graphics.extraPackages = with pkgs; [
         vulkan-hdr-layer-kwin6
       ];
