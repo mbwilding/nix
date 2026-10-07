@@ -58,6 +58,7 @@
             bat
             brightnessctl
             cifs-utils
+            cmatrix
             curl
             dapr-cli
             dig
