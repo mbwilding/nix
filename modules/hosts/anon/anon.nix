@@ -50,12 +50,20 @@ let
     # ./_kitty.nix
 
     (
-      { pkgs, ... }:
       {
-        home.packages = with pkgs; [
-          davinci-resolve-studio
-          heroic
-        ];
+        pkgs,
+        lib,
+        secrets,
+        ...
+      }:
+      {
+        home.packages =
+          with pkgs;
+          [
+            davinci-resolve-studio
+            heroic
+          ]
+          ++ map (name: lib.attrByPath (lib.splitString "." name) null pkgs) secrets.packages;
       }
     )
   ];
