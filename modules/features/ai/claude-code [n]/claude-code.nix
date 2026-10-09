@@ -74,7 +74,22 @@
                 Authorization = "Bearer ${if work then secrets.githubWorkToken else secrets.githubPersonalToken}";
               };
             };
-          };
+          }
+          // (
+            if work then
+              {
+                atlassian = {
+                  type = "http";
+                  url = "https://mcp.atlassian.com/v1/mcp";
+                };
+                # lucid = {
+                #   type = "http";
+                #   url = "https://mcp.lucid.app/mcp";
+                # };
+              }
+            else
+              { }
+          );
           agents = {
             ponytail = ../agent-ponytail.md;
           };
