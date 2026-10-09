@@ -73,7 +73,7 @@
       anim_speed = 1.8;
       gaps = 0.0;
       lua = lib.generators.mkLuaInline;
-      screenshotDir = "${import ../../../nix/_home.nix}/Pictures/Screenshots";
+      screenshotDir = "${config.home.homeDirectory}/Pictures/Screenshots";
       terminal = "kitty";
     in
     {

@@ -52,7 +52,7 @@
     }:
 
     let
-      screenshotDir = "${import ../../../nix/_home.nix}/Pictures/Screenshots";
+      screenshotDir = "${config.home.homeDirectory}/Pictures/Screenshots";
       mod = "Mod";
       terminal = "kitty";
     in
