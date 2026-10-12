@@ -72,6 +72,7 @@ in
         inputs.self.modules.homeManager.cli
         ./_aws.nix
         ./_git.nix
+        (import ../work/_power-platform-toolbox.nix { inherit inputs; })
         ./_ssh.nix
       ];
 
