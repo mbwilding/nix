@@ -82,6 +82,10 @@
                   type = "http";
                   url = "https://mcp.atlassian.com/v1/mcp";
                 };
+                figma = {
+                  type = "http";
+                  url = "https://mcp.figma.com/mcp";
+                };
                 # lucid = {
                 #   type = "http";
                 #   url = "https://mcp.lucid.app/mcp";
