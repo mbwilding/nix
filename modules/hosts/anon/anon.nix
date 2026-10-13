@@ -62,6 +62,7 @@ let
           [
             davinci-resolve-studio
             heroic
+            clonehero
           ]
           ++ map (name: lib.attrByPath (lib.splitString "." name) null pkgs) secrets.packages;
       }
