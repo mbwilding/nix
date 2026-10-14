@@ -17,15 +17,11 @@ in
         # Devices
 
         anon = personal // { };
-
-        nona = personal // { };
-
-        truenas = personal // { };
-
-        server = personal // { };
-
         lxc = personal // { };
-
+        msi = personal // { };
+        nona = personal // { };
+        server = personal // { };
+        truenas = personal // { };
         ai-sdlc = personal // {
           User = "agent";
         };
