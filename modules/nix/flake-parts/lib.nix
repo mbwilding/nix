@@ -19,7 +19,7 @@
       user = "mbwilding";
       secrets = import ../_secrets.nix;
       sharedNixSettings = {
-        # max-jobs = "auto";
+        max-jobs = 1; # "auto"
         # cores = 2;
         nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
