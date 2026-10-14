@@ -2,7 +2,7 @@
 
 let
   arch = "x86_64-linux";
-  hostName = "wsl";
+  hostName = "msi";
   stateVersion = "26.05";
   homeManagerModules = [ ./_shells.nix ];
   # secrets = import ../../nix/_secrets.nix;
