@@ -21,6 +21,10 @@ in
       settings = {
         # Devices
 
+        msi = personal // {
+          User = "mbwil";
+        };
+
         surface = {
           User = secrets.workId;
           IdentityFile = [ "~/.ssh/personal" ];
