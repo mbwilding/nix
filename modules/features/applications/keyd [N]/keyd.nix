@@ -48,6 +48,7 @@ in
             "0001:0001:09b4e68d"
             "413c:2110:a6c37897"
             "045e:09ae" # Surface Book 3
+            "0001:0001:09650417" # Stealth
           ];
 
           settings = {
