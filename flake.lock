@@ -951,11 +951,11 @@
         "pnpm2nix": "pnpm2nix"
       },
       "locked": {
-        "lastModified": 1791804221,
-        "narHash": "sha256-HrHK1UGQ/IZhI3N+xokPneV3dxKE238EpEtSZQ+fQzU=",
+        "lastModified": 1791957881,
+        "narHash": "sha256-4ytV0KzTrQpfCwuyWaeNE184ywOGaT/yBjRZrsLFxEI=",
         "owner": "mbwilding",
         "repo": "desktop-app",
-        "rev": "06d2eaef0ae02adfbe1b48efd0c7570e405fbfe9",
+        "rev": "b2cc19dc3993738b17783207b53cf9dc87e4a9aa",
         "type": "github"
       },
       "original": {
