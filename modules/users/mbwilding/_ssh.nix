@@ -18,10 +18,14 @@ in
 
         anon = personal // { };
         lxc = personal // { };
-        msi = personal // { };
         nona = personal // { };
         server = personal // { };
         truenas = personal // { };
+
+        msi = personal // {
+          User = "mbwil";
+        };
+
         ai-sdlc = personal // {
           User = "agent";
         };
