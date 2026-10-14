@@ -4,9 +4,13 @@
   flake.modules.nixos.gpu-nvidia =
     {
       config,
+      lib,
       pkgs,
       ...
     }:
+    let
+      offload = config.hardware.nvidia.prime.offload.enable;
+    in
     {
       boot.blacklistedKernelModules = [ "nouveau" ];
 
@@ -34,7 +38,7 @@
           nvidia-vaapi-driver
         ];
 
-        sessionVariables = {
+        sessionVariables = lib.mkIf (!offload) {
           ENABLE_HDR_WSI = 1;
           GBM_BACKEND = "nvidia-drm";
           LIBVA_DRIVER_NAME = "nvidia";
