@@ -25,15 +25,9 @@ in
   flake.modules.nixos.${hostName} =
     { ... }:
     {
-      imports =
-        featureModules.nixos
-        ++ [
-          ./_hardware-configuration.nix
-          ./_audio.nix
-        ]
-        ++ [
-          inputs.nixos-wsl.nixosModules.default
-        ];
+      imports = featureModules.nixos ++ [
+        inputs.nixos-wsl.nixosModules.default
+      ];
 
       home-manager.sharedModules = homeManagerModules;
 
