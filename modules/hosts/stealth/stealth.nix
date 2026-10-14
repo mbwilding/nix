@@ -6,9 +6,9 @@ let
   primaryMonitor = "eDP-1";
 
   features = [
-    "claude-code"
     "appimage"
     "audio"
+    "claude-code"
     "development"
     "flatpak"
     "gpu-amd"
@@ -17,6 +17,7 @@ let
     "hyprland"
     "keyd-dvorak"
     "lutris"
+    "mounts"
     "mpv"
     "obs"
     "podman"
@@ -69,8 +70,8 @@ in
   flake.modules.nixos.${hostName} =
     { pkgs, ... }:
     let
-      kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
-      # kernel = pkgs.linuxPackages_latest;
+      # kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
+      kernel = pkgs.linuxPackages_latest;
     in
     {
       imports = featureModules.nixos ++ [
