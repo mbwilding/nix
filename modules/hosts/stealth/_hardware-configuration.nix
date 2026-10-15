@@ -45,22 +45,10 @@
       "uid=1000"
       "gid=1000"
       "rw"
-      "user"
       "exec"
-      "umask=000"
-    ];
-  };
-
-  # Steam
-  systemd.tmpfiles.rules = [
-    "d /home/mbwilding/.local/share/Steam/compatdata-windows 0755 mbwilding users -"
-  ];
-  fileSystems."/mnt/windows/Program Files (x86)/Steam/steamapps/compatdata" = {
-    device = "/home/mbwilding/.local/share/Steam/compatdata-windows";
-    options = [
-      "bind"
+      "umask=022"
       "nofail"
-      "x-systemd.requires-mounts-for=/mnt/windows"
+      "x-systemd.device-timeout=5s"
     ];
   };
 
