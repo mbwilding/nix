@@ -51,6 +51,19 @@
     ];
   };
 
+  # Steam
+  systemd.tmpfiles.rules = [
+    "d /home/mbwilding/.local/share/Steam/compatdata-windows 0755 mbwilding users -"
+  ];
+  fileSystems."/mnt/windows/Program Files (x86)/Steam/steamapps/compatdata" = {
+    device = "/home/mbwilding/.local/share/Steam/compatdata-windows";
+    options = [
+      "bind"
+      "nofail"
+      "x-systemd.requires-mounts-for=/mnt/windows"
+    ];
+  };
+
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
