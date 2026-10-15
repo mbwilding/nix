@@ -148,7 +148,7 @@
             per_monitor_directories = true;
             automation = {
               enabled = true;
-              interval_seconds = 300; # 5 min
+              interval_seconds = 180; # 3 min
             };
           };
 
