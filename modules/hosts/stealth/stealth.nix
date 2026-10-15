@@ -88,6 +88,7 @@ in
         primaryMonitor = primaryMonitor;
       };
       networking.hostName = hostName;
+      time.hardwareClockInLocalTime = true;
 
       hardware = {
         xone.enable = true;
