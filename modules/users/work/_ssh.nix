@@ -21,7 +21,7 @@ in
       settings = {
         # Devices
 
-        msi = personal // { };
+        stealth = personal // { };
 
         surface = {
           User = secrets.workId;
