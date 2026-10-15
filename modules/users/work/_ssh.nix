@@ -21,9 +21,7 @@ in
       settings = {
         # Devices
 
-        msi = personal // {
-          User = "mbwil";
-        };
+        msi = personal // { };
 
         surface = {
           User = secrets.workId;
