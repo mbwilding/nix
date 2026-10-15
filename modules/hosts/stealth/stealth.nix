@@ -24,7 +24,7 @@ let
     "printing"
     "proxy"
     "qemu"
-    "secure-boot"
+    # "secure-boot"
     "steam"
     "swap"
     "system-default"
