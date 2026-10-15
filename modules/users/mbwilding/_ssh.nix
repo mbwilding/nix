@@ -21,10 +21,7 @@ in
         nona = personal // { };
         server = personal // { };
         truenas = personal // { };
-
-        msi = personal // {
-          User = "mbwil";
-        };
+        stealth = personal // { };
 
         ai-sdlc = personal // {
           User = "agent";
