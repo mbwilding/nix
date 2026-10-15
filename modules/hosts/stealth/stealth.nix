@@ -77,7 +77,7 @@ in
     {
       imports = featureModules.nixos ++ [
         ./_hardware-configuration.nix
-        # ./_audio.nix
+        ./_audio.nix
       ];
 
       home-manager.sharedModules = homeManagerModules;
