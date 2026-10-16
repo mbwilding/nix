@@ -83,6 +83,10 @@ in
       home-manager.sharedModules = homeManagerModules;
 
       boot.kernelPackages = kernel;
+      boot.kernelParams = [
+        "usbcore.autosuspend=-1"
+        "btusb.enable_autosuspend=0"
+      ];
       host = {
         keymap = "dvorak";
         primaryMonitor = primaryMonitor;
