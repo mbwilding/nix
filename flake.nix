@@ -24,6 +24,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mango = {
+      url = "github:mangowm/mango";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,11 +56,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-cachyos-kernel = {
-      url = "github:xddxdd/nix-cachyos-kernel/release";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.flake-compat.follows = "flake-compat";
-    };
+    # TODO: Cachy
+    # nix-cachyos-kernel = {
+    #   url = "github:xddxdd/nix-cachyos-kernel/release";
+    #   inputs.flake-parts.follows = "flake-parts";
+    #   inputs.flake-compat.follows = "flake-compat";
+    # };
 
     gronk = {
       url = "github:mbwilding/gronk.nvim";

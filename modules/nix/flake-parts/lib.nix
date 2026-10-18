@@ -25,14 +25,16 @@
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
         trusted-users = [ user ];
         extra-substituters = [
-          "https://attic.xuyh0120.win/lantian"
+          # TODO: Cachy
+          # "https://attic.xuyh0120.win/lantian"
           "https://noctalia.cachix.org"
           "https://cache.nixos-cuda.org"
           "https://yazi.cachix.org"
           "https://nix-community.cachix.org"
         ];
         extra-trusted-public-keys = [
-          "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+          # TODO: Cachy
+          # "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
           "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
           "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
           "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
@@ -101,7 +103,8 @@
               nix.settings = sharedNixSettings;
               nixpkgs.hostPlatform = lib.mkDefault system;
               nixpkgs.overlays = sharedOverlays ++ [
-                inputs.nix-cachyos-kernel.overlays.default
+                # TODO: Cachy
+                # inputs.nix-cachyos-kernel.overlays.default
               ];
 
               _module.args.pkgsMaster = import inputs.nixpkgs-master {
