@@ -1,11 +1,16 @@
 { lib, ... }:
 
+let
+  tv = "desc:LG Electronics LG TV SSCR2 0x01010101";
+  alienware = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
+  lg = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
+in
 {
   wayland.windowManager.hyprland = {
     settings = {
       monitor = lib.mkAfter [
         {
-          output = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          output = tv;
           mode = "3840x2160@143.99";
           position = "0x0";
           scale = 1.0;
@@ -24,7 +29,7 @@
           max_avg_luminance = 400;
         }
         {
-          output = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
+          output = alienware;
           mode = "3440x1440@120";
           position = "3840x-720";
           scale = 1.0;
@@ -32,7 +37,7 @@
           vrr = 3;
         }
         {
-          output = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
+          output = lg;
           mode = "2560x1080@60";
           scale = 1.0;
           position = "-2560x1080";
@@ -44,33 +49,33 @@
       workspace_rule = lib.mkAfter [
         {
           workspace = 1;
-          monitor = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          monitor = tv;
           persistent = true;
           default = true;
         }
         {
           workspace = 2;
-          monitor = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          monitor = tv;
           persistent = true;
         }
         {
           workspace = 3;
-          monitor = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          monitor = tv;
           persistent = true;
         }
         {
           workspace = 4;
-          monitor = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          monitor = tv;
           persistent = true;
         }
         {
           workspace = 5;
-          monitor = "desc:LG Electronics LG TV SSCR2 0x01010101";
+          monitor = tv;
           persistent = true;
         }
         {
           workspace = "name:social";
-          monitor = "desc:Dell Inc. Dell AW3418DW #ASPlyzilYLXd";
+          monitor = alienware;
           default = true;
           layout = "scrolling";
           layout_opts = {
@@ -80,7 +85,7 @@
         }
         {
           workspace = "name:spare";
-          monitor = "desc:LG Electronics LG ULTRAWIDE 0x01010101";
+          monitor = lg;
           default = true;
           layout = "scrolling";
           layout_opts = {
