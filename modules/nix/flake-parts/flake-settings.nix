@@ -1,11 +1,8 @@
-{
-  inputs,
-  ...
-}:
+_:
 
 {
   imports = [
-    inputs.flake-parts.flakeModules.modules
+    ./_modules.nix
   ];
 
   systems = [

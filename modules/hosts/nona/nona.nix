@@ -17,6 +17,7 @@ let
     "hyprland"
     "keyd-dvorak"
     "lutris"
+    "mango"
     "mounts"
     "mpv"
     "obs"
@@ -47,6 +48,7 @@ let
     }
 
     ./_hyprland.nix
+    ./_mango.nix
 
     (
       {
@@ -70,7 +72,7 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     let
       # kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
       kernel = pkgs.linuxPackages_latest;
@@ -82,6 +84,16 @@ in
       ];
 
       home-manager.sharedModules = homeManagerModules;
+
+      host.waylandSession.sessionPackage = lib.mkForce (
+        pkgs.symlinkJoin {
+          name = "wayland-sessions";
+          paths = [
+            pkgs.hyprland
+            inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango
+          ];
+        }
+      );
 
       boot.kernelPackages = kernel;
       boot.extraModprobeConfig = ''
