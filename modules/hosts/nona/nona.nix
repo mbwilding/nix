@@ -13,7 +13,7 @@ let
     "flatpak"
     "gpu-amd"
     "gui"
-    "hyprland"
+    # "hyprland"
     "keyd-dvorak"
     "lutris"
     "mango"
@@ -46,7 +46,7 @@ let
       _module.args.primaryMonitor = primaryMonitor;
     }
 
-    ./_hyprland.nix
+    # ./_hyprland.nix
     ./_mango.nix
 
     (
@@ -88,7 +88,7 @@ in
         pkgs.symlinkJoin {
           name = "wayland-sessions";
           paths = [
-            pkgs.hyprland
+            # pkgs.hyprland
             inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango
           ];
         }

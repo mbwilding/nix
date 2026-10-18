@@ -16,7 +16,13 @@
 
         programs.xwayland.enable = true;
 
-        xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+        xdg.portal = {
+          enable = true;
+          extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+          config.common = {
+            default = [ "gtk" ];
+          };
+        };
 
         programs.dconf.enable = true;
 
@@ -129,6 +135,8 @@
           animation_duration_close = 200;
           animation_duration_move = 200;
           animation_duration_tag = 0;
+          animation_type_open = "zoom";
+          animation_type_close = "zoom";
 
           # Input
           xkb_rules_layout = "us";
@@ -138,6 +146,7 @@
           numlock_on = 0;
           sloppy_focus = 0;
           warp_cursor = 0;
+          cursor_hide_on_keypress = 1;
           mouse_accel_profile = 1;
           mouse_accel_speed = 0.0;
           trackpad_natural_scrolling = 1;
@@ -250,6 +259,79 @@
           gesturebind = [
             "none,up,3,viewtoleft_have_client"
             "none,down,3,viewtoright_have_client"
+          ];
+        };
+      };
+
+      xdg = {
+        # The imv package ships its .desktop entry with NoDisplay=true, which
+        # hides it from file managers' "Open With" suggestion lists even when
+        # it's the configured default. Override it with a visible entry.
+        desktopEntries.imv = {
+          name = "imv";
+          genericName = "Image Viewer";
+          comment = "Fast Image Viewer";
+          exec = "imv %F";
+          icon = "multimedia-photo-viewer";
+          terminal = false;
+          categories = [
+            "Graphics"
+            "2DGraphics"
+            "Viewer"
+          ];
+          mimeType = [
+            "image/png"
+            "image/jpeg"
+            "image/gif"
+            "image/bmp"
+            "image/svg+xml"
+            "image/tiff"
+            "image/webp"
+            "image/x-icon"
+          ];
+        };
+
+        mimeApps = {
+          enable = true;
+          defaultApplications = {
+            "inode/directory" = "thunar.desktop";
+
+            "image/png" = "imv.desktop";
+            "image/jpeg" = "imv.desktop";
+            "image/gif" = "imv.desktop";
+            "image/bmp" = "imv.desktop";
+            "image/svg+xml" = "imv.desktop";
+            "image/tiff" = "imv.desktop";
+            "image/webp" = "imv.desktop";
+            "image/x-icon" = "imv.desktop";
+
+            "video/mp4" = "mpv.desktop";
+            "video/x-matroska" = "mpv.desktop";
+            "video/webm" = "mpv.desktop";
+            "video/quicktime" = "mpv.desktop";
+            "video/x-msvideo" = "mpv.desktop";
+            "video/mpeg" = "mpv.desktop";
+            "video/ogg" = "mpv.desktop";
+            "video/x-flv" = "mpv.desktop";
+            "video/x-ms-wmv" = "mpv.desktop";
+            "video/3gpp" = "mpv.desktop";
+          };
+        };
+      };
+
+      services.hypridle = {
+        enable = true;
+        settings = {
+          general = {
+            after_sleep_cmd = "brightnessctl -r";
+            ignore_dbus_inhibit = false;
+            lock_cmd = "noctalia msg session lock";
+          };
+          listener = [
+            {
+              timeout = 300;
+              on-timeout = "noctalia msg session lock";
+            }
           ];
         };
       };
