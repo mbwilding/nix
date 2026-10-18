@@ -6,7 +6,6 @@ let
   primaryMonitor = "eDP-1";
 
   features = [
-    "affinity"
     "appimage"
     "audio"
     "claude-code"
