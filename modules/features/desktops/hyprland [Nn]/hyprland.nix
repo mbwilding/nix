@@ -785,14 +785,14 @@
             {
               _args = [
                 "switch:on:Lid Switch"
-                (lua ''hl.dsp.exec_cmd("noctalia msg session lock && hyprctl dispatch 'hl.dsp.dpms(\"off\")' && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend")'')
+                (lua ''hl.dsp.exec_cmd("noctalia msg session lock && noctalia msg dpms-off && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend")'')
                 { locked = true; }
               ];
             }
             {
               _args = [
                 "switch:off:Lid Switch"
-                (lua ''hl.dsp.exec_cmd("hyprctl dispatch 'hl.dsp.dpms(\"on\")'")'')
+                (lua ''hl.dsp.exec_cmd("noctalia msg dpms-on")'')
                 { locked = true; }
               ];
             }
@@ -914,32 +914,6 @@
             "video/x-ms-wmv" = "mpv.desktop";
             "video/3gpp" = "mpv.desktop";
           };
-        };
-      };
-
-      services.hypridle = {
-        enable = true;
-        settings = {
-          general = {
-            after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })' && brightnessctl -r";
-            ignore_dbus_inhibit = false;
-            lock_cmd = "noctalia msg session lock";
-          };
-          listener = [
-            {
-              timeout = 300;
-              on-timeout = "noctalia msg session lock";
-            }
-            {
-              timeout = 330;
-              on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'";
-              on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })' && brightnessctl -r";
-            }
-            # {
-            #   timeout = 1800;
-            #   on-timeout = "systemctl suspend";
-            # }
-          ];
         };
       };
     };

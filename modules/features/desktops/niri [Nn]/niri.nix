@@ -306,13 +306,12 @@
           lid-close.action.spawn = [
             "sh"
             "-c"
-            "noctalia msg session lock && niri msg action power-off-monitors && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
+            "noctalia msg session lock && noctalia msg dpms-off && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
           ];
           lid-open.action.spawn = [
-            "niri"
+            "noctalia"
             "msg"
-            "action"
-            "power-on-monitors"
+            "dpms-on"
           ];
         };
       };
