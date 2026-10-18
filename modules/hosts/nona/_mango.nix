@@ -14,9 +14,7 @@ _:
   };
 
   wayland.windowManager.mango.extraConfig = ''
-
     exec_once=brightnessctl set --device=platform::micmute 0
-    exec_once=brightnessctl set 20%
     bind=SUPER,backslash,spawn_shell,systemctl is-active --quiet keyd && systemctl stop keyd || systemctl start keyd
   '';
 }
