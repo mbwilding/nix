@@ -5,7 +5,6 @@ let
   hostName = "anon";
   primaryMonitor = "HDMI-A-1";
   features = [
-    "affinity"
     "appimage"
     "audio"
     "claude-code"
