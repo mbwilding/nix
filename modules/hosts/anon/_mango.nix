@@ -25,6 +25,8 @@ in
   wayland.windowManager.mango = {
     settings = {
       # Positive coordinates only, XWayland breaks with negative ones
+      # hdr_max_lum/hdr_max_avg_lum: nix shell nixpkgs#libdisplay-info -c di-edid-decode < /sys/class/drm/card1-<output>/edid
+      # (HDR Static Metadata: max luminance, max frame-average luminance)
       monitor_rule = lib.mkAfter [
         "${match tv},width:3840,height:2160,refresh:143.99,x:2560,y:720,scale:1,vrr:1,hdr:1,hdr_max_lum:1200,hdr_max_avg_lum:400,primary:1"
         "${match alienware},width:3440,height:1440,refresh:120,x:6400,y:0,scale:1,vrr:1,rr:1"

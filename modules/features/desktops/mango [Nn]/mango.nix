@@ -48,6 +48,17 @@
       terminal = "kitty";
       mod = "SUPER";
 
+      toggleHdr = pkgs.writeShellScript "toggle-hdr" ''
+        exec 9>"$XDG_RUNTIME_DIR/toggle-hdr.lock"
+        ${pkgs.util-linux}/bin/flock -n 9 || exit 0
+        m=$(mmsg get cursorpos | ${pkgs.jq}/bin/jq -r .monitor)
+        mmsg dispatch "togglehdr,toggle,$m"
+        sleep 0.3
+        state=$(mmsg get monitor "$m" | ${pkgs.jq}/bin/jq -r 'if .is_hdr then "On" else "Off" end')
+        noctalia msg notification-show "HDR $state" "$m"
+        sleep 1
+      '';
+
       spawn = key: cmd: "${mod},${key},spawn,${cmd}";
       shell = key: cmd: "${mod},${key},spawn_shell,${cmd}";
 
@@ -119,13 +130,10 @@
 
           # Appearance
           border_px = 0;
-          border_radius = 0;
           gap_inner_horizontal = 0;
           gap_inner_vertical = 0;
           gap_outer_horizontal = 0;
           gap_outer_vertical = 0;
-          blur = 0;
-          shadows = 0;
           focused_opacity = 1.0;
           unfocused_opacity = 1.0;
 
@@ -167,6 +175,7 @@
             "QT_QPA_PLATFORMTHEME,gtk3"
             "QT_SCALE_FACTOR,1"
             "SDL_VIDEODRIVER,wayland"
+            "WLR_RENDERER,vulkan"
             "GDK_DPI_SCALE,1"
             "GDK_SCALE,1"
             "XCURSOR_SIZE,24"
@@ -197,6 +206,7 @@
             (spawn "r" "noctalia msg panel-toggle launcher")
             (spawn "s" "spotify")
             (spawn "t" terminal)
+            (spawn "x" "${toggleHdr}")
             (spawn "z" "noctalia msg session lock")
             (shell "g" "systemd-run --user --scope steam -beta publicbeta")
             (spawn "comma" "noctalia msg settings-toggle")
@@ -260,6 +270,11 @@
             "none,up,3,viewtoleft_have_client"
             "none,down,3,viewtoright_have_client"
           ];
+
+          switchbind = [
+            "fold,spawn_shell,noctalia msg session lock && noctalia msg dpms-off && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
+            "unfold,spawn,noctalia msg dpms-on"
+          ];
         };
       };
 
@@ -316,23 +331,6 @@
             "video/x-ms-wmv" = "mpv.desktop";
             "video/3gpp" = "mpv.desktop";
           };
-        };
-      };
-
-      services.hypridle = {
-        enable = true;
-        settings = {
-          general = {
-            after_sleep_cmd = "brightnessctl -r";
-            ignore_dbus_inhibit = false;
-            lock_cmd = "noctalia msg session lock";
-          };
-          listener = [
-            {
-              timeout = 300;
-              on-timeout = "noctalia msg session lock";
-            }
-          ];
         };
       };
     };

@@ -49,14 +49,16 @@
     };
   };
 
-  services.hypridle = {
-    settings = {
-      listener = [
-        {
-          timeout = 1800;
-          on-timeout = "systemctl suspend";
-        }
-      ];
+  programs.noctalia.settings.idle = {
+    behavior_order = [
+      "lock"
+      "screen-off"
+      "suspend"
+    ];
+    behavior.suspend = {
+      action = "suspend";
+      timeout = 1800;
+      lock_before_suspend = false;
     };
   };
 }

@@ -62,6 +62,24 @@
       programs.noctalia = {
         enable = true;
         settings = {
+          idle = {
+            behavior_order = [
+              "lock"
+              "screen-off"
+            ];
+            behavior = {
+              lock = {
+                action = "lock";
+                timeout = 300;
+              };
+              screen-off = {
+                action = "screen_off";
+                timeout = 330;
+                resume_command = "brightnessctl -r";
+              };
+            };
+          };
+
           bar.default = {
             auto_hide = true;
             show_on_workspace_switch = false;
