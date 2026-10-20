@@ -2,7 +2,7 @@
 
 {
   flake.modules.nixos.printing =
-    { pkgs, ... }:
+    { pkgs, pkgsStable, ... }:
     {
       services = {
         avahi = {
@@ -16,8 +16,8 @@
           drivers = with pkgs; [
             gutenprint
             gutenprintBin
-            hplip
-            hplipWithPlugin
+            pkgsStable.hplip
+            pkgsStable.hplipWithPlugin
             brlaser
             cnijfilter2
             epson-escpr
