@@ -30,7 +30,7 @@
   flake.modules.homeManager.packages-cli =
     {
       pkgs,
-      # pkgsStable,
+      pkgsStable,
       # pkgsMaster,
       ...
     }:
@@ -56,7 +56,7 @@
             _1password-cli
             archivemount
             asciiquarium
-            azure-cli
+            pkgsStable.azure-cli
             bat
             brightnessctl
             cifs-utils

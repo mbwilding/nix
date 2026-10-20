@@ -62,6 +62,10 @@ in
           system = config.nixpkgs.hostPlatform.system;
           config.allowUnfree = true;
         };
+        _module.args.pkgsStable = import inputs.nixpkgs-stable {
+          system = config.nixpkgs.hostPlatform.system;
+          config.allowUnfree = true;
+        };
       };
     };
 
