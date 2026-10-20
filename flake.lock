@@ -790,16 +790,15 @@
         "pnpm2nix": "pnpm2nix"
       },
       "locked": {
-        "lastModified": 1791957881,
-        "narHash": "sha256-4ytV0KzTrQpfCwuyWaeNE184ywOGaT/yBjRZrsLFxEI=",
-        "owner": "mbwilding",
+        "lastModified": 1792479342,
+        "narHash": "sha256-AYCAP5Zhp/KhlZafoBOlq0KZHXW7Wf5dtk+ChVpuzLg=",
+        "owner": "PowerPlatformToolBox",
         "repo": "desktop-app",
-        "rev": "b2cc19dc3993738b17783207b53cf9dc87e4a9aa",
+        "rev": "65196a9014dc4f838ca077a3ba33c36125775810",
         "type": "github"
       },
       "original": {
-        "owner": "mbwilding",
-        "ref": "chore/nix-flake",
+        "owner": "PowerPlatformToolBox",
         "repo": "desktop-app",
         "type": "github"
       }
