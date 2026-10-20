@@ -103,9 +103,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # TODO: github:PowerPlatformToolBox/desktop-app once https://github.com/PowerPlatformToolBox/desktop-app/pull/699 is merged
     power-platform-toolbox = {
-      url = "github:mbwilding/desktop-app/chore/nix-flake";
+      url = "github:PowerPlatformToolBox/desktop-app";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
