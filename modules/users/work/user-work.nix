@@ -46,6 +46,8 @@ in
         _module.args.work = true;
         _module.args.pkgsMaster =
           inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
+        _module.args.pkgsStable =
+          inputs.nixpkgs-stable.legacyPackages.${config.nixpkgs.hostPlatform.system};
       };
     };
 
