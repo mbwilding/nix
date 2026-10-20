@@ -11,7 +11,6 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/release-26.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     ucodenix.url = "github:e-tho/ucodenix";
-    yazi.url = "github:sxyazi/yazi";
 
     waydroid-nvidia-nix = {
       url = "github:yigexuanmu/waydroid-nvidia-nix";
@@ -69,11 +68,6 @@
 
     neospleen = {
       url = "github:mbwilding/neospleen";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    vm-curator = {
-      url = "github:mroboff/vm-curator";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
