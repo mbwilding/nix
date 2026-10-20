@@ -5,6 +5,7 @@
     {
       lib,
       pkgs,
+      pkgsStable,
       config,
       ...
     }:
@@ -22,7 +23,7 @@
               lib.makeBinPath [
                 dotnet
                 pkgs.mono
-                pkgs.msbuild
+                pkgsStable.msbuild
               ]
             }"
         '';

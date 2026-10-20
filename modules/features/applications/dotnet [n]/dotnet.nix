@@ -5,6 +5,7 @@
     {
       lib,
       pkgs,
+      pkgsStable,
       config,
       ...
     }:
@@ -23,7 +24,7 @@
       config = {
         home = {
           packages = with pkgs; [
-            msbuild
+            pkgsStable.msbuild
             nssTools # certutil, needed for `dotnet dev-certs https --trust`
           ];
 
