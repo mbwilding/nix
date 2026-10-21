@@ -110,6 +110,7 @@ in
 
       hardware = {
         xone.enable = true;
+        xpad-noone.enable = false;
         nvidia-container-toolkit.enable = true;
       };
 
