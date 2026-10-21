@@ -3,119 +3,46 @@
 let
   arch = "x86_64-linux";
   hostName = "stealth";
-  primaryMonitor = "eDP-1";
+  stateVersion = "26.05";
+  homeManagerModules = featureModules.homeManager ++ [ ./_shells.nix ];
+  # secrets = import ../../nix/_secrets.nix;
 
   features = [
     "appimage"
-    "audio"
     "claude-code"
+    "cli"
     "development"
-    "flatpak"
-    "gpu-amd"
-    "gpu-nvidia"
-    "gui"
-    "hyprland"
-    "keyd-dvorak"
-    "lutris"
-    "mounts"
-    "mpv"
-    "obs"
-    "podman"
-    "printing"
+    "fonts"
     "proxy"
-    "qemu"
-    "secure-boot"
-    "steam"
-    "swap"
-    "system-default"
-    "ucodenix"
+    "system-base"
     "user-mbwilding"
-    "user-work"
-    "vm-curator"
-    "wifi"
-    "wine"
-    "wireguard-nona"
     "wireshark"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
-
-  homeManagerExtraModules = [
-    {
-      _module.args.primaryMonitor = primaryMonitor;
-    }
-
-    ./_hyprland.nix
-
-    (
-      {
-        pkgs,
-        lib,
-        secrets,
-        ...
-      }:
-      {
-        home.packages =
-          with pkgs;
-          [
-            heroic
-          ]
-          ++ map (name: lib.attrByPath (lib.splitString "." name) null pkgs) secrets.packages;
-      }
-    )
-  ];
-
-  homeManagerModules = featureModules.homeManager ++ homeManagerExtraModules;
 in
 {
   flake.modules.nixos.${hostName} =
-    { pkgs, ... }:
-    let
-      # kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
-      kernel = pkgs.linuxPackages_latest;
-    in
+    { ... }:
     {
       imports = featureModules.nixos ++ [
-        ./_hardware-configuration.nix
-        ./_audio.nix
+        inputs.nixos-wsl.nixosModules.default
       ];
 
       home-manager.sharedModules = homeManagerModules;
 
-      boot.kernelPackages = kernel;
-      boot.kernelParams = [
-        "usbcore.autosuspend=-1"
-        "btusb.enable_autosuspend=0"
-      ];
-      host = {
-        keymap = "dvorak";
-        primaryMonitor = primaryMonitor;
-      };
+      # home-manager.users.mbwilding.home.stateVersion = stateVersion;
       networking.hostName = hostName;
-      time.hardwareClockInLocalTime = true;
+      programs.fish.enable = true;
+      programs.zsh.enable = false;
+      system.stateVersion = stateVersion;
 
-      hardware = {
-        xone.enable = true;
+      nixpkgs.config.allowUnfree = true;
 
-        nvidia = {
-          powerManagement.enable = true;
-          powerManagement.finegrained = true;
-          prime = {
-            offload = {
-              enable = true;
-              enableOffloadCmd = true;
-            };
-            amdgpuBusId = "PCI:101:0:0";
-            nvidiaBusId = "PCI:100:0:0";
-          };
-        };
+      wsl = {
+        defaultUser = "mbwilding";
+        enable = true;
       };
-
-      services = {
-        upower.enable = true;
-      };
-
-      system.stateVersion = "26.05";
     };
 
   flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
