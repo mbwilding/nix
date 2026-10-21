@@ -42,6 +42,7 @@ in
       wsl = {
         defaultUser = "mbwilding";
         enable = true;
+        interop.register = true;
       };
     };
 
