@@ -107,6 +107,7 @@ in
 
       hardware = {
         xone.enable = true;
+        xpad-noone.enable = false;
       };
 
       services = {
