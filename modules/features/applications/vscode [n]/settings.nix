@@ -45,33 +45,33 @@
         "telemetry.telemetryLevel" = "off";
         "update.mode" = "none";
 
-        # Hide tabs (single buffer workflow)
-        "workbench.editor.showTabs" = "single";
-        "workbench.editor.enablePreview" = false;
-
-        # Hide activity bar, status bar, sidebar by default
-        "workbench.activityBar.location" = "hidden";
-        "workbench.statusBar.visible" = false;
-        "workbench.sideBar.location" = "right";
-
-        # Hide AI / chat
-        "chat.commandCenter.enabled" = false;
-
-        # Zen mode as default -- hides everything except editor, persists across restarts
-        "zenMode.restore" = true;
-        "zenMode.fullScreen" = false;
-        "zenMode.centerLayout" = false;
-        "zenMode.hideActivityBar" = true;
-        "zenMode.hideStatusBar" = true;
-        "zenMode.hideLineNumbers" = false;
-        "zenMode.showTabs" = "single";
-        "zenMode.silentNotifications" = false;
-
-        # Zen-like editor
-        "editor.scrollbar.vertical" = "hidden";
-        "editor.scrollbar.horizontal" = "hidden";
-        "editor.overviewRulerBorder" = false;
-        "editor.hideCursorInOverviewRuler" = true;
+        # # Hide tabs (single buffer workflow)
+        # "workbench.editor.showTabs" = "single";
+        # "workbench.editor.enablePreview" = false;
+        #
+        # # Hide activity bar, status bar, sidebar by default
+        # "workbench.activityBar.location" = "hidden";
+        # "workbench.statusBar.visible" = false;
+        # "workbench.sideBar.location" = "right";
+        #
+        # # Hide AI / chat
+        # "chat.commandCenter.enabled" = false;
+        #
+        # # Zen mode as default -- hides everything except editor, persists across restarts
+        # "zenMode.restore" = true;
+        # "zenMode.fullScreen" = false;
+        # "zenMode.centerLayout" = false;
+        # "zenMode.hideActivityBar" = true;
+        # "zenMode.hideStatusBar" = true;
+        # "zenMode.hideLineNumbers" = false;
+        # "zenMode.showTabs" = "single";
+        # "zenMode.silentNotifications" = false;
+        #
+        # # Zen-like editor
+        # "editor.scrollbar.vertical" = "hidden";
+        # "editor.scrollbar.horizontal" = "hidden";
+        # "editor.overviewRulerBorder" = false;
+        # "editor.hideCursorInOverviewRuler" = true;
       };
     };
 }
