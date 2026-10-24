@@ -1,0 +1,34 @@
+--- a/src/microsoft/vulkan/dzn_dxcore.cpp	2026-10-24 14:47:02.989247797 +0000
++++ b/src/microsoft/vulkan/dzn_dxcore.cpp	2026-10-24 14:47:03.020520751 +0000
+@@ -58,9 +58,10 @@
+    }
+ 
+    VkResult result = VK_SUCCESS;
++   bool found = false;
+    uint32_t adapter_count = list->GetAdapterCount();
+    IDXCoreAdapter *adapter;
+-   for (uint32_t i = 0; i < adapter_count && result == VK_SUCCESS; ++i) {
++   for (uint32_t i = 0; i < adapter_count; ++i) {
+       result = VK_ERROR_INITIALIZATION_FAILED;
+       if (SUCCEEDED(list->GetAdapter(i, IID_PPV_ARGS(&adapter)))) {
+          dzn_physical_device_desc desc = { 0 };
+@@ -82,6 +83,10 @@
+             desc.revision = hardware_id.revision;
+             desc.is_warp = !is_hardware;
+             result = dzn_instance_add_physical_device(instance, adapter, &desc);
++            if (result == VK_SUCCESS)
++               found = true;
++            else
++               mesa_logw("Skipping DXCore adapter %s\n", desc.description);
+          }
+ 
+          adapter->Release();
+@@ -90,7 +95,7 @@
+ 
+    list->Release();
+    factory->Release();
+-   return result;
++   return found || adapter_count == 0 ? VK_SUCCESS : result;
+ }
+ 
+ void
