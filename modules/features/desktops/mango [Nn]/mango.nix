@@ -19,6 +19,10 @@
         xdg.portal = {
           enable = true;
           extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+          wlr.settings.screencast = {
+            chooser_type = "simple";
+            chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+          };
           config.mango = {
             default = [ "gtk" ];
           };
