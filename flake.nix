@@ -88,7 +88,7 @@
 
     # TODO: github:github:dynatrace/dtctl once https://github.com/Dynatrace/dtctl/pull/734 is merged
     dtctl = {
-      url = "github:mbwilding/dtctl";
+      url = "github:mbwilding/dtctl/fix/nix-vendor-hash";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
