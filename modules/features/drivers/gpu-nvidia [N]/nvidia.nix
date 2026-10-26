@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   flake.modules.nixos.gpu-nvidia =
@@ -22,7 +22,10 @@
 
         nvidia = {
           # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-          package = config.boot.kernelPackages.nvidiaPackages.production;
+          # package = config.boot.kernelPackages.nvidiaPackages.production;
+          package =
+            (config.boot.kernelPackages.callPackage "${inputs.nixpkgs-master}/pkgs/os-specific/linux/nvidia-x11" { })
+            .production;
           open = true;
           modesetting.enable = true;
           nvidiaSettings = true;
