@@ -20,5 +20,8 @@
   # can't actually use at runtime. It needs +ep (effective+permitted) to work.
   security.wrappers.sunshine.capabilities = lib.mkForce "cap_sys_admin+ep";
 
-  systemd.user.services.sunshine.environment.LD_LIBRARY_PATH = "/run/opengl-driver/lib";
+  systemd.user.services.sunshine = {
+    environment.LD_LIBRARY_PATH = "/run/opengl-driver/lib";
+    unitConfig.ConditionUser = "mbwilding";
+  };
 }

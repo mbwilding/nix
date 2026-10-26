@@ -43,14 +43,12 @@
               vendorHash = "sha256-Kv7uvuLq2eMeIDBbWyI9GgDW+bJ0fNe1DoKro2GHDy0=";
             });
             open-ecc = inputs.open-ecc.packages.${system}.default;
-            steam-achievement-manager = inputs.steam-achievement-manager.packages.${system}.default;
           in
           with pkgs;
           [
             # Custom
             dtctl
             open-ecc
-            steam-achievement-manager
 
             # Packages
             _1password-cli

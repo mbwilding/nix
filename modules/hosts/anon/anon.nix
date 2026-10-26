@@ -10,9 +10,9 @@ let
     "claude-code"
     "development"
     "flatpak"
+    "gaming"
     "gpu-nvidia"
     "gui"
-    "lutris"
     "mounts"
     "mpv"
     "obs"
@@ -21,7 +21,6 @@ let
     "proxy"
     "qemu"
     "solaar"
-    "steam"
     "streamcontroller"
     "swap"
     "system-default"
@@ -64,8 +63,6 @@ let
           with pkgs;
           [
             davinci-resolve-studio
-            heroic
-            clonehero
           ]
           ++ map (name: lib.attrByPath (lib.splitString "." name) null pkgs) secrets.packages;
       }

@@ -12,9 +12,14 @@
     };
 
   flake.modules.homeManager.lutris =
-    { pkgs, ... }:
     {
-      programs = {
+      pkgs,
+      lib,
+      work,
+      ...
+    }:
+    {
+      programs = lib.mkIf (!work) {
         lutris = {
           enable = true;
           protonPackages = [

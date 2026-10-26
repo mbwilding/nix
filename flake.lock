@@ -51,6 +51,26 @@
         "type": "github"
       }
     },
+    "epic-games-launcher": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792832235,
+        "narHash": "sha256-lAx5nd21mJTKKkUMzmNt7SYKZ2fD3Z78aNMGs+Qx61g=",
+        "owner": "kjetteren",
+        "repo": "epic-games-launcher-flake",
+        "rev": "a4c92d2bcad7b32be5b16a7fdaae89d67c049ea4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kjetteren",
+        "repo": "epic-games-launcher-flake",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "locked": {
         "lastModified": 1767039857,
@@ -794,6 +814,7 @@
     "root": {
       "inputs": {
         "dtctl": "dtctl",
+        "epic-games-launcher": "epic-games-launcher",
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
         "gronk": "gronk",

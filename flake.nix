@@ -61,6 +61,11 @@
     #   inputs.flake-compat.follows = "flake-compat";
     # };
 
+    epic-games-launcher = {
+      url = "github:kjetteren/epic-games-launcher-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     gronk = {
       url = "github:mbwilding/gronk.nvim";
       inputs.nixpkgs.follows = "nixpkgs";

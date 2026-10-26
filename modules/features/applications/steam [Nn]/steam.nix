@@ -55,7 +55,12 @@
     };
 
   flake.modules.homeManager.steam =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      work,
+      ...
+    }:
     let
       protonVersion = pkgs.lib.trim (builtins.readFile "${pkgs.proton-ge-bin.steamcompattool}/version");
       protonName = builtins.elemAt (pkgs.lib.splitString " " protonVersion) 1;
@@ -438,7 +443,7 @@
         USEGAMESCOPEWSI="1"
       '';
     in
-    {
+    lib.mkIf (!work) {
       home.activation.steamtinkerlaunchDefaultTemplate = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         target="$HOME/.config/steamtinkerlaunch/default_template.conf"
         if [ ! -e "$target" ]; then
