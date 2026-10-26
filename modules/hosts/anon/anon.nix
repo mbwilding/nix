@@ -51,7 +51,6 @@ let
     # ./_hyprland.nix
     ./_mango.nix
     # ./_niri.nix
-    # ./_kitty.nix
 
     (
       {

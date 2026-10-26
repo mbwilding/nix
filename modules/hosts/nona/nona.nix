@@ -48,9 +48,9 @@ let
       _module.args.primaryMonitor = primaryMonitor;
     }
 
-    ./_hyprland.nix
+    # ./_hyprland.nix
     ./_mango.nix
-    ./_niri.nix
+    # ./_niri.nix
 
     (
       {
