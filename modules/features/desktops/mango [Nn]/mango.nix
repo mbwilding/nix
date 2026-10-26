@@ -141,7 +141,7 @@
           focused_opacity = 1.0;
           unfocused_opacity = 1.0;
 
-          animations = 1;
+          animations = 0;
           layer_animations = 0;
           animation_duration_open = 200;
           animation_duration_close = 200;

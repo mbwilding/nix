@@ -26,7 +26,7 @@
 
           settings = {
             adjust_line_height = "115%";
-            background_opacity = "0.98";
+            # background_opacity = "0.98";
             clear_all_shortcuts = true;
             confirm_os_window_close = 0;
             copy_on_select = "clipboard";
