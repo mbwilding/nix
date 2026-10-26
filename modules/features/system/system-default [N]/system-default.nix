@@ -26,7 +26,6 @@
           efi.canTouchEfiVariables = true;
           timeout = 1;
         };
-        initrd.systemd.enable = true;
       };
 
       services = {
