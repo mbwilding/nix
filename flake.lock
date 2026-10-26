@@ -38,16 +38,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1793001721,
-        "narHash": "sha256-y3sEFWyeiSYsZv5bR3FXu+rA8pFKMKmZrKh1PVrR0J0=",
-        "owner": "mbwilding",
+        "lastModified": 1792607450,
+        "narHash": "sha256-XrF9byHIBl6LwPn589SQnQMJh1zTEENz5bR5D20mBs8=",
+        "owner": "dynatrace",
         "repo": "dtctl",
-        "rev": "41c8d1358dc5dc9074ddda21b66a847d7433d510",
+        "rev": "97f26e0bd02f5e7b7b3418ae760195ee488a6a74",
         "type": "github"
       },
       "original": {
-        "owner": "mbwilding",
-        "ref": "fix/nix-vendor-hash",
+        "owner": "dynatrace",
         "repo": "dtctl",
         "type": "github"
       }
@@ -523,11 +522,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1793002046,
-        "narHash": "sha256-loFOnYr9tc2ZyCMa2P/ZlDKr+mA18eVKPG7PcdpZg2I=",
+        "lastModified": 1793002674,
+        "narHash": "sha256-u18bP+ILrg8iGX4kqtDSbpVhFrRHBPTH8wiNpsbJ2ss=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d809d5897a4d571aacad68b309820a77a87297b5",
+        "rev": "3fbbacc06fdc4dce74685a7dd636027a605eec91",
         "type": "github"
       },
       "original": {

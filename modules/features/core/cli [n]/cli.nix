@@ -39,10 +39,9 @@
         packages =
           let
             system = pkgs.stdenv.hostPlatform.system;
-            dtctl = inputs.dtctl.packages.${system}.default;
-            # dtctl = inputs.dtctl.packages.${system}.default.overrideAttrs (_: {
-            #   vendorHash = "sha256-q5gRKdBg3ms5HfVdhOKXXJG+xMpoapHOvMJ1mhPOdQA=";
-            # });
+            dtctl = inputs.dtctl.packages.${system}.default.overrideAttrs (_: {
+              vendorHash = "sha256-Kv7uvuLq2eMeIDBbWyI9GgDW+bJ0fNe1DoKro2GHDy0=";
+            });
             open-ecc = inputs.open-ecc.packages.${system}.default;
             steam-achievement-manager = inputs.steam-achievement-manager.packages.${system}.default;
           in

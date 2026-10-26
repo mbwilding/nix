@@ -86,9 +86,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # TODO: github:github:dynatrace/dtctl once https://github.com/Dynatrace/dtctl/pull/734 is merged
+    # TODO: PR will keep the hash up to date https://github.com/Dynatrace/dtctl/pull/734
     dtctl = {
-      url = "github:mbwilding/dtctl/fix/nix-vendor-hash";
+      url = "github:dynatrace/dtctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
