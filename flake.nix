@@ -86,8 +86,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO: github:github:dynatrace/dtctl once https://github.com/Dynatrace/dtctl/pull/734 is merged
     dtctl = {
-      url = "github:dynatrace/dtctl";
+      url = "github:mbwilding/dtctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
