@@ -71,7 +71,7 @@
             commit = ../command-commit.md;
             doco = ../command-doco.md;
           };
-          tui = {
+          cli = {
             mouse = true;
             diff_style = "auto";
             attention = {
