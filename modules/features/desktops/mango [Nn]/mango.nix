@@ -153,7 +153,8 @@
           repeat_delay = 195;
           numlock_on = 0;
           sloppy_focus = 0;
-          warp_cursor = 0;
+          focus_cross_monitor = 1;
+          warp_cursor = 1;
           cursor_hide_on_keypress = 1;
           mouse_accel_profile = 1;
           mouse_accel_speed = 0.0;
