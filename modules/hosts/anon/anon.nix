@@ -14,8 +14,10 @@ let
     "gui"
     "hyprland"
     "lutris"
+    "mango"
     "mounts"
     "mpv"
+    "niri"
     "obs"
     "podman"
     "printing"
@@ -46,6 +48,8 @@ let
     }
 
     ./_hyprland.nix
+    ./_mango.nix
+    ./_niri.nix
     # ./_kitty.nix
 
     (
@@ -96,6 +100,7 @@ in
         inherit primaryMonitor;
         # keymap = "dvorak";
         waylandSession.secondTty.enable = true;
+        waylandSession.defaultSession = "mango";
       };
 
       systemd.services.wifi-disable-default = {

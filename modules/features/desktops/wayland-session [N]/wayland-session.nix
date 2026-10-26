@@ -8,6 +8,17 @@
       config,
       ...
     }:
+    let
+      sessions = pkgs.symlinkJoin {
+        name = "wayland-sessions";
+        paths = config.host.waylandSession.sessionPackages;
+      };
+      greeterCommand = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${sessions}/share/wayland-sessions${
+        lib.optionalString (
+          config.host.waylandSession.defaultSession != null
+        ) " --cmd ${config.host.waylandSession.defaultSession}"
+      }";
+    in
     {
       imports = [
         inputs.self.modules.nixos.gui
@@ -21,9 +32,16 @@
           description = "Primary monitor output name for this host (e.g. HDMI-A-1, eDP-1).";
         };
 
-        waylandSession.sessionPackage = lib.mkOption {
-          type = lib.types.package;
-          description = "The compositor package whose share/wayland-sessions tuigreet will list.";
+        waylandSession.sessionPackages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = [ ];
+          description = "Compositor packages whose share/wayland-sessions tuigreet will list.";
+        };
+
+        waylandSession.defaultSession = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Command tuigreet starts when no session has been remembered (e.g. mango).";
         };
 
         waylandSession.secondTty.enable = lib.mkOption {
@@ -42,7 +60,7 @@
           greetd = {
             enable = true;
             settings.default_session = {
-              command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${config.host.waylandSession.sessionPackage}/share/wayland-sessions";
+              command = greeterCommand;
               user = "greeter";
             };
           };
@@ -98,7 +116,7 @@
                 settingsFormat.generate "greetd-vt2.toml" {
                   terminal.vt = 2;
                   default_session = {
-                    command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${config.host.waylandSession.sessionPackage}/share/wayland-sessions";
+                    command = greeterCommand;
                     user = "greeter";
                   };
                 }

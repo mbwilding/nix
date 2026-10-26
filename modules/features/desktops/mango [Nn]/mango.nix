@@ -12,14 +12,14 @@
 
       config = {
         programs.mango.enable = true;
-        host.waylandSession.sessionPackage = inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+        host.waylandSession.sessionPackages = [ inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango ];
 
         programs.xwayland.enable = true;
 
         xdg.portal = {
           enable = true;
           extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-          config.common = {
+          config.mango = {
             default = [ "gtk" ];
           };
         };

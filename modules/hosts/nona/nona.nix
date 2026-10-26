@@ -13,12 +13,13 @@ let
     "flatpak"
     "gpu-amd"
     "gui"
-    # "hyprland"
+    "hyprland"
     "keyd-dvorak"
     "lutris"
     "mango"
     "mounts"
     "mpv"
+    "niri"
     "obs"
     "podman"
     "printing"
@@ -46,8 +47,9 @@ let
       _module.args.primaryMonitor = primaryMonitor;
     }
 
-    # ./_hyprland.nix
+    ./_hyprland.nix
     ./_mango.nix
+    ./_niri.nix
 
     (
       {
@@ -84,16 +86,6 @@ in
 
       home-manager.sharedModules = homeManagerModules;
 
-      host.waylandSession.sessionPackage = lib.mkForce (
-        pkgs.symlinkJoin {
-          name = "wayland-sessions";
-          paths = [
-            # pkgs.hyprland
-            inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango
-          ];
-        }
-      );
-
       boot.kernelPackages = kernel;
       boot.extraModprobeConfig = ''
         options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y disable_clkreq=Y
@@ -102,6 +94,7 @@ in
       host = {
         keymap = "dvorak";
         primaryMonitor = primaryMonitor;
+        waylandSession.defaultSession = "mango";
       };
       networking.hostName = hostName;
 

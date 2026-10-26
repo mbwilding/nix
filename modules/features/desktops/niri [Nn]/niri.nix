@@ -10,7 +10,7 @@
       ];
 
       config = {
-        host.waylandSession.sessionPackage = pkgs.niri;
+        host.waylandSession.sessionPackages = [ pkgs.niri ];
 
         programs.niri = {
           enable = true;
@@ -73,6 +73,8 @@
         grim
         slurp
       ];
+
+      programs.niri.package = pkgs.niri;
 
       programs.niri.settings = {
         hotkey-overlay.skip-at-startup = true;

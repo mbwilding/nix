@@ -10,7 +10,7 @@
       ];
 
       config = {
-        host.waylandSession.sessionPackage = pkgs.hyprland;
+        host.waylandSession.sessionPackages = [ pkgs.hyprland ];
 
         programs = {
           hyprland = {
