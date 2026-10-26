@@ -87,7 +87,7 @@
     };
 
     dtctl = {
-      url = "github:dynatrace-oss/dtctl";
+      url = "github:dynatrace/dtctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
