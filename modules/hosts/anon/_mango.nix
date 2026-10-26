@@ -19,7 +19,7 @@ let
   spec = m: "make:${m.make}&&model:${m.model}";
 
   social = "monitor:${spec alienware},tags:1";
-  game = "monitor:${spec tv},tags:1,is_floating:1";
+  game = "monitor:${spec tv},tags:1,is_floating:1,vrr_only_fullscreen:1";
 in
 {
   wayland.windowManager.mango = {
@@ -28,8 +28,8 @@ in
       # hdr_max_lum/hdr_max_avg_lum: nix shell nixpkgs#libdisplay-info -c di-edid-decode < /sys/class/drm/card1-<output>/edid
       # (HDR Static Metadata: max luminance, max frame-average luminance)
       monitor_rule = lib.mkAfter [
-        "${match tv},width:3840,height:2160,refresh:143.99,x:2560,y:720,scale:1,vrr:1,hdr:1,hdr_max_lum:1200,hdr_max_avg_lum:400,primary:1"
-        "${match alienware},width:3440,height:1440,refresh:120,x:6400,y:0,scale:1,vrr:1,rr:1"
+        "${match tv},width:3840,height:2160,refresh:143.99,x:2560,y:720,scale:1,vrr:0,hdr:1,hdr_max_lum:1200,hdr_max_avg_lum:400,primary:1"
+        "${match alienware},width:3440,height:1440,refresh:120,x:6400,y:0,scale:1,vrr:0,rr:1"
         "${match lg},width:2560,height:1080,refresh:60,x:0,y:1800,scale:1"
       ];
 
