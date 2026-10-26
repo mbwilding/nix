@@ -38,7 +38,7 @@ in
           lib.range 1 5
         ))
         ++ [
-          "id:1,${tagMatch alienware},layout_name:vertical_scroller,no_hide:1"
+          "id:1,${tagMatch alienware},layout_name:tile,master_count:99,no_hide:1"
           "id:1,${tagMatch lg},layout_name:vertical_scroller,no_hide:1"
         ]
       );
