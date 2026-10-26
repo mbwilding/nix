@@ -12,12 +12,9 @@ let
     "flatpak"
     "gpu-nvidia"
     "gui"
-    "hyprland"
     "lutris"
-    "mango"
     "mounts"
     "mpv"
-    "niri"
     "obs"
     "podman"
     "printing"
@@ -38,6 +35,10 @@ let
     "wifi"
     "wine"
     "wireshark"
+
+    "mango"
+    # "hyprland"
+    # "niri"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
@@ -47,9 +48,9 @@ let
       _module.args.primaryMonitor = primaryMonitor;
     }
 
-    ./_hyprland.nix
+    # ./_hyprland.nix
     ./_mango.nix
-    ./_niri.nix
+    # ./_niri.nix
     # ./_kitty.nix
 
     (
@@ -100,7 +101,6 @@ in
         inherit primaryMonitor;
         # keymap = "dvorak";
         waylandSession.secondTty.enable = true;
-        waylandSession.defaultSession = "mango";
       };
 
       systemd.services.wifi-disable-default = {

@@ -13,13 +13,10 @@ let
     "flatpak"
     "gpu-amd"
     "gui"
-    "hyprland"
     "keyd-dvorak"
     "lutris"
-    "mango"
     "mounts"
     "mpv"
-    "niri"
     "obs"
     "podman"
     "printing"
@@ -38,6 +35,10 @@ let
     "wine"
     "wireguard-nona"
     "wireshark"
+
+    "mango"
+    # "hyprland"
+    # "niri"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
@@ -73,7 +74,7 @@ let
 in
 {
   flake.modules.nixos.${hostName} =
-    { lib, pkgs, ... }:
+    { pkgs, ... }:
     let
       # kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
       kernel = pkgs.linuxPackages_latest;
@@ -94,7 +95,6 @@ in
       host = {
         keymap = "dvorak";
         primaryMonitor = primaryMonitor;
-        waylandSession.defaultSession = "mango";
       };
       networking.hostName = hostName;
 

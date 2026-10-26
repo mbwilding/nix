@@ -13,11 +13,7 @@
         name = "wayland-sessions";
         paths = config.host.waylandSession.sessionPackages;
       };
-      greeterCommand = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${sessions}/share/wayland-sessions${
-        lib.optionalString (
-          config.host.waylandSession.defaultSession != null
-        ) " --cmd ${config.host.waylandSession.defaultSession}"
-      }";
+      greeterCommand = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${sessions}/share/wayland-sessions";
     in
     {
       imports = [
@@ -36,12 +32,6 @@
           type = lib.types.listOf lib.types.package;
           default = [ ];
           description = "Compositor packages whose share/wayland-sessions tuigreet will list.";
-        };
-
-        waylandSession.defaultSession = lib.mkOption {
-          type = lib.types.nullOr lib.types.str;
-          default = null;
-          description = "Command tuigreet starts when no session has been remembered (e.g. mango).";
         };
 
         waylandSession.secondTty.enable = lib.mkOption {
