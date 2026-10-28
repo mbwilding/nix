@@ -12,7 +12,9 @@
 
       config = {
         programs.mango.enable = true;
-        host.waylandSession.sessionPackages = [ inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango ];
+        host.waylandSession.sessionPackages = [
+          inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango
+        ];
 
         programs.xwayland.enable = true;
 
@@ -25,7 +27,10 @@
             chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
           };
           config.mango = {
-            default = lib.mkForce [ "wlr" "gtk" ];
+            default = lib.mkForce [
+              "wlr"
+              "gtk"
+            ];
           };
         };
 
@@ -62,6 +67,23 @@
         state=$(mmsg get monitor "$m" | ${pkgs.jq}/bin/jq -r 'if .is_hdr then "On" else "Off" end')
         noctalia msg notification-show "HDR $state" "$m"
         sleep 1
+      '';
+
+      gapShift = pkgs.writeShellScript "gap-shift" ''
+        max=12 off=0
+        while :; do
+          sleep $((300 + RANDOM % 900))
+          target=$(${pkgs.xrandr}/bin/xrandr --query | ${pkgs.gawk}/bin/awk '/ connected primary /{print $1; exit}')
+          [ -n "$target" ] || continue
+          cur=$(mmsg get all-monitors | ${pkgs.jq}/bin/jq -r '[..|objects|select(has("is_hdr") and .active == true)|.name][0] // empty')
+          new=$((RANDOM % (max + 1)))
+          delta=$((new - off))
+          [ "$delta" -ne 0 ] || continue
+          [ "$cur" = "$target" ] || mmsg dispatch "focusmon,$target"
+          mmsg dispatch "incgaps,$delta"
+          [ "$cur" = "$target" ] || [ -z "$cur" ] || mmsg dispatch "focusmon,$cur"
+          off=$new
+        done
       '';
 
       spawn = key: cmd: "${mod},${key},spawn,${cmd}";
@@ -191,6 +213,7 @@
           exec_once = [
             "noctalia"
             "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+            "${gapShift}"
           ];
 
           window_rule = [
