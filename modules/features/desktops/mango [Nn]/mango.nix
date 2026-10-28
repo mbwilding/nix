@@ -69,23 +69,6 @@
         sleep 1
       '';
 
-      gapShift = pkgs.writeShellScript "gap-shift" ''
-        max=12 off=0
-        while :; do
-          sleep $((300 + RANDOM % 900))
-          target=$(${pkgs.xrandr}/bin/xrandr --query | ${pkgs.gawk}/bin/awk '/ connected primary /{print $1; exit}')
-          [ -n "$target" ] || continue
-          cur=$(mmsg get all-monitors | ${pkgs.jq}/bin/jq -r '[..|objects|select(has("is_hdr") and .active == true)|.name][0] // empty')
-          new=$((RANDOM % (max + 1)))
-          delta=$((new - off))
-          [ "$delta" -ne 0 ] || continue
-          [ "$cur" = "$target" ] || mmsg dispatch "focusmon,$target"
-          mmsg dispatch "incgaps,$delta"
-          [ "$cur" = "$target" ] || [ -z "$cur" ] || mmsg dispatch "focusmon,$cur"
-          off=$new
-        done
-      '';
-
       spawn = key: cmd: "${mod},${key},spawn,${cmd}";
       shell = key: cmd: "${mod},${key},spawn_shell,${cmd}";
 
@@ -156,13 +139,15 @@
           tag_num = 9;
 
           # Appearance
-          border_px = 2;
-          gap_inner_horizontal = 10;
-          gap_inner_vertical = 10;
-          gap_outer_horizontal = 10;
-          gap_outer_vertical = 10;
+          focus_color = "0x000000ff";
+          border_color = "0x000000ff";
+          border_px = 0;
+          gap_inner_horizontal = 0;
+          gap_inner_vertical = 0;
+          gap_outer_horizontal = 0;
+          gap_outer_vertical = 0;
           focused_opacity = 1.0;
-          unfocused_opacity = 1.0;
+          unfocused_opacity = 0.9;
 
           animations = 1;
           layer_animations = 1;
@@ -213,7 +198,6 @@
           exec_once = [
             "noctalia"
             "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-            "${gapShift}"
           ];
 
           window_rule = [
