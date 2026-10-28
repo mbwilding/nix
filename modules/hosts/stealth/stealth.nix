@@ -16,6 +16,7 @@ let
     "proxy"
     "system-base"
     "user-mbwilding"
+    "user-work"
     "wireshark"
   ];
 
