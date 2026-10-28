@@ -16,6 +16,7 @@
       lutris
       steam
       steam-achievement-manager
+      wowup
     ];
   };
 }
