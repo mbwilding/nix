@@ -160,7 +160,7 @@
           };
 
           wallpaper = {
-            directory = "/etc/nixos/wallpapers";
+            directory = "/etc/nixos/wallpapers/scenery";
             directory_dark = "";
             default.path = "/etc/nixos/wallpapers/scenery/chameleon-dragonfly-portrait-blurred-green-background-3840x2665-6376.jpg";
             per_monitor_directories = true;
