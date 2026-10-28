@@ -44,10 +44,14 @@ in
         imports = [ inputs.self.modules.homeManager.${moduleName} ];
         _module.args.secrets = config._module.args.secrets;
         _module.args.work = true;
-        _module.args.pkgsMaster =
-          inputs.nixpkgs-master.legacyPackages.${config.nixpkgs.hostPlatform.system};
-        _module.args.pkgsStable =
-          inputs.nixpkgs-stable.legacyPackages.${config.nixpkgs.hostPlatform.system};
+        _module.args.pkgsMaster = import inputs.nixpkgs-master {
+          system = config.nixpkgs.hostPlatform.system;
+          config.allowUnfree = true;
+        };
+        _module.args.pkgsStable = import inputs.nixpkgs-stable {
+          system = config.nixpkgs.hostPlatform.system;
+          config.allowUnfree = true;
+        };
       };
     };
 
