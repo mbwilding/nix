@@ -20,6 +20,7 @@ let
     "printing"
     "proxy"
     "qemu"
+    "ryzen"
     "solaar"
     "streamcontroller"
     "swap"

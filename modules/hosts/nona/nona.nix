@@ -22,6 +22,7 @@ let
     "printing"
     "proxy"
     "qemu"
+    "ryzen"
     "swap"
     "system-default"
     "ucodenix"

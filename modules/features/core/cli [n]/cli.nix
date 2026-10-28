@@ -73,6 +73,7 @@
             gnupg
             home-manager
             hostname
+            i2c-tools
             imagemagick
             jq
             killall
