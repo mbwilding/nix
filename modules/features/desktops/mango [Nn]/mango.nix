@@ -2,7 +2,7 @@
 
 {
   flake.modules.nixos.mango =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     {
       imports = [
         inputs.mango.nixosModules.mango
@@ -25,7 +25,7 @@
             chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
           };
           config.mango = {
-            default = [ "wlr" "gtk" ];
+            default = lib.mkForce [ "wlr" "gtk" ];
           };
         };
 
