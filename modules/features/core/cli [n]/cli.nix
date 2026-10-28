@@ -62,6 +62,7 @@
             curl
             dapr-cli
             dig
+            dmidecode
             exiftool
             eza
             fd
