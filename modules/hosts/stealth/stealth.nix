@@ -13,10 +13,8 @@ let
     "cli"
     "development"
     "fonts"
-    "proxy"
     "system-base"
     "user-mbwilding"
-    "user-work"
     "wireshark"
   ];
 
