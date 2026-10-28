@@ -13,7 +13,6 @@ let
     "cli"
     "development"
     "fonts"
-    "mango"
     "proxy"
     "system-base"
     "user-mbwilding"
