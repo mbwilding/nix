@@ -134,16 +134,16 @@
           tag_num = 9;
 
           # Appearance
-          border_px = 0;
-          gap_inner_horizontal = 0;
-          gap_inner_vertical = 0;
-          gap_outer_horizontal = 0;
-          gap_outer_vertical = 0;
+          border_px = 2;
+          gap_inner_horizontal = 10;
+          gap_inner_vertical = 10;
+          gap_outer_horizontal = 10;
+          gap_outer_vertical = 10;
           focused_opacity = 1.0;
           unfocused_opacity = 1.0;
 
-          animations = 0;
-          layer_animations = 0;
+          animations = 1;
+          layer_animations = 1;
           animation_duration_open = 200;
           animation_duration_close = 200;
           animation_duration_move = 200;
@@ -159,7 +159,7 @@
           numlock_on = 0;
           sloppy_focus = 0;
           focus_cross_monitor = 1;
-          warp_cursor = 1;
+          warp_cursor = 0;
           cursor_hide_on_keypress = 1;
           mouse_accel_profile = 1;
           mouse_accel_speed = 0.0;
