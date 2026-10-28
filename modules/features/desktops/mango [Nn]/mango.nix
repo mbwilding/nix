@@ -147,7 +147,7 @@
           gap_outer_horizontal = 0;
           gap_outer_vertical = 0;
           focused_opacity = 1.0;
-          unfocused_opacity = 0.9;
+          unfocused_opacity = 0.98;
 
           animations = 1;
           layer_animations = 1;
