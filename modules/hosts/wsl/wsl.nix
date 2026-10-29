@@ -5,6 +5,7 @@ let
   hostNames = [
     "wsl-anon"
     "wsl-stealth"
+    "wsl-surface"
   ];
   stateVersion = "26.05";
   homeManagerModules = featureModules.homeManager ++ [ ./_shells.nix ];
