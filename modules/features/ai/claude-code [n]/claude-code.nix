@@ -90,10 +90,10 @@
                   type = "http";
                   url = "https://factory-mcp.mp.${secrets.workName}.com.au/mcp";
                 };
-                # lucid = {
-                #   type = "http";
-                #   url = "https://mcp.lucid.app/mcp";
-                # };
+                lucid = {
+                  type = "http";
+                  url = "https://mcp.lucid.app/mcp";
+                };
               }
             else
               { }
