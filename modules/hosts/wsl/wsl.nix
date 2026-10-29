@@ -1,8 +1,11 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 
 let
   arch = "x86_64-linux";
-  hostName = "stealth";
+  hostNames = [
+    "wsl-anon"
+    "wsl-stealth"
+  ];
   stateVersion = "26.05";
   homeManagerModules = featureModules.homeManager ++ [ ./_shells.nix ];
   # secrets = import ../../nix/_secrets.nix;
@@ -15,13 +18,15 @@ let
     "fonts"
     "system-base"
     "user-mbwilding"
+    "user-work"
     "wireshark"
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
 in
 {
-  flake.modules.nixos.${hostName} =
+  flake.modules.nixos = lib.genAttrs hostNames (
+    hostName:
     { pkgs, ... }:
     {
       imports = featureModules.nixos ++ [
@@ -84,9 +89,12 @@ in
           LD_LIBRARY_PATH=/usr/lib/wsl/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} exec /usr/lib/wsl/lib/nvidia-smi "$@"
         '')
       ];
-    };
+    }
+  );
 
-  flake.nixosConfigurations = inputs.self.lib.mkNixOS arch hostName;
+  flake.nixosConfigurations = lib.mergeAttrsList (map (inputs.self.lib.mkNixOS arch) hostNames);
 
-  flake.homeConfigurations = inputs.self.lib.mkHomeManager arch hostName homeManagerModules;
+  flake.homeConfigurations = lib.mergeAttrsList (
+    map (hostName: inputs.self.lib.mkHomeManager arch hostName homeManagerModules) hostNames
+  );
 }
