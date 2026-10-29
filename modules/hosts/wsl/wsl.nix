@@ -79,7 +79,7 @@ in
 
       # Use the Windows podman machine's rootful socket (group 10 inside the machine)
       users.groups.podman-machine.gid = 10;
-      users.users.mbwilding.extraGroups = [ "podman-machine" ];
+      custom.availableGroups = [ "podman-machine" ];
       virtualisation.podman.dockerSocket.enable = lib.mkForce false;
 
       environment.sessionVariables = {
