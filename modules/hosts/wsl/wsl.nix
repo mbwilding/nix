@@ -17,6 +17,7 @@ let
     "development"
     "fonts"
     "podman"
+    "proxy"
     "system-base"
     "user-mbwilding"
     "user-work"
@@ -81,6 +82,10 @@ in
       users.groups.podman-machine.gid = 10;
       custom.availableGroups = [ "podman-machine" ];
       virtualisation.podman.dockerSocket.enable = lib.mkForce false;
+
+      # Without NetworkManager the proxy feature runs dnsmasq, which forwards the rest to WSL's resolver
+      wsl.wslConf.network.generateResolvConf = false;
+      services.dnsmasq.settings.server = [ "10.255.255.254" ];
 
       environment.sessionVariables = {
         CONTAINER_HOST = "unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-root.sock";

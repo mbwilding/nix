@@ -22,18 +22,33 @@
       fakeIpRange = "198.18.0.0/15";
       dnsPort = 15353;
       proxyPort = 18081;
+      # NOTE: Windows use, via WSL localhost forwarding
+      socksPort = 1080;
+      nm = config.networking.networkmanager.enable;
     in
     {
-      networking.networkmanager.dns = "dnsmasq";
-      environment.etc."NetworkManager/dnsmasq.d/work-proxy.conf".text =
-        lib.concatMapStringsSep "\n" (
-          d: "server=/${lib.removePrefix "." d}/127.0.0.1#${toString dnsPort}"
-        ) include
-        + "\n";
+      networking.networkmanager.dns = lib.mkIf nm "dnsmasq";
+      environment.etc."NetworkManager/dnsmasq.d/work-proxy.conf" = lib.mkIf nm {
+        text =
+          lib.concatMapStringsSep "\n" (
+            d: "server=/${lib.removePrefix "." d}/127.0.0.1#${toString dnsPort}"
+          ) include
+          + "\n";
+      };
 
-      systemd.services.NetworkManager.restartTriggers = [
+      systemd.services.NetworkManager.restartTriggers = lib.mkIf nm [
         config.environment.etc."NetworkManager/dnsmasq.d/work-proxy.conf".source
       ];
+
+      services.dnsmasq = lib.mkIf (!nm) {
+        enable = true;
+        settings = {
+          listen-address = "127.0.0.1";
+          bind-interfaces = true;
+          no-resolv = true;
+          server = map (d: "/${lib.removePrefix "." d}/127.0.0.1#${toString dnsPort}") include;
+        };
+      };
 
       networking.nftables = {
         enable = true;
@@ -81,6 +96,12 @@
               listen = "127.0.0.1";
               listen_port = proxyPort;
             }
+            {
+              type = "socks";
+              tag = "socks-in";
+              listen = "127.0.0.1";
+              listen_port = socksPort;
+            }
           ];
 
           dns = {
@@ -121,7 +142,10 @@
                 action = "hijack-dns";
               }
               {
-                inbound = [ "redir-in" ];
+                inbound = [
+                  "redir-in"
+                  "socks-in"
+                ];
                 outbound = "work-ssh";
               }
             ];
