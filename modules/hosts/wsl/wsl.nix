@@ -7,6 +7,7 @@ let
     "wsl-stealth"
     "wsl-surface"
   ];
+  noProxyHosts = [ "wsl-surface" ];
   stateVersion = "26.05";
   homeManagerModules = featureModules.homeManager ++ [ ./_shells.nix ];
   # secrets = import ../../nix/_secrets.nix;
@@ -18,7 +19,6 @@ let
     "development"
     "fonts"
     "podman"
-    "proxy"
     "system-base"
     "user-mbwilding"
     "user-work"
@@ -26,15 +26,19 @@ let
   ];
 
   featureModules = inputs.self.lib.mkFeatures features;
+  proxyModules = (inputs.self.lib.mkFeatures [ "proxy" ]).nixos;
 in
 {
   flake.modules.nixos = lib.genAttrs hostNames (
     hostName:
     { pkgs, ... }:
     {
-      imports = featureModules.nixos ++ [
-        inputs.nixos-wsl.nixosModules.default
-      ];
+      imports =
+        featureModules.nixos
+        ++ lib.optionals (!(builtins.elem hostName noProxyHosts)) proxyModules
+        ++ [
+          inputs.nixos-wsl.nixosModules.default
+        ];
 
       home-manager.sharedModules = homeManagerModules;
 
@@ -85,8 +89,10 @@ in
       virtualisation.podman.dockerSocket.enable = lib.mkForce false;
 
       # Without NetworkManager the proxy feature runs dnsmasq, which forwards the rest to WSL's resolver
-      wsl.wslConf.network.generateResolvConf = false;
-      services.dnsmasq.settings.server = [ "10.255.255.254" ];
+      wsl.wslConf.network.generateResolvConf = lib.mkIf (!(builtins.elem hostName noProxyHosts)) false;
+      services.dnsmasq.settings.server = lib.mkIf (!(builtins.elem hostName noProxyHosts)) [
+        "10.255.255.254"
+      ];
 
       environment.sessionVariables = {
         CONTAINER_HOST = "unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-root.sock";
