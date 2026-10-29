@@ -17,7 +17,14 @@
     "uas"
     "usbhid"
     "sd_mod"
+    # Hyper-V
+    "hv_vmbus"
+    "hv_storvsc"
+    "hv_netvsc"
+    "hv_utils"
   ];
+  # Hyper-V
+  virtualisation.hypervGuest.enable = true;
   boot.blacklistedKernelModules = [ "amdgpu" ];
   boot.extraModulePackages = [ ];
   boot.initrd.kernelModules = [ ];
