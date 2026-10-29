@@ -46,6 +46,8 @@
       "gid=1000"
       "rw"
       "user"
+      "nofail"
+      "x-systemd.device-timeout=5s"
       "exec"
       "umask=000"
     ];
@@ -59,6 +61,8 @@
       "gid=1000"
       "rw"
       "user"
+      "nofail"
+      "x-systemd.device-timeout=5s"
       "exec"
       "umask=000"
     ];
