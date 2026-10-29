@@ -38,10 +38,18 @@
     ];
   };
 
-  # fileSystems."/mnt/games" = {
-  #   device = "/dev/disk/by-uuid/78ebf819-c844-48f2-bca3-035af5dc6577";
-  #   fsType = "ext4";
-  # };
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/F89069819069476A";
+    fsType = "ntfs";
+    options = [
+      "uid=1000"
+      "gid=1000"
+      "rw"
+      "user"
+      "exec"
+      "umask=000"
+    ];
+  };
 
   fileSystems."/mnt/studio" = {
     device = "/dev/disk/by-uuid/094D132D094D132D";
