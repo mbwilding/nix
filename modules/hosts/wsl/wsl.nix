@@ -8,9 +8,9 @@ let
     "wsl-surface"
   ];
   noProxyHosts = [ "wsl-surface" ];
+  workHosts = [ "wsl-surface" ];
   stateVersion = "26.05";
   homeManagerModules = featureModules.homeManager ++ [ ./_shells.nix ];
-  # secrets = import ../../nix/_secrets.nix;
 
   features = [
     "appimage"
@@ -31,7 +31,7 @@ in
 {
   flake.modules.nixos = lib.genAttrs hostNames (
     hostName:
-    { pkgs, ... }:
+    { pkgs, secrets, ... }:
     {
       imports =
         featureModules.nixos
@@ -56,7 +56,7 @@ in
       ];
 
       wsl = {
-        defaultUser = "mbwilding";
+        defaultUser = if builtins.elem hostName workHosts then secrets.workId else "mbwilding";
         enable = true;
         interop.register = true;
         wslConf.automount.options = "uid=1000,gid=100,umask=002,fmask=111";
