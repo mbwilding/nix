@@ -16,6 +16,7 @@ let
     "cli"
     "development"
     "fonts"
+    "podman"
     "system-base"
     "user-mbwilding"
     "user-work"
@@ -76,7 +77,14 @@ in
             patches = old.patches ++ [ ./dzn-skip-failed-adapters.patch ];
           });
 
+      # Use the Windows podman machine's rootful socket (group 10 inside the machine)
+      users.groups.podman-machine.gid = 10;
+      users.users.mbwilding.extraGroups = [ "podman-machine" ];
+      virtualisation.podman.dockerSocket.enable = lib.mkForce false;
+
       environment.sessionVariables = {
+        CONTAINER_HOST = "unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-root.sock";
+        DOCKER_HOST = "unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-root.sock";
         # libcuda and libd3d12 dlopen their siblings by name
         LD_LIBRARY_PATH = [ "/run/opengl-driver/lib" ];
         # OpenGL on D3D12 otherwise picks the AMD iGPU, which fails
