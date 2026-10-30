@@ -18,6 +18,7 @@ let
     "cli"
     "development"
     "fonts"
+    "mounts"
     "podman"
     "system-base"
     "user-mbwilding"
@@ -93,6 +94,11 @@ in
       services.dnsmasq.settings.server = lib.mkIf (!(builtins.elem hostName noProxyHosts)) [
         "10.255.255.254"
       ];
+
+      # NAT rewrites source ports, so the NAS must allow non-root mounts
+      fileSystems = lib.genAttrs [ "/mnt/common" "/mnt/mbwilding" "/mnt/nextcloud" ] (_: {
+        options = [ "noresvport" ];
+      });
 
       environment.sessionVariables = {
         CONTAINER_HOST = "unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-root.sock";
