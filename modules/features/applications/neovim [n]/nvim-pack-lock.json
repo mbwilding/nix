@@ -177,7 +177,7 @@
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-lspconfig": {
-      "rev": "4b2b045b8ceb035f5c8bc9cab19b95706bfa6a19",
+      "rev": "460bb34e7be114f1fda7815781696bc701e60f83",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -282,7 +282,7 @@
       "src": "https://github.com/folke/zen-mode.nvim"
     },
     "zpack.nvim": {
-      "rev": "ec09994ca68fc36bad89a7782c5e6b244b154e10",
+      "rev": "871104e76ba75706b2e6ceadb4950f6b4481dc71",
       "src": "https://github.com/zuqini/zpack.nvim"
     }
   }
