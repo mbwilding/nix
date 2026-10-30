@@ -1,6 +1,7 @@
 -- DAP (Debug Adapter Protocol) is a protocol that allows editors to communicate with debuggers.
 
-local is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil
+local platform = require("platform")
+local is_nixos = platform.is_nixos
 
 ---@type zpack.Spec
 return {
@@ -24,8 +25,9 @@ return {
             opts = {
                 pses_bundle_path = (function()
                     return (is_nixos and "/etc/profiles/per-user/mbwilding/bin/powershell-editor-services")
-                        or (jit.os == "OSX" and os.getenv("HOME") .. "/.lsp/powershell_es")
-                        or (jit.os == "Linux" and "/opt/powershell-editor-services")
+                        or (platform.os == "OSX" and os.getenv("HOME") .. "/.lsp/powershell_es")
+                        or (platform.os == "Linux" and "/opt/powershell-editor-services")
+                        or (platform.os == "Windows" and os.getenv("LOCALAPPDATA") .. "/powershell-editor-services")
                 end)(),
             },
         },

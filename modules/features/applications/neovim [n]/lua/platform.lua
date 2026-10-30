@@ -1,6 +1,9 @@
-local uname = vim.loop.os_uname().sysname
+local M = {
+    os = jit.os,
+    is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil,
+}
 
-if uname == "Windows_NT" then
+if M.os == "Windows" then
     vim.o.shell = "pwsh"
     vim.o.shellcmdflag =
         "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
@@ -9,3 +12,5 @@ if uname == "Windows_NT" then
     vim.o.shellquote = ""
     vim.o.shellxquote = ""
 end
+
+return M

@@ -29,6 +29,14 @@ return {
             end
         end
 
+        -- Tarballs contain symlinks that Windows tar cannot extract
+        if require("platform").os == "Windows" then
+            local unsupported = { bp = true, foam = true, rescript = true, rnoweb = true }
+            parsers = vim.tbl_filter(function(parser)
+                return not unsupported[parser]
+            end, parsers)
+        end
+
         -- Install file type parsers
         require("nvim-treesitter").install(parsers)
 

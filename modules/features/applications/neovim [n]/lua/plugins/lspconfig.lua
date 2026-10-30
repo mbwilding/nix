@@ -1,6 +1,7 @@
-# https://github.com/neovim/nvim-lspconfig/tree/master/lsp
+-- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
 
-local is_nixos = vim.uv.fs_stat("/etc/nixos") ~= nil
+local platform = require("platform")
+local is_nixos = platform.is_nixos
 local hostname = vim.fn.hostname()
 
 ---@type zpack.Spec
@@ -150,8 +151,9 @@ return {
             powershell_es = {
                 bundle_path = (function()
                     return (is_nixos and "/etc/profiles/per-user/mbwilding/lib/powershell-editor-services")
-                        or (jit.os == "OSX" and os.getenv("HOME") .. "/.lsp/powershell_es")
-                        or (jit.os == "Linux" and "/opt/powershell-editor-services")
+                        or (platform.os == "OSX" and os.getenv("HOME") .. "/.lsp/powershell_es")
+                        or (platform.os == "Linux" and "/opt/powershell-editor-services")
+                        or (platform.os == "Windows" and os.getenv("LOCALAPPDATA") .. "/powershell-editor-services")
                 end)(),
                 settings = {
                     powershell = {
