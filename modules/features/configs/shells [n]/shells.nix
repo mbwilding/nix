@@ -110,6 +110,10 @@
 
             # Vi
             fish_vi_key_bindings
+            set -g fish_cursor_default block
+            set -g fish_cursor_insert line
+            set -g fish_cursor_replace_one underscore
+            set -g fish_cursor_visual block
 
             # Git prompt settings
             set -g __fish_git_prompt_showdirtystate 1
@@ -162,9 +166,18 @@
                   set_color --bold red
                   echo -n (fish_status_to_signal $last_status)" "
                 end
-                echo -n '❯ '
+                if test "$fish_bind_mode" = default
+                  set_color --bold blue
+                  echo -n '❮ '
+                else
+                  echo -n '❯ '
+                end
                 set_color normal
               '';
+            };
+            fish_mode_prompt = {
+              description = "Disable default vi mode prompt";
+              body = "";
             };
             fish_right_prompt = {
               description = "Right prompt with time and battery";
@@ -219,6 +232,7 @@
           enable = true;
           dotDir = "${config.xdg.configHome}/zsh";
           autocd = true;
+          defaultKeymap = "viins";
           autosuggestion.enable = true;
           enableCompletion = true;
           syntaxHighlighting.enable = true;
@@ -235,6 +249,16 @@
             ];
           };
           initContent = ''
+            autoload -Uz add-zle-hook-widget
+            _vi_cursor() {
+              case $KEYMAP in
+                vicmd) print -n '\e[2 q' ;;
+                *) print -n '\e[6 q' ;;
+              esac
+            }
+            add-zle-hook-widget keymap-select _vi_cursor
+            add-zle-hook-widget line-init _vi_cursor
+
             wifi-connect() {
               echo -n "Enter SSID: "
               read ssid
@@ -253,6 +277,7 @@
           settings = {
             add_newline = true;
             character.success_symbol = "[❯](bold green)";
+            character.vicmd_symbol = "[❮](bold blue)";
             battery = {
               full_symbol = "󰁹 ";
               charging_symbol = "󰂄 ";
