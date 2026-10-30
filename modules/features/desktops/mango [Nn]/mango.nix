@@ -249,6 +249,7 @@
             # Master layout
             "${mod},n,focusstack,next"
             "${mod},Return,zoom"
+            "${mod},space,switch_layout"
 
             # Mod + scroll through tags
             "${mod},Right,viewtoright"

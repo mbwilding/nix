@@ -858,6 +858,14 @@
             hl.exec_cmd("noctalia")
             hl.exec_cmd("systemctl --user start hyprpolkitagent")
           end)
+
+          -- Super + Space steps through the layouts
+          local layouts = { "master", "dwindle", "scrolling" }
+          local layout_index = 1
+          hl.bind(mod .. " + space", function()
+            layout_index = layout_index % #layouts + 1
+            hl.config({ general = { layout = layouts[layout_index] } })
+          end)
         '';
       };
 
