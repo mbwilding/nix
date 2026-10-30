@@ -2,6 +2,7 @@
 return {
     "3rd/image.nvim",
     -- dependencies = { "luarocks.nvim" },
+    enabled = require("platform").os ~= "Windows",
     event = "VeryLazy",
     ---@type Options
     opts = {
