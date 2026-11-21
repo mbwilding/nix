@@ -80,8 +80,8 @@ in
       ...
     }:
     let
-      # kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
-      kernel = pkgs.linuxPackages_latest;
+      kernel = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-zen4;
+      # kernel = pkgs.linuxPackages_latest;
     in
     {
       imports = featureModules.nixos ++ [

@@ -54,12 +54,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # TODO: Cachy
-    # nix-cachyos-kernel = {
-    #   url = "github:xddxdd/nix-cachyos-kernel/release";
-    #   inputs.flake-parts.follows = "flake-parts";
-    #   inputs.flake-compat.follows = "flake-compat";
-    # };
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.flake-compat.follows = "flake-compat";
+    };
 
     epic-games-launcher = {
       url = "github:kjetteren/epic-games-launcher-flake";

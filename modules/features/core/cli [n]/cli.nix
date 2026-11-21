@@ -40,7 +40,7 @@
           let
             system = pkgs.stdenv.hostPlatform.system;
             dtctl = inputs.dtctl.packages.${system}.default.overrideAttrs (_: {
-              vendorHash = "sha256-Kv7uvuLq2eMeIDBbWyI9GgDW+bJ0fNe1DoKro2GHDy0=";
+              vendorHash = "sha256-DnWpjknMEVFG96n0AjrFYegJgWWYrGeXW11F5FI8sBc=";
             });
             open-ecc = inputs.open-ecc.packages.${system}.default;
           in

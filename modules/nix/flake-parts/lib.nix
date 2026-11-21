@@ -24,16 +24,14 @@
         nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
         access-tokens = [ "github.com=${secrets.githubPersonalToken}" ];
         trusted-users = [ user ];
-        extra-substituters = [
-          # TODO: Cachy
-          # "https://attic.xuyh0120.win/lantian"
+        substituters = [
+          "https://cache.lantian.pub/lantian"
           "https://noctalia.cachix.org"
           "https://cache.nixos-cuda.org"
           "https://nix-community.cachix.org"
         ];
-        extra-trusted-public-keys = [
-          # TODO: Cachy
-          # "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+        trusted-public-keys = [
+          "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ="
           "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
           "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
