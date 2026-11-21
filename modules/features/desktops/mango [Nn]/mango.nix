@@ -286,8 +286,8 @@
           ];
 
           switchbind = [
-            "fold,spawn_shell,noctalia msg session lock && noctalia msg dpms-off && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
-            "unfold,spawn,noctalia msg dpms-on"
+            "lid_on,spawn_shell,noctalia msg session lock && noctalia msg dpms-off && [ $(cat /sys/class/power_supply/AC/online) -eq 0 ] && systemctl suspend"
+            "lid_off,spawn,noctalia msg dpms-on"
           ];
         };
       };
