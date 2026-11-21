@@ -753,11 +753,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791021686,
-        "narHash": "sha256-tQHvgC12F4fNiV0i5eVDuyEc+vw4hYvGcm7Gf/wzJfI=",
+        "lastModified": 1795297780,
+        "narHash": "sha256-LcEx6nc57RPf17/OWfl+LET7PHTS8Z54jrAfs1iXlW0=",
         "owner": "mbwilding",
         "repo": "open-ecc",
-        "rev": "f6075e483d7b64a45edc6d1c6e1eb0c97de2c9fa",
+        "rev": "1c44c8581da6b837c855669ee265883b2bbc6c29",
         "type": "github"
       },
       "original": {
@@ -938,11 +938,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795295368,
-        "narHash": "sha256-eSFHjr3w62qZGRFsxeE32yQHu61Yp1l3JiimIjnxne4=",
+        "lastModified": 1795297709,
+        "narHash": "sha256-31N0e5JBctdRbVs0F8U9Nt8re9vKCWJ45QENahj7IB4=",
         "owner": "mbwilding",
         "repo": "steam-achievement-manager",
-        "rev": "e4e7a86b283fdf157db16c3d7694348f8a4de699",
+        "rev": "2849be0f044bd08ac28e8baf28fc5dcef5c25e34",
         "type": "github"
       },
       "original": {
