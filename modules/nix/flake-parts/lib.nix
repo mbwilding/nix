@@ -99,8 +99,7 @@
               nix.settings = sharedNixSettings;
               nixpkgs.hostPlatform = lib.mkDefault system;
               nixpkgs.overlays = sharedOverlays ++ [
-                # TODO: Cachy
-                # inputs.nix-cachyos-kernel.overlays.default
+                inputs.nix-cachyos-kernel.overlays.default
               ];
 
               _module.args.pkgsMaster = import inputs.nixpkgs-master {
