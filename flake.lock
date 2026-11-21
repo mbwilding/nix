@@ -938,11 +938,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793207023,
-        "narHash": "sha256-VXa2q0nwrzVJIDSyjgvzVPTwW8E0JYHFcYnCdrk5AKA=",
+        "lastModified": 1795295368,
+        "narHash": "sha256-eSFHjr3w62qZGRFsxeE32yQHu61Yp1l3JiimIjnxne4=",
         "owner": "mbwilding",
         "repo": "steam-achievement-manager",
-        "rev": "6563e3c9ab33fd5d8903d97591af98f345730831",
+        "rev": "e4e7a86b283fdf157db16c3d7694348f8a4de699",
         "type": "github"
       },
       "original": {
