@@ -12,6 +12,7 @@ let
     "flatpak"
     "gaming"
     "gpu-nvidia"
+    "gpu-unlock"
     "gui"
     "mounts"
     "mpv"
