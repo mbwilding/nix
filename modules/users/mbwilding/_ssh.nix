@@ -17,15 +17,8 @@ in
         # Devices
 
         anon = personal // { };
-        lxc = personal // { };
         nona = personal // { };
-        server = personal // { };
         truenas = personal // { };
-        stealth = personal // { };
-
-        ai-sdlc = personal // {
-          User = "agent";
-        };
 
         # Git
 
