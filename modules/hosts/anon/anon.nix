@@ -14,6 +14,7 @@ let
     "gpu-nvidia"
     "gpu-unlock"
     "gui"
+    "llama-cpp"
     "mounts"
     "mpv"
     "obs"
