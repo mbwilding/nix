@@ -65,24 +65,18 @@ in
         useWindowsDriver = true;
       };
 
-      # Only the drivers WSL can use. Dozen (Vulkan on D3D12) is patched to skip adapters it
-      # cannot open: the AMD iGPU's D3D12 driver needs libz and OpenSSL 1.0, and one failed
-      # adapter used to fail the whole enumeration, hiding the NVIDIA GPU too.
-      hardware.graphics.package =
-        (pkgs.mesa.override {
-          galliumDrivers = [
-            "d3d12"
-            "llvmpipe"
-            "softpipe"
-          ];
-          vulkanDrivers = [
-            "microsoft-experimental"
-            "swrast"
-          ];
-        }).overrideAttrs
-          (old: {
-            patches = old.patches ++ [ ./dzn-skip-failed-adapters.patch ];
-          });
+      # Only the drivers WSL can use
+      hardware.graphics.package = pkgs.mesa.override {
+        galliumDrivers = [
+          "d3d12"
+          "llvmpipe"
+          "softpipe"
+        ];
+        vulkanDrivers = [
+          "microsoft-experimental"
+          "swrast"
+        ];
+      };
 
       # Use the Windows podman machine's rootful socket (group 10 inside the machine)
       users.groups.podman-machine.gid = 10;
