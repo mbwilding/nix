@@ -4,7 +4,7 @@ set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 search_dir="$root/modules"
 
-for bin in curl jq nix; do
+for bin in curl jq nix python3; do
   command -v "$bin" >/dev/null || {
     echo "missing dependency: $bin" >&2
     exit 1
@@ -206,6 +206,55 @@ update_fetchfromgithub_file() {
   sed -i "s#$cur_hash#$new_hash#" "$file"
 }
 
+update_gpu_unlock_file() {
+  local file="$1" cur_rev cur_hash latest_sha nv new_hash h_kernel h_run
+  local kernel_url run_url
+
+  cur_rev=$(first_match '(?<=rev = ")[^"]+' "$file")
+  cur_hash=$(first_match '(?<=hash = ")sha256-[^"]+(?=";\s*$)' "$file")
+
+  latest_sha=$(curl_github "https://api.github.com/repos/Zagitta/gpu-unlock/commits/HEAD" | jq -r '.sha // empty' || true)
+  if [[ -z "$latest_sha" ]]; then
+    echo "  skip: could not resolve latest commit for Zagitta/gpu-unlock"
+    return
+  fi
+
+  nv=$(curl -sf "https://raw.githubusercontent.com/Zagitta/gpu-unlock/$latest_sha/Makefile" |
+    sed -nE 's/^NV[[:space:]]*:?=[[:space:]]*([0-9.]+).*/\1/p' | head -1 || true)
+  if [[ -z "$nv" ]]; then
+    echo "  skip: could not read NV driver version from upstream Makefile"
+    return
+  fi
+
+  if [[ "$latest_sha" == "$cur_rev" ]]; then
+    echo "  up to date ($cur_rev, driver $nv) [Zagitta/gpu-unlock]"
+    return
+  fi
+
+  echo "  Zagitta/gpu-unlock: $cur_rev -> $latest_sha (driver $nv)"
+
+  new_hash=$(nix flake prefetch "github:Zagitta/gpu-unlock/$latest_sha" --json 2>/dev/null | jq -r '.hash // empty' || true)
+  kernel_url="https://download.nvidia.com/XFree86/NVIDIA-kernel-module-source/NVIDIA-kernel-module-source-$nv.tar.xz"
+  run_url="https://download.nvidia.com/XFree86/Linux-x86_64/$nv/NVIDIA-Linux-x86_64-$nv-no-compat32.run"
+  h_kernel=$(prefetch_hash sha256 "$kernel_url")
+  h_run=$(prefetch_hash sha256 "$run_url")
+
+  if [[ -z "$new_hash" || -z "$h_kernel" || -z "$h_run" ]]; then
+    echo "    FAILED to prefetch one of: source, kernel module source, installer"
+    return
+  fi
+
+  python3 - "$file" "$cur_rev" "$latest_sha" "$new_hash" "$h_kernel" "$h_run" <<'PY'
+import re, sys
+f, old_rev, new_rev, h_src, h_kernel, h_run = sys.argv[1:]
+s = open(f).read()
+s = s.replace(f'rev = "{old_rev}"', f'rev = "{new_rev}"')
+hashes = iter([h_src, h_kernel, h_run])
+s = re.sub(r'(hash = ")sha256-[^"]+(";)', lambda m: m.group(1) + next(hashes) + m.group(2), s)
+open(f, 'w').write(s)
+PY
+}
+
 update_vscode_marketplace_file() {
   local file="$1" publisher name cur_version cur_hash latest url new_hash query
 
@@ -352,11 +401,13 @@ update_npm_file() {
 
 main() {
   local files file
-  mapfile -t files < <(find "$search_dir" -type f -name '_*.nix' | sort)
+  mapfile -t files < <(find "$search_dir" -type f \( -name '_*.nix' -o -name 'gpu-unlock.nix' \) | sort)
 
   for file in "${files[@]}"; do
     echo "==> ${file#"$root"/}"
-    if grep -q 'buildVscodeMarketplaceExtension' "$file"; then
+    if grep -q 'Zagitta' "$file"; then
+      update_gpu_unlock_file "$file"
+    elif grep -q 'buildVscodeMarketplaceExtension' "$file"; then
       update_vscode_marketplace_file "$file"
     elif grep -q 'registry\.npmjs\.org' "$file"; then
       update_npm_file "$file"

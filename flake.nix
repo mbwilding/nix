@@ -75,11 +75,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    gpu-unlock = {
-      url = "github:Sticzu/nixos-gpu-unlock";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     open-ecc = {
       url = "github:mbwilding/open-ecc";
       inputs.nixpkgs.follows = "nixpkgs";

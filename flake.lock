@@ -206,26 +206,6 @@
         "type": "github"
       }
     },
-    "gpu-unlock": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1794341122,
-        "narHash": "sha256-DFStHoOlt+30K0nrVpGWRQWPW7i4kIJ3GZcIF9K0bkI=",
-        "owner": "Sticzu",
-        "repo": "nixos-gpu-unlock",
-        "rev": "bab15b53ad19cc84417e5047d5c25cf17b005ee4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Sticzu",
-        "repo": "nixos-gpu-unlock",
-        "type": "github"
-      }
-    },
     "gronk": {
       "inputs": {
         "nixpkgs": [
@@ -878,7 +858,6 @@
         "epic-games-launcher": "epic-games-launcher",
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
-        "gpu-unlock": "gpu-unlock",
         "gronk": "gronk",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
