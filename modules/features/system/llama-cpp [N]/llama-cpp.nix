@@ -42,9 +42,8 @@
             ${lib.getExe' llama-cpp "llama-server"} \
               --host 0.0.0.0 \
               --port ${toString port} \
-              -hf mradermacher/Huihui-Qwen3.5-27B-abliterated-GGUF:Q5_K_M \
-              --hf-file Huihui-Qwen3.5-27B-abliterated.Q5_K_M.gguf \
-              -ngl 99 \
+              -hf mradermacher/Huihui-Qwen3.5-27B-abliterated-GGUF:Q4_K_M \
+              --hf-file Huihui-Qwen3.5-27B-abliterated.Q4_K_M.gguf \
               -c 65536 \
               -fa on \
               -np 1 \
@@ -53,6 +52,7 @@
           '';
           CacheDirectory = "llama-cpp";
           Restart = "on-failure";
+          RestartSec = 30;
         };
       };
     };
@@ -70,7 +70,7 @@
           apiKey = "not-needed";
         };
         models."qwen3.5-27b-abliterated" = {
-          name = "Qwen3.5 27B Abliterated (Q5_K_M)";
+          name = "Qwen3.5 27B Abliterated (Q4_K_M)";
           id = "qwen3.5-27b-abliterated";
           tool_call = true;
           temperature = true;
