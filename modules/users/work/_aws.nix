@@ -1,4 +1,5 @@
 {
+  config,
   secrets,
   ...
 }:
@@ -59,6 +60,11 @@ let
     };
 in
 {
+  home.file = {
+    ".aws/sso".source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Users/mbwilding/.aws/sso";
+    ".aws/cli".source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Users/mbwilding/.aws/cli";
+  };
+
   home.sessionVariables = {
     AWS_PROFILE = "md";
     AWS_REGION = s.region;
